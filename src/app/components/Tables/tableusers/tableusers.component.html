@@ -1,0 +1,88 @@
+
+<table mat-table [dataSource]="dataSource" class="">
+
+
+
+  <!-- Username Column -->
+  <ng-container matColumnDef="username">
+    <th mat-header-cell *matHeaderCellDef> Usuario </th>
+    <td mat-cell *matCellDef="let user">
+      <ng-container *ngIf="editingId === user.username; else viewUsername">
+        <input matInput [(ngModel)]="editedUser.username" class="editable-input">
+      </ng-container>
+      <ng-template #viewUsername>{{ user.username }}</ng-template>
+    </td>
+  </ng-container>
+
+  <!-- First Name Column -->
+  <ng-container matColumnDef="first_name">
+    <th mat-header-cell *matHeaderCellDef> Nombre </th>
+    <td mat-cell *matCellDef="let user">
+      <ng-container *ngIf="editingId === user.username; else viewFirstName">
+        <input matInput [(ngModel)]="editedUser.first_name" class="editable-input">
+      </ng-container>
+      <ng-template #viewFirstName>{{ user.first_name }}</ng-template>
+    </td>
+  </ng-container>
+
+  <!-- Last Name Column -->
+  <ng-container matColumnDef="last_name">
+    <th mat-header-cell *matHeaderCellDef> Apellido </th>
+    <td mat-cell *matCellDef="let user">
+      <ng-container *ngIf="editingId === user.username; else viewLastName">
+        <input matInput [(ngModel)]="editedUser.last_name" class="editable-input">
+      </ng-container>
+      <ng-template #viewLastName>{{ user.last_name }}</ng-template>
+    </td>
+  </ng-container>
+
+
+
+  <!-- Activo Column -->
+  <ng-container matColumnDef="is_active">
+    <th mat-header-cell *matHeaderCellDef> Activo </th>
+    <td mat-cell *matCellDef="let user">
+      <mat-icon 
+        *ngIf="user.is_active" 
+        style="font-size: 26px;" 
+        color="primary" class="cursor-pointer"
+        (click)="onToggle(user)">
+        toggle_on
+      </mat-icon>
+      <mat-icon 
+        *ngIf="!user.is_active" 
+        style="font-size: 26px;" 
+        color="black" class="cursor-pointer"
+        (click)="onToggle(user)">
+        toggle_off
+      </mat-icon>
+    </td>
+  </ng-container>
+
+  <!-- Acciones Column -->
+  <ng-container matColumnDef="acciones">
+    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+    <td mat-cell *matCellDef="let user">
+      <ng-container *ngIf="editingId === user.username; else viewActions">
+        <button mat-icon-button color="primary" (click)="onUpdateUser()">
+          <mat-icon>check</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="onCancelEdit()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </ng-container>
+      <ng-template #viewActions>
+        <button mat-icon-button color="accent" (click)="onEditUser(user)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </ng-template>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>

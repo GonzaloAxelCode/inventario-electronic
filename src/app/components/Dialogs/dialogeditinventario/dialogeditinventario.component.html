@@ -1,0 +1,39 @@
+<div class="form-container mt-6  rounded-lg">
+  <form [formGroup]="inventarioFormEdit" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+
+
+        <!-- Campos numéricos en una fila -->
+    <div class="flex space-x-3 md:col-span-2 w-full">
+      <tui-textfield class="flex-1">
+        <label tuiLabel>Stock Actual</label>
+        <input [max]="100" [min]="0" [step]="1" tuiInputNumber formControlName="cantidad" />
+      </tui-textfield>
+
+     
+
+    </div>
+    <div class="flex space-x-3 w-full col-span-2">
+      <tui-textfield tuiTextfieldController class="flex flex-2 w-full">
+        <label tuiLabel>Costo Compra</label>
+        <input [min]="0"   tuiInputNumber formControlName="costo_compra" />
+
+      </tui-textfield>
+      <tui-textfield tuiTextfieldController class="flex flex-2 w-full">
+        <label tuiLabel>Costo Venta</label>
+        <input [min]="0"      [tuiNumberFormat]="{precision: 2}"
+  tuiInputNumber formControlName="costo_venta" />
+
+      </tui-textfield>
+    </div>
+
+
+    <!-- Botón -->
+    <div class="md:col-span-2 flex justify-end">
+      <button tuiButton size="m" type="submit" appearance="positive" [disabled]="inventarioFormEdit.invalid">
+        Actualizar Inventario
+      </button>
+    </div>
+
+  </form>
+</div>

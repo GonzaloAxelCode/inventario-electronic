@@ -1,0 +1,54 @@
+
+<div class="p-4">
+    <button
+    iconStart="@tui.plus"
+    tuiButton
+    appearance="info"
+    tuiButtonVertical
+    type="button"
+    class="my-5 pr-3 "
+    (click)="showDialogCreateUser()"
+    
+>
+    Agregar nuevo personal
+</button>
+
+    
+    <div class="w-full">
+        <table size="s" tuiTable >
+            <thead>
+                <tr class="bg-neutral-700">
+                    <th tuiTh class="text-left p-3">#</th>
+                    <th tuiTh class="text-left p-3">Username</th>
+                    <th tuiTh class="text-left p-3">Nombres y Apellidos</th>
+                    <th tuiTh class="text-left p-3">Activo</th>
+                    <th tuiTh class="text-left p-3">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of users; let i = index" class="hover:bg-neutral-700">
+                    <td tuiTd class="p-3">{{ user.id}}</td>
+                    <td tuiTd class="p-3">{{ user.username }}</td>
+                    <td tuiTd class="p-3">{{ user.first_name }} {{user.last_name}}</td>
+                    <td tuiTd class="p-3"> <input tuiSwitch type="checkbox" [(ngModel)]="user.is_active"
+                            (click)="toggleUpdateStateUser($event,user)" /></td>
+
+                    <td tuiTd class="p-3">
+
+                        <div class="flex gap-2 ">
+                            <button appearance="positive" iconStart="@tui.shield-half" tuiButton tuiButtonVertical
+                                type="button"     (click)="showDialogEditPermissions(user)">
+                                Gestionar Permisos
+                            </button>
+                              <button appearance="textfield" iconStart="@tui.key-round" tuiButton tuiButtonVertical
+                                type="button" (click)="showDialogUpdatePassword(user)">
+                               Cambiar Password
+                            </button>
+                        </div>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

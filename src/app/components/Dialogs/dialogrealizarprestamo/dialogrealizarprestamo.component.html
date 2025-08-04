@@ -1,0 +1,23 @@
+<form [formGroup]="testForm" class="flex flex-col gap-4" (ngSubmit)="onSubmit()">
+   
+  <tui-textfield tuiTextfieldController class="flex flex-2 w-full">
+        <label tuiLabel>Monto</label>
+        <input [min]="0"      [tuiNumberFormat]="{precision: 2}"
+  tuiInputNumber formControlName="monto" />
+
+      </tui-textfield>
+    <tui-textarea 
+        formControlName="descripcion" 
+        class="tui-space_top-4" 
+        [expandable]="true"
+        placeholder="Descripción del gasto"
+    >
+    </tui-textarea>
+    
+
+    <button 
+       
+    >
+        Registrar Gasto
+    </button>
+</form>

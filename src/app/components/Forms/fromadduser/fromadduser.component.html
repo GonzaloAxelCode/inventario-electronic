@@ -1,0 +1,36 @@
+<div class="form-container">
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <!-- Username -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Usuario</mat-label>
+      <input matInput formControlName="username" placeholder="Ingrese el nombre de usuario" />
+      <mat-error *ngIf="userForm.get('username')?.hasError('required')">
+        Este campo es obligatorio
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Nombre -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="first_name" placeholder="Ingrese el nombre" />
+      <mat-error *ngIf="userForm.get('first_name')?.hasError('required')">
+        Este campo es obligatorio
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Apellido -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Apellido</mat-label>
+      <input matInput formControlName="last_name" placeholder="Ingrese el apellido" />
+      <mat-error *ngIf="userForm.get('last_name')?.hasError('required')">
+        Este campo es obligatorio
+      </mat-error>
+    </mat-form-field>
+
+        <div class="button-container">
+      <button mat-raised-button color="primary" [disabled]="userForm.invalid" type="submit">
+        Crear Usuario
+      </button>
+    </div>
+  </form>
+</div>

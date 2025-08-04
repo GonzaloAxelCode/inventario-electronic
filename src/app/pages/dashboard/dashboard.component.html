@@ -1,0 +1,28 @@
+<div class="p-6  text-zinc-200">
+
+
+    <div class="flex flex-col gap-4 pt-4">
+        <app-dashboard-sales-cards></app-dashboard-sales-cards>
+        <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+           
+            <div class="">
+                <p class="text-2xl font-bold ">Productos con bajo stock</p>
+                <app-dashboard-low-stock></app-dashboard-low-stock>
+            </div>
+             <div>
+                <p class="text-2xl font-bold ">Productos mas Vendidos</p>
+                <div>
+
+                    <app-dashboard-products-most-sales></app-dashboard-products-most-sales>
+                </div>
+
+
+            </div>
+           
+        </div>
+        <p class="text-2xl font-bold "> Ventas por rango de fecha</p>
+        <app-chartsalesbetweentwodates></app-chartsalesbetweentwodates>
+
+    </div>
+
+</div>

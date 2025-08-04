@@ -1,0 +1,47 @@
+<table tuiTable size="s">
+  <thead>
+    <tr>
+      <th tuiTh>ID</th>
+      <th tuiTh>Nombre</th>
+      <th tuiTh>Descripción</th>
+      <th tuiTh>Abreviado</th>
+      <th tuiTh>Acciones</th>
+    </tr>
+  </thead>
+  <tbody tuiTbody *ngIf="(selectCategorias$| async)?.categorias?.length">
+    <tr *ngFor="let categoria of (selectCategorias$| async)?.categorias">
+      <td tuiTd>{{ categoria.id }}</td>
+      
+      <td tuiTd>
+      
+       {{ categoria.nombre }}
+      </td>
+      
+      <td tuiTd>
+       
+       {{ categoria.descripcion }}
+      </td>
+      
+      <td tuiTd>
+      
+       {{ categoria.siglas_nombre_categoria }}
+      </td>
+      
+      <td tuiTd>
+        <div class="flex gap-2">
+         
+        
+          <button appearance="positive" iconStart="@tui.pencil" tuiButton  type="button" (click)="showDialogUpdate(categoria)"
+                     >
+                     Actualizar
+                    </button>
+                    <button appearance="error" (click)="onDeleteCategoria(categoria.id)" iconStart="@tui.x" tuiButton type="button"
+                        >
+                        Desactivar
+                    </button>
+        
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

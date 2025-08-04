@@ -1,0 +1,137 @@
+<div class=" p-6 text-white">
+
+    <div class="lg:grid grid-cols-12 gap-4">
+        <!-- Botones con Taiga UI -->
+        <div class="col-span-1  flex flex-col gap-4">
+            <a [href]="comprobante.pdf_url" target="_blank" iconStart="@tui.file-chart-column-increasing"
+                tuiButtonVertical tuiButton appearance="positive" class="bg-blue-600 text-white">
+                Ver PDF
+            </a>
+
+            <a [href]="comprobante.xml_url" target="_blank" iconStart="@tui.file-code-2" tuiButton appearance="warning"
+                class="bg-gray-600 text-white" tuiButtonVertical>
+                Ver XML
+            </a>
+
+            <a iconStart="@tui.folder-archive" [href]="comprobante.cdr_url" target="_blank" tuiButton appearance="info"
+                tuiButtonVertical class="bg-yellow-600 text-white border-none">
+                Ver CDR
+            </a>
+
+            <a iconStart="@tui.ticket-check" [href]="comprobante.ticket_url" target="_blank" tuiButton
+                appearance="glass" tuiButtonVertical class="bg-green-600 text-white">
+                Ver Ticket
+            </a>
+
+            <button tuiButton appearance="negative" iconStart="@tui.ban" tuiButtonVertical class="text-white">
+                Cancelar
+            </button>
+
+        </div>
+        <div class="col-span-11">
+            <!-- Tabla del Comprobante -->
+            <table tuiTable class="w-full text-sm border border-neutral-700 rounded-lg mb-4">
+                <thead class="bg-neutral-800">
+                    <tr>
+                        <th class="p-2 text-left" colspan="3">Información del Comprobante</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="p-2 font-semibold">Tipo:</td>
+                        <td class="p-2 text-xl" colspan="2">{{ comprobante.tipo_comprobante }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-semibold">Serie:</td>
+                        <td class="p-2 text-xl">{{ comprobante.serie }}</td>
+                        <td class="p-2  font-semibold">Correlativo:
+                            <tui-chip size="s" class="text-md" iconEnd="@tui.message-circle-code"
+                                [style.border-radius.rem]="5">
+                                {{ comprobante.correlativo }}
+                            </tui-chip>
+
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-semibold">Moneda:</td>
+                        <td class="p-2 text-xl" colspan="2">{{ comprobante.moneda }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2  font-semibold">Cliente:</td>
+                        <td class="p-2  text-2xl">{{ comprobante.nombre_cliente }}</td>
+                        <td class="p-2 text-md font-semibold">Documento: <tui-badge appearance="info" size="m">
+
+                                {{ comprobante.numero_documento_cliente }}
+                            </tui-badge> </td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-semibold">Estado SUNAT:</td>
+                        <td class="p-2 text-green-400" colspan="2">
+                            <tui-badge appearance="positive">{{ comprobante.estado_sunat }}</tui-badge>
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td class="p-2 font-semibold">IGV:</td>
+                        <td class="p-2 text-xl"> S/ {{ comprobante.igv }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-semibold">Gravadas:</td>
+                        <td class="p-2 text-xl">S/ {{ comprobante.gravadas }}</td>
+
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-semibold">Leyenda:</td>
+                        <td class="p-2 text-sm font-extralight italic" colspan="2">{{ comprobante.leyenda }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-semibold">Total:</td>
+                        <td class="p-2 text-4xl font-bold   text-green-500" colspan="2">
+                            S/ {{ comprobante.total }}
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+
+            <!-- Tabla de Productos Vendidos -->
+            <table tuiTable class="w-full text-sm border border-neutral-700 rounded-lg mt-2">
+                <thead class="bg-neutral-800">
+                    <tr>
+                        <th class="p-2 text-left">Código</th>
+                        <th class="p-2 text-left">Producto</th>
+                        <th class="p-2 text-left">Cantidad</th>
+                        <th class="p-2 text-left">Valor Unitario de Venta (Sin IGV)</th>
+                        <th class="p-2 text-left">Valor Total de Venta (Sin IGV)</th>
+
+                        <th class="p-2 text-left">IGV total </th>
+
+                        <th class="p-2 text-left">Total </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of comprobante.items" class="border-b border-neutral-700">
+                        <td class="p-2">{{ item.codigo }}</td>
+                        <td class="p-2">{{ item.descripcion }}</td>
+                        <td class="p-2">{{ item.cantidad }}</td>
+                        <td class="p-2">S/ {{ item.valorUnitario }}</td>
+                        <td class="p-2">S/ {{ item.valorVenta }}</td>
+
+                        <td class="p-2">S/ {{ item.totalImpuestos }}</td>
+
+
+                        <td class="p-2">S/ {{ item.precioUnitario * item.cantidad }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+
+    </div>
+
+
+</div>

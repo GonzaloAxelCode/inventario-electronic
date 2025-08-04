@@ -1,0 +1,59 @@
+
+<div class="p-10">
+	 
+<div class="flex gap-2">
+    <button
+    iconStart="@tui.plus"
+    tuiButton
+    appearance="info"
+    tuiButtonVertical
+    type="button"
+    class="my-5 pr-3"
+    
+    (click)="showDialog()"
+>
+  Agregar Proveedor
+</button>
+
+</div>
+
+<table tuiTable size="s">
+  <thead>
+    <tr>
+      <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
+      <th tuiTh>Activo</th>
+      <th tuiTh>Acciones</th>
+      
+      
+      
+    </tr>
+  </thead>
+  <tbody tuiTbody *ngIf="(proveedoresState$ | async)?.proveedores?.length">
+    <tr *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []">
+
+      <td *ngFor="let column of allColumns" tuiTd>{{ getProveedorValue(proveedor, column.key) }}</td>
+
+ <td tuiTd >
+                <tui-badge [appearance]="proveedor.activo ? 'positive' : 'negative'">{{ proveedor.activo ? 'Activo' : 'No
+                    activo' }}</tui-badge>
+            </td>
+            <td tuiTd>
+                <div class="flex gap-2 ">
+                    <button appearance="positive" iconStart="@tui.users" tuiButton  type="button"
+                    (click)="showDialogUpdate()"
+                        >
+                        Actualizar
+                    </button>
+                    <button appearance="error" iconStart="@tui.trash" tuiButton  type="button"
+                      (click)="onDeleteProveedor(proveedor.id)"
+                        >
+                        Desactivar
+                    </button>
+                </div>
+
+            </td>
+
+    </tr>
+
+  </tbody>
+</table>

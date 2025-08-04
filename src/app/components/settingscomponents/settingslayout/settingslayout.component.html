@@ -1,0 +1,55 @@
+<main tuiNavigationMain>
+    <header tuiSubheader>
+        
+            <div class="flex gap-4 items-center ">
+                <tui-avatar src="@tui.user" size="xxl" />
+                <h2 tuiHeader>
+                    <div tuiTitle>
+                        <div tuiNavigationLogo>
+                            <tui-icon icon="@tui.gitlab" />
+                            <span tuiFade>{{user.first_name}} {{user.last_name}}</span>
+                            
+                        </div>
+                        
+                        <div tuiSubtitle [style.display]="'flex'" [style.gap.rem]="1">
+                            <span>
+                                <tui-icon icon="@tui.user" />
+                              {{user.username}}
+                            </span>
+                            {{user.is_active ? "Activo":"Desactivado"}}
+                            <span>
+                                <tui-icon icon="@tui.lock" />
+                                {{user.is_superuser ? "Administrador":"Personal"}}
+                            </span>
+                        </div>
+                    </div>
+
+                </h2>
+            </div>
+
+
+
+
+        <nav tuiTabs class="flex flex-wrap gap-2">
+            <a tuiTab routerLink="/settings" routerLinkActive="active-link">
+                General
+            </a>
+
+            <a tuiTab routerLink="/settings/ventas" routerLinkActive="active-link">
+                Configuracion Ventas
+            </a>
+            <a tuiTab routerLink="/settings/permisos" routerLinkActive="active-link">
+                Mis Permisos
+            </a>
+         
+             <a *ngIf="user.is_superuser" tuiTab routerLink="/settings/usermanagement" routerLinkActive="active-link">
+                Gestionar Personal
+            </a>
+        </nav>
+    </header>
+
+    <div>
+        <router-outlet></router-outlet>
+
+    </div>
+</main>

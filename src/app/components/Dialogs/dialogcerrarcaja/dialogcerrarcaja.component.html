@@ -1,0 +1,48 @@
+<div tuiCell>
+    <div tuiAccessories tuiTitle>
+        Saldo Inicial
+        <div tuiSubtitle>Saldo al comenzar hoy</div>
+    </div>
+    <div tuiTitle>
+        <span [style.color]="'var(--tui-text-warning)'">S/. {{caja.saldo_inicial}}</span>
+    </div>
+</div>
+
+<div tuiCell>
+
+    <div tuiAccessories tuiTitle>
+        Gastos Totales
+        <div tuiSubtitle>Registro de gastos Hoy</div>
+    </div>
+    <div tuiTitle>
+        <span [style.color]="'var(--tui-text-negative)'">- S/. {{caja.egresos}}</span>
+
+    </div>
+</div>
+<div tuiCell>
+
+    <div tuiAccessories tuiTitle>
+        Ingresos Totales
+        <div tuiSubtitle>Ingresos de Hoy</div>
+    </div>
+    <div tuiTitle>
+        <span [style.color]="'var(--tui-text-positive)'">+ S/. {{caja.ingresos}}</span>
+
+    </div>
+</div>
+
+<div tuiCell>
+
+    <div tuiAccessories tuiTitle>
+       Total efectivo en caja
+        <div tuiSubtitle>Totales del dia en efectivo</div>
+    </div>
+    <div tuiTitle>
+        <span class="text-2xl font-bold">S/. {{caja.saldo_final}}</span>
+
+    </div>
+</div>
+<button iconStart="@tui.lock"  (click)="cerrarCaja()"
+class="grid w-full my-3" tuiButton type="submit" appearance="error">
+    Cerrar Caja
+</button>

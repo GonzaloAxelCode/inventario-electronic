@@ -1,0 +1,30 @@
+	<form [formGroup]="testForm" class="flex flex-col gap-4" (ngSubmit)="onSubmit()">
+        	
+        	<tui-textfield
+    iconStart="@tui.hand-coins"
+    tuiTextfieldSize="l"
+>
+    <label tuiLabel>Monto del gasto (S/.)
+    </label>
+ 
+    <input
+        placeholder="Escribe el monto"
+        tuiInputNumber
+              formControlName="monto" 
+    />
+
+ 
+</tui-textfield>
+ 
+    <tui-textarea
+        formControlName="descripccion"
+        class="tui-space_top-4"
+        [expandable]="true"
+    >
+       Motivo o descripccion del gasto.
+    </tui-textarea>
+     <button iconStart="@tui.dollar-sign" [disabled]="testForm.invalid" class="grid w-full my-3" tuiButton type="submit"
+        appearance="primary-grayscale">
+       Registrar Gasto
+    </button>
+</form>

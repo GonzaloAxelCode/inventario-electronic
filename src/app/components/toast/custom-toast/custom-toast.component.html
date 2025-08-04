@@ -1,0 +1,16 @@
+<ng-template
+  #customAlertTemplate="polymorpheus"
+  polymorpheus
+  let-data
+>
+  <div class="flex items-center gap-4">
+    <tui-icon *ngIf="data.appearance === 'positive'" tuiIcon="check-circle" class="text-green-500"></tui-icon>
+    <tui-icon *ngIf="data.appearance === 'negative'" tuiIcon="alert-circle" class="text-red-500"></tui-icon>
+    <tui-icon *ngIf="data.appearance === 'warning'" tuiIcon="info" class="text-yellow-500"></tui-icon>
+    <tui-icon *ngIf="data.appearance === 'info'" tuiIcon="info-circle" class="text-blue-500"></tui-icon>
+    <div>
+      <strong class="block">{{ data.label }}</strong>
+      <p>{{ data.message }}</p>
+    </div>
+  </div>
+</ng-template>

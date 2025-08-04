@@ -1,0 +1,25 @@
+<section>
+  <div class="grid grid-cols-6 w-full gap-2 mb-4">
+    <div class=" col-span-5">
+      <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range">
+        Range
+      </tui-input-date-range>
+    </div>
+
+    <button (click)="allSalesYear()" tuiButton appearance="outline-grayscale" class=" col-span-1"
+      iconEnd="@tui.calendar-1" type="button">
+      2025
+    </button>
+  </div>
+
+  <ng-container *ngIf="{
+    labels: labels$ | async,
+    values: value$ | async
+  } as data">
+    <tui-axes *ngIf="data.labels && data.values" class="axes" [axisXLabels]="data.labels" [horizontalLines]="10"
+      [verticalLines]="data.labels.length - 1" [axisYLabels]="axisYSecondaryLabels">
+      <tui-line-days-chart class="chart" [height]="3000" [value]="data.values" [xStringify]="xStringify$ | async"
+        [yStringify]="yStringify" />
+    </tui-axes>
+  </ng-container>
+</section>

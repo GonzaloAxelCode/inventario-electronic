@@ -1,0 +1,15 @@
+{
+	"rules": {
+		"unicorn/empty-brace-spaces": "off",
+		"@typescript-eslint/no-explicit-any": "off",
+				"unicorn/consistent-function-scoping": "off"
+	},
+	"settings": {
+		"import/resolver": {
+			"alias": {
+				"map": [["@", "./src"]],
+				"extensions": [".js", ".jsx", ".ts", ".tsx"]
+			}
+		}
+	}
+}

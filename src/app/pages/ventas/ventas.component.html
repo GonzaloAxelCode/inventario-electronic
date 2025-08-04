@@ -1,0 +1,180 @@
+<section class="m-6">
+  <div class="flex gap-2">
+    <a routerLink="/create_venta"> <button iconStart="@tui.plus" tuiButton appearance="info" tuiButtonVertical
+        type="button" class="my-5 pr-3">
+
+        Crear una venta
+
+
+      </button> </a>
+
+  </div>
+
+
+  <tui-block-status *ngIf="(ventasState$ | async)?.ventas?.length === 0 && !(ventasState$ | async)?.loading else tabla"
+     class="m-auto">
+     <div>
+
+
+    <img alt="survived" class="w-[500px] object-contain m-auto"
+      src="https://res.cloudinary.com/ddksrkond/image/upload/v1754237996/search-product_aw8lfe.png"
+       />
+
+    <h4>Aun no tienes ningun producto en el Inventario</h4>
+
+    <span>Empieza a hacer el inventario</span>
+     </div>
+
+  </tui-block-status>
+
+
+
+
+  <ng-template #tabla>
+
+    <search tuiSearch class="pb-4">
+      <div class="mb-4">
+        <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range">
+          Range
+        </tui-input-date-range>
+      </div>
+      <form [formGroup]="form" (submit)="onSubmitSearch()">
+        <fieldset tuiTextfieldSize="s">
+          <tui-textfield iconStart="@tui.search">
+            <input tuiTheme="ligth" formControlName="nombre_cliente" placeholder="Buscar nombre cliente" tuiTextfield />
+          </tui-textfield>
+         
+          <tui-select class="w-44" formControlName="estado_sunat">
+            Estado Sunat
+            <select placeholder="Estado Sunat" tuiSelect [items]="estados_sunat"></select>
+          </tui-select>
+
+          <tui-select class="w-44" formControlName="metodo_pago">
+            Metodo de Pago
+            <select placeholder="Metodo pago" tuiSelect [items]="metodos_pago"></select>
+          </tui-select>
+
+          <tui-select class="w-44" formControlName="tipo_comprobante">
+            Tipo Comprobante
+            <select placeholder="Comprobante" tuiSelect [items]="tipoComprobantes"></select>
+          </tui-select>
+
+
+          <tui-textfield iconStart="@tui.search">
+            <input tuiTheme="ligth" formControlName="numero_comprobante" placeholder=" Numero Comprobante "
+              tuiTextfield />
+          </tui-textfield>
+     
+          <tui-textfield iconStart="@tui.search">
+            <input tuiTheme="ligth" formControlName="numero_documento_cliente" placeholder="Dni o Ruc" tuiTextfield />
+          </tui-textfield>
+          <button size="s" appearance="primary-grayscale" tuiButton type="submit" (click)="onSubmitSearch()">
+            Buscar
+          </button>
+        </fieldset>
+        <fieldset>
+
+
+          Resultados: {{((ventasState$ | async)?.count )}}
+          <hr />
+
+
+          <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
+            (click)="clearSearch()">
+            Limpiar {{ count() ? '(' + count() + ')' : '' }}
+          </button>
+
+        </fieldset>
+      </form>
+    </search>
+    <tui-loader [overlay]="true" [showLoader]="!!(ventasState$ | async)?.loadingSearch ">
+    
+        <table   *ngIf="((ventasState$ | async)?.search_ventas_found) === '' || ((ventasState$ | async)?.search_ventas_found === 'ventas_found') " tuiTable size="s" class=" w-full pt-3" [columns]="allColumnKeys">
+          <thead>
+            <tr>
+              <th tuiTh>ID</th>
+              <th tuiTh>Productos Vendidos</th>
+              <th tuiTh>Comprobante</th>
+              <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
+              <th tuiTh>Estado</th>
+              <th tuiTh>Total</th>
+              <th tuiTh>Acciones</th>
+            </tr>
+          </thead>
+          <tbody >
+            <tr   *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas)">
+              
+              <td tuiTd>{{venta.id}}</td>
+              <td tuiTd>
+                <div *ngFor="let productos of venta.productos">
+                  <tui-chip>{{ productos.producto_nombre }}</tui-chip>
+                </div>
+              </td>
+              <td tuiTd>
+
+                <tui-badge size="m" iconStart="@tui.ticket-check"
+                  [appearance]="venta.tipo_comprobante === 'Boleta' ? 'positive' : 'outline'">
+                  {{ venta.tipo_comprobante }}
+                </tui-badge>
+              </td>
+
+              <td *ngFor="let column of allColumns" tuiTd>{{ getVentaValue(venta, column.key) }}</td>
+              <td tuiTd>
+                <tui-badge [appearance]="venta.estado === 'Cancelado' ? 'error' : 
+                 venta.estado === 'Completada' ? 'positive' : 
+                 venta.estado === 'En Espera Sunat' ? 'warning' : 'neutral'" tuiStatus>
+                  {{ venta.estado }}
+                </tui-badge>
+              </td>
+              <td tuiTd>
+                <p class="font-bold text-lg w-24 text-nowrap">
+                  S/. {{venta.total}}
+                </p>
+              </td>
+              <td tuiTd>
+                <div class="flex gap-2 ">
+                  <button appearance="info" (click)="showDialogVentaDetail(venta)" iconStart="@tui.wallet-cards"
+                    tuiButton type="button">
+                    Detalles
+                  </button>
+                </div>
+
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+
+        <tui-block-status *ngIf="((ventasState$ | async)?.search_ventas_found) === 'ventas_not_found'" size="m"
+          class="m-auto">
+          <img alt="survived"
+            src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+            tuiSlot="top" />
+
+          <h4>Ventas no encontradas</h4>
+
+          <span>No coicidimos con ninguna venta</span>
+
+
+        </tui-block-status>
+        <div class="pt-4"
+          *ngIf="((ventasState$ | async)?.search_ventas_found ) === 'ventas_found' || ((ventasState$ | async)?.search_ventas_found ) === '' ">
+          <tui-pagination [index]="(ventasState$ | async)?.index_page" [length]="(ventasState$ | async)?.length_pages"
+            (indexChange)="goToPage($event)" />
+        </div>
+        
+
+
+
+    </tui-loader>
+
+
+  </ng-template>
+
+
+
+
+
+
+
+</section>

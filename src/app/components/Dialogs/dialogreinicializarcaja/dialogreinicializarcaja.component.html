@@ -1,0 +1,27 @@
+
+        <form  class="my-auto mx-auto flex flex-col gap-3" (ngSubmit)="onSubmit()"
+            [formGroup]="form" [style.max-width.rem]="32">
+           
+            <tui-notification appearance="error">
+                <h3 tuiTitle>
+                    Importante
+                    <span tuiSubtitle>Solo realizar en caso de error al iniciar una caja.Esta operacion quedara registrada.</span>
+                </h3>
+            </tui-notification>
+            <tui-textfield>
+                <label tuiLabel>Nuevo efectivo Incial</label>
+                <input formControlName="saldo_inicial" tuiInputNumber placeholder="S/. 0.0" tuiTextfieldSize="l" />
+            </tui-textfield>
+
+
+
+            <footer>
+
+                <button tuiButton type="submit" [disabled]="form.invalid" iconStart="@tui.money"
+                    appearance="primary-grayscale" class="grid w-full">
+                    Reinicializar Caja
+                </button>
+            </footer>
+        </form>
+
+  

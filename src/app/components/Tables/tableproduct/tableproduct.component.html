@@ -1,0 +1,133 @@
+<div class="py-6">
+    <!-- Si no hay productos, mostramos el mensaje con el botón -->
+    <tui-block-status
+        *ngIf="(productosState$ | async)?.productos?.length === 0 && !(productosState$ | async)?.loadingProductos else tabla"
+        size="m" class="m-auto">
+        <img alt="survived"
+            src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+            tuiSlot="top" />
+
+        <h4>Aun no tienes ningun producto</h4>
+
+        <span>Empieza a crear tus primeros productos</span>
+
+        <button appearance="primary" size="s" tuiButton type="button">
+            Crear un nuevo producto
+        </button>
+    </tui-block-status>
+
+    <!-- Si hay productos, mostramos la tabla -->
+    <ng-template #tabla>
+        <search tuiSearch class="pb-4">
+            <form [formGroup]="form" (submit)="onSubmitSearch()">
+                <fieldset tuiTextfieldSize="s">
+                    <tui-textfield iconStart="@tui.search">
+                        <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre" tuiTextfield />
+                    </tui-textfield>
+
+                    <tui-select class="w-44" formControlName="categoria" [stringify]="stringify">
+                        Categoria
+                        <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
+                    </tui-select>
+                    <button size="s" appearance="primary-grayscale" tuiButton type="submit" (click)="onSubmitSearch()"
+                        [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null">
+                        >
+                        Buscar
+                    </button>
+                </fieldset>
+                <fieldset>
+                  
+
+                    Resultados: {{((productosState$ | async)?.count )}}
+                    <hr />
+
+
+                    <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
+                         (click)="clearSearch()">
+                        Limpiar {{ count() ? '(' + count() + ')' : '' }}
+                    </button>
+
+                </fieldset>
+            </form>
+        </search>
+
+        <tui-loader [overlay]="true" [showLoader]="!!(productosState$ | async)?.loadingSearch ">
+
+            <table
+                *ngIf="((productosState$ | async)?.search_products_found ) === '' || ((productosState$ | async)?.search_products_found === 'products_found') "
+                tuiTable size="s" class="w-full">
+                <thead>
+                    <tr>
+                        <th tuiTh *ngIf="displayedColumns.includes('sku')">SKU</th>
+                        <th tuiTh *ngIf="displayedColumns.includes('nombre')">Nombre</th>
+                        <th tuiTh *ngIf="displayedColumns.includes('descripcion')">Descripción</th>
+
+                        <th tuiTh *ngIf="displayedColumns.includes('categoria')">Categoría</th>
+
+                        <th tuiTh *ngIf="displayedColumns.includes('marca')">Marca</th>
+                        <th tuiTh *ngIf="displayedColumns.includes('modelo')">Modelo</th>
+                        <th tuiTh *ngIf="displayedColumns.includes('fechaCreacion')">Fecha Creación</th>
+                        <th tuiTh *ngIf="displayedColumns.includes('activo')">Activo</th>
+                        <th tuiTh>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody tuiTbody>
+
+                    <tr
+                        *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)">
+
+                        <td tuiTd *ngIf="displayedColumns.includes('sku')">{{ producto.sku }}</td>
+                        <td tuiTd *ngIf="displayedColumns.includes('nombre')">{{ producto.nombre }}</td>
+                        <td tuiTd *ngIf="displayedColumns.includes('descripcion')">{{ producto.descripcion }}</td>
+
+                        <td tuiTd *ngIf="displayedColumns.includes('categoria')">{{ producto.categoria_nombre }}</td>
+
+                        <td tuiTd *ngIf="displayedColumns.includes('marca')">{{ producto.marca }}</td>
+                        <td tuiTd *ngIf="displayedColumns.includes('modelo')">{{ producto.modelo }}</td>
+                        <td tuiTd *ngIf="displayedColumns.includes('fechaCreacion')">{{ producto.fecha_creacion | date
+                            }}
+                        </td>
+                        <td tuiTd *ngIf="displayedColumns.includes('activo')">
+                            <tui-badge [appearance]="producto.activo ? 'positive' : 'negative'">
+                                {{ producto.activo ? 'Activo' : 'No activo' }}
+                            </tui-badge>
+                        </td>
+                        <td tuiTd>
+                            <div class="flex gap-2 ">
+                                <button appearance="positive" iconStart="@tui.pencil" tuiButton 
+                                    type="button" (click)="showDialogUpdate(producto)">
+                                    Actualizar
+                                </button>
+                                <button appearance="error" iconStart="@tui.trash" tuiButton
+                                    type="button" (click)="onDeleteProducto(producto.id)">
+                                    Desactivar
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+          
+
+            <tui-block-status *ngIf="((productosState$ | async)?.search_products_found ) === 'products_not_found'"
+                size="m" class="m-auto">
+                <img alt="survived"
+                    src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+                    tuiSlot="top" />
+
+                <h4>Productos no encontrados</h4>
+
+                <span>No coicidimos con ningun producto</span>
+
+
+            </tui-block-status>
+              <div class="pt-4" *ngIf="((productosState$ | async)?.search_products_found ) === 'products_found' || ((productosState$ | async)?.search_products_found ) === '' ">
+                <tui-pagination   [index]="(productosState$ | async)?.index_page"
+                    [length]="(productosState$ | async)?.length_pages" (indexChange)="goToPage($event)" />
+            </div>
+        </tui-loader>
+
+
+    </ng-template>
+
+</div>

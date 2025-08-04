@@ -1,0 +1,35 @@
+<div class="form-container">
+	<form [formGroup]="proveedorForm" (ngSubmit)="onSubmit()">
+
+		<div class="grid w-full grid-cols-1 md:grid-cols-2 gap-3">
+			<div class="flex flex-col gap-3">
+
+				<tui-input formControlName="nombre">
+					Nombre
+					<input placeholder="Ingrese el nombre del proveedor" tuiTextfieldLegacy type="text" />
+				</tui-input>
+
+				<tui-input class="full-width" formControlName="direccion" placeholder="Ingrese la dirección">
+					Dirección
+				</tui-input>
+			</div>
+
+						<div class="flex flex-col gap-3">
+				<tui-input class="full-width" formControlName="telefono" placeholder="Ingrese el teléfono" type="tel">
+					Teléfono
+				</tui-input>
+
+
+				<tui-input class="full-width" formControlName="tipo_producto" placeholder="Ingrese el tipo de producto">
+					Tipo de Producto
+				</tui-input>
+			</div>
+		</div>
+
+		<div class="my-3">
+			<button tuiButton size="m" type="submit" [disabled]="proveedorForm.invalid">
+				Agregar Proveedor
+			</button>
+		</div>
+	</form>
+</div>

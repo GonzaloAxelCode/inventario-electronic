@@ -1,0 +1,41 @@
+<div class="form-container mt-5">
+  <form [formGroup]="tiendaForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <tui-input 
+      formControlName="nombre" 
+      placeholder="Ingrese el nombre de la tienda" 
+      class="full-width"
+    >
+      Nombre
+    </tui-input>
+       <tui-input 
+      formControlName="direccion" 
+      placeholder="Ingrese la dirección de la tienda" 
+      class="full-width"
+    >
+      Dirección
+    </tui-input>
+       <tui-input 
+      formControlName="telefono" 
+      placeholder="Ingrese el teléfono de la tienda" 
+      class="full-width"
+    >
+      Teléfono
+    </tui-input>
+
+
+    <tui-input 
+      formControlName="ruc" 
+      placeholder="Ingrese el RUC de la tienda" 
+      class="full-width"
+    >
+      RUC
+    </tui-input>
+ 
+
+    <div class="my-3">
+      <button tuiButton size="m" type="submit" [disabled]="tiendaForm.invalid">
+        Crear Tienda
+      </button>
+    </div>
+  </form>
+</div>

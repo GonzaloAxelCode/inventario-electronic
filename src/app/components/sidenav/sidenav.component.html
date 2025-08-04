@@ -1,0 +1,98 @@
+<body class="grid h-screen overflow-x-hidden">
+  <ng-template #sidebarTemplate>
+    <nav class="flex flex-col  justify-between h-full bg-tui-background  md:min-w-[200px] ">
+
+      <div>
+        <a routerLink="/"
+          class="flex items-center gap-3 p-3  text-xl font-bold transition-all duration-300 ease-in-out text-white">
+          <span>
+            <img src="https://res.cloudinary.com/ddksrkond/image/upload/v1743650866/APP%20INVENTARIO/logolarge_yl985m.png" class="w-32" alt="">
+          </span>
+        </a>
+        <a routerLink="/dashboard" routerLinkActive="bg-neutral-700"
+          class="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+          <tui-icon icon="home" class="text-blue-500"></tui-icon> <span>Dashboard</span>
+        </a>
+        <!-- Inventario -->
+        <a routerLink="/inventario" routerLinkActive="bg-neutral-700"
+          class="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+          <tui-icon icon="box" class="text-green-500"></tui-icon> <span>Inventario</span>
+        </a>
+
+        <!-- Ventas -->
+        <a routerLink="/ventas" routerLinkActive="bg-neutral-700"
+          class="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+          <tui-icon icon="shopping-cart" class="text-yellow-500"></tui-icon> <span>Ventas</span>
+        </a>
+        <!-- Productos -->
+        <a routerLink="/productos" routerLinkActive="bg-neutral-700"
+          class="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+          <tui-icon icon="list" class="text-cyan-500"></tui-icon> <span>Productos</span>
+        </a>
+
+        <!-- Proveedores -->
+        <a routerLink="/proveedores" routerLinkActive="bg-neutral-700"
+          class="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+          <tui-icon icon="building" class="text-purple-500"></tui-icon> <span>Proveedores</span>
+        </a>
+
+        <!-- Tiendas -->
+        <a routerLink="/compras" routerLinkActive="bg-neutral-700"
+          class="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+          <tui-icon icon="store" class="text-green-500"></tui-icon> <span>Compras</span>
+        </a>
+ <!-- Tiendas -->
+        <a routerLink="/caja" routerLinkActive="bg-neutral-700"
+          class="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+          <tui-icon icon="store" class="text-green-500"></tui-icon> <span>Caja</span>
+        </a>
+        <!-- Configuración -->
+        <a routerLink="/settings" routerLinkActive="bg-neutral-700"
+          class="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+          <tui-icon icon="settings" class="text-red-500"></tui-icon> <span>Configuración</span>
+        </a>
+
+        <!-- Reportes -->
+        <a routerLink="/reportes" routerLinkActive="bg-neutral-700"
+          class="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+          <tui-icon icon="bar-chart" class="text-blue-500"></tui-icon> <span>Reportes</span>
+        </a>
+      </div>
+
+      <!-- Logout -->
+      <div class="flex justify-between" (click)="logout()">
+        <a class="flex items-center gap-3 p-3 rounded-xl hover:bg-tui-background-base-alt">
+          <tui-icon icon="log-out" class="text-tui-error"></tui-icon> <span>Cerrar Sesión</span>
+        </a>
+      </div>
+    </nav>
+  </ng-template>
+
+
+  <div class="flex md:hidden">
+    <tui-drawer *tuiPopup="open()" direction="left" class="drawer" [overlay]="true" (click.self)="onClose()">
+      <aside class="relative">
+        <div class="absolute right-0 top-0">
+          <button class="" tuiButton type="button" iconStart="@tui.x" size="s" appearance="floating"
+            (click)="onClose()">
+          </button>
+        </div>
+
+        <ng-container *ngTemplateOutlet="sidebarTemplate"></ng-container>
+      </aside>
+    </tui-drawer>
+  </div>
+ <main class="flex h-screen w-screen">
+    <!-- Sidebar (estático) -->
+    <aside class="hidden md:block p-5 pr-0 h-screen overflow-y-auto bg-tui-background sticky top-0">
+      <ng-container *ngTemplateOutlet="sidebarTemplate"></ng-container>
+    </aside>
+
+    <!-- Contenido principal (scrollable) -->
+    <div class="flex-1 overflow-y-auto">
+      <app-header></app-header>
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+</body>

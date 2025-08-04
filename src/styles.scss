@@ -1,0 +1,44 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'ngx-toastr/toastr';
+
+
+body {
+  font-family: 'Outfit', sans-serif; /* Fuente principal */
+  font-weight: 500; /* Peso predeterminado */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Rubik', sans-serif; /* Fuente para encabezados */
+  font-weight: 700; /* Peso más grueso para encabezados */
+}
+
+p, span, div, input, button {
+  font-family: 'Outfit', sans-serif; /* Fuente para texto normal */
+  font-weight: 500; /* Peso normal para texto */
+}
+[tuiTh],
+[tuiTd] {
+    border-inline-start: none;
+    border-inline-end: none;
+    border: 1px solid var(--tui-background-base-alt); /* Borde oscuro */
+}
+
+[tuiTable],[tuiTitle] {
+    flex-direction: row;
+    gap: 0.375rem;
+    border-top: 0;
+}
+  table {
+    width: 100%;
+    border-collapse: collapse; /* Quitar espacios entre celdas */
+    border-radius: 12px; /* Bordes redondeados */
+    border: 1px solid var(--tui-background-base-alt); /* Borde oscuro */
+    overflow: hidden; /* Asegurar que respete el borde redondeado */
+  }

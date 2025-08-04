@@ -1,0 +1,19 @@
+<div class="container mt-10">
+  <div id="cards">
+    <a *ngFor="let item of modulos" [routerLink]="item.link" class="card">
+      <div class="card-content">
+        <div class="card-image">
+          <img [src]="item.icono" [alt]="item.title" />
+        </div>
+        <div class="card-info-wrapper justify-center flex">
+          <div class="card-info mx-auto">
+            <div class="card-info-title mx-auto">
+              <p class="text-xl text-center">{{ item.title }}</p>
+              <p class="text-md text-center">{{ item.subtitle }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>

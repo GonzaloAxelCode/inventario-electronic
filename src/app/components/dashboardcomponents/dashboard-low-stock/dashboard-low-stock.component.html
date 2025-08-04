@@ -1,0 +1,30 @@
+
+<table tuiTable size="s">
+  <thead>
+    <tr>
+      <th tuiTh>ID Producto / ID Inventario</th>
+      <th tuiTh>Nombre</th>
+      <th tuiTh>Stock</th>
+    </tr>
+  </thead>
+  <tbody tuiTbody *ngIf="(selectVentas$| async)?.lowStockProducts?.length">
+    <tr *ngFor="let product of (selectVentas$| async)?.lowStockProducts">
+      <td tuiTd>{{ product.producto_id }} / {{ product.inventario_id  }}</td>
+      
+      <td tuiTd>
+      
+       {{ product.nombre }}
+      </td>
+      
+      <td tuiTd>
+       
+      
+               <div tuiBlockDetails class="">
+              <span class="-translate-y-1" [ngClass]="getColorClass(product.cantidad)">
+        {{ product.cantidad }}
+    </span>          </div>
+      </td>
+   
+    </tr>
+  </tbody>
+</table>

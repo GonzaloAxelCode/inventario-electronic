@@ -1,0 +1,78 @@
+<div>
+
+  <div class="max-w-4xl mx-l pt-6  rounded-lg ">
+
+    <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- Nombre -->
+      <div class="flex flex-col">
+        <tui-input formControlName="nombre" class="w-full" placeholder="Ingrese el nombre del producto">
+          Nombre del Producto
+        </tui-input>
+        <tui-error *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched">
+          Este campo es obligatorio
+        </tui-error>
+      </div>
+      <div class="flex flex-col">
+        <tui-select formControlName="categoria" class="w-full" [stringify]="getCategoriaNombre">
+          Categoría
+          <tui-data-list *tuiDataList>
+            <button *ngFor="let categoria of categorias" tuiOption [value]="categoria.id">
+              {{ categoria.nombre }}
+            </button>
+          </tui-data-list>
+        </tui-select>
+        <tui-error *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched">
+          Debe seleccionar una categoría
+        </tui-error>
+      </div>
+
+      <!-- Marca -->
+      <div class="flex flex-col">
+        <tui-select formControlName="marca" class="w-full">
+          Marca
+          <tui-data-list *tuiDataList>
+            <button *ngFor="let marca of marcas" tuiOption [value]="marca">{{ marca }}</button>
+          </tui-data-list>
+        </tui-select>
+        <tui-error *ngIf="productoForm.get('marca')?.invalid && productoForm.get('marca')?.touched">
+          Este campo es obligatorio
+        </tui-error>
+      </div>
+
+      <!-- Modelo -->
+      <div class="flex flex-col">
+        <tui-select formControlName="modelo" class="w-full">
+          Modelo
+          <tui-data-list *tuiDataList>
+            <button *ngFor="let modelo of modelos" tuiOption [value]="modelo">{{ modelo }}</button>
+          </tui-data-list>
+        </tui-select>
+        <tui-error *ngIf="productoForm.get('modelo')?.invalid && productoForm.get('modelo')?.touched">
+          Este campo es obligatorio
+        </tui-error>
+      </div>
+
+
+      <!-- Descripción (Ocupará ambas columnas) -->
+      <div class="col-span-2">
+        <tui-textarea formControlName="descripcion" class="w-full" placeholder="Ingrese la descripción">
+          Descripción
+        </tui-textarea>
+        <tui-error *ngIf="productoForm.get('descripcion')?.invalid && productoForm.get('descripcion')?.touched">
+          La descripción es obligatoria
+        </tui-error>
+      </div>
+
+
+      <!-- Botón de envío -->
+      <div class="grid w-full col-span-2">
+        <button tuiButton type="submit"   iconStart="@tui.plus" appearance="primary-grayscale" [disabled]="productoForm.invalid"
+          class="px-6 py-2 transition">
+          Agregar Producto
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

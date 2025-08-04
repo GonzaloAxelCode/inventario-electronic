@@ -1,0 +1,41 @@
+
+
+<table tuiTable [style.width.rem]="58">
+  <thead>
+    <tr>
+      <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
+       <th tuiTh>Activo</th>
+      <th tuiTh>Acciones</th>
+      
+       
+    </tr>
+  </thead>
+  <tbody tuiTbody *ngIf="(tiendasState$ | async)?.tiendas?.length">
+    <tr *ngFor="let tienda of (tiendasState$ | async)?.tiendas ?? []">
+
+      <td *ngFor="let column of allColumns" tuiTd>{{ getTiendaValue(tienda, column.key) }}</td>
+
+ <td tuiTd >
+                <tui-badge [appearance]="tienda.activo ? 'positive' : 'negative'">{{ tienda.activo ? 'Activo' : 'No
+                    activo' }}</tui-badge>
+            </td>
+            <td tuiTd>
+                <div class="flex gap-2 ">
+                    <button appearance="secondary" iconStart="@tui.users" tuiButton tuiButtonVertical type="button"
+                      (click)="showDialogUpdate()"
+                        >
+                        Actualizar
+                    </button>
+                    <button appearance="error" iconStart="@tui.trash" tuiButton tuiButtonVertical type="button"
+                      (click)="onDeleteTienda(tienda.id)"
+                        >
+                        Desactivar
+                    </button>
+                </div>
+
+            </td>
+
+    </tr>
+
+  </tbody>
+</table>

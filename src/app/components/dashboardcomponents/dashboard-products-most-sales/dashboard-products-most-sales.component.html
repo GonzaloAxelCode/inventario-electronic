@@ -1,0 +1,23 @@
+<div class="wrapper">
+  <tui-ring-chart
+    [value]="value"
+    [(activeItemIndex)]="activeItemIndex"
+  >
+    <div>Total</div>
+  </tui-ring-chart>
+
+  <div class="legend">
+    <tui-legend-item
+      *ngFor="let label of labels; let index = index"
+      size="s"
+      class="item"
+      [active]="isItemActive(index)"
+      [color]="'var(--tui-chart-categorical-0' + index + ')'"
+      [text]="label"
+      (tuiHoveredChange)="onHover(index, $event)"
+    >
+      <span>{{ value[index] || 0 }}</span>
+    </tui-legend-item>
+  </div>
+</div>
+
