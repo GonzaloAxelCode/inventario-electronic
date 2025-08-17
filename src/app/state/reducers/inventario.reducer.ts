@@ -84,17 +84,17 @@ export const inventarioReducer = createReducer(
 
     on(createInventario, state => ({
         ...state,
-        loading: true
+        loadingCreate: true
     })),
     on(createInventarioSuccess, (state, { inventario }) => ({
         ...state,
         inventarios: [...state.inventarios, inventario],
-        loading: false
+        loadingCreate: false
     })),
     on(createInventarioFail, (state, { error }) => ({
         ...state,
         errors: error,
-        loading: false
+        loadingCreate: false
     })),
 
 

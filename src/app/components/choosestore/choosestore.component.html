@@ -1,0 +1,11 @@
+<form [formGroup]="formChoose" >
+    <tui-select formControlName="metodoPago" class="w-full" [disabled]="true" >
+               Tienda seleccionada
+                <tui-data-list *tuiDataList  >
+                    <button  *ngFor="let metodo of listMetodosPago" tuiOption [value]="metodo">
+                        {{ metodo }}
+                    </button>
+                </tui-data-list>
+            </tui-select>
+
+</form>

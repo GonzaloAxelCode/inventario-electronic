@@ -1,0 +1,230 @@
+<div class="p-0 bg-transparent text-neutral-900  dark:text-neutral-100 transition-colors duration-300 rounded-xl ">
+    <!-- SIN COMPROBANTE -->
+    <div class="flex flex-col gap-4" *ngIf="venta.estado == 'Pendiente'">
+        <div class="flex flex-row gap-4 flex-wrap">
+            <a [href]="comprobante.pdf_url" target="_blank" iconStart="@tui.file-chart-column-increasing"
+                tuiButtonVertical tuiButton appearance="positive"
+                class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow transition">
+                Hacer Comprobante
+            </a>
+
+            <button tuiButton appearance="negative" iconStart="@tui.ban"
+                tuiButtonVertical
+                class="bg-red-600 hover:bg-red-700 text-white rounded-lg shadow transition">
+                Eliminar Venta
+            </button>
+        </div>
+
+        <!-- Información de la Venta -->
+        <div>
+            <table tuiTable
+                class="w-full text-sm border border-neutral-300 dark:border-neutral-700 rounded-lg mb-4 overflow-hidden">
+                <thead class="bg-neutral-200 dark:bg-neutral-800">
+                    <tr>
+                        <th class="p-3 text-left" colspan="2">Información de la Venta</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-neutral-200 dark:divide-neutral-700">
+                    <tr>
+                        <td class="p-3 font-semibold">ID Venta:</td>
+                        <td class="p-3">{{ venta.id }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Método de Pago:</td>
+                        <td class="p-3">{{ venta.metodo_pago }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Tipo de Comprobante:</td>
+                        <td class="p-3">{{ venta.tipo_comprobante }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Estado:</td>
+                        <td class="p-3">{{ venta.estado }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Fecha Hora:</td>
+                        <td class="p-3">{{ venta.fecha_hora }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Fecha Realización:</td>
+                        <td class="p-3">{{ venta.fecha_realizacion }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Subtotal:</td>
+                        <td class="p-3">S/ {{ venta.subtotal }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Gravado Total:</td>
+                        <td class="p-3">S/ {{ venta.gravado_total }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">IGV Total:</td>
+                        <td class="p-3">S/ {{ venta.igv_total }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Total:</td>
+                        <td class="p-3 text-green-500 font-bold">S/ {{ venta.total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Productos -->
+            <table tuiTable
+                class="w-full text-sm border border-neutral-300 dark:border-neutral-700 rounded-lg overflow-hidden">
+                <thead class="bg-neutral-200 dark:bg-neutral-800">
+                    <tr>
+                        <th class="p-3 text-left">Código</th>
+                        <th class="p-3 text-left">Producto</th>
+                        <th class="p-3 text-left">Cantidad</th>
+                        <th class="p-3 text-left">Valor Unitario</th>
+                        <th class="p-3 text-left">Valor Total</th>
+                        <th class="p-3 text-left">IGV</th>
+                        <th class="p-3 text-left">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-neutral-200 dark:divide-neutral-700">
+                    <tr *ngFor="let item of venta.productos" class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                        <td class="p-3">{{ item.id }}</td>
+                        <td class="p-3">{{ item.producto_nombre }}</td>
+                        <td class="p-3">{{ item.cantidad }}</td>
+                        <td class="p-3">S/ {{ item.valor_unitario }}</td>
+                        <td class="p-3">S/ {{ item.valor_venta}}</td>
+                        <td class="p-3">S/ {{ item.igv }}</td>
+                        <td class="p-3">S/ {{ (item?.precio_unitario ?? 0) * (item?.cantidad ?? 0) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- CON COMPROBANTE -->
+    <div class="flex flex-col gap-4" *ngIf="venta.estado !== 'Pendiente' && venta.tipo_comprobante !== 'Sin Comprobante'">
+
+        <!-- Botones -->
+        <div class="flex flex-row gap-4 flex-wrap">
+            <a [href]="comprobante.pdf_url" target="_blank" iconStart="@tui.file-chart-column-increasing"
+                tuiButtonVertical tuiButton appearance="positive"
+                class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow transition">
+                Ver PDF
+            </a>
+
+            <a [href]="comprobante.xml_url" target="_blank" iconStart="@tui.file-code-2"
+                tuiButton appearance="warning"
+                class="bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition" tuiButtonVertical>
+                Ver XML
+            </a>
+
+            <a iconStart="@tui.folder-archive" [href]="comprobante.cdr_url" target="_blank"
+                tuiButton appearance="info"
+                tuiButtonVertical
+                class="bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg shadow transition">
+                Ver CDR
+            </a>
+
+            <a iconStart="@tui.ticket-check" [href]="comprobante.ticket_url" target="_blank"
+                tuiButton appearance="glass"
+                tuiButtonVertical
+                class="bg-green-600 hover:bg-green-700 text-white rounded-lg shadow transition">
+                Ver Ticket
+            </a>
+
+            <button tuiButton appearance="negative" iconStart="@tui.ban"
+                tuiButtonVertical
+                class="bg-red-600 hover:bg-red-700 text-white rounded-lg shadow transition">
+                Eliminar definitivo
+            </button>
+        </div>
+
+        <!-- Información del Comprobante -->
+        <div>
+            <table tuiTable
+                class="w-full text-sm border border-neutral-300 dark:border-neutral-700 rounded-lg mb-4 overflow-hidden">
+                <thead class="bg-neutral-200 dark:bg-neutral-800">
+                    <tr>
+                        <th class="p-3 text-left font-semibold" colspan="3">Información del Comprobante</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-neutral-200 dark:divide-neutral-700">
+                    <tr>
+                        <td class="p-3 font-semibold">Tipo:</td>
+                        <td class="p-3 text-xl" colspan="2">{{ comprobante.tipo_comprobante }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Serie:</td>
+                        <td class="p-3 text-xl">{{ comprobante.serie }}</td>
+                        <td class="p-3 font-semibold">Correlativo:
+                            <tui-chip size="s" class="text-md" iconEnd="@tui.message-circle-code"
+                                [style.border-radius.rem]="5">
+                                {{ comprobante.correlativo }}
+                            </tui-chip>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Moneda:</td>
+                        <td class="p-3 text-xl" colspan="2">{{ comprobante.moneda }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Cliente:</td>
+                        <td class="p-3 text-2xl">{{ comprobante.nombre_cliente }}</td>
+                        <td class="p-3 text-md font-semibold">Documento:
+                            <tui-badge appearance="info" size="m">
+                                {{ comprobante.numero_documento_cliente }}
+                            </tui-badge>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Estado SUNAT:</td>
+                        <td class="p-3 text-green-500" colspan="2">
+                            <tui-badge appearance="positive">{{ comprobante.estado_sunat }}</tui-badge>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">IGV:</td>
+                        <td class="p-3 text-xl">S/ {{ comprobante.igv }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Gravadas:</td>
+                        <td class="p-3 text-xl">S/ {{ comprobante.gravadas }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Leyenda:</td>
+                        <td class="p-3 text-sm italic opacity-80" colspan="2">{{ comprobante.leyenda }}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold">Total:</td>
+                        <td class="p-3 text-4xl font-bold text-green-500" colspan="2">
+                            S/ {{ comprobante.total }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Productos Vendidos -->
+            <table tuiTable
+                class="w-full text-sm border border-neutral-300 dark:border-neutral-700 rounded-lg overflow-hidden">
+                <thead class="bg-neutral-200 dark:bg-neutral-800">
+                    <tr>
+                        <th class="p-3 text-left">Código</th>
+                        <th class="p-3 text-left">Producto</th>
+                        <th class="p-3 text-left">Cantidad</th>
+                        <th class="p-3 text-left">Valor Unitario (Sin IGV)</th>
+                        <th class="p-3 text-left">Valor Total (Sin IGV)</th>
+                        <th class="p-3 text-left">IGV Total</th>
+                        <th class="p-3 text-left">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-neutral-200 dark:divide-neutral-700">
+                    <tr *ngFor="let item of comprobante.items" class="hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                        <td class="p-3">{{ item.codigo }}</td>
+                        <td class="p-3">{{ item.descripcion }}</td>
+                        <td class="p-3">{{ item.cantidad }}</td>
+                        <td class="p-3">S/ {{ item.valorUnitario }}</td>
+                        <td class="p-3">S/ {{ item.valorVenta }}</td>
+                        <td class="p-3">S/ {{ item.totalImpuestos }}</td>
+                        <td class="p-3">S/ {{ item.precioUnitario * item.cantidad }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

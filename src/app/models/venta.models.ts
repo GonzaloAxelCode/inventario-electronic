@@ -87,6 +87,7 @@ export interface CreateVenta {
     descuentos: number;
     igv: number;
     totalPagar: number;
+    estado: boolean;
     productos: ProductoVenta[];
 }
 
@@ -121,5 +122,11 @@ export interface ProductSale {
     igv: number;
     tipo_afectacion_igv: string;
     total_impuestos: number;
-    precio_unitario: number;
+    precio_unitario?: number;
+    codigo?: string;
+    descripcion?: string;
+    valor_total?: number;
+    igv_total?: number;
+    total?: number;
+
 }

@@ -4,16 +4,14 @@
       *ngIf="(inventariosState$ | async)?.inventarios?.length === 0 && !(inventariosState$ | async)?.loadingProductosInventario else tabla"
       size="m" class="m-auto">
       <img alt="survived"
-        src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+        src="https://res.cloudinary.com/ddksrkond/image/upload/v1754237996/search-product_aw8lfe.png"
         tuiSlot="top" />
 
       <h4>Aun no tienes ningun producto en el Inventario</h4>
 
       <span>Empieza a hacer el inventario</span>
 
-      <button appearance="primary" size="s" tuiButton type="button">
-        Crear Inventario
-      </button>
+      
     </tui-block-status>
 
     <ng-template #tabla>

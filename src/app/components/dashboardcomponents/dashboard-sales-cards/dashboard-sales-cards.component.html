@@ -8,10 +8,10 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cosl-3 lg:grid-cols-3 gap-4 pb-4">
   <div class="card">
     <div class=" flex justify-between gap-3">
-      <span class="flex items-center gap-2">
+      <span class="flex items-center gap-2 text-slate-700 dark:text-gray-300">
         <!-- Usar el ng-template aquí -->
         <ng-container *ngTemplateOutlet="iconoVentas"></ng-container>
-        <p class="title-text">
+        <p class="title-text text-slate-700 dark:text-gray-300">
           Ventas del dia
         </p>
       </span>
@@ -35,7 +35,7 @@
 
     </div>
     <div class="data">
-      <p>
+      <p class="text-slate-700 dark:text-gray-300">
         <span>S/.</span> {{ todaySales}}
       </p>
 
@@ -44,7 +44,7 @@
 
   <div class="card">
     <div class=" flex items-center justify-between gap-3">
-      <span class="flex gap-2 items-center">
+      <span class="flex gap-2 items-center text-slate-700 dark:text-gray-300">
 
 
         <ng-container *ngTemplateOutlet="iconoVentas"></ng-container>
@@ -53,7 +53,7 @@
         </p>
       </span>
 
-  <button tuiButton appearance="outline-grayscale" class="mb-2" disabled iconEnd="@tui.calendar-1" size="s" type="button">
+  <button tuiButton appearance="outline-grayscale" class="mb-2 text-slate-700 dark:text-gray-300" disabled iconEnd="@tui.calendar-1" size="s" type="button">
            Semana 
           </button>
 
@@ -61,7 +61,7 @@
 
     </div>
     <div class="data">
-      <p>
+      <p class="text-slate-700 dark:text-gray-300">
         <span>S/.</span> {{ thisWeekSales}}
       </p>
 
@@ -71,9 +71,9 @@
 
   <div class="card">
     <div class=" flex items-center justify-between gap-3">
-      <span class="flex gap-2 items-center">
-        <ng-container *ngTemplateOutlet="iconoVentas"></ng-container>
-        <p class="title-text">
+      <span class="flex gap-2 items-center text-slate-700 dark:text-gray-300">
+        <ng-container *ngTemplateOutlet="iconoVentas" class="text-slate-700 dark:text-gray-300"></ng-container>
+        <p class="title-text text-slate-700 dark:text-gray-300">
           Ventas Mensual
         </p>
 
@@ -81,7 +81,7 @@
       <form [formGroup]="testFormMonth" class="w-[120px]">
         <tui-select (ngModelChange)="onMonthChange($event)" tuiTextfieldSize="s" formControlName="month" class="w-full">
           <tui-data-list size="s" *tuiDataList>
-            <button *ngFor="let month of months" tuiOption [value]="month.name">
+            <button class="text-slate-700 dark:text-gray-300" *ngFor="let month of months" tuiOption [value]="month.name">
               {{ month.name }}
             </button>
           </tui-data-list>
@@ -90,7 +90,7 @@
 
     </div>
     <div class="data">
-      <p>
+      <p class="text-slate-700 dark:text-gray-300">
         <span>S/.</span> {{ thisMonthSales }}
       </p>
 

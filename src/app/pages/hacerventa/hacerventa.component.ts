@@ -15,7 +15,7 @@ import { select, Store } from '@ngrx/store';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiLoader, TuiTextfield, TuiTitle } from '@taiga-ui/core';
-import { TuiDataListWrapper, TuiItemsWithMore, TuiRadio, TuiStepper } from '@taiga-ui/kit';
+import { TuiCheckbox, TuiDataListWrapper, TuiItemsWithMore, TuiRadio, TuiStepper } from '@taiga-ui/kit';
 import { TuiAppBar, TuiCardLarge, TuiCell, TuiHeader } from '@taiga-ui/layout';
 import { TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { catchError, finalize, Observable, of, timeout } from 'rxjs';
@@ -24,7 +24,7 @@ import { catchError, finalize, Observable, of, timeout } from 'rxjs';
   selector: 'app-hacerventa',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule,
-
+    TuiCheckbox,
     TuiStepper,
     TuiTable,
     TuiItemsWithMore,
@@ -65,7 +65,7 @@ export class HacerventaComponent implements OnInit {
     total: 0
   };
   ventaForm: FormGroup;
-  listMetodosPago = [" YAPE", "Efectivo"]
+  listMetodosPago = [" YAPE", "PLIN", "Transferencia(No disponible)", "Efectivo"]
   tipoComprobantes = ["Boleta", "Factura", "Sin Comprobante"]
   formasPago = ["Contado"]
   protected readonly options = { updateOn: 'blur' } as const;
@@ -88,6 +88,7 @@ export class HacerventaComponent implements OnInit {
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogService = inject(DialogService);
 
+
   userId: number = 0;
   constructor(private fb: FormBuilder, private consultaService: ConsultaService, private cdr: ChangeDetectorRef) {
     this.loadingCreateVenta$ = this.store.select(selectVenta);
@@ -108,7 +109,10 @@ export class HacerventaComponent implements OnInit {
       cliente: [null, Validators.required],
       documento_cliente: ["76881855"],
       nombre_cliente: [""],
-      productos: this.fb.array([], [Validators.required, Validators.minLength(1)])
+      productos: this.fb.array([], [Validators.required, Validators.minLength(1)]),
+      is_send_sunat: [true]
+
+
     });
     this.productosFormArray.valueChanges.subscribe(() => {
       this.validarStock();
@@ -116,10 +120,20 @@ export class HacerventaComponent implements OnInit {
       this.calcularTotales();
     });
 
-  }
-  ngOnInit(): void {
 
   }
+  ngOnInit() {
+    this.ventaForm.get('is_send_sunat')?.valueChanges
+      .subscribe(value => {
+        this.onChangeEnviarSunat(value);
+      });
+  }
+
+
+  onChangeEnviarSunat(value: boolean) {
+    this.ventaForm.get('is_send_sunat')?.setValue(value, { emitEvent: false });
+  }
+
   validarStock(): void {
     this.productosFormArray.controls.forEach((control, index) => {
       const cantidad = parseInt(control.get('cantidad_final')?.value || '0');
@@ -240,19 +254,14 @@ export class HacerventaComponent implements OnInit {
   }
 
   hacerVenta() {
-    if (this.ventaForm.valid) {
-      const preparedData = {
-        ...this.ventaForm.value,
-      }
-
-      this.store.dispatch(crearVenta({ venta: preparedData }));
-
-
-      this.ventaForm.patchValue({
-        nombre_cliente: '',
-        cliente: null
-      });
+    const preparedData = {
+      ...this.ventaForm.value,
+      estado: this.ventaForm.get("is_send_sunat")?.value
     }
+    console.log(preparedData)
+
+    this.store.dispatch(crearVenta({ venta: preparedData }));
+
 
   }
   get productosFormArray(): FormArray<FormGroup> {

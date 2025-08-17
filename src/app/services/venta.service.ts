@@ -134,7 +134,14 @@ export class VentaService {
             })
         );
     }
-
+    createVenta_sin_comprobante(venta: CreateVenta): Observable<Venta> {
+        return this.http.post<Venta>(`${this.siteURL}/ventas/crear/sin_comprobante/`, venta).pipe(
+            catchError(error => {
+                console.error('Error al crear la venta', error);
+                return throwError(error);
+            })
+        );
+    }
     cancelarVenta(ventaId: number): Observable<Venta> {
         return this.http.patch<Venta>(`${this.siteURL}/ventas/cancelar/${ventaId}/`, {}).pipe(
             catchError(error => {

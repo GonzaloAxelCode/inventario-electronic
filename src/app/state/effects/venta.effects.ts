@@ -145,28 +145,29 @@ export class VentaEffects {
             )
         )
     );
+
     createVentaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(crearVenta),
-            exhaustMap(({ venta }) =>
-                this.ventaService.createVenta(venta).pipe(
+            exhaustMap(({ venta }) => {
+                const servicio = venta.tipoComprobante === 'Sin Comprobante' || !venta.estado
+                    ? this.ventaService.createVenta_sin_comprobante(venta)
+                    : this.ventaService.createVenta(venta);
+
+                return servicio.pipe(
                     map(createdVenta => {
                         this.toastr.success('Venta creada exitosamente', 'Éxito');
-                        this.dialogServiceVentaDetail.open(createdVenta).subscribe((result) => {
-                            // Manejo opcional del resultado
-                            // if (result) this.store.dispatch(...);
-                        });
+                        this.dialogServiceVentaDetail.open(createdVenta).subscribe();
                         return crearVentaExito({ venta: createdVenta });
                     }),
                     catchError(error => {
                         this.toastr.error('Error al crear la venta', 'Error');
                         return of(crearVentaError({ error }));
                     })
-                )
-            )
+                );
+            })
         )
     );
-
     cancelarVentaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cancelarVenta),

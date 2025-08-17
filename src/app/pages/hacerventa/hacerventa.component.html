@@ -3,12 +3,26 @@
 <form [formGroup]="ventaForm" class="grid grid-cols-1 mt-10 gap-3 p-4">
     <div class="grid gap-3 grid-cols-1 md:grid-cols-[1fr_1fr] lg:grid-cols-[1fr_2fr]">
         <div class="flex flex-col gap-4">
-            <div class="grid grid-cols-1 gap-2">
+            
+            <tui-select formControlName="tipoComprobante" class="w-full">
+                Tipo de comprobante
+                <tui-data-list *tuiDataList>
+                    <button *ngFor="let comprobante of tipoComprobantes" tuiOption [value]="comprobante">
+                        {{ comprobante }}
+                    </button>
+                </tui-data-list>
+            </tui-select>
+
+
+
+            <div class="grid grid-cols-1 gap-2" *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Sin Comprobante'">
+                
                 <div class="flex gap-2">
                     <tui-input *ngIf="!ventaForm.get('nombre_cliente')?.value" class="col-span-2 w-full"
                         formControlName="documento_cliente">
-                        Buscar Cliente
-                        <input placeholder="Ingrese DNI o RUC"  tuiTextfieldLegacy size="s" type="text" />
+                                     {{ ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'DNI' : 'RUC' }}
+
+                        <input  [placeholder]="ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'Ingrese DNI' : 'Ingrese RUC'"  tuiTextfieldLegacy size="s" type="text" />
                     </tui-input>
 
                     <!-- Muestra el nombre del cliente si existe -->
@@ -18,9 +32,9 @@
                     </tui-textfield>
 
                     <!-- Botón para buscar cliente -->
-                    <button *ngIf="!ventaForm.get('cliente')?.value" class="col-span-1" tuiButton type="button"
+                    <button *ngIf="!ventaForm.get('cliente')?.value" class="col-span-1" tuiButton iconStart="@tui.search" type="button"
                         appearance="positive" (click)="buscarCliente()">
-                        Buscar
+                        
                     </button>
 
                     <button *ngIf="ventaForm.get('cliente')?.value" class="col-span-1" tuiButton type="button"
@@ -28,7 +42,19 @@
 
                     </button>
                 </div>
+                 <label class="flex items-center gap-2">
+    <input
+      tuiCheckbox
+      
+      type="checkbox"
+      formControlName="is_send_sunat"
+      [size]="'m'"
+    />
+    Enviar comprobante a SUNAT
+  </label>
             </div>
+            
+
 
             <tui-select formControlName="metodoPago" class="w-full">
                 Metodo de pago
@@ -48,14 +74,6 @@
                 </tui-data-list>
             </tui-select>
 
-            <tui-select formControlName="tipoComprobante" class="w-full">
-                Tipo de comprobante
-                <tui-data-list *tuiDataList>
-                    <button *ngFor="let comprobante of tipoComprobantes" tuiOption [value]="comprobante">
-                        {{ comprobante }}
-                    </button>
-                </tui-data-list>
-            </tui-select>
         </div>
 
         <div tuiCardLarge class="flex flex-col items-start">
@@ -130,7 +148,8 @@
         </div>
     </div>
 
-    <button iconStart="@tui.dollar-sign" [disabled]="!ventaForm.valid" class="flex w-full my-3" tuiButton type="submit"
+    <button iconStart="@tui.dollar-sign"   [disabled]="ventaForm.get('tipoComprobante')?.value !== 'Sin Comprobante' && !ventaForm.valid"
+ class="flex w-full my-3" tuiButton type="submit"
         (click)="hacerVenta()" appearance="primary-grayscale">
         Realizar Venta
     </button>

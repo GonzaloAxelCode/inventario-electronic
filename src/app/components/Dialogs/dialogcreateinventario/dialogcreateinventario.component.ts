@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TuiButton, TuiDataList, TuiDropdown, TuiError, TuiNumberFormat, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiDropdown, TuiError, TuiLoader, tuiLoaderOptionsProvider, TuiNumberFormat, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
 
 import { TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
@@ -13,8 +13,10 @@ import { Producto, ProductoState } from '@/app/models/producto.models';
 import { TiendaState } from '@/app/models/tienda.models';
 import { createInventario } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
+import { InventarioState } from '@/app/state/reducers/inventario.reducer';
 import { ProveedorState } from '@/app/state/reducers/proveedor.reducer';
 import { selectAuth } from '@/app/state/selectors/auth.selectors';
+import { selectInventarioState } from '@/app/state/selectors/inventario.selectors';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { selectProveedorState } from '@/app/state/selectors/proveedor.selectors';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
@@ -42,9 +44,9 @@ import { Observable } from 'rxjs';
     TuiDataListWrapperComponent,
     TuiInputNumber,
     TuiTextfieldControllerModule,
-    TuiInputModule, TuiAppearance, TuiTable, TuiNumberFormat],
+    TuiInputModule, TuiAppearance, TuiTable, TuiNumberFormat, TuiLoader],
   providers: [
-
+    tuiLoaderOptionsProvider({ size: 'm' })
   ],
   templateUrl: './dialogcreateinventario.component.html',
   styleUrl: './dialogcreateinventario.component.scss'
@@ -57,7 +59,7 @@ export class DialogcreateinventarioComponent implements OnInit {
   productos: Producto[] = [];
   tiendas: any[] = [];
   proveedores: any[] = [];
-
+  loadingCreateInventario: boolean = false;
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
 
   }
@@ -75,9 +77,12 @@ export class DialogcreateinventarioComponent implements OnInit {
     this.store.select(selectTiendaState).subscribe((state: TiendaState) => {
       this.tiendas = state.tiendas;
     });
+    this.store.select(selectInventarioState).subscribe((state: InventarioState) => {
+      this.loadingCreateInventario = state.loadingCreate;
+    });
     this.inventarioForm2 = this.fb.group({
       producto: [null, Validators.required],
-      tienda: [TIENDA_ID, Validators.required],
+      tienda: [1, Validators.required],
       proveedor: [null, Validators.required],
       responsable: [this.userId],
       cantidad: [1, [Validators.required, Validators.min(1)]],

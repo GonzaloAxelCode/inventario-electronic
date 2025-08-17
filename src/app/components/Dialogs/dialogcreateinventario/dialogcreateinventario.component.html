@@ -73,9 +73,17 @@
     </tui-textarea>
     <!-- Botón -->
 
-    <button tuiButton iconStart="@tui.plus" size="m" class="w-full flex col-span-2" type="submit" type="submit"
-      appearance="primary-grayscale" [disabled]="inventarioForm2.invalid">
-      Crear Inventario
+    <button tuiButton [iconStart]="loadingCreateInventario ? '' : '@tui.plus'" size="m" class="w-full flex col-span-2" type="submit" type="submit"
+      appearance="primary-grayscale" [disabled]="inventarioForm2.invalid || loadingCreateInventario" >
+      <span *ngIf="loadingCreateInventario" >
+        <tui-loader [showLoader]="loadingCreateInventario" />
+
+      </span>
+      <span>
+
+        Crear Inventario
+      </span>
+
     </button>
 
 

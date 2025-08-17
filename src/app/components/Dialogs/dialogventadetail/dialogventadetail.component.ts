@@ -19,19 +19,12 @@ export class DialogventadetailComponent {
 
   public comprobante: ComprobanteElectronico = this.venta?.comprobante ?? {} as ComprobanteElectronico;
 
-  public productos_json = (() => {
-    try {
-      return this.venta.productos_json ? JSON.parse(this.venta.productos_json) : [];
-    } catch (error) {
-      console.error("Error al parsear productos_json:", error);
-      return [];
-    }
-  })();
-  constructor() {
-
-
+  public productos_json = JSON.parse(this.venta.productos_json ?? '[]');
+  ngOnInit(): void {
+    console.log(this.venta);
   }
-  getValorVentaRedondeado(valor: number): string {
-    return valor.toFixed(2);
+
+  getValorVentaRedondeado(valor: number) {
+    return valor ? parseFloat(valor.toFixed(2)) : 0.0;
   }
 }

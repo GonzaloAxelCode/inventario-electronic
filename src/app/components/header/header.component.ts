@@ -6,6 +6,9 @@ import { TuiAppearance, TuiButton, TuiTextfield, TuiTitle } from '@taiga-ui/core
 
 import { TuiAvatar } from '@taiga-ui/kit';
 import { TuiCell, TuiNavigation, TuiSearch } from '@taiga-ui/layout';
+import ChoosestoreComponent from '../choosestore/choosestore.component';
+import { DarkmodeComponent } from "../darkmode/darkmode.component";
+import { ChartsalesbetweentwodatesComponent } from "../dashboardcomponents/chartsalesbetweentwodates/chartsalesbetweentwodates.component";
 
 
 
@@ -20,7 +23,7 @@ import { TuiCell, TuiNavigation, TuiSearch } from '@taiga-ui/layout';
     TuiNavigation,
     TuiSearch, TuiButton,
     TuiTextfield,
-    TuiTitle,],
+    TuiTitle, DarkmodeComponent, ChoosestoreComponent, ChartsalesbetweentwodatesComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
