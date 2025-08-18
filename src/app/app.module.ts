@@ -57,6 +57,7 @@ import { VentaEffects } from './state/effects/venta.effects';
 		LoginComponent,
 		CommonModule,
 		TuiRoot,
+
 		ToastrModule.forRoot({
 
 		}),

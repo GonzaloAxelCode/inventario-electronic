@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { TIENDA_ID } from '../constants/tienda-vars';
 import { URL_BASE } from './utils/endpoints';
 import { printError } from './utils/print-errors';
 
@@ -22,7 +23,7 @@ export class CategoriaService {
   }
 
   createCategoria(categoria: CategoriaCreate): Observable<Categoria> {
-    return this.http.post<Categoria>(`${this.siteURL}/categorias/create/`, categoria).pipe(
+    return this.http.post<Categoria>(`${this.siteURL}/categorias/create/`, { ...categoria, tienda: TIENDA_ID }).pipe(
       catchError(error => {
         printError(error)
         return throwError(error)

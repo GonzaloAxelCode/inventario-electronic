@@ -72,8 +72,10 @@ export class DialogcreateinventarioComponent implements OnInit {
       this.productos = state.productos;
     });
     this.store.select(selectProveedorState).subscribe((state: ProveedorState) => {
-      this.proveedores = state.proveedores;
+      // Filtra solo proveedores activos
+      this.proveedores = state.proveedores.filter(proveedor => proveedor.activo);
     });
+
     this.store.select(selectTiendaState).subscribe((state: TiendaState) => {
       this.tiendas = state.tiendas;
     });

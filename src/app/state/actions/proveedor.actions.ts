@@ -52,15 +52,16 @@ export const updateProveedorFail = createAction(
     props<{ error: any }>()
 );
 
-export const deleteProveedorAction = createAction(
+export const onActiveToggleProveedorAction = createAction(
     ProveedorActionTypes.DELETE_PROVEEDOR,
-    props<{ id: number }>()
+    props<{ proveedor: Proveedor, activo: boolean }>()
 );
-export const deleteProveedorSuccess = createAction(
+export const onActiveToggleProveedorSuccess = createAction(
     ProveedorActionTypes.DELETE_PROVEEDOR_SUCCESS,
     props<any>()
 );
-export const deleteProveedorFail = createAction(
+export const onActiveToggleProveedorFail = createAction(
     ProveedorActionTypes.DELETE_PROVEEDOR_FAIL,
     props<{ error: any }>()
 );
+

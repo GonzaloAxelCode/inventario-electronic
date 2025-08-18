@@ -147,8 +147,8 @@
 
 
 
-<div *ngIf="!(caja_is_open$ | async)" class="w-full m-auto h-screen">
-    <div class="m-auto h-screen grid place-content-center">
+<div *ngIf="!(caja_is_open$ | async)" class="w-full m-auto">
+    <div class="m-auto  grid place-content-center mt-20">
         <form tuiAppearance="floating" class="my-auto mx-auto" tuiCardLarge tuiForm="m" (ngSubmit)="onSubmit()"
             [formGroup]="form" [style.max-width.rem]="32">
             <header tuiHeader>

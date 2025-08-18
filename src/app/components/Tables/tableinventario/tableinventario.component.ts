@@ -2,6 +2,7 @@ import { TIENDA_ID } from '@/app/constants/tienda-vars';
 import { Categoria, CategoriaState } from '@/app/models/categoria.models';
 import { Inventario } from '@/app/models/inventario.models';
 import { Producto, ProductoState } from '@/app/models/producto.models';
+import { Proveedor } from '@/app/models/proveedor.models';
 import { TiendaState } from '@/app/models/tienda.models';
 import { DialogEditInventarioDetailService } from '@/app/services/dialogs-services/dialog-edit-inventario.service';
 import { clearSearchInventarios, createInventario, eliminarInventarioAction, loadInventarios, searchInventarios } from '@/app/state/actions/inventario.actions';
@@ -94,12 +95,14 @@ export class TableinventarioComponent {
   protected readonly form = new FormGroup({
     nombre: new FormControl(),
     categoria: new FormControl<any>(null),
+    proveedor: new FormControl<any>(null),
     activo: new FormControl(),
   });
   filteredData: any = []
   allColumnKeys = this.allColumns.map(c => c.key);
   displayedColumns = [...this.allColumnKeys];
   selectCategorias$?: Observable<Categoria[]>;
+  selectProveedores$?: Observable<Proveedor[]>;
 
   compareCategorias = (a: Categoria, b: Categoria) => a && b && a.id === b.id;
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
@@ -138,6 +141,9 @@ export class TableinventarioComponent {
     this.inventariosState$ = this.store.select(selectInventario);
     this.selectCategorias$ = this.store.select(selectCategoria).pipe(
       map((state: CategoriaState) => state.categorias)
+    );
+    this.selectProveedores$ = this.store.select(selectProveedorState).pipe(
+      map((state: ProveedorState) => state.proveedores)
     );
   }
   onSubmit(): void {

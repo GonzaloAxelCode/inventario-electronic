@@ -19,12 +19,16 @@
         <form [formGroup]="form" (submit)="onSubmitSearch()">
           <fieldset tuiTextfieldSize="s">
             <tui-textfield iconStart="@tui.search">
-              <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre" tuiTextfield />
+              <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre o codigo de producto" tuiTextfield />
             </tui-textfield>
 
             <tui-select class="w-44" formControlName="categoria" [stringify]="stringify">
               Categoria
               <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
+            </tui-select>
+             <tui-select class="w-44" formControlName="proveedor" [stringify]="stringify">
+              Proveedor
+              <select placeholder="Proveedor" tuiSelect [items]="(selectProveedores$ | async)"></select>
             </tui-select>
             <button size="s" appearance="primary-grayscale" tuiButton type="submit" (click)="onSubmitSearch()"
               [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null">
@@ -55,6 +59,7 @@
                 <th tuiTh>Costo Compra</th>
                 <th tuiTh>Costo Venta</th>
                 <th tuiTh>Stock</th>
+                <th tuiTh>Proveedor</th>
                 <th tuiTh>Acciones</th>
 
 
@@ -77,14 +82,14 @@
 
                 </td>
 
-
-                <td tuiTd>
+ <td tuiTd>
                   <div tuiBlockDetails>
                     <span class=" text-lg">
                       S/. {{ inventario.costo_venta }}
                     </span>
                   </div>
                 </td>
+               
                 <td tuiTd>
                   <div tuiBlockDetails>
                     <span class="-translate-y-1" [ngClass]="getColorClass(inventario.cantidad)">
@@ -93,22 +98,29 @@
                   </div>
                 </td>
                 <td tuiTd>
+                  <div >
+                    <span class="" >
+                      {{ inventario.proveedor_nombre  }}
+                    </span>
+                  </div>
+                </td>
+                <td tuiTd>
                   <div class="flex gap-2 " *ngIf="mode === 'normal'">
 
-                    <button appearance="error" (click)="eliminarInventario(inventario.id)" iconStart="@tui.trash"
+                    <button appearance="error" (click)="eliminarInventario(inventario.id)"  iconStart="@tui.trash"
                       tuiButton  type="button">
                       Eliminar
                     </button>
 
-                    <button appearance="info" (click)="showDialogEditInventario(inventario)" iconStart="@tui.pencil"
+                    <button appearance="info" [disabled]="!inventario.activo" (click)="showDialogEditInventario(inventario)" iconStart="@tui.pencil"
                       tuiButton  type="button">
                       Actualizar
                     </button>
                   </div>
                  <div class="flex gap-2 " *ngIf="mode === 'select_product_sale_mode'">
-                    <button [disabled]="inventario.cantidad <= 0"
+                    <button [disabled]="inventario.cantidad <= 0  || !inventario.activo"
                         [appearance]="inventario.cantidad <= 0 ? 'secondary-grayscale': 'positive'" class="w-full"
-                        (click)="cerrarDialogo(inventario)" [iconStart]="inventario.cantidad <= 0 ? '@tui.lock': '@tui.plus'"
+                        (click)="cerrarDialogo(inventario)"   [iconStart]="inventario.cantidad <= 0 ? '@tui.lock': '@tui.plus'"
                         tuiButton  type="button">
                         Agregar producto
                     </button>

@@ -9,7 +9,7 @@ import { injectContext } from '@taiga-ui/polymorpheus';
 @Component({
   selector: 'app-dialogventadetail',
   standalone: true,
-  imports: [CommonModule, TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiChip],
+  imports: [CommonModule, TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiChip,],
   templateUrl: './dialogventadetail.component.html',
   styleUrl: './dialogventadetail.component.scss'
 })

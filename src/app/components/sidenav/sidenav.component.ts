@@ -2,6 +2,7 @@ import { SidebarService } from '@/app/services/ui/sidebar-service.service';
 import { clearTokensAction } from '@/app/state/actions/auth.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectAuth } from '@/app/state/selectors/auth.selectors';
+import { selectUser } from '@/app/state/selectors/user.selectors';
 import { CommonModule, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -49,10 +50,14 @@ import { HeaderComponent } from "../header/header.component";
 export class SidenavComponent {
   isAuthenticated$: Observable<any>;
 
+  isSuperUser$: Observable<any>;
   constructor(private store: Store<AppState>, public router: Router, public sidebarService: SidebarService) {
 
     this.isAuthenticated$ = this.store.select(selectAuth).pipe(
       map(authState => authState.isAuthenticated)
+    );
+    this.isSuperUser$ = this.store.select(selectUser).pipe(
+      map(state => state.user.is_superuser)
     );
 
     this.loadingAuthenticated$ = this.store.select(selectAuth).pipe(

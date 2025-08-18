@@ -1,5 +1,6 @@
 import { Proveedor } from '@/app/models/proveedor.models';
 import { DialogUpdateProveedorService } from '@/app/services/dialogs-services/dialog-updateproveedor.service';
+import { onActiveToggleProveedorAction } from '@/app/state/actions/proveedor.actions';
 import { AppState } from '@/app/state/app.state';
 import { ProveedorState } from '@/app/state/reducers/proveedor.reducer';
 import { selectProveedores } from '@/app/state/selectors/proveedor.selectors';
@@ -68,34 +69,34 @@ export class TableproveedorComponent implements OnInit {
     });
   }
   private readonly dialogService = inject(DialogUpdateProveedorService);
-  protected showDialogUpdate(): void {
-    this.dialogService.open({}).subscribe((result: any) => {
+  protected showDialogUpdate(proveedor: Partial<Proveedor>): void {
+    this.dialogService.open(proveedor).subscribe((result: any) => {
 
     });
   }
   private readonly dialogs = inject(TuiResponsiveDialogService);
   private readonly alerts = inject(TuiAlertService);
-  protected onDeleteProveedor(id: any): void {
+  protected onActiveToggle(proveedor: Proveedor): void {
     const data: TuiConfirmData = {
-      content: '¿Estás seguro de que deseas eliminar esta ?',
-      yes: 'Eliminar',
+      content: '¿Estás seguro de que deseas desactivar o activar este proveedor?',
+      yes: 'Ok',
       no: 'Cancelar',
     };
 
     this.dialogs
       .open<boolean>(TUI_CONFIRM, {
-        label: 'Confirmación de Eliminación',
+        label: 'Confirmación de Activación / Desactivación',
         size: 's',
         data,
       })
       .subscribe((confirm) => {
         if (confirm) {
 
-
-          this.alerts.open(' eliminado exitosamente.').subscribe();
+          this.store.dispatch(onActiveToggleProveedorAction({ proveedor, activo: !proveedor.activo }));
+          this.alerts.open(' Acción exitosa.',).subscribe();
         } else {
 
-          this.alerts.open('Eliminación cancelada.').subscribe();
+          this.alerts.open('Acción cancelada.').subscribe();
         }
       });
   }

@@ -40,15 +40,19 @@
             <td tuiTd>
                 <div class="flex gap-2 ">
                     <button appearance="positive" iconStart="@tui.users" tuiButton  type="button"
-                    (click)="showDialogUpdate()"
+                    (click)="showDialogUpdate(proveedor)"
                         >
                         Actualizar
                     </button>
-                    <button appearance="error" iconStart="@tui.trash" tuiButton  type="button"
-                      (click)="onDeleteProveedor(proveedor.id)"
-                        >
-                        Desactivar
-                    </button>
+                 <button
+  [appearance]="proveedor.activo ? 'error' : 'secondary'"
+  iconStart="@tui.trash"
+  tuiButton
+  type="button"
+  (click)=" onActiveToggle(proveedor)"
+>
+  {{ proveedor.activo ? 'Desactivar' : 'Activar' }}
+</button>
                 </div>
 
             </td>

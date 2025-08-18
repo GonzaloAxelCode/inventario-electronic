@@ -4,12 +4,12 @@ import {
     createProveedorAction,
     createProveedorFail,
     createProveedorSuccess,
-    deleteProveedorAction,
-    deleteProveedorFail,
-    deleteProveedorSuccess,
     loadProveedores,
     loadProveedoresFail,
     loadProveedoresSuccess,
+    onActiveToggleProveedorAction,
+    onActiveToggleProveedorFail,
+    onActiveToggleProveedorSuccess,
     updateProveedorAction,
     updateProveedorFail,
     updateProveedorSuccess
@@ -71,18 +71,19 @@ export const proveedorReducer = createReducer(
         errors: error,
         loadingProveedores: false
     })),
-    on(deleteProveedorAction, (state) => ({
+    on(onActiveToggleProveedorAction, (state) => ({
         ...state,
-        loadingProveedores: true
+
     })),
-    on(deleteProveedorSuccess, (state, { id }) => ({
+    on(onActiveToggleProveedorSuccess, (state, { proveedor, activo }) => ({
         ...state,
-        proveedores: state.proveedores.filter(p => p.id !== id),
-        loadingProveedores: false
+        proveedores: state.proveedores.map(p => proveedor.id === p.id ? { ...p, activo: activo } : p),
+
+
     })),
-    on(deleteProveedorFail, (state, { error }) => ({
+    on(onActiveToggleProveedorFail, (state, { error }) => ({
         ...state,
         errors: error,
-        loadingProveedores: false
+
     }))
 );

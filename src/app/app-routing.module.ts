@@ -17,13 +17,18 @@ import { ProductosComponent } from './pages/productos/productos.component';
 import { ProveedoresComponent } from './pages/proveedores/proveedores.component';
 import { ReportesComponent } from './pages/reportes/reportes.component';
 
+import { AdminhistoryComponent } from './components/adminhistory/adminhistory.component';
+import { AdminhomeComponent } from './components/adminhome/adminhome.component';
+import { AdminmanagestoreComponent } from './components/adminmanagestore/adminmanagestore.component';
+import { AdminsettingsComponent } from './components/adminsettings/adminsettings.component';
 import { MyaccountComponent } from './components/settingscomponents/myaccount/myaccount.component';
 import { PerfilsettingsComponent } from './components/settingscomponents/perfilsettings/perfilsettings.component';
 import { PermisossettingsComponent } from './components/settingscomponents/permisossettings/permisossettings.component';
 import { SettingslayoutComponent } from './components/settingscomponents/settingslayout/settingslayout.component';
-import { UsermanagementComponent } from './components/settingscomponents/usermanagement/usermanagement.component';
 import { VentassettingsComponent } from './components/settingscomponents/ventassettings/ventassettings.component';
+import { UsermanagementComponent } from './components/usermanagement/usermanagement.component';
 import { superUserGuard } from './guards/superuser.guard';
+import { AdminlayoutComponent } from './layouts/adminlayout/adminlayout.component';
 import { CajaComponent } from './pages/caja/caja.component';
 import { ComprasComponent } from './pages/compras/compras.component';
 import { SettiingsComponent } from './pages/settiings/settiings.component';
@@ -37,7 +42,7 @@ const routes: Routes = [
 		component: MainlayoutComponent,
 		canActivate: [authGuard],
 		children: [
-			{ path: '', component: DashboardComponent },
+			{ path: '', component: DashboardComponent, },
 			{ path: 'inventario', component: InventarioComponent },
 			{ path: 'ventas', component: VentasComponent },
 			{ path: 'create_venta', component: HacerventaComponent },
@@ -58,10 +63,24 @@ const routes: Routes = [
 					{ path: 'ventas', component: VentassettingsComponent },
 					{ path: 'permisos', component: PermisossettingsComponent },
 					{ path: 'perfil', component: PerfilsettingsComponent },
-					{ path: 'usermanagement', component: UsermanagementComponent, canActivate: [superUserGuard] },
+
 
 				]
-			}
+			},
+			{
+				path: 'admin',
+				component: AdminlayoutComponent,
+				canActivate: [superUserGuard],
+				children: [
+					{ path: '', component: AdminhomeComponent },
+					{ path: 'history', component: AdminhistoryComponent },
+					{ path: 'config', component: AdminsettingsComponent, },
+					{ path: 'store', component: AdminmanagestoreComponent, },
+					{ path: 'usermanagement', component: UsermanagementComponent, },
+
+				]
+			},
+
 		]
 	},
 	{
@@ -78,7 +97,5 @@ const routes: Routes = [
 	exports: [RouterModule],
 })
 export class AppRoutingModule {
-
-
 
 }

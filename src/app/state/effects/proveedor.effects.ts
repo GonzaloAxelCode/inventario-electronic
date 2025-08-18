@@ -9,12 +9,12 @@ import {
     createProveedorAction,
     createProveedorFail,
     createProveedorSuccess,
-    deleteProveedorAction,
-    deleteProveedorFail,
-    deleteProveedorSuccess,
     loadProveedores,
     loadProveedoresFail,
     loadProveedoresSuccess,
+    onActiveToggleProveedorAction,
+    onActiveToggleProveedorFail,
+    onActiveToggleProveedorSuccess,
     updateProveedorAction,
     updateProveedorFail,
     updateProveedorSuccess
@@ -85,16 +85,16 @@ export class ProveedorEffects {
 
     deleteProveedorEffect = createEffect(() =>
         this.actions$.pipe(
-            ofType(deleteProveedorAction),
-            exhaustMap(({ id }) =>
-                this.proveedorService.deleteProveedor(id).pipe(
+            ofType(onActiveToggleProveedorAction),
+            exhaustMap(({ proveedor, activo }) =>
+                this.proveedorService.activateOrDesactivateProveedor(proveedor, activo).pipe(
                     map(() => {
-                        this.toastr.success('Proveedor eliminado exitosamente', 'Éxito');
-                        return deleteProveedorSuccess({ id });
+                        this.toastr.success('Proveedor activado/desactivado exitosamente', 'Éxito');
+                        return onActiveToggleProveedorSuccess({ proveedor, activo });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al eliminar el proveedor', 'Error');
-                        return of(deleteProveedorFail({ error }));
+                        this.toastr.error('Error al activar/desactivar el proveedor', 'Error');
+                        return of(onActiveToggleProveedorFail({ error }));
                     })
                 )
             )

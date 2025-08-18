@@ -34,7 +34,7 @@ export class UserService {
     }
 
     createUser(user: Partial<User>): Observable<User> {
-        return this.http.post<User>(`${this.siteURL}/usuarios/create/`, user).pipe(
+        return this.http.post<User>(`${this.siteURL}/usuarios/create/`, { ...user }).pipe(
             catchError(error => {
                 console.error(error);
                 return throwError(error);

@@ -51,7 +51,7 @@ export class DialogupdateproductComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
     this.productoForm = this.fb.group({
-      nombre: [this.producto.nombre, Validators.required],
+      nombre: [this.producto.nombre, Validators.required,],
       descripcion: [this.producto.descripcion],
       marca: [this.producto.marca || 'Genérico', Validators.required], // Valor por defecto
       modelo: [this.producto.modelo || 'Genérico', Validators.required], // Valor por defecto categoria: [this.producto.categoria, Validators.required],

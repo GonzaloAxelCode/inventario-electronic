@@ -19,6 +19,7 @@ export class DialogEditInventarioDetailService {
         const component = new PolymorpheusComponent(DialogeditinventarioComponent);
         const options: Partial<InventarioDialogOptions> = {
             dismissible: true,
+            label: "Editar inventario",
             size: "auto",
             data
         };

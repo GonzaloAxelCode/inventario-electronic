@@ -7,7 +7,7 @@
 
       <!-- Nombre -->
       <div class="flex flex-col">
-        <tui-input formControlName="nombre" class="w-full" placeholder="Ingrese el nombre del producto">
+        <tui-input formControlName="nombre"  class="w-full" placeholder="Ingrese el nombre del producto">
           Nombre del Producto
         </tui-input>
         <tui-error *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched">
