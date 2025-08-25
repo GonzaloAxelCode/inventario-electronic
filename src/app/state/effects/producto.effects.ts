@@ -53,8 +53,8 @@ export class ProductoEffects {
     createProductoEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(createProductoAction),
-            exhaustMap(({ producto }) =>
-                this.productoService.createProducto(producto).pipe(
+            exhaustMap(({ producto, }) =>
+                this.productoService.createProducto(producto,).pipe(
                     map((res: any) => {
                         this.toastr.success('Producto creado exitosamente', 'Éxito');
                         return createProductoSuccess({ producto: res.producto });

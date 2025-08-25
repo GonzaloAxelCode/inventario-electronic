@@ -1,3 +1,5 @@
+import { User } from "./user.models";
+
 export interface Tienda {
     id: number;
     nombre?: string;
@@ -5,12 +7,13 @@ export interface Tienda {
     ciudad?: string;
     telefono?: string;
     activo?: boolean;
-    encargadoId?: number | null;
+    encargado?: User | null;     // 👈 objeto completo, no solo ID
     capacidad?: number;
     ruc?: string;
     imagen?: string | null;
+    users_tienda?: User[];       // 👈 array de usuarios
 }
-export type TiendaCreate = Omit<Tienda, 'id' | 'activo' | 'encargadoId' | 'parent' | 'capacidad' | 'imagen' | 'ciudad'>;
+export type TiendaCreate = Omit<Tienda, 'id' | 'users_tienda' | 'activo' | 'encargado' | 'parent' | 'capacidad' | 'imagen' | 'ciudad'>;
 
 
 

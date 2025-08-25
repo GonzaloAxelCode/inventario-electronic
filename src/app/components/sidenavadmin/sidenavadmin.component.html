@@ -1,0 +1,63 @@
+<body class="grid overflow-x-hidden">
+    <ng-template #sidebarTemplateadmin>
+
+        <nav class="flex flex-col  justify-between bg-tui-background  md:min-w-[200px] ">
+
+            <div class="flex flex-col gap-2 ">
+                <a (click)="onClose()" routerLink="/admin"
+                    class="flex items-center gap-3 p-3 text-xl font-bold transition-all duration-300 ease-in-out text-white">
+                    <span>
+                        <img src="https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_350,h_150/v1755473642/APP%20INVENTARIO/T-removebg-preview_zgnu7f.png"
+                            class="w-32 transition-all duration-300 invert-0 dark:invert" alt="">
+                    </span>
+                </a>
+
+
+
+                <a (click)="onClose()" routerLink="/admin/store" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
+                    class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+                    <tui-icon icon="store" class="text-green-500"></tui-icon> <span>Tiendas</span>
+                </a>
+                <a (click)="onClose()" routerLink="/admin/history" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
+                    class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+                    <tui-icon icon="history" class="text-green-500"></tui-icon> <span>Historial de actividades</span>
+                </a>
+                <a (click)="onClose()" routerLink="/admin/config" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
+                    class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+                    <tui-icon icon="settings" class="text-grey-500"></tui-icon> <span>Configuracion</span>
+                </a>
+            </div>
+
+
+
+        </nav>
+    </ng-template>
+
+
+    <div class="flex md:hidden">
+        <tui-drawer *tuiPopup="open()" direction="left" class="drawer" [overlay]="true" (click.self)="onClose()">
+            <aside class="relative">
+                <div class="absolute right-0 top-0">
+                    <button class="" tuiButton type="button" iconStart="@tui.x" size="s" appearance="floating"
+                        (click)="onClose()">
+                    </button>
+                </div>
+
+                <ng-container *ngTemplateOutlet="sidebarTemplateadmin"></ng-container>
+            </aside>
+        </tui-drawer>
+    </div>
+    <main class="flex h-screen w-screen">
+        <!-- Sidebar (estático) -->
+        <aside class="hidden md:block p-5 pr-0 h-screen overflow-y-auto bg-tui-background sticky top-0">
+            <ng-container *ngTemplateOutlet="sidebarTemplateadmin"></ng-container>
+        </aside>
+
+        <!-- Contenido principal (scrollable) -->
+        <div class="flex-1 overflow-y-auto">
+            <app-header></app-header>
+            <router-outlet></router-outlet>
+        </div>
+    </main>
+
+</body>

@@ -1,9 +1,8 @@
 import { User } from '@/app/models/user.models';
 
-import { clearAuthDataFromLocalStorage } from '@/app/services/utils/localstorage-functions';
 import { createReducer, on } from '@ngrx/store';
-import { clearTokensAction } from '../actions/auth.actions';
 import {
+    clearUserAction,
     createUserAction,
     createUserFail,
     createUserSuccess,
@@ -32,10 +31,11 @@ export interface UserState {
     user: User,
     loadingUsers: boolean;
     errors: any;
+    loadingCurrentUser: boolean
 }
 export const userInitial = {
     id: 0,
-    username: '',
+    username: 'Desconocido',
     first_name: '',
     last_name: '',
     photo_url: '',
@@ -76,7 +76,8 @@ export const initialStateUser: UserState = {
     users: [],
     loadingUsers: false,
     errors: {},
-    user: userInitial
+    user: null as unknown as User,
+    loadingCurrentUser: false
 };
 
 export const userReducer = createReducer(
@@ -154,28 +155,34 @@ export const userReducer = createReducer(
         ...state,
         errors: error
     })),
-    on(clearTokensAction, (state) => {
-        clearAuthDataFromLocalStorage()
+    on(clearUserAction, (state) => {
+
         return {
             ...state,
-            isAuthenticated: false,
-            refreshToken: '',
-            accessToken: '',
+            user: null as unknown as User,
+            users: []
         }
     }),
 
     on(loadUserAction, state => ({
         ...state,
+        loadingCurrentUser: true
 
     })),
-    on(loadUserSuccess, (state, { user }) => ({
-        ...state,
-        user,
+    on(loadUserSuccess, (state, { user }) => {
 
-    })),
+        return {
+            ...state,
+            user: { ...user },
+            loadingCurrentUser: false
+        }
+
+
+    }),
     on(loadUserFail, (state, { error }) => ({
         ...state,
         errors: error,
+        loadingCurrentUser: false
 
     })),
     on(updateUserPermissionsAction, (state) => ({

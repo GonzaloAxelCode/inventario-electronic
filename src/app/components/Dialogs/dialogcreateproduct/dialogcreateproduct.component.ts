@@ -9,9 +9,11 @@ import { Categoria } from '@/app/models/categoria.models';
 import { createProductoAction } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectCategoriaState } from '@/app/state/selectors/categoria.selectors';
+import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
 import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-dialogcreateproduct',
@@ -39,7 +41,7 @@ export class DialogcreateproductComponent {
   categorias: Categoria[] = [];
   marcas = ['Genérico', 'Samsung', 'Apple', 'Xiaomi', 'Huawei'];
   modelos = ['Genérico', 'Modelo A', 'Modelo B', 'Modelo C'];
-
+  tiendaUser!: number
 
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
     this.productoForm = this.fb.group({
@@ -56,6 +58,15 @@ export class DialogcreateproductComponent {
       this.categorias = state.categorias;
 
     });
+
+    //  tiendaUser!: number
+
+    this.store.select(selectUsersState).pipe(
+      map(userState => userState.user.tienda)
+    ).subscribe(tienda => {
+      this.tiendaUser = tienda || 0;
+    });
+
   }
 
   onSubmit() {
@@ -65,7 +76,8 @@ export class DialogcreateproductComponent {
         producto: {
           ...nuevoProducto,
           categoria_nombre: this.getCategoriaNombre(nuevoProducto.categoria),
-        }
+        },
+
       }));
       this.context.completeWith(true)
     }
@@ -85,5 +97,6 @@ export class DialogcreateproductComponent {
     }
   }
   protected activeItemIndex = 0;
+
 
 }

@@ -12,9 +12,10 @@ import { TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
 import { TuiComboBoxModule, TuiSelectModule } from '@taiga-ui/legacy';
 
 
-import { TIENDA_ID } from '@/app/constants/tienda-vars';
+import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiDataListWrapperComponent } from '@taiga-ui/kit';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-dialogrealizarprestamo',
@@ -53,21 +54,34 @@ import { TuiDataListWrapperComponent } from '@taiga-ui/kit';
   styleUrl: './dialogrealizarprestamo.component.scss'
 })
 export class DialogrealizarprestamoComponent {
+  userId!: number
   protected testForm = new FormGroup({
 
     monto: new FormControl(0, Validators.required),
     descripccion: new FormControl('', Validators.required),
 
   });
-  constructor(private store: Store<AppState>) { }
+  tiendaUser!: number
 
+  constructor(private store: Store<AppState>) { }
+  ngOnInit(): void {
+    this.store.select(selectCurrenttUser).subscribe((state) => {
+      this.userId = state.id
+    })
+    this.store.select(selectUsersState).pipe(
+      map(userState => userState.user.tienda)
+    ).subscribe(tienda => {
+      this.tiendaUser = tienda || 0;
+    });
+
+  }
   onSubmit() {
 
     if (this.testForm.valid) {
       console.log(this.testForm.value)
       this.store.dispatch(realizarPrestamo({
-        tiendaId: TIENDA_ID,
-        userId: 5,
+
+
         monto: this.testForm.value.monto,
         descripcion: this.testForm.value.descripccion,
       }))

@@ -12,13 +12,14 @@ import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton, tuiDialog } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiBadge, TuiConfirmData, TuiRadio } from '@taiga-ui/kit';
+import { TuiBlockStatus } from '@taiga-ui/layout';
 import { Observable } from 'rxjs';
 import { DialogcreateproveedorComponent } from '../../Dialogs/dialogcreateproveedor/dialogcreateproveedor.component';
 @Component({
   selector: 'app-tableproveedor',
   standalone: true,
   imports: [CommonModule, FormsModule, TuiTable, CommonModule,
-
+    TuiBlockStatus,
     TuiRadio,
     FormsModule,
     TuiTable, TuiButton, TuiAppearance, TuiBadge

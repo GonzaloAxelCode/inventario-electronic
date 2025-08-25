@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
 
 export interface AuthState {
-    user_id_auth?: number | null,
-    id_user: string | null,
+
+
     errors?: AuthErrors;
     isLoadingLogin: boolean;
     isLoadingLogout: boolean,

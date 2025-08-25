@@ -21,11 +21,11 @@ export interface VentaResponse {
 export class VentaService {
     private siteURL = URL_BASE + "/api";
     private http = inject(HttpClient);
-    getVentasPorRangoFechasTienda(tiendaId: number, fromDate: Date, toDate: Date): Observable<{ salesDateRangePerDay: Array<[string, number]> }> {
+    getVentasPorRangoFechasTienda(fromDate: Date, toDate: Date): Observable<{ salesDateRangePerDay: Array<[string, number]> }> {
         const rangeDates = {
             from_date: [fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate()],
             to_date: [toDate.getFullYear(), toDate.getMonth(), toDate.getDate()],
-            tienda_id: tiendaId
+
         };
 
         return this.http.post<{ salesDateRangePerDay: Array<[string, number]> }>(
@@ -40,7 +40,7 @@ export class VentaService {
     }
 
     getResumenVentasByDate({
-        tiendaId,
+
         year,
         month,
         day,
@@ -49,7 +49,7 @@ export class VentaService {
     ): Observable<{ todaySales: number, thisMonthSales: number, tipo: string }> {
 
         const requestPayload = {
-            tienda_id: tiendaId,
+
             year,
             month,
             day,
@@ -66,9 +66,9 @@ export class VentaService {
             })
         );
     }
-    getTopProductosMasVendidos(tiendaId: number, fromDate: Date, toDate: Date): Observable<{ topProductoMostSales: ProductsSales[] }> {
+    getTopProductosMasVendidos(fromDate: Date, toDate: Date): Observable<{ topProductoMostSales: ProductsSales[] }> {
         const body = {
-            tienda_id: tiendaId,
+
             from_date: [fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate()],
             to_date: [toDate.getFullYear(), toDate.getMonth(), toDate.getDate()]
         };
@@ -84,7 +84,7 @@ export class VentaService {
         );
     }
     getVentasPorTienda(
-        tiendaId: number,
+
         from_date: [number, number, number],
         to_date: [number, number, number],
         page: number = 1,
@@ -93,7 +93,7 @@ export class VentaService {
 
         // Construir los query params
         let params = new HttpParams()
-            .set('tienda_id', tiendaId.toString())
+
             .set('page', page.toString())
             .set('page_size', page_size.toString());
 
@@ -117,8 +117,8 @@ export class VentaService {
                 })
             );
     }
-    getLowStockProductsPorTienda(tiendaId: number): Observable<any[]> {
-        return this.http.get<any[]>(`${this.siteURL}/productos-menor-stock/${tiendaId}/`).pipe(
+    getLowStockProductsPorTienda(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.siteURL}/productos-menor-stock/`).pipe(
             catchError(error => {
                 console.error('Error al obtener productos con menor stock', error);
                 return throwError(error);
@@ -152,10 +152,10 @@ export class VentaService {
     }
 
 
-    obtenerResumenVentas(tiendaId: number): Observable<any> {
+    obtenerResumenVentas(): Observable<any> {
         return this.http.post<any>(
             `${this.siteURL}/ventas/resumen/`,
-            { tienda_id: tiendaId }
+            {}
         ).pipe(
             catchError(error => {
                 console.error('Error al obtener resumen de ventas', error);
@@ -163,12 +163,12 @@ export class VentaService {
             })
         );
     }
-    fetchSearchVentas(query: Partial<QuerySearchVenta>, page: number, page_size: number, tienda_id: number): Observable<any> {
+    fetchSearchVentas(query: Partial<QuerySearchVenta>, page: number, page_size: number): Observable<any> {
         const params = new HttpParams()
             .set('page', page)
             .set('page_size', page_size);
         return this.http.post<VentaResponse>(`${this.siteURL}/ventas/search/`, {
-            tienda_id: tienda_id,
+
             query,
 
         }, { params }).pipe(

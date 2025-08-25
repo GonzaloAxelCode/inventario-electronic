@@ -1,4 +1,5 @@
 import { Tienda, TiendaState } from '@/app/models/tienda.models';
+import { DialogDetailTiendaService } from '@/app/services/dialogs-services/dialog-detailtienda.service';
 import { DialogUpdateTiendaService } from '@/app/services/dialogs-services/dialog-updatetienda.service';
 import { desactivateTiendaAction } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
@@ -98,9 +99,18 @@ export class TabletiendasComponent implements OnInit {
   getTiendaValue(venta: Tienda, key: string): any {
     return venta[key as keyof Tienda];
   }
+
+
+
   private readonly dialogService = inject(DialogUpdateTiendaService);
+  private readonly dialogServiceDetail = inject(DialogDetailTiendaService);
   protected showDialogUpdate(): void {
     this.dialogService.open({}).subscribe((result: any) => {
+
+    });
+  }
+  protected showDialogDetailTienda(tienda: Tienda): void {
+    this.dialogServiceDetail.open(tienda).subscribe((result: any) => {
 
     });
   }

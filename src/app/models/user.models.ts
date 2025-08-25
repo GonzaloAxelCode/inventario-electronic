@@ -1,5 +1,5 @@
 export interface User {
-    id: number
+    id: number;
     username: string;
     first_name: string;
     last_name: string;
@@ -10,7 +10,11 @@ export interface User {
     is_superuser: boolean;
     es_empleado: boolean;
     desactivate_account: boolean;
-    permissions: UserPermissions
+    tienda?: number | null
+    tienda_nombre?: string | null
+    permissions: UserPermissions;
+    user_permissions_list: string[];   // 👈 faltaba
+    all_permissions_meta: string[];    // 👈 faltaba
 }
 
 export interface UserPermissions {
@@ -38,7 +42,9 @@ export interface UserPermissions {
     view_category: boolean;
     view_supplier: boolean;
     view_store: boolean;
+    can_create_user: boolean;   // 👈 también faltaba
 }
+
 export interface CreateUser {
     username: string;
     password: string;

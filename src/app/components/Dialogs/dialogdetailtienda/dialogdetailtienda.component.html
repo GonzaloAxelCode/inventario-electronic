@@ -1,0 +1,99 @@
+<!-- Dialog: Detalle de Tienda -->
+<div class="w-full max-w-4xl mx-auto ">
+  <!-- Card -->
+  <div class="rounded-2xl b">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row gap-6  p-2 rounded-t-2xl">
+      <!-- Imagen / Avatar -->
+      <div class="shrink-0">
+        <div
+          class="h-24 w-24 rounded-2xl overflow-hidden ring-1 ring-gray-200 dark:ring-gray-700 bg-white dark:bg-neutral-800 grid place-items-center">
+          <img *ngIf="tienda?.imagen; else fallbackAvatar" [src]="tienda?.imagen!" [alt]="tienda?.nombre || 'Tienda'"
+            class="h-full w-full object-cover" (error)="tienda!.imagen = null" />
+          <ng-template #fallbackAvatar>
+            <div class="h-full w-full grid place-items-center text-2xl font-semibold">
+              {{'T'}}
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Títulos -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start gap-3 flex-wrap">
+          <h2 class="text-2xl md:text-3xl font-semibold tracking-tight truncate">
+            {{ tienda?.nombre || 'Tienda sin nombre' }}
+          </h2>
+
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" [ngClass]="tienda.activo ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' :
+                                         'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'">
+            {{ tienda.activo ? 'Activa' : 'Inactiva' }}
+          </span>
+        </div>
+
+        <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <div class="flex items-center gap-2">
+              <span class="font-medium">ID:</span>
+              <span class="tabular-nums">{{ tienda?.id ?? '—' }}</span>
+            </div>
+            <div class="flex items-center gap-2" *ngIf="tienda?.ruc">
+              <span class="font-medium">RUC:</span>
+              <span class="tabular-nums">{{ tienda?.ruc }}</span>
+            </div>
+            <div class="flex items-center gap-2" *ngIf="tienda?.capacidad !== undefined">
+              <span class="font-medium">Capacidad:</span>
+              <span class="tabular-nums">{{ tienda?.capacidad }}</span>
+            </div>
+
+            <div class="flex items-center gap-2" *ngIf="tienda?.capacidad !== undefined">
+              <span class="font-medium">Direccion:</span>
+              <span class="tabular-nums">{{ tienda?.direccion }}</span>
+            </div>
+             <div class="flex items-center gap-2" *ngIf="tienda?.capacidad !== undefined">
+              <span class="font-medium">Ciudad:</span>
+              <span class="tabular-nums">{{ tienda?.ciudad }}</span>
+            </div>
+
+              <div class="flex items-center gap-2" *ngIf="tienda?.capacidad !== undefined">
+              <span class="font-medium">Telefono:</span>
+              <span class="tabular-nums">{{ tienda?.telefono }}</span>
+            </div>
+           
+            <div class="flex items-center gap-2" *ngIf="tienda?.encargado">
+              <span class="font-medium">Encargado:</span>
+              <span class="tabular-nums">{{ tienda?.encargado?.first_name || '—' }} {{ tienda?.encargado?.last_name || '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acciones (opcional en el diálogo) -->
+      <div class="flex gap-2 self-start">
+        <button type="button"
+          class="px-3 py-2 rounded-xl border border-gray-300/70 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-800 text-sm"
+          (click)="context.completeWith(false)">
+          Cerrar
+        </button>
+        <button type="button"
+          class="px-3 py-2 rounded-xl bg-black text-white dark:bg-white dark:text-black hover:opacity-90 text-sm"
+          (click)="context.completeWith(true)">
+          Confirmar
+        </button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="p-2">
+         <!-- Usuarios / Encargados relacionados -->
+      <div class="mt-2">
+       
+
+        <div class="rounded-2xl overflow-hidden">
+          <!-- Tu tabla existente -->
+          <app-tableusers [users]="tienda.users_tienda || []" [tienda]="tienda"></app-tableusers>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

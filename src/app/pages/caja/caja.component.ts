@@ -29,8 +29,8 @@ import { TuiFieldErrorPipe, TuiInputInline, TuiInputNumber, TuiSegmented, TuiSwi
 import { TuiCardLarge, TuiCell, TuiForm, TuiHeader } from '@taiga-ui/layout';
 import { TuiInputDateModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 
-import { TIENDA_ID } from '@/app/constants/tienda-vars';
 import { selectAuth } from '@/app/state/selectors/auth.selectors';
+import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID } from '@angular/core';
 import { TuiFormatDateService } from '@taiga-ui/core';
@@ -89,8 +89,9 @@ export class CajaComponent implements OnInit {
   operaciones: OperacionCaja[] = []
   selectCaja$!: Observable<Caja>;
   authState$ = this.store.pipe(select(selectAuth));
+  tiendaUser!: number
 
-  userId: number = 0;
+  userId!: number;
 
   protected readonly form = new FormGroup({
     saldo_inicial: new FormControl("", Validators.required),
@@ -98,9 +99,12 @@ export class CajaComponent implements OnInit {
 
   protected readonly columns = ["id_operacion", "detalles", "tipo", "usuario", "fecha", "monto"]
   constructor(private store: Store<AppState>) {
-    this.store.dispatch(loadCaja({
-      tiendaId: TIENDA_ID,
-    }));
+    this.store.select(selectUsersState).pipe(
+      map(userState => userState.user.tienda)
+    ).subscribe(tienda => {
+      this.tiendaUser = tienda || 0;
+    });
+    this.store.dispatch(loadCaja());
     this.caja_is_open$ = this.store.select(selectCajaState).pipe(
       map(caja => caja.caja_is_open)
     );
@@ -111,14 +115,15 @@ export class CajaComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.store.select(selectCurrenttUser).subscribe((state) => {
+      this.userId = state.id
+    })
     this.store.select(selectCaja).subscribe((state) => {
       console.log(state)
       this.operaciones = state.operaciones
     });
 
-    this.store.pipe(select(selectAuth)).subscribe(authState => {
-      this.userId = Number(authState?.id_user) || 0;
-    });
+
   }
 
 
@@ -216,8 +221,8 @@ export class CajaComponent implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.store.dispatch(createCaja({
-        tiendaId: TIENDA_ID,
-        usuarioId: this.userId,
+
+
         saldoInicial: this.form.value.saldo_inicial
       }))
     }

@@ -1,4 +1,9 @@
-<div class="p-0">
-    <label tuiLabel>
-        <input tuiSwitch type="checkbox" [(ngModel)]="darkMode" (click)="toggleDarkMode()" /> Cambiar tema </label>
+<div class="p-0" class="cursor-pointer text-sm">
+    <label tuiLabel class="cursor-pointer flex items-center">
+        <input size="s" class="cursor-pointer " tuiSwitch type="checkbox" [(ngModel)]="darkMode" (click)="toggleDarkMode()" >
+        <span class=" text-sm">
+         Cambiar tema
+        </span>
+        
+         </label>
 </div>

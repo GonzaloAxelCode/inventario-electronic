@@ -18,11 +18,11 @@ import {
   userMeAuthenticatedSuccess
 } from '../actions/auth.actions';
 
-const { refreshToken, accessToken, idUser } = getAuthDataFromLocalStorage();
+const { refreshToken, accessToken, } = getAuthDataFromLocalStorage();
 
 export const initialState: AuthState = {
   errors: {},
-  id_user: idUser || "0",
+
   isAuthenticated: false,
   accessToken: accessToken || '',
   refreshToken: refreshToken || '',
@@ -95,7 +95,7 @@ export const authReducer = createReducer(
       accessToken: '',
       refreshToken: '',
       isAuthenticated: false,
-      isLoadingLogout: true,
+
     };
   })
 );

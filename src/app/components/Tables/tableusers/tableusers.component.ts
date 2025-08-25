@@ -1,62 +1,87 @@
+import { Tienda } from '@/app/models/tienda.models';
 import { User } from '@/app/models/user.models';
-import {
-  updateUserAction
-} from '@/app/state/actions/user.actions';
+import { DialogCreateUserService } from '@/app/services/dialogs-services/dialog-create-user.service';
+import { DialogEditUserPermissionService } from '@/app/services/dialogs-services/dialog-edit-user-permissions.service';
+import { DialogUpdatePasswordService } from '@/app/services/dialogs-services/dialog-update-password-user.service';
+import { desactivateUserAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
-import { selectUser } from '@/app/state/selectors/user.selectors';
+import { UserState } from '@/app/state/reducers/user.reducer';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Store } from '@ngrx/store';
+import { TuiTable } from '@taiga-ui/addon-table';
+import { TuiAppearance, TuiButton, TuiIcon } from '@taiga-ui/core';
+import { TuiSwitch } from '@taiga-ui/kit';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-tableusers',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatIconModule, FormsModule],
+
+  imports: [TuiTable, CommonModule, TuiTable, TuiSwitch, FormsModule, TuiAppearance, TuiButton, TuiIcon],
   templateUrl: './tableusers.component.html',
   styleUrl: './tableusers.component.scss'
 })
 export class TableUsersComponent implements OnInit {
 
-  displayedColumns = ['username', 'first_name', 'last_name', 'is_active', 'acciones'];
-  dataSource = new MatTableDataSource<User>([]);
-  editingId: string | null = null;
-  editedUser: Partial<User> = {};
+  userState$?: Observable<UserState>;
+  // users: User[] = []
+  @Input() users: User[] = [];  // 👈 ahora depende 100% de Input
+  @Input() tienda: Partial<Tienda> = {}
 
-  constructor(private store: Store<AppState>, private cdRef: ChangeDetectorRef) { }
 
+  private readonly dialogServiceEditPermissions = inject(DialogEditUserPermissionService);
+  private readonly dialogServiceUpdatepassowrd = inject(DialogUpdatePasswordService);
+  private readonly dialogServiceCreateuser = inject(DialogCreateUserService);
+
+
+  constructor(private store: Store<AppState>) {
+
+  }
   ngOnInit() {
+    /* this.store.select(selectUsersState).pipe(
+      tap(userState => {
+        this.users = userState.users;
+        console.log(userState.users)
 
-    this.store.select(selectUser).subscribe(usersState => {
-      this.dataSource.data = usersState.users;
+      })
+    ).subscribe(); */
+
+  }
+
+
+  protected showDialogUpdatePassword(user: User): void {
+    this.dialogServiceUpdatepassowrd.open(user).subscribe({
+
     });
   }
 
-  onEditUser(user: User) {
-    this.editingId = user.username;
-    this.editedUser = { ...user };
+  protected showDialogEditPermissions(user: User): void {
+    this.dialogServiceEditPermissions.open(user).subscribe({
+
+    });
   }
+  protected showDialogCreateUser(tienda: Partial<Tienda>): void {
+    this.dialogServiceCreateuser.open(tienda).subscribe({
 
-  onUpdateUser() {
-
-    this.store.dispatch(updateUserAction({ user: this.editedUser }))
-    this.editingId = null;
-
+    });
   }
-
-  onCancelEdit() {
-    this.editingId = null;
-  }
-
-  onToggle(user: User) {
-
-  }
-
-  onDeleteUser(user: User) {
-    if (confirm(`¿Seguro que quieres eliminar a ${user.username}?`)) {
-
+  toggleUpdateStateUser(event: Event, user: Partial<User>) {
+    if (user.is_superuser) {
+      event.preventDefault();
+      return;
     }
+    const updatedState = !user.is_active;
+
+    console.log("Cambiado a ", !user.is_active)
+
+
+    this.store.dispatch(desactivateUserAction({
+      id: user.id,
+      is_active: updatedState
+    }))
+
+
   }
 }

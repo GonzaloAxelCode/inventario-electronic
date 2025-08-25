@@ -1,141 +1,129 @@
-<div *ngIf="user.permissions" class="wrapper grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 pt-4  px-2">
+<div *ngIf="user.permissions" class="w-full max-w-2xl mx-auto space-y-6 pt-4 px-2">
 
   <!-- Sección: Ventas -->
-  <div>
-    <h3 class="text-xl font-semibold px-2 mb-0  ">Ventas</h3>
-    <div class="space-y-2">
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede hacer una venta</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_make_sale" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede cancelar una venta</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_cancel_sale" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede ver las ventas</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_sale" (click)="$event.preventDefault()" />
-      </label>
-    </div>
+  <div class="space-y-2">
+    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center">Ventas</h2>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede hacer una venta</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_make_sale" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede cancelar una venta</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_cancel_sale" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede ver las ventas</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_sale" (click)="$event.preventDefault()" />
+    </label>
   </div>
 
   <!-- Sección: Inventario -->
-  <div>
-    <h3 class="text-xl font-semibold px-2 mb-0  ">Inventario</h3>
-    <div class="space-y-2">
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede crear inventario</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_inventory" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede modificar inventario</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_inventory" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede actualizar inventario</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_update_inventory" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede eliminar inventario</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_inventory" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede ver el inventario</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_inventory" (click)="$event.preventDefault()" />
-      </label>
-    </div>
+  <div class="space-y-2">
+    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center" >Inventario</h2>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede crear inventario</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_inventory" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede modificar inventario</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_inventory" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede actualizar inventario</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_update_inventory" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede eliminar inventario</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_inventory" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede ver el inventario</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_inventory" (click)="$event.preventDefault()" />
+    </label>
   </div>
 
   <!-- Sección: Productos -->
-  <div>
-    <h3 class="text-xl font-semibold px-2 mb-0  ">Productos</h3>
-    <div class="space-y-2">
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede crear un producto</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_product" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede actualizar un producto</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_update_product" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede eliminar un producto</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_product" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede ver los productos</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_product" (click)="$event.preventDefault()" />
-      </label>
-    </div>
+  <div class="space-y-2">
+    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center">Productos</h2>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede crear un producto</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_product" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede actualizar un producto</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_update_product" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede eliminar un producto</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_product" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede ver los productos</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_product" (click)="$event.preventDefault()" />
+    </label>
   </div>
 
   <!-- Sección: Categorías -->
-  <div>
-    <h3 class="text-xl font-semibold px-2 mb-0  ">Categorías</h3>
-    <div class="space-y-2">
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede crear una categoría</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_category" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede modificar una categoría</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_category" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede eliminar una categoría</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_category" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede ver las categorías</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_category" (click)="$event.preventDefault()" />
-      </label>
-    </div>
+  <div class="space-y-2">
+    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center">Categorías</h2>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede crear una categoría</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_category" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede modificar una categoría</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_category" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede eliminar una categoría</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_category" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede ver las categorías</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_category" (click)="$event.preventDefault()" />
+    </label>
   </div>
 
   <!-- Sección: Proveedores -->
-  <div>
-    <h3 class="text-xl font-semibold px-2 mb-0  ">Proveedores</h3>
-    <div class="space-y-2">
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede crear proveedores</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_supplier" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede modificar proveedores</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_supplier" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede eliminar proveedores</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_supplier" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede ver los proveedores</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_supplier" (click)="$event.preventDefault()" />
-      </label>
-    </div>
+  <div class="space-y-2">
+    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center">Proveedores</h2>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede crear proveedores</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_supplier" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede modificar proveedores</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_supplier" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede eliminar proveedores</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_supplier" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede ver los proveedores</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_supplier" (click)="$event.preventDefault()" />
+    </label>
   </div>
 
   <!-- Sección: Tiendas -->
-  <div>
-    <h3 class="text-xl font-semibold px-2 mb-0  ">Tiendas</h3>
-    <div class="space-y-2">
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede crear una tienda</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_store" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede modificar una tienda</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_store" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede eliminar una tienda</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_store" (click)="$event.preventDefault()" />
-      </label>
-      <label class="flex items-center justify-between px-2  rounded-lg shadow-sm">
-        <span>Puede ver las tiendas</span>
-        <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_store" (click)="$event.preventDefault()" />
-      </label>
-    </div>
+  <div class="space-y-2">
+    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center">Tiendas</h2>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede crear una tienda</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_store" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede modificar una tienda</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_store" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede eliminar una tienda</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_store" (click)="$event.preventDefault()" />
+    </label>
+    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
+      <span>Puede ver las tiendas</span>
+      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_store" (click)="$event.preventDefault()" />
+    </label>
   </div>
 
 </div>

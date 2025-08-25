@@ -1,7 +1,7 @@
-import { TIENDA_ID } from '@/app/constants/tienda-vars';
 import { cargarProductosMenorStock } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
+import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
@@ -9,7 +9,7 @@ import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiFormatNumberPipe } from '@taiga-ui/core';
 import { TuiBlockDetails } from '@taiga-ui/layout';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard-low-stock',
@@ -22,10 +22,14 @@ import { Observable } from 'rxjs';
 export class DashboardLowStockComponent implements OnInit {
   private readonly store = inject(Store<AppState>);
   selectVentas$?: Observable<VentaState>
+  tiendaUser!: number
   constructor() {
-    this.store.dispatch(cargarProductosMenorStock({
-      tiendaId: TIENDA_ID,
-    }));
+    this.store.select(selectUsersState).pipe(
+      map(userState => userState.user.tienda)
+    ).subscribe(tienda => {
+      this.tiendaUser = tienda || 0;
+    });
+    this.store.dispatch(cargarProductosMenorStock());
   }
   ngOnInit() {
 

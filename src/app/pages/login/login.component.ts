@@ -67,8 +67,8 @@ export class LoginComponent implements OnInit {
 
 			this.authState$.subscribe((authState) => {
 				if (authState.isAuthenticated) {
+					window.location.replace('/');
 
-					this.router.navigate(['/']);
 				}
 
 			});

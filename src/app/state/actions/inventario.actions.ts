@@ -37,7 +37,7 @@ export enum InventarioActionTypes {
 
 export const loadInventarios = createAction(
     InventarioActionTypes.LOAD_INVENTARIOS,
-    props<{ tiendaId: number, page?: number, page_size?: number }>()
+    props<{ page?: number, page_size?: number }>()
 );
 export const loadInventariosSuccess = createAction(
     InventarioActionTypes.LOAD_INVENTARIOS_SUCCESS,
@@ -95,7 +95,7 @@ export const actualizarInventarioFail = createAction(
 
 export const searchInventarios = createAction(
     InventarioActionTypes.SEARCH_INVENTARIOS,
-    props<{ query: Partial<QuerySearchInventario>, page?: number, page_size?: number, tiendaId: number }>()
+    props<{ query: Partial<QuerySearchInventario>, page?: number, page_size?: number }>()
 );
 export const searchInventarioSuccess = createAction(
     InventarioActionTypes.SEARCH_INVENTARIOS_SUCCESS,

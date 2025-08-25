@@ -23,6 +23,7 @@ export enum ActionTypes {
     UPDATE_PERMISSIONS_USER = 'UPDATE_PERMISSIONS_USER',
     UPDATE_PERMISSIONS_USER_SUCCESS = 'UPDATE_PERMISSIONS_USER_SUCCESS',
     UPDATE_PERMISSIONS_USER_FAIL = 'UPDATE_PERMISSIONS_USER_FAIL',
+    CLEAR_USER = 'CLEAR_USER'
 }
 
 
@@ -41,7 +42,7 @@ export const loadUsersFail = createAction(
 
 export const createUserAction = createAction(
     ActionTypes.CREATE_USER,
-    props<{ user: Partial<User> }>()
+    props<{ user: Partial<User>, tienda_id: number }>()
 );
 
 export const createUserSuccess = createAction(
@@ -130,4 +131,10 @@ export const updateUserPermissionsSuccess = createAction(
 export const updateUserPermissionsFail = createAction(
     ActionTypes.UPDATE_PERMISSIONS_USER_FAIL,
     props<{ error: any }>()
+);
+
+
+export const clearUserAction = createAction(
+    ActionTypes.CLEAR_USER,
+
 );

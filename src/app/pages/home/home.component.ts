@@ -27,7 +27,7 @@ const DataModulosConfiguracion = [
     title: "Crear Venta",
     subtitle: "Inicia una nueva venta",
     icono: "https://i.ibb.co/K0ffGrG/crear-venta.png",
-    link: "/create_venta",
+    link: "/ventas/crear",
   },
   {
     title: "Productos",

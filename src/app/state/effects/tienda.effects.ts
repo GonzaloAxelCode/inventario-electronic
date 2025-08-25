@@ -24,7 +24,9 @@ export class TiendaEffects {
                 this.tiendaService.fetchLoadTiendas().pipe(
                     map(tiendas => {
 
+                        console.log('tiendas', tiendas);
                         return loadTiendasSuccess({ tiendas });
+
                     }),
                     catchError(error => {
 

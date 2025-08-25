@@ -32,7 +32,7 @@ export class AuthEffects {
                         saveAuthDataToLocalStorage({
                             accessToken: response?.access,
                             refreshToken: response?.refresh,
-                            idUser: response.user_id
+
                         });
 
 
@@ -42,7 +42,7 @@ export class AuthEffects {
                             isAuthenticated: true,
                             isLoadingLogin: false,
                             isLoadingLogout: false,
-                            id_user: response.user_id
+
                         });
                     }),
                     catchError((error) =>
@@ -54,7 +54,7 @@ export class AuthEffects {
                                 errors: error?.error,
                                 isLoadingLogin: false,
                                 isLoadingLogout: false,
-                                id_user: null
+
                             })
                         )
                     )

@@ -1,0 +1,27 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap");
+
+body {
+  display: grid;
+  grid: [stack] 1fr / min-content [stack] 1fr;
+  font-family: "Rubik", sans-serif;
+}
+nav a{
+  margin-top: 3px;
+}
+.drawer {
+    top: 0;
+    border-radius: 0;
+      max-width: 250px;
+}
+
+.header {
+    position: sticky;
+}
+tui-icon {
+    block-size: 1.5rem;
+    inline-size: 1.5rem;
+    border-width: 0.25rem;
+}

@@ -32,12 +32,12 @@ export class DashboardProductsMostSalesComponent implements OnInit {
   }
 
   ngOnInit() {
-    const tiendaId = 1; // Reemplaza con el valor dinámico si es necesario
+
     const fromDate = new Date(2025, 0, 1); // Enero 1, 2025
     const toDate = new Date(2025, 4, 4); // Abril 4, 2025
 
     // Despachamos la acción para cargar los productos más vendidos
-    this.store.dispatch(cargarTopProductosVentas({ tiendaId, fromDate, toDate }));
+    this.store.dispatch(cargarTopProductosVentas({ fromDate, toDate }));
 
     // Suscribimos a la respuesta de los productos más vendidos
     this.topProductosMasVendidos$.subscribe((productos) => {

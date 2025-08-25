@@ -6,18 +6,13 @@ import { Store } from '@ngrx/store';
 import { TuiAppearance, TuiButton, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule } from '@taiga-ui/legacy';
 @Component({
-  selector: 'app-formaddtienda',
+  selector: 'app-formaddstore',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TuiTextfield,
-
-
-    TuiInputModule, TuiAppearance,
-    TuiButton],
-  templateUrl: './formaddtienda.component.html',
-  styleUrl: './formaddtienda.component.scss'
+  imports: [CommonModule, ReactiveFormsModule, TuiTextfield, TuiInputModule, TuiAppearance, TuiButton],
+  templateUrl: './formaddstore.component.html',
+  styleUrl: './formaddstore.component.scss'
 })
-export class FormaddtiendaComponent {
-
+export class FormaddstoreComponent {
   tiendaForm: FormGroup;
 
   constructor(private store: Store, private fb: FormBuilder) {

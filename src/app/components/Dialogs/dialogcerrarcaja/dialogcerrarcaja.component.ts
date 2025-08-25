@@ -2,6 +2,7 @@ import { Caja } from '@/app/models/caja.models';
 import { cerrarCaja } from '@/app/state/actions/caja.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectCaja } from '@/app/state/selectors/caja.selectors';
+import { selectCurrenttUser } from '@/app/state/selectors/user.selectors';
 import { AsyncPipe, CommonModule, NgForOf } from '@angular/common';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -18,8 +19,15 @@ import { TuiCell } from '@taiga-ui/layout';
 })
 export class DialogcerrarcajaComponent {
   caja!: Caja
-  constructor(private store: Store<AppState>) { }
+  userId!: number
+  constructor(private store: Store<AppState>) {
+
+
+  }
   ngOnInit(): void {
+    this.store.select(selectCurrenttUser).subscribe((state) => {
+      this.userId = state.id
+    })
     this.store.select(selectCaja).subscribe((state) => {
       this.caja = state.caja
     });
@@ -27,7 +35,7 @@ export class DialogcerrarcajaComponent {
   cerrarCaja() {
     this.store.dispatch(cerrarCaja({
       cajaId: this.caja.id,
-      userId: 5
+
     }))
   }
 }

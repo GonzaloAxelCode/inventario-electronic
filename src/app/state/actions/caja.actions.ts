@@ -36,7 +36,7 @@ export enum CajaActionTypes {
 
 export const loadCaja = createAction(
     CajaActionTypes.LOAD_CAJA,
-    props<{ tiendaId: number }>()
+
 );
 
 export const loadCajaSuccess = createAction(
@@ -50,7 +50,7 @@ export const loadCajaFail = createAction(
 );
 export const createCaja = createAction(
     CajaActionTypes.CREATE_CAJA,
-    props<{ saldoInicial: any; tiendaId: number; usuarioId: number }>()
+    props<{ saldoInicial: any }>()
 );
 
 export const createCajaSuccess = createAction(
@@ -67,7 +67,7 @@ export const createCajaFail = createAction(
 
 export const cerrarCaja = createAction(
     CajaActionTypes.CERRAR_CAJA,
-    props<{ userId: any, cajaId: any }>()
+    props<{ cajaId: any }>()
 );
 
 export const cerrarCajaSuccess = createAction(
@@ -84,7 +84,7 @@ export const cerrarCajaFail = createAction(
 
 export const realizarGasto = createAction(
     CajaActionTypes.REALIZAR_GASTO,
-    props<{ userId: any, cajaId: any, monto: any, descripcion: any }>()
+    props<{ cajaId: any, monto: any, descripcion: any }>()
 );
 
 export const realizarGastoSuccess = createAction(
@@ -101,7 +101,7 @@ export const realizarGastoFail = createAction(
 
 export const realizarIngreso = createAction(
     CajaActionTypes.REALIZAR_INGRESO,
-    props<{ cajaId: any, userId: any, monto: any, descripcion: any }>()
+    props<{ cajaId: any, monto: any, descripcion: any }>()
 );
 
 export const realizarIngresoSuccess = createAction(
@@ -119,7 +119,7 @@ export const realizarIngresoFail = createAction(
 
 export const realizarPrestamo = createAction(
     CajaActionTypes.REALIZAR_PRESTAMO,
-    props<{ userId: any, tiendaId: any, monto: any, descripcion: any }>()
+    props<{ monto: any, descripcion: any }>()
 );
 
 export const realizarPrestamoSuccess = createAction(
@@ -137,7 +137,7 @@ export const realizarPrestamoFail = createAction(
 
 export const reinicializarCaja = createAction(
     CajaActionTypes.REINICIALIZAR_CAJA,
-    props<{ tiendaId: any, userId: any, cajaId: any, saldoInicial: any }>()
+    props<{ cajaId: any, saldoInicial: any }>()
 );
 
 export const reinicializarCajaSuccess = createAction(

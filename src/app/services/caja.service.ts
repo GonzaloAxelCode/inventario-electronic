@@ -31,10 +31,10 @@ export class CajaService {
     /**
      * GET /api/caja-abierta/:tienda_id/
      */
-    getCajaAbierta(tiendaId: number): Observable<{ caja: Caja; operaciones: OperacionCaja[], caja_is_open: boolean }> {
+    getCajaAbierta(): Observable<{ caja: Caja; operaciones: OperacionCaja[], caja_is_open: boolean }> {
         return this.http
             .get<{ caja: Caja; operaciones: OperacionCaja[]; caja_is_open: boolean }>(
-                `${this.siteURL}/caja/${tiendaId}/`
+                `${this.siteURL}/caja/`
             )
             .pipe(catchError((error) => throwError(() => error)));
     }
@@ -42,11 +42,10 @@ export class CajaService {
     /**
      * POST /api/create-caja/
      */
-    createCaja(saldoInicial: number, tiendaId: number, usuarioId: number): Observable<{ caja: Caja; operaciones: OperacionCaja[], caja_is_open: boolean }> {
+    createCaja(saldoInicial: number): Observable<{ caja: Caja; operaciones: OperacionCaja[], caja_is_open: boolean }> {
         const payload = {
             saldo_inicial: saldoInicial,
-            tienda_id: tiendaId,
-            usuario_id: usuarioId,
+
         };
         return this.http
             .post<{ caja: Caja; operaciones: OperacionCaja[]; caja_is_open: boolean }>(`${this.siteURL}/create-caja/`, payload)
@@ -56,12 +55,12 @@ export class CajaService {
     /**
      * POST /api/caja/realizar-gasto/
      */
-    realizarGasto(cajaId: number, monto: number, descripcion: string, usuarioId: number): Observable<{ operacion: OperacionCaja, caja: Caja }> {
+    realizarGasto(cajaId: number, monto: number, descripcion: string): Observable<{ operacion: OperacionCaja, caja: Caja }> {
         const payload = {
             caja_id: cajaId,
             monto,
             descripcion,
-            usuario_id: usuarioId,
+
         };
         return this.http
             .post<{ operacion: OperacionCaja, caja: Caja }>(`${this.siteURL}/caja/realizar-gasto/`, payload)
@@ -71,12 +70,12 @@ export class CajaService {
     /**
      * POST /api/caja/realizar-ingreso/
      */
-    realizarIngreso(cajaId: number, monto: number, descripcion: string, usuarioId: number): Observable<{ operacion: OperacionCaja, caja: Caja }> {
+    realizarIngreso(cajaId: number, monto: number, descripcion: string): Observable<{ operacion: OperacionCaja, caja: Caja }> {
         const payload = {
             caja_id: cajaId,
             monto,
             descripcion,
-            usuario_id: usuarioId,
+
         };
         return this.http
             .post<{ operacion: OperacionCaja, caja: Caja }>(`${this.siteURL}/caja/realizar-ingreso/`, payload)
@@ -86,12 +85,12 @@ export class CajaService {
     /**
      * POST /api/caja/registrar-prestamo/
      */
-    registrarPrestamo(tiendaId: number, monto: number, descripcion: string, usuarioId: number): Observable<{ operacion: OperacionCaja, caja: Caja }> {
+    registrarPrestamo(monto: number, descripcion: string): Observable<{ operacion: OperacionCaja, caja: Caja }> {
         const payload = {
-            tienda_id: tiendaId,
+
             monto,
             descripcion,
-            usuario_id: usuarioId,
+
         };
         return this.http
             .post<{ operacion: OperacionCaja, caja: Caja }>(`${this.siteURL}/caja/registrar-prestamo/`, payload)
@@ -101,8 +100,8 @@ export class CajaService {
     /**
      * POST /api/caja/cerrar/
      */
-    cerrarCaja(cajaId: number, usuarioId: number): Observable<{ caja_is_open: boolean, caja: any, operaciones: any }> {
-        const payload = { caja_id: cajaId, usuario_id: usuarioId };
+    cerrarCaja(cajaId: number): Observable<{ caja_is_open: boolean, caja: any, operaciones: any }> {
+        const payload = { caja_id: cajaId };
         return this.http
             .post<{ caja_is_open: boolean, caja: any, operaciones: any }>(`${this.siteURL}/caja/cerrar/`, payload)
             .pipe(catchError((error) => throwError(() => error)));
@@ -111,8 +110,8 @@ export class CajaService {
     /**
      * POST /api/caja/reiniciar/
      */
-    reinicializarCaja(tiendaId: number, cajaId: number, usuarioId: number, saldoInicial: number): Observable<{ caja_is_open: boolean, caja: Caja, operaciones: any }> {
-        const payload = { tienda_id: tiendaId, caja_id: cajaId, usuario_id: usuarioId, saldo_inicial: saldoInicial };
+    reinicializarCaja(cajaId: number, saldoInicial: number): Observable<{ caja_is_open: boolean, caja: Caja, operaciones: any }> {
+        const payload = { caja_id: cajaId, saldo_inicial: saldoInicial };
         return this.http
             .post<{ caja_is_open: boolean, caja: Caja, operaciones: any }>(`${this.siteURL}/caja/reiniciar/`, payload)
             .pipe(catchError((error) => throwError(() => error)));

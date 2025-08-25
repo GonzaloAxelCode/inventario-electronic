@@ -1,14 +1,15 @@
 import { DialogcreatetiendaComponent } from '@/app/components/Dialogs/dialogcreatetienda/dialogcreatetienda.component';
+import { FormaddstoreComponent } from '@/app/components/Forms/formaddstore/formaddstore.component';
 import { TabletiendasComponent } from '@/app/components/Tables/tabletiendas/tabletiendas.component';
 import { Component } from '@angular/core';
 import { TuiAppearance, TuiButton, tuiDialog } from '@taiga-ui/core';
-import { FormaddtiendaComponent } from "../../components/Forms/formaddtienda/formaddtienda.component";
+
 
 
 @Component({
   selector: 'app-tiendas',
   standalone: true,
-  imports: [FormaddtiendaComponent, TabletiendasComponent, TuiButton, TuiAppearance],
+  imports: [FormaddstoreComponent, TabletiendasComponent, TuiButton, TuiAppearance],
   templateUrl: './tiendas.component.html',
   styleUrl: './tiendas.component.scss'
 })

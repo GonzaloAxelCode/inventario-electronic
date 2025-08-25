@@ -31,20 +31,14 @@
 
 
         <nav tuiTabs class="flex flex-wrap gap-2">
-            <a tuiTab routerLink="/settings" routerLinkActive="active-link">
-                General
-            </a>
-
-            <a tuiTab routerLink="/settings/ventas" routerLinkActive="active-link">
+                     <a tuiTab routerLink="/app/settings/ventas" routerLinkActive="active-link">
                 Configuracion Ventas
             </a>
-            <a tuiTab routerLink="/settings/permisos" routerLinkActive="active-link">
+            <a tuiTab routerLink="/app/settings/permisos" routerLinkActive="active-link">
                 Mis Permisos
             </a>
          
-             <a *ngIf="user.is_superuser" tuiTab routerLink="/settings/usermanagement" routerLinkActive="active-link">
-                Gestionar Personal
-            </a>
+            
         </nav>
     </header>
 

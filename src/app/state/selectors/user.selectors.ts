@@ -14,4 +14,11 @@ export const selectUser = createSelector(
 );
 
 
+export const selectCurrenttUser = createSelector(
+    selectUsersState,
+    (state: UserState) => state.user
+);
+
+
+
 

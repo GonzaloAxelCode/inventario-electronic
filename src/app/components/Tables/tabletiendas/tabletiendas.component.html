@@ -21,10 +21,11 @@
             </td>
             <td tuiTd>
                 <div class="flex gap-2 ">
-                    <button appearance="secondary" iconStart="@tui.users" tuiButton tuiButtonVertical type="button"
-                      (click)="showDialogUpdate()"
+                  
+                     <button appearance="info" iconStart="@tui.users" tuiButton tuiButtonVertical type="button"
+                      (click)="showDialogDetailTienda(tienda)"
                         >
-                        Actualizar
+                        Ver
                     </button>
                     <button appearance="error" iconStart="@tui.trash" tuiButton tuiButtonVertical type="button"
                       (click)="onDeleteTienda(tienda.id)"

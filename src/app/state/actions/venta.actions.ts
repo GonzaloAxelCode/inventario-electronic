@@ -42,7 +42,7 @@ export enum VentaActionTypes {
 }
 export const cargarResumenVentasByDate = createAction(
     VentaActionTypes.CARGAR_RESUMEN_VENTAS_BY_DATE,
-    props<{ tiendaId: number, year: number, month: number | null, day: number | null, tipo: string }>()
+    props<{ year: number, month: number | null, day: number | null, tipo: string }>()
 );
 
 export const cargarResumenVentasByDateExito = createAction(
@@ -62,7 +62,7 @@ export const cargarResumenVentasByDateError = createAction(
 
 export const cargarTopProductosVentas = createAction(
     VentaActionTypes.CARGAR_TOP_PRODUCTOS_VENTAS,
-    props<{ tiendaId: number, fromDate: Date, toDate: Date }>()
+    props<{ fromDate: Date, toDate: Date }>()
 );
 
 export const cargarTopProductosVentasExito = createAction(
@@ -77,7 +77,7 @@ export const cargarTopProductosVentasError = createAction(
 
 export const cargarVentasTienda = createAction(
     VentaActionTypes.CARGAR_VENTAS_TIENDA,
-    props<{ tiendaId: number, from_date: any, to_date: any, page?: any, page_size?: any }>()
+    props<{ from_date: any, to_date: any, page?: any, page_size?: any }>()
 );
 
 export const cargarVentasTiendaExito = createAction(
@@ -127,7 +127,7 @@ export const cancelarVentaError = createAction(
 
 export const cargarResumenVentas = createAction(
     VentaActionTypes.CARGAR_RESUMEN_VENTAS,
-    props<{ tiendaId: number }>()
+
 );
 
 export const cargarResumenVentasExito = createAction(
@@ -145,7 +145,7 @@ export const cargarResumenVentasError = createAction(
 // Acción para cargar ventas por rango de fechas y tienda
 export const cargarVentasRangoFechasTienda = createAction(
     VentaActionTypes.CARGAR_VENTAS_RANGO_FECHAS_TIENDA,
-    props<{ tiendaId: number, fromDate: Date, toDate: Date }>()
+    props<{ fromDate: Date, toDate: Date }>()
 );
 
 // Acción para el éxito de la carga de ventas por rango de fechas y tienda
@@ -164,7 +164,7 @@ export const cargarVentasRangoFechasTiendaError = createAction(
 
 export const cargarProductosMenorStock = createAction(
     VentaActionTypes.CARGAR_PRODUCTOS_MENOR_STOCK,
-    props<{ tiendaId: number }>()
+
 );
 
 export const cargarProductosMenorStockSuccess = createAction(
@@ -184,7 +184,7 @@ export const clearVentaTemporal = createAction(
 
 export const searchVenta = createAction(
     VentaActionTypes.SEARCH_VENTA,
-    props<{ query: Partial<QuerySearchVenta>, tiendaId: any, page_size?: any, page?: any }>()
+    props<{ query: Partial<QuerySearchVenta>, page_size?: any, page?: any }>()
 );
 
 export const searchVentaSuccess = createAction(

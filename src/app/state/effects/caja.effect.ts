@@ -46,8 +46,8 @@ export class CajaEffects {
     loadCajaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(loadCaja),
-            exhaustMap(({ tiendaId }) =>
-                this.cajaService.getCajaAbierta(tiendaId).pipe(
+            exhaustMap(() =>
+                this.cajaService.getCajaAbierta().pipe(
                     map(({ caja, operaciones, caja_is_open }) => {
                         console.log("effect", caja, operaciones, caja_is_open);
                         return loadCajaSuccess({ caja, operaciones, caja_is_open })
@@ -62,8 +62,8 @@ export class CajaEffects {
     createCajaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(createCaja),
-            exhaustMap(({ saldoInicial, tiendaId, usuarioId }) =>
-                this.cajaService.createCaja(saldoInicial, tiendaId, usuarioId).pipe(
+            exhaustMap(({ saldoInicial, }) =>
+                this.cajaService.createCaja(saldoInicial,).pipe(
                     map(({ caja, operaciones, caja_is_open }) => {
                         this.toastr.success('Caja iniciada', 'Éxito');
                         return createCajaSuccess({ caja, operaciones, caja_is_open });
@@ -82,8 +82,8 @@ export class CajaEffects {
     realizarGastoEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(realizarGasto),
-            exhaustMap(({ cajaId, monto, descripcion, userId }) =>
-                this.cajaService.realizarGasto(cajaId, monto, descripcion, userId).pipe(
+            exhaustMap(({ cajaId, monto, descripcion, }) =>
+                this.cajaService.realizarGasto(cajaId, monto, descripcion,).pipe(
                     map(({ operacion, caja }) => {
                         this.toastr.success('Gasto registrado', 'Éxito');
                         return realizarGastoSuccess({ operacion, caja });
@@ -101,8 +101,8 @@ export class CajaEffects {
     realizarIngresoEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(realizarIngreso),
-            exhaustMap(({ userId, cajaId, monto, descripcion }) =>
-                this.cajaService.realizarIngreso(cajaId, monto, descripcion, userId).pipe(
+            exhaustMap(({ cajaId, monto, descripcion }) =>
+                this.cajaService.realizarIngreso(cajaId, monto, descripcion,).pipe(
                     map(({ operacion, caja }) => {
                         this.toastr.success('Ingreso registrado', 'Éxito');
                         return realizarIngresoSuccess({ operacion, caja });
@@ -120,8 +120,8 @@ export class CajaEffects {
     registrarPrestamoEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(realizarPrestamo),
-            exhaustMap(({ tiendaId, monto, descripcion, userId }) =>
-                this.cajaService.registrarPrestamo(tiendaId, monto, descripcion, userId).pipe(
+            exhaustMap(({ monto, descripcion, }) =>
+                this.cajaService.registrarPrestamo(monto, descripcion,).pipe(
                     map(({ operacion, caja }) => {
                         this.toastr.success('Préstamo registrado', 'Éxito');
                         return realizarPrestamoSuccess({ operacion, caja });
@@ -139,8 +139,8 @@ export class CajaEffects {
     cerrarCajaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cerrarCaja),
-            exhaustMap(({ cajaId, userId }) =>
-                this.cajaService.cerrarCaja(cajaId, userId).pipe(
+            exhaustMap(({ cajaId, }) =>
+                this.cajaService.cerrarCaja(cajaId,).pipe(
                     map((res) => {
                         this.toastr.success('Caja cerrada', 'Éxito');
                         return cerrarCajaSuccess({ caja_is_open: false });
@@ -158,8 +158,8 @@ export class CajaEffects {
     reiniciarCajaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(reinicializarCaja),
-            exhaustMap(({ tiendaId, cajaId, userId, saldoInicial }) =>
-                this.cajaService.reinicializarCaja(tiendaId, cajaId, userId, saldoInicial).pipe(
+            exhaustMap(({ cajaId, saldoInicial }) =>
+                this.cajaService.reinicializarCaja(cajaId, saldoInicial).pipe(
                     map(({ caja, operaciones }) => {
                         this.toastr.success('Caja reiniciada', 'Éxito');
                         return reinicializarCajaSuccess({ caja, operaciones, caja_is_open: true });

@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { TIENDA_ID } from '../constants/tienda-vars';
 import { URL_BASE } from './utils/endpoints';
 import { printError } from './utils/print-errors';
 
@@ -15,13 +14,13 @@ export class ProveedorService {
     private http = inject(HttpClient);
 
     fetchProveedores(): Observable<Proveedor[]> {
-        return this.http.get<Proveedor[]>(`${this.siteURL}/proveedores?tienda=${TIENDA_ID}`).pipe(
+        return this.http.get<Proveedor[]>(`${this.siteURL}/proveedores`).pipe(
             catchError(error => throwError(error))
         );
     }
 
     createProveedor(proveedor: ProveedorCreate): Observable<Proveedor> {
-        return this.http.post<Proveedor>(`${this.siteURL}/proveedores/create/`, { ...proveedor, tienda: TIENDA_ID }).pipe(
+        return this.http.post<Proveedor>(`${this.siteURL}/proveedores/create/`, { ...proveedor }).pipe(
             catchError(error => {
                 printError(error);
                 return throwError(error);

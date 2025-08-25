@@ -1,24 +1,23 @@
 
 
-import { TIENDA_ID } from '@/app/constants/tienda-vars';
 import { ConsultaService } from '@/app/services/consultas.service';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { crearVenta } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
-import { selectAuth } from '@/app/state/selectors/auth.selectors';
+import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { AsyncPipe, CommonModule, NgForOf } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiLoader, TuiTextfield, TuiTitle } from '@taiga-ui/core';
 import { TuiCheckbox, TuiDataListWrapper, TuiItemsWithMore, TuiRadio, TuiStepper } from '@taiga-ui/kit';
 import { TuiAppBar, TuiCardLarge, TuiCell, TuiHeader } from '@taiga-ui/layout';
 import { TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
-import { catchError, finalize, Observable, of, timeout } from 'rxjs';
+import { catchError, finalize, map, Observable, of, timeout } from 'rxjs';
 
 @Component({
   selector: 'app-hacerventa',
@@ -88,19 +87,23 @@ export class HacerventaComponent implements OnInit {
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogService = inject(DialogService);
 
-
-  userId: number = 0;
+  tiendaUser!: number
+  userId!: number;
   constructor(private fb: FormBuilder, private consultaService: ConsultaService, private cdr: ChangeDetectorRef) {
     this.loadingCreateVenta$ = this.store.select(selectVenta);
     this.showVentaDetailTemporary$ = this.store.select(selectVenta)
-
-    this.store.pipe(select(selectAuth)).subscribe(authState => {
-      this.userId = Number(authState?.id_user) || 0;
+    this.store.select(selectUsersState).pipe(
+      map(userState => userState.user.tienda)
+    ).subscribe(tienda => {
+      this.tiendaUser = tienda || 0;
     });
+    this.store.select(selectCurrenttUser).subscribe((state) => {
+      this.userId = state.id
+    })
 
     this.ventaForm = this.fb.group({
 
-      tiendaId: [TIENDA_ID],
+
       usuarioId: [this.userId],
 
       metodoPago: [this.listMetodosPago[1], Validators.required],

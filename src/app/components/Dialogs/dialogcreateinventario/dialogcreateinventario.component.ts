@@ -8,24 +8,23 @@ import { TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
 import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 
 
-import { TIENDA_ID } from '@/app/constants/tienda-vars';
 import { Producto, ProductoState } from '@/app/models/producto.models';
 import { TiendaState } from '@/app/models/tienda.models';
 import { createInventario } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
 import { InventarioState } from '@/app/state/reducers/inventario.reducer';
 import { ProveedorState } from '@/app/state/reducers/proveedor.reducer';
-import { selectAuth } from '@/app/state/selectors/auth.selectors';
 import { selectInventarioState } from '@/app/state/selectors/inventario.selectors';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { selectProveedorState } from '@/app/state/selectors/proveedor.selectors';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
+import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAppearance } from '@taiga-ui/core';
 import { TuiDataListWrapperComponent, TuiInputNumber } from '@taiga-ui/kit';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 
 @Component({
@@ -54,20 +53,22 @@ import { Observable } from 'rxjs';
 export class DialogcreateinventarioComponent implements OnInit {
 
   tiendasState$?: Observable<TiendaState>
-  userId: number = 0;
+  userId!: number
   inventarioForm2!: FormGroup;
   productos: Producto[] = [];
   tiendas: any[] = [];
   proveedores: any[] = [];
   loadingCreateInventario: boolean = false;
+  tiendaUser!: number
+
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
 
   }
   ngOnInit() {
-
-    this.store.pipe(select(selectAuth)).subscribe(authState => {
-      this.userId = Number(authState?.id_user) || 0;
+    this.store.select(selectCurrenttUser).subscribe((state) => {
+      this.userId = state.id;
     });
+
     this.store.select(selectProductoState).subscribe((state: ProductoState) => {
       this.productos = state.productos;
     });
@@ -94,6 +95,11 @@ export class DialogcreateinventarioComponent implements OnInit {
       costo_venta: [1, [Validators.required,]],
       descripcion: ['', Validators.required]
     });
+    this.store.select(selectUsersState).pipe(
+      map(userState => userState.user.tienda)
+    ).subscribe(tienda => {
+      this.tiendaUser = tienda || 0;
+    });
   }
   onSubmit(): void {
     if (this.inventarioForm2.valid) {
@@ -101,7 +107,7 @@ export class DialogcreateinventarioComponent implements OnInit {
       const preparedData = {
         ...this.inventarioForm2.value,
         producto: this.inventarioForm2.value.producto.id,
-        tienda: TIENDA_ID,
+        tienda: this.tiendaUser,
         proveedor: this.inventarioForm2.value.proveedor.id,
       }
 

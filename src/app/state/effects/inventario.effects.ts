@@ -60,7 +60,7 @@ export class InventarioEffects {
         this.actions$.pipe(
             ofType(loadInventarios),
             exhaustMap((action) =>
-                this.inventarioService.fetchInventariosPorTienda(action.tiendaId, action.page || 1, action.page_size || 5).pipe(
+                this.inventarioService.fetchInventariosPorTienda(action.page || 1, action.page_size || 5).pipe(
                     map(response => {
 
                         return loadInventariosSuccess({
@@ -165,7 +165,7 @@ export class InventarioEffects {
         this.actions$.pipe(
             ofType(searchInventarios),
             exhaustMap((action) =>
-                this.inventarioService.fetchSearchInventarios(action.query, action.page || 1, action.page_size || 5, action.tiendaId).pipe(
+                this.inventarioService.fetchSearchInventarios(action.query, action.page || 1, action.page_size || 5).pipe(
                     map(response => {
                         console.log(response)
                         return searchInventarioSuccess({

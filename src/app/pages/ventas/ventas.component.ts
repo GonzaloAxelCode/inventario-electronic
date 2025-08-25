@@ -1,10 +1,10 @@
-import { TIENDA_ID } from '@/app/constants/tienda-vars';
 import { Venta } from '@/app/models/venta.models';
 import { QuerySearchVenta } from '@/app/services/caja.service';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
 import { cargarVentasTienda, clearVentaSearch, searchVenta } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
+import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVentaState } from '@/app/state/selectors/venta.selectors';
 import { AsyncPipe, CommonModule, NgForOf, NgIf } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
@@ -100,9 +100,15 @@ export class VentasComponent implements OnInit {
   filteredData: any = []
   allColumnKeys = this.allColumns.map(c => c.key);
   displayedColumns = [...this.allColumnKeys];
+  tiendaUser!: number
+
   constructor(private fb: FormBuilder, private store: Store<AppState>) { }
   ngOnInit() {
-
+    this.store.select(selectUsersState).pipe(
+      map(userState => userState.user.tienda)
+    ).subscribe(tienda => {
+      this.tiendaUser = tienda || 0;
+    });
     this.loadInitialData();
   }
 
@@ -111,7 +117,7 @@ export class VentasComponent implements OnInit {
 
     this.store.dispatch(cargarVentasTienda({
 
-      tiendaId: TIENDA_ID,
+
       from_date: [initialRange.from.year, initialRange.from.month, initialRange.from.day],
       to_date: [initialRange.to.year, initialRange.to.month, initialRange.to.day]
 
@@ -189,7 +195,9 @@ export class VentasComponent implements OnInit {
     }
 
     console.log(searchQuery)
-    this.store.dispatch(searchVenta({ query: searchQuery, tiendaId: TIENDA_ID }))
+    this.store.dispatch(searchVenta({
+      query: searchQuery,
+    }))
 
   }
 
@@ -207,11 +215,11 @@ export class VentasComponent implements OnInit {
   protected goToPage(index: number): void {
     this.ventasState$?.pipe(take(1)).subscribe(state => {
       if (state?.search_ventas_found === '') {
-        //this.store.dispatch(loadInventarios({ tiendaId: TIENDA_ID, page: index + 1 }));
+
         const initialRange = this.range;
         this.store.dispatch(cargarVentasTienda({
 
-          tiendaId: TIENDA_ID,
+
           from_date: [initialRange.from.year, initialRange.from.month, initialRange.from.day],
           to_date: [initialRange.to.year, initialRange.to.month, initialRange.to.day],
           page: index + 1
@@ -230,7 +238,7 @@ export class VentasComponent implements OnInit {
           tipo_documento_cliente: this.form.value.tipo_documento_cliente === "Dni" ? "1" : "6",
           estado_sunat: this.form.value.estado_sunat || ""
         }
-        this.store.dispatch(searchVenta({ query: searchQuery, tiendaId: TIENDA_ID, page: index + 1 }));
+        this.store.dispatch(searchVenta({ query: searchQuery, page: index + 1 }));
       }
     });
   }

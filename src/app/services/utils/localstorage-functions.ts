@@ -1,15 +1,15 @@
 import { TokenPair } from "src/app/models/auth.models";
 
-export type AuthDataLocastorage = TokenPair & { idUser: string };
+export type AuthDataLocastorage = TokenPair
 
 const STORAGE_KEY = "authData";
 
 export function getAuthDataFromLocalStorage(): AuthDataLocastorage {
     if (typeof window !== 'undefined' && window.localStorage) {
         const data = localStorage.getItem(STORAGE_KEY);
-        return data ? JSON.parse(data) : { accessToken: '', refreshToken: '', idUser: '0' };
+        return data ? JSON.parse(data) : { accessToken: '', refreshToken: '' };
     }
-    return { accessToken: '', refreshToken: '', idUser: '0' };
+    return { accessToken: '', refreshToken: '' };
 }
 
 export function saveAuthDataToLocalStorage(authData: AuthDataLocastorage): void {

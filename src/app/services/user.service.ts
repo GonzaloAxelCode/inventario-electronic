@@ -1,5 +1,5 @@
 import { User, UserPermissions } from '@/app/models/user.models';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -14,33 +14,41 @@ export class UserService {
     private siteURL = `${URL_BASE}/api`;
     private http = inject(HttpClient);
 
-
-    fetchUsers(): Observable<User[]> {
-        return this.http.get<User[]>(`${this.siteURL}/usuarios/`).pipe(
-            catchError(error => {
-                console.error(error);
-                return throwError(error);
-            })
-        );
-    }
     fetchCurrentUser(): Observable<User> {
-        const { idUser } = getAuthDataFromLocalStorage()
-        return this.http.get<User>(`${this.siteURL}/usuarios/${idUser}/`).pipe(
+        const { accessToken } = getAuthDataFromLocalStorage()
+        const headers = new HttpHeaders().set('Authorization', `JWT ${accessToken}`);
+
+        return this.http.get<User>(`${this.siteURL}/usuarios/me/`, {
+            headers
+        }).pipe(
+            catchError(error => {
+                console.error(error);
+                return throwError(() => error);
+            })
+        );
+    }
+    fetchUsers(): Observable<User[]> {
+        const { accessToken } = getAuthDataFromLocalStorage()
+        const headers = new HttpHeaders().set('Authorization', `JWT ${accessToken}`);
+
+        return this.http.get<User[]>(`${this.siteURL}/usuarios/`, {
+            headers
+        }).pipe(
             catchError(error => {
                 console.error(error);
                 return throwError(error);
+            })
+        );
+    }
+    createUser(user: Partial<User>, tienda_id: number): Observable<User> {
+        return this.http.post<User>(`${this.siteURL}/usuarios/create/${tienda_id}/`, user).pipe(
+            catchError(error => {
+                console.error(error);
+                return throwError(() => error);
             })
         );
     }
 
-    createUser(user: Partial<User>): Observable<User> {
-        return this.http.post<User>(`${this.siteURL}/usuarios/create/`, { ...user }).pipe(
-            catchError(error => {
-                console.error(error);
-                return throwError(error);
-            })
-        );
-    }
 
 
     updateUser(user: Partial<User>): Observable<User> {

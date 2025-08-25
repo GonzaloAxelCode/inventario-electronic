@@ -1,4 +1,3 @@
-import { TIENDA_ID } from '@/app/constants/tienda-vars';
 import { checkTokenAction } from '@/app/state/actions/auth.actions';
 import { loadCategorias } from '@/app/state/actions/categoria.actions';
 import { loadInventarios } from '@/app/state/actions/inventario.actions';
@@ -22,13 +21,14 @@ export class AppEffects {
                 ofType('@ngrx/effects/init'),
                 tap(() => {
                     this.store.dispatch(checkTokenAction());
+                    this.store.dispatch(loadUserAction());
                     this.store.dispatch(loadCategorias());
                     this.store.dispatch(loadProductosAction({}));
                     this.store.dispatch(loadProveedores());
 
                     this.store.dispatch(loadTiendasAction());
-                    this.store.dispatch(loadInventarios({ tiendaId: TIENDA_ID }));
-                    this.store.dispatch(loadUserAction());
+                    this.store.dispatch(loadInventarios({}));
+
                     this.store.dispatch(loadUsersAction());
                 })
             ),

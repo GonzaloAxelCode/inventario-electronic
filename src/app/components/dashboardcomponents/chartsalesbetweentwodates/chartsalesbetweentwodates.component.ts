@@ -1,6 +1,6 @@
-import { TIENDA_ID } from '@/app/constants/tienda-vars';
 import { cargarVentasRangoFechasTienda } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
+import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVentaState } from '@/app/state/selectors/venta.selectors';
 import { AsyncPipe, CommonModule, NgIf } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
@@ -35,6 +35,7 @@ import { distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
   styleUrls: ['./chartsalesbetweentwodates.component.scss'],
 })
 export class ChartsalesbetweentwodatesComponent implements OnInit {
+  tiendaUser!: number
 
   protected readonly axisYSecondaryLabels = [
     's/. 300', 's/. 600', 's/. 900', 's/. 1200', 's/. 1500',
@@ -90,6 +91,14 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
 
   ngOnInit() {
     this.loadInitialData();
+
+
+    this.store.select(selectUsersState).pipe(
+      map(userState => userState.user.tienda)
+    ).subscribe(tienda => {
+      this.tiendaUser = tienda || 0;
+    });
+
   }
   allSalesYear() {
     const fromDate = new Date(2025, 0, 1);
@@ -102,7 +111,7 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
 
 
     this.store.dispatch(cargarVentasRangoFechasTienda({
-      tiendaId: TIENDA_ID,
+
       fromDate,
       toDate
     }));
@@ -111,7 +120,7 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
   private loadInitialData(): void {
     const initialRange = this.range;
     this.store.dispatch(cargarVentasRangoFechasTienda({
-      tiendaId: TIENDA_ID,
+
       fromDate: new Date(initialRange.from.year, initialRange.from.month, initialRange.from.day),
       toDate: new Date(initialRange.to.year, initialRange.to.month, initialRange.to.day)
     }));
@@ -125,7 +134,7 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
 
     // Disparar la carga de nuevos datos
     this.store.dispatch(cargarVentasRangoFechasTienda({
-      tiendaId: TIENDA_ID,
+
       fromDate: new Date(newRange.from.year, newRange.from.month, newRange.from.day),
       toDate: new Date(newRange.to.year, newRange.to.month, newRange.to.day)
     }));

@@ -3,7 +3,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { TIENDA_ID } from '../constants/tienda-vars';
 import { URL_BASE } from './utils/endpoints';
 import { printError } from './utils/print-errors';
 import { QuerySearchProduct } from './utils/querys';
@@ -27,7 +26,7 @@ export class ProductoService {
     private siteURL = URL_BASE + "/api";
     private http = inject(HttpClient);
     fetchLoadProductos(page: number, page_size: number): Observable<PaginationResponse> {
-        return this.http.get<PaginationResponse>(`${this.siteURL}/productos/?page=${page}&page_size=${page_size}&tienda=${TIENDA_ID}`).pipe(
+        return this.http.get<PaginationResponse>(`${this.siteURL}/productos/?page=${page}&page_size=${page_size}`).pipe(
             catchError(error => throwError(error))
         );
     }
@@ -40,7 +39,7 @@ export class ProductoService {
     }
 
     createProducto(producto: ProductoCreate): Observable<Producto> {
-        return this.http.post<Producto>(`${this.siteURL}/productos/create/`, { ...producto, tienda: TIENDA_ID }).pipe(
+        return this.http.post<Producto>(`${this.siteURL}/productos/create/`, { ...producto }).pipe(
             catchError(error => {
                 printError(error);
                 return throwError(error);
@@ -68,7 +67,7 @@ export class ProductoService {
             .set('page_size', page_size);
         return this.http.post<PaginationResponse>(
             `${this.siteURL}/productos/buscar-producto/`,
-            { ...query, tienda: TIENDA_ID },
+            { ...query },
             { params }
         ).pipe(
             catchError(error => throwError(error))

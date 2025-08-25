@@ -51,8 +51,8 @@ export class VentaEffects {
     loadVentasPorRangoFechasTiendaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cargarVentasRangoFechasTienda),
-            exhaustMap(({ tiendaId, fromDate, toDate }) =>
-                this.ventaService.getVentasPorRangoFechasTienda(tiendaId, fromDate, toDate).pipe(
+            exhaustMap(({ fromDate, toDate }) =>
+                this.ventaService.getVentasPorRangoFechasTienda(fromDate, toDate).pipe(
                     map(response => {
 
                         return cargarVentasRangoFechasTiendaExito({ salesDateRangePerDay: response.salesDateRangePerDay });
@@ -66,8 +66,8 @@ export class VentaEffects {
     loadResumenVentasByDateEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cargarResumenVentasByDate), // La acción que despacha el efecto
-            exhaustMap(({ tiendaId, year, month, day, tipo }) =>
-                this.ventaService.getResumenVentasByDate({ tiendaId, year, month, day, tipo }).pipe(
+            exhaustMap(({ year, month, day, tipo }) =>
+                this.ventaService.getResumenVentasByDate({ year, month, day, tipo }).pipe(
                     map(response => {
                         // Acción que despacha los datos obtenidos
                         return cargarResumenVentasByDateExito({
@@ -89,8 +89,8 @@ export class VentaEffects {
     loadLowStockProductsPorTienda$ = createEffect(() =>
         this.actions$.pipe(
             ofType(cargarProductosMenorStock),
-            exhaustMap(({ tiendaId }) =>
-                this.ventaService.getLowStockProductsPorTienda(tiendaId).pipe(
+            exhaustMap(() =>
+                this.ventaService.getLowStockProductsPorTienda().pipe(
                     map((res: any) =>
 
                         cargarProductosMenorStockSuccess({ lowStockProducts: res.lowStockProducts })
@@ -107,8 +107,8 @@ export class VentaEffects {
     loadTopProductosMasVendidosEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cargarTopProductosVentas),
-            exhaustMap(({ tiendaId, fromDate, toDate }) =>
-                this.ventaService.getTopProductosMasVendidos(tiendaId, fromDate, toDate).pipe(
+            exhaustMap(({ fromDate, toDate }) =>
+                this.ventaService.getTopProductosMasVendidos(fromDate, toDate).pipe(
                     map(response =>
                         cargarTopProductosVentasExito({ topProductoMostSales: response.topProductoMostSales })
                     ),
@@ -124,8 +124,8 @@ export class VentaEffects {
     loadVentasTiendaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cargarVentasTienda),
-            exhaustMap(({ tiendaId, from_date, to_date, page, page_size }) =>
-                this.ventaService.getVentasPorTienda(tiendaId, from_date, to_date, page, page_size).pipe(
+            exhaustMap(({ from_date, to_date, page, page_size }) =>
+                this.ventaService.getVentasPorTienda(from_date, to_date, page, page_size).pipe(
                     map(response => {
                         console.log(response)
                         return cargarVentasTiendaExito({
@@ -191,8 +191,8 @@ export class VentaEffects {
     cargarResumenVentasEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cargarResumenVentas),
-            exhaustMap(({ tiendaId }) =>
-                this.ventaService.obtenerResumenVentas(tiendaId).pipe(
+            exhaustMap(() =>
+                this.ventaService.obtenerResumenVentas().pipe(
                     map((res) => {
 
                         return cargarResumenVentasExito({
@@ -216,7 +216,7 @@ export class VentaEffects {
         this.actions$.pipe(
             ofType(searchVenta),
             exhaustMap((action) =>
-                this.ventaService.fetchSearchVentas(action.query, action.page || 1, action.page_size || 5, action.tiendaId).pipe(
+                this.ventaService.fetchSearchVentas(action.query, action.page || 1, action.page_size || 5).pipe(
                     map(response => {
                         console.log(response)
                         return searchVentaSuccess({
