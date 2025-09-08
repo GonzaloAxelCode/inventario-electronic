@@ -11,9 +11,6 @@ import {
     cancelarVenta,
     cancelarVentaError,
     cancelarVentaExito,
-    cargarProductosMenorStock,
-    cargarProductosMenorStockFailure,
-    cargarProductosMenorStockSuccess,
     cargarResumenVentas,
     cargarResumenVentasByDate,
     cargarResumenVentasByDateError,
@@ -86,22 +83,6 @@ export class VentaEffects {
         )
     );
 
-    loadLowStockProductsPorTienda$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(cargarProductosMenorStock),
-            exhaustMap(() =>
-                this.ventaService.getLowStockProductsPorTienda().pipe(
-                    map((res: any) =>
-
-                        cargarProductosMenorStockSuccess({ lowStockProducts: res.lowStockProducts })
-                    ),
-                    catchError((error) =>
-                        of(cargarProductosMenorStockFailure({ error }))
-                    )
-                )
-            )
-        )
-    );
 
 
     loadTopProductosMasVendidosEffect = createEffect(() =>

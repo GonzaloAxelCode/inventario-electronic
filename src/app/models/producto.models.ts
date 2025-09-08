@@ -11,6 +11,7 @@ export interface Producto {
     fecha_actualizacion?: Date;
     activo?: boolean;
     categoria_nombre?: string
+    date_created?: any
 }
 
 export type ProductoCreate = Omit<Producto, 'id' |
@@ -34,7 +35,7 @@ export interface ProductoState {
     productos_search: Producto[];
     loadingProductos?: boolean;
     errors?: any;
-
+    all_products: Producto[]
     loadingCreate: boolean;
     loadingUpdate: boolean;
     loadingDeactivate: boolean;

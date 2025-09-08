@@ -15,17 +15,18 @@ export interface Inventario {
     proveedor: number | any
     responsable: number | any
     descripcion: string
-
     producto_nombre: string,
     tienda_nombre: string,
-
+    date_created?: any
     proveedor_nombre: string,
     responsable_nombre: string
+    categoria_nombre: string
+    categoria_id: number
 }
 
 export type InventarioCreate = Omit<Inventario, 'id' |
     'fecha_actualizacion' |
     'activo' |
-    'estado' |
+    'estado' | 'responsable' |
     'lote'>;
 

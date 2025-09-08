@@ -4,15 +4,17 @@ import { createCategoriaAction, createCategoriaFail, createCategoriaSuccess, del
 
 
 
-interface CategoriaState {
+export interface CategoriaState {
   categorias: Categoria[];
-  loadingCategorias?: boolean;
+  loadingCategorias: boolean;
   errors?: any;
+  loadingCreateCategoria: boolean
 }
 
 export const initialState: CategoriaState = {
   categorias: [],
   loadingCategorias: false,
+  loadingCreateCategoria: false,
   errors: {}
 };
 
@@ -34,18 +36,18 @@ export const categoriaReducer = createReducer(
   })),
   on(createCategoriaAction, (state) => ({
     ...state,
-    loadingCategorias: true
+    loadingCreateCategoria: true
   })),
   on(createCategoriaSuccess, (state, { categoria }) => ({
     ...state,
     categorias: [...state.categorias, categoria],
 
-    loadingCategorias: false
+    loadingCreateCategoria: false
   })),
   on(createCategoriaFail, (state, { error }) => ({
     ...state,
     errors: error,
-    loadingCategorias: false
+    loadingCreateCategoria: false
   })), on(updateCategoriaAction, (state, { categoria }) => ({
     ...state,
 

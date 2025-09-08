@@ -27,6 +27,7 @@ export interface Caja {
     saldo_final: number;
     estado: EstadoCaja;
     observacion?: string;
+    date_created?: any
     operaciones: OperacionCaja[];
 }
 

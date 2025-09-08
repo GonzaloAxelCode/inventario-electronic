@@ -42,7 +42,7 @@
 
     </div>
 </div>
-<button iconStart="@tui.lock"  (click)="cerrarCaja()"
+<button iconStart="@tui.lock"  [disabled]="!!(cajaState$ | async)?.loadingCerrarCaja" (click)="cerrarCaja()"
 class="grid w-full my-3" tuiButton type="submit" appearance="error">
-    Cerrar Caja
+    Cerrar Caja    <tui-loader [showLoader]="!!(cajaState$ | async)?.loadingCerrarCaja"></tui-loader>
 </button>

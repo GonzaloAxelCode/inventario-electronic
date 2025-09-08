@@ -37,7 +37,8 @@ const initialState: ProductoState = {
     loadingDeactivate: false,
     loadingDelete: false,
     loadingSearch: false,
-    productos_search: []
+    productos_search: [],
+    all_products: []
 };
 
 export const productoReducer = createReducer(
@@ -47,20 +48,21 @@ export const productoReducer = createReducer(
     on(loadProductosAction, state => ({
         ...state,
         loadingProductos: true,
-        loadingSearch: true
+
+
     })),
-    on(loadProductosSuccess, (state, { productos, next, previous, index_page, length_pages }) => ({
+    on(loadProductosSuccess, (state, { productos, next, previous, index_page, length_pages, all_products }) => ({
         ...state,
         productos,
         loadingProductos: false,
-        loadingSearch: false,
+        all_products,
         next, previous, index_page, length_pages
     })),
     on(loadProductosFail, (state, { error }) => ({
         ...state,
         errors: error,
         loadingProductos: false,
-        loadingSearch: false
+
     })),
 
     // Creación de producto

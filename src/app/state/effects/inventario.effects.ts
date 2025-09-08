@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { InventarioService } from '@/app/services/inventario.service';
+import { InventarioSearchService } from '@/app/services/search-services/inventario-search.service';
 import {
     actualizarInventario,
 
@@ -12,6 +13,15 @@ import {
 
 
     actualizarInventarioSuccess,
+
+
+    cargarProductosMenorStock,
+
+
+    cargarProductosMenorStockFailure,
+
+
+    cargarProductosMenorStockSuccess,
 
 
     createInventario,
@@ -29,9 +39,6 @@ import {
 
     loadInventariosFail,
     loadInventariosSuccess,
-
-    searchInventarioFail,
-
     searchInventarios,
 
     searchInventarioSuccess,
@@ -53,6 +60,7 @@ export class InventarioEffects {
     constructor(
         private actions$: Actions,
         private inventarioService: InventarioService,
+        private inventarioSearchService: InventarioSearchService,
         private toastr: ToastrService
     ) { }
 
@@ -60,15 +68,13 @@ export class InventarioEffects {
         this.actions$.pipe(
             ofType(loadInventarios),
             exhaustMap((action) =>
-                this.inventarioService.fetchInventariosPorTienda(action.page || 1, action.page_size || 5).pipe(
-                    map(response => {
+                this.inventarioService.fetchInventariosPorTienda().pipe(
+                    map(res => {
 
                         return loadInventariosSuccess({
-                            inventarios: response.results,
-                            next: response.next,
-                            previous: response.previous,
-                            index_page: response.index_page,
-                            length_pages: response.length_pages
+
+                            inventarios: res.results,
+
 
                         })
                     }),
@@ -164,26 +170,35 @@ export class InventarioEffects {
     searchProductosEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(searchInventarios),
-            exhaustMap((action) =>
-                this.inventarioService.fetchSearchInventarios(action.query, action.page || 1, action.page_size || 5).pipe(
-                    map(response => {
-                        console.log(response)
-                        return searchInventarioSuccess({
-                            inventarios: response.results,
-                            search_products_found: response.search_products_found,
-                            count: response.count,
-                            next: response.next,
-                            previous: response.previous,
-                            index_page: response.index_page,
-                            length_pages: response.length_pages
-                        });
-                    }),
-                    catchError(error => {
-                        this.toastr.error('Error al buscar los inventarios', 'Error');
-                        return of(searchInventarioFail({ error }));
-                    })
+            map(action => {
+
+                const resultados = this.inventarioSearchService.filtrarInventario(action.inventarios, action.query);
+
+
+                return searchInventarioSuccess({
+                    inventarios_search: resultados.data,
+                    search_found: resultados.found
+                });
+            })
+        )
+    );
+
+
+    loadLowStockProductsPorTienda$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(cargarProductosMenorStock),
+            exhaustMap(() =>
+                this.inventarioService.getLowStockProductsPorTienda().pipe(
+                    map((res: any) =>
+
+                        cargarProductosMenorStockSuccess({ lowStockProducts: res.lowStockProducts })
+                    ),
+                    catchError((error) =>
+                        of(cargarProductosMenorStockFailure({ error }))
+                    )
                 )
             )
         )
     );
+
 }

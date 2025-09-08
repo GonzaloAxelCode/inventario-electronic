@@ -17,9 +17,10 @@ export const tiendaReducer = createReducer(
     })),
     on(loadTiendasSuccess, (state, { tiendas }) => ({
         ...state,
-        tiendas,
+        tiendas: tiendas.filter(t => t.ruc !== "00000000000"),
         loadingTiendas: false
     })),
+
     on(loadTiendasFail, (state, { error }) => ({
         ...state,
         errors: error,
@@ -27,17 +28,17 @@ export const tiendaReducer = createReducer(
     })),
     on(createTiendaAction, state => ({
         ...state,
-        loadingTiendas: true
+
     })),
     on(createTiendaSuccess, (state, { tienda }) => ({
         ...state,
         tiendas: [...state.tiendas, tienda],
-        loadingTiendas: false
+
     })),
     on(createTiendaFail, (state, { error }) => ({
         ...state,
         errors: error,
-        loadingTiendas: false
+
     })),
     on(desactivateTiendaAction, state => ({
         ...state,

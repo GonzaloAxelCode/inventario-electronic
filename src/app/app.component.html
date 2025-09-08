@@ -1,0 +1,21 @@
+<tui-root [attr.tuiTheme]="!darkMode() ? 'dark' : null" class="relative">
+  
+  <!-- Si está cargando: loader -->
+  <ng-container *ngIf="loading$ | async; else appContent">
+    <div class="fixed inset-0 flex items-center flex-col gap-3 justify-center
+                dark:bg-neutral-800 bg-neutral-100 z-[9999]">
+      
+      <img src="https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_350,h_150/v1755473642/APP%20INVENTARIO/T-removebg-preview_zgnu7f.png"
+           class="w-60 transition-all duration-300 invert-0 dark:invert"
+           alt="App Logo">
+
+      <div class="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent"></div>
+    </div>
+  </ng-container>
+
+  <!-- Si NO está cargando: app normal -->
+  <ng-template #appContent>
+    <router-outlet></router-outlet>
+  </ng-template>
+
+</tui-root>

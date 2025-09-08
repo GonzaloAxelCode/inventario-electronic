@@ -1,6 +1,9 @@
 
+<div  class=" w-full rounded-2xl"   
+  [ngClass]="(tiendasState$ | async)?.loadingTiendas ? 'h-[200px]' : 'h-auto'"
 
-<table tuiTable [style.width.rem]="58">
+      [tuiSkeleton]="!!(tiendasState$ | async)?.loadingTiendas">
+<table tuiTable     >
   <thead>
     <tr>
       <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
@@ -13,16 +16,16 @@
   <tbody tuiTbody *ngIf="(tiendasState$ | async)?.tiendas?.length">
     <tr *ngFor="let tienda of (tiendasState$ | async)?.tiendas ?? []">
 
-      <td *ngFor="let column of allColumns" tuiTd>{{ getTiendaValue(tienda, column.key) }}</td>
+      <td  *ngFor="let column of allColumns" tuiTd>{{ getTiendaValue(tienda, column.key) }}</td>
 
  <td tuiTd >
                 <tui-badge [appearance]="tienda.activo ? 'positive' : 'negative'">{{ tienda.activo ? 'Activo' : 'No
                     activo' }}</tui-badge>
             </td>
-            <td tuiTd>
+            <td tuiTd >
                 <div class="flex gap-2 ">
                   
-                     <button appearance="info" iconStart="@tui.users" tuiButton tuiButtonVertical type="button"
+                     <button appearance="info"  iconStart="@tui.users" tuiButton tuiButtonVertical type="button"
                       (click)="showDialogDetailTienda(tienda)"
                         >
                         Ver

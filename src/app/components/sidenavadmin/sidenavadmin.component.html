@@ -3,7 +3,7 @@
 
         <nav class="flex flex-col  justify-between bg-tui-background  md:min-w-[200px] ">
 
-            <div class="flex flex-col gap-2 ">
+            <div class="flex flex-col gap-1 ">
                 <a (click)="onClose()" routerLink="/admin"
                     class="flex items-center gap-3 p-3 text-xl font-bold transition-all duration-300 ease-in-out text-white">
                     <span>
@@ -14,6 +14,10 @@
 
 
 
+ <a (click)="onClose()" routerLink="/admin" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
+                    class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+                    <tui-icon icon="store" class="text-green-500"></tui-icon> <span>Home</span>
+                </a>
                 <a (click)="onClose()" routerLink="/admin/store" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
                     class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
                     <tui-icon icon="store" class="text-green-500"></tui-icon> <span>Tiendas</span>
@@ -47,17 +51,17 @@
             </aside>
         </tui-drawer>
     </div>
-    <main class="flex h-screen w-screen">
+    <div class="flex h-screen w-screen">
         <!-- Sidebar (estático) -->
         <aside class="hidden md:block p-5 pr-0 h-screen overflow-y-auto bg-tui-background sticky top-0">
             <ng-container *ngTemplateOutlet="sidebarTemplateadmin"></ng-container>
         </aside>
 
         <!-- Contenido principal (scrollable) -->
-        <div class="flex-1 overflow-y-auto">
+        <main >
             <app-header></app-header>
             <router-outlet></router-outlet>
-        </div>
-    </main>
+        </main>
+    </div>
 
 </body>

@@ -1,30 +1,39 @@
+
+
+<div [tuiSkeleton]="!!(selectInventario$ | async)?.loadingLowStock" 
+  [ngClass]="(selectInventario$ | async)?.loadingLowStock ? 'h-[200px]' : 'h-auto'"
+  class="rounded-xl"
+
+> 
+
+
 <table tuiTable size="s">
   <thead>
     <tr>
-      <th tuiTh class="text-slate-700 dark:text-gray-300">ID Producto / ID Inventario</th>
+      <th tuiTh class="text-slate-700 dark:text-gray-300">Cod Producto</th>
       <th tuiTh class="text-slate-700 dark:text-gray-300">Nombre</th>
       <th tuiTh class="text-slate-700 dark:text-gray-300">Stock</th>
     </tr>
   </thead>
-  <tbody tuiTbody *ngIf="(selectVentas$| async)?.lowStockProducts?.length">
-    <tr *ngFor="let product of (selectVentas$| async)?.lowStockProducts">
-      <td tuiTd class="text-slate-700 dark:text-gray-300">{{ product.producto_id }} / {{ product.inventario_id }}</td>
+  <tbody tuiTbody *ngIf="(selectInventario$| async)?.lowStockProducts?.length">
+    <tr *ngFor="let item of (selectInventario$| async)?.lowStockProducts">
+      <td tuiTd class="text-slate-700 dark:text-gray-300">{{ item.item.sku }}</td>
 
       <td tuiTd class="text-slate-700 dark:text-gray-300">
 
-        {{ product.nombre }}
+        {{ item.item.nombre }}
       </td>
 
       <td tuiTd>
 
 
         <div tuiBlockDetails class="">
-          <span class="-translate-y-1 text-slate-700 dark:text-gray-300" [ngClass]="getColorClass(product.cantidad)">
-            {{ product.cantidad }}
+          <span class="-translate-y-1 text-slate-700 dark:text-gray-300" [ngClass]="getColorClass(item.inventario.cantidad)">
+            {{ item.inventario.cantidad }}
           </span>
         </div>
       </td>
 
     </tr>
   </tbody>
-</table>
+</table></div>

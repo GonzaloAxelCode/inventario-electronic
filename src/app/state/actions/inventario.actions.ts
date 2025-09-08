@@ -1,6 +1,7 @@
 import { Inventario, InventarioCreate } from '@/app/models/inventario.models';
 import { QuerySearchInventario } from '@/app/services/inventario.service';
 import { createAction, props } from '@ngrx/store';
+import { InventarioLowStock } from '../reducers/inventario.reducer';
 
 export enum InventarioActionTypes {
     LOAD_INVENTARIOS = '[Inventario] Load Inventarios',
@@ -18,6 +19,9 @@ export enum InventarioActionTypes {
     ACTUALIZAR_INVENTARIO = '[Inventario] Actualizacion',
     ACTUALIZAR_INVENTARIO_SUCCESS = '[Inventario] Actualizacion Success',
     ACTUALIZAR_INVENTARIO_FAIL = '[Inventario] Actualizacion Fail',
+    CARGAR_PRODUCTOS_MENOR_STOCK = '[Inventario] Cargar productos con menor stock',
+    CARGAR_PRODUCTOS_MENOR_STOCK_SUCCESS = '[Inventario] Cargar productos con menor stock Success',
+    CARGAR_PRODUCTOS_MENOR_STOCK_FAILURE = '[Inventario] Cargar productos con menor stock Failure',
 
 
     VERIFICAR_STOCK = '[Inventario] Verificar Stock',
@@ -41,7 +45,7 @@ export const loadInventarios = createAction(
 );
 export const loadInventariosSuccess = createAction(
     InventarioActionTypes.LOAD_INVENTARIOS_SUCCESS,
-    props<{ inventarios: Inventario[], next: any, previous: any, index_page: any, length_pages: any }>()
+    props<{ inventarios: Inventario[] }>()
 );
 export const loadInventariosFail = createAction(
     InventarioActionTypes.LOAD_INVENTARIOS_FAIL,
@@ -95,11 +99,11 @@ export const actualizarInventarioFail = createAction(
 
 export const searchInventarios = createAction(
     InventarioActionTypes.SEARCH_INVENTARIOS,
-    props<{ query: Partial<QuerySearchInventario>, page?: number, page_size?: number }>()
+    props<{ inventarios: Inventario[], query: Partial<QuerySearchInventario> }>()
 );
 export const searchInventarioSuccess = createAction(
     InventarioActionTypes.SEARCH_INVENTARIOS_SUCCESS,
-    props<{ inventarios: Inventario[], search_products_found: string, count: number, next: any, previous: any, index_page: any, length_pages: any }>()
+    props<{ inventarios_search: Inventario[], search_found: boolean }>()
 );
 export const searchInventarioFail = createAction(
     InventarioActionTypes.SEARCH_INVENTARIOS_FAIL,
@@ -140,3 +144,17 @@ export const clearSearchInventarios = createAction(
 
 
 
+export const cargarProductosMenorStock = createAction(
+    InventarioActionTypes.CARGAR_PRODUCTOS_MENOR_STOCK,
+
+);
+
+export const cargarProductosMenorStockSuccess = createAction(
+    InventarioActionTypes.CARGAR_PRODUCTOS_MENOR_STOCK_SUCCESS,
+    props<{ lowStockProducts: InventarioLowStock[] }>()
+);
+
+export const cargarProductosMenorStockFailure = createAction(
+    InventarioActionTypes.CARGAR_PRODUCTOS_MENOR_STOCK_FAILURE,
+    props<{ error: any }>()
+);

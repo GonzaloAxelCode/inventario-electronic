@@ -8,7 +8,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiDay } from '@taiga-ui/cdk';
 import { TuiButton, TuiDataList, TuiDropdown, TuiFormatDatePipe, TuiTextfield } from '@taiga-ui/core';
-import { TuiDataListWrapper } from '@taiga-ui/kit';
+import { TuiDataListWrapper, TuiSkeleton } from '@taiga-ui/kit';
 import { TuiInputDateModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { format } from 'date-fns'; // Importa la función format de date-fns
 import { es } from 'date-fns/locale'; // Importa la configuración regional para español
@@ -25,7 +25,8 @@ import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
     TuiDropdown, TuiTextfield,
     TuiInputModule, TuiTextareaModule,
     TuiInputDateModule,
-    TuiTextfieldControllerModule, TuiSelectModule],
+    TuiTextfieldControllerModule, TuiSelectModule, TuiSkeleton
+  ],
   providers: [TuiFormatDatePipe],
   templateUrl: './dashboard-sales-cards.component.html',
   styleUrl: './dashboard-sales-cards.component.scss'

@@ -4,9 +4,6 @@ import {
     cancelarVenta,
     cancelarVentaError,
     cancelarVentaExito,
-    cargarProductosMenorStock,
-    cargarProductosMenorStockFailure,
-    cargarProductosMenorStockSuccess,
     cargarResumenVentas,
     cargarResumenVentasByDate,
     cargarResumenVentasByDateError,
@@ -50,8 +47,8 @@ export interface VentaState {
     loadingCreateVenta: boolean
     showVentaDetailTemporary: boolean
     temporaryVenta: Venta
-    lowStockProducts: any[],
-    loadingLowStock: boolean,
+
+
     search_ventas_found: string;
     count: number;
     next: any;
@@ -61,6 +58,8 @@ export interface VentaState {
     loadingSearch: boolean;
     loadingLoadVentas: boolean
     ventas_search: Venta[];
+    loadingResumenVentas: boolean
+    loadingMostSales: boolean
 }
 
 export const initialState: VentaState = {
@@ -76,9 +75,9 @@ export const initialState: VentaState = {
     thisMonthSales: 1212,
     salesDateRangePerDay: [],
     topProductoMostSales: [],
-    lowStockProducts: [],
-    loadingLowStock: false,
+    loadingMostSales: false,
 
+    loadingResumenVentas: false,
     search_ventas_found: "",  // Inicializa como string vacío si es que no hay un valor predeterminado
     count: 0,
     next: null,
@@ -121,24 +120,6 @@ export const ventaReducer = createReducer(
         error,
         loadingLoadVentas: false
     })),
-    on(cargarProductosMenorStock, (state) => ({
-        ...state,
-        loadingLowStock: true,
-        errorLowStock: null,
-    })),
-
-    on(cargarProductosMenorStockSuccess, (state, { lowStockProducts }) => ({
-        ...state,
-        lowStockProducts: lowStockProducts,
-        loadingLowStock: false,
-    })),
-
-    on(cargarProductosMenorStockFailure, (state, { error }) => ({
-        ...state,
-        errorLowStock: error,
-        loadingLowStock: false,
-    })),
-
     on(crearVenta, state => ({
         ...state,
         loadingCreateVenta: true
@@ -178,7 +159,7 @@ export const ventaReducer = createReducer(
     })),
     on(cargarResumenVentas, (state) => ({
         ...state,
-        loading: true,
+        loadingResumenVentas: true,
         error: null
     })),
 
@@ -191,29 +172,29 @@ export const ventaReducer = createReducer(
             todaySales: todaySales,
             thisWeekSales: thisWeekSales,
             thisMonthSales: thisMonthSales,
-            loading: false
+            loadingResumenVentas: false
         };
     }),
     on(cargarResumenVentasError, (state, { error }) => ({
         ...state,
         error,
-        loading: false
+        loadingResumenVentas: false
     })),
     on(cargarTopProductosVentas, (state) => ({
         ...state,
-        loading: true,
+        loadingMostSales: true,
         error: null
     })),
 
     on(cargarTopProductosVentasExito, (state, { topProductoMostSales }) => ({
         ...state,
-        loading: false,
+        loadingMostSales: false,
         topProductoMostSales
     })),
 
     on(cargarTopProductosVentasError, (state, { error }) => ({
         ...state,
-        loading: false,
+        loadingMostSales: false,
         error
     })),
     on(cargarResumenVentasByDate, state => ({

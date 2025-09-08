@@ -25,9 +25,6 @@ export enum VentaActionTypes {
     CARGAR_TOP_PRODUCTOS_VENTAS = '[Venta] Cargar Top Productos Más Vendidos',
     CARGAR_TOP_PRODUCTOS_VENTAS_EXITO = '[Venta] Cargar Top Productos Más Vendidos Éxito',
     CARGAR_TOP_PRODUCTOS_VENTAS_ERROR = '[Venta] Cargar Top Productos Más Vendidos Error',
-    CARGAR_PRODUCTOS_MENOR_STOCK = '[Inventario] Cargar productos con menor stock',
-    CARGAR_PRODUCTOS_MENOR_STOCK_SUCCESS = '[Inventario] Cargar productos con menor stock Success',
-    CARGAR_PRODUCTOS_MENOR_STOCK_FAILURE = '[Inventario] Cargar productos con menor stock Failure',
     CARGAR_RESUMEN_VENTAS_BY_DATE = '[Venta] Cargar Resumen Ventas por Mes o Día',
     CARGAR_RESUMEN_VENTAS_BY_DATE_EXITO = '[Venta] Cargar Resumen Ventas por Mes o Día Éxito',
     CARGAR_RESUMEN_VENTAS_BY_DATE_ERROR = '[Venta] Cargar Resumen Ventas por Mes o Día Error',
@@ -162,20 +159,7 @@ export const cargarVentasRangoFechasTiendaError = createAction(
 
 
 
-export const cargarProductosMenorStock = createAction(
-    VentaActionTypes.CARGAR_PRODUCTOS_MENOR_STOCK,
 
-);
-
-export const cargarProductosMenorStockSuccess = createAction(
-    VentaActionTypes.CARGAR_PRODUCTOS_MENOR_STOCK_SUCCESS,
-    props<{ lowStockProducts: any[] }>()
-);
-
-export const cargarProductosMenorStockFailure = createAction(
-    VentaActionTypes.CARGAR_PRODUCTOS_MENOR_STOCK_FAILURE,
-    props<{ error: any }>()
-);
 export const clearVentaTemporal = createAction(
     VentaActionTypes.CLEAR_VENTA_TEMPORAL,
 

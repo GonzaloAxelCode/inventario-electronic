@@ -17,7 +17,11 @@ export interface Venta {
     igv_total: number
     total: number
     productos_json: string
-    comprobante: ComprobanteElectronico
+    comprobante: ComprobanteElectronico,
+    tipo_documento_cliente: string
+    numero_documento_cliente: string
+    nombre_cliente: string
+    date_created?: any
 
 }
 
@@ -27,7 +31,7 @@ export interface ComprobanteElectronico {
     correlativo: string
     numero: string;
     moneda: string;
-
+    date_created?: any
     tipo_documento_cliente: string;
     numero_documento_cliente: string;
     nombre_cliente: string;
@@ -75,6 +79,7 @@ export interface VentaProducto {
     tipo_afectacion_igv: string;
     total_impuestos: number;
     precio_unitario: number;
+    date_created?: any
 }
 
 export interface CreateVenta {

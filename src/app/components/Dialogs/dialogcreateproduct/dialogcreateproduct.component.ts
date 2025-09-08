@@ -2,24 +2,27 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiExpand, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiExpand, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
 
 import { Categoria } from '@/app/models/categoria.models';
-import { createProductoAction } from '@/app/state/actions/producto.actions';
+import { ProductoState } from '@/app/models/producto.models';
+import { createProductoAction, createProductoFail, createProductoSuccess } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectCategoriaState } from '@/app/state/selectors/categoria.selectors';
+import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
+import { Actions, ofType } from '@ngrx/effects';
 import { TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
 import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
-import { map } from 'rxjs';
+import { map, Observable, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-dialogcreateproduct',
   standalone: true,
   imports: [
-    CommonModule,
+    CommonModule, TuiLoader,
     ReactiveFormsModule,
     TuiInputModule,
     TuiTextareaModule,
@@ -42,8 +45,9 @@ export class DialogcreateproductComponent {
   marcas = ['Genérico', 'Samsung', 'Apple', 'Xiaomi', 'Huawei'];
   modelos = ['Genérico', 'Modelo A', 'Modelo B', 'Modelo C'];
   tiendaUser!: number
-
-  constructor(private fb: FormBuilder, private store: Store<AppState>) {
+  private destroy$ = new Subject<void>();
+  loadingCreateProduct$!: Observable<boolean>
+  constructor(private fb: FormBuilder, private store: Store<AppState>, private actions$: Actions) {
     this.productoForm = this.fb.group({
       nombre: ['', Validators.required],
       descripcion: [''],
@@ -66,7 +70,16 @@ export class DialogcreateproductComponent {
     ).subscribe(tienda => {
       this.tiendaUser = tienda || 0;
     });
+    this.loadingCreateProduct$ = this.store.select(selectProductoState).pipe(
+      map((state: ProductoState) => state.loadingCreate)
+    );
+    this.actions$.pipe(
+      ofType(createProductoSuccess, createProductoFail),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
 
+      this.context.completeWith(true);
+    });
   }
 
   onSubmit() {
@@ -79,7 +92,7 @@ export class DialogcreateproductComponent {
         },
 
       }));
-      this.context.completeWith(true)
+
     }
   }
 
@@ -97,6 +110,9 @@ export class DialogcreateproductComponent {
     }
   }
   protected activeItemIndex = 0;
-
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
 }

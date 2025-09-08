@@ -1,4 +1,5 @@
 import { Proveedor } from '@/app/models/proveedor.models';
+import { DialogCreateProveedorService } from '@/app/services/dialogs-services/dialog-createproveedor.service';
 import { DialogUpdateProveedorService } from '@/app/services/dialogs-services/dialog-updateproveedor.service';
 import { onActiveToggleProveedorAction } from '@/app/state/actions/proveedor.actions';
 import { AppState } from '@/app/state/app.state';
@@ -11,7 +12,7 @@ import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton, tuiDialog } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiConfirmData, TuiRadio } from '@taiga-ui/kit';
+import { TUI_CONFIRM, TuiBadge, TuiConfirmData, TuiRadio, TuiSkeleton } from '@taiga-ui/kit';
 import { TuiBlockStatus } from '@taiga-ui/layout';
 import { Observable } from 'rxjs';
 import { DialogcreateproveedorComponent } from '../../Dialogs/dialogcreateproveedor/dialogcreateproveedor.component';
@@ -20,7 +21,7 @@ import { DialogcreateproveedorComponent } from '../../Dialogs/dialogcreateprovee
   standalone: true,
   imports: [CommonModule, FormsModule, TuiTable, CommonModule,
     TuiBlockStatus,
-    TuiRadio,
+    TuiRadio, TuiSkeleton,
     FormsModule,
     TuiTable, TuiButton, TuiAppearance, TuiBadge
   ],
@@ -59,19 +60,16 @@ export class TableproveedorComponent implements OnInit {
   getProveedorValue(proveedor: Proveedor, key: string): any {
     return proveedor[key as keyof Proveedor];
   }
-  protected showDialog(): void {
-    this.dialog().subscribe({
-      next: (data) => {
-        console.info(`Dialog emitted data = ${data}`);
-      },
-      complete: () => {
-        console.info('Dialog closed');
-      },
-    });
-  }
+
   private readonly dialogService = inject(DialogUpdateProveedorService);
+  private readonly dialogServiceCreate = inject(DialogCreateProveedorService);
   protected showDialogUpdate(proveedor: Partial<Proveedor>): void {
     this.dialogService.open(proveedor).subscribe((result: any) => {
+
+    });
+  }
+  protected showDialogCreate(): void {
+    this.dialogServiceCreate.open().subscribe((result: any) => {
 
     });
   }

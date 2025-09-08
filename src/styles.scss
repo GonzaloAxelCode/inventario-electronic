@@ -25,8 +25,23 @@ p, span, div, input, button {
 }
 
 
+
 table {
   width: 100%;
+  
+}
+
+
+th,
+td{
+    border-inline-start: none !important;
+    border-inline-end: none !important;  background-color: transparent !important;
+}
+
+table  {
+    flex-direction: row;
+    gap: 0.375rem;
+    
 }
 
 

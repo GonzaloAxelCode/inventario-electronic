@@ -1,7 +1,8 @@
-import { Categoria, CategoriaState } from '@/app/models/categoria.models';
+import { Categoria } from '@/app/models/categoria.models';
 import { DialogUpdateCategoriaService } from '@/app/services/dialogs-services/dialog-updatecategoria.service';
 import { deleteCategoriaAction } from '@/app/state/actions/categoria.actions';
 import { AppState } from '@/app/state/app.state';
+import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
@@ -10,8 +11,9 @@ import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiConfirmData, TuiRadio } from '@taiga-ui/kit';
-import { Observable } from 'rxjs';
+import { TUI_CONFIRM, TuiBadge, TuiConfirmData, TuiRadio, TuiSkeleton } from '@taiga-ui/kit';
+import { TuiBlockStatus } from '@taiga-ui/layout';
+import { Observable, tap } from 'rxjs';
 @Component({
   selector: 'app-tablecategories',
   standalone: true,
@@ -19,8 +21,8 @@ import { Observable } from 'rxjs';
   imports: [CommonModule, FormsModule, TuiTable, CommonModule,
 
     TuiRadio,
-    FormsModule,
-    TuiTable, TuiButton, TuiAppearance, TuiBadge
+    FormsModule, TuiSkeleton,
+    TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiBlockStatus
   ],
   templateUrl: './tablecategories.component.html',
   styleUrl: './tablecategories.component.scss'
@@ -43,6 +45,10 @@ export class TablecategoriesComponent implements OnInit {
 
   ngOnInit() {
     this.selectCategorias$ = this.store.select(selectCategoria);
+
+    this.selectCategorias$ = this.store.select(selectCategoria).pipe(
+      tap(categorias => console.log('Categorias desde store:', categorias))
+    );
   }
   getCategoriaValue(proveedor: Categoria, key: string): any {
     return proveedor[key as keyof Categoria];

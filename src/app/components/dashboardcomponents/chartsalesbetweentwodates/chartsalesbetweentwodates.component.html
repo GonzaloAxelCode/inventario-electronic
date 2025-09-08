@@ -1,5 +1,5 @@
 <section>
-  <div class="grid grid-cols-6 w-full gap-2 mb-4">
+  <div class="grid grid-cols-6 w-full gap-2 mb-4 rounded-lg"  [tuiSkeleton]="!!(selectVentas$ | async)?.loadingMostSales" >
     <div class=" col-span-5">
       <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range">
         Range
@@ -11,8 +11,10 @@
       2025
     </button>
   </div>
+  <div  class="rounded-lg" [tuiSkeleton]="!!(selectVentas$ | async)?.loadingMostSales" >
 
-  <ng-container *ngIf="{
+
+  <ng-container  *ngIf="{
     labels: labels$ | async,
     values: value$ | async
   } as data">
@@ -21,5 +23,5 @@
       <tui-line-days-chart class="chart" [height]="3000" [value]="data.values" [xStringify]="xStringify$ | async"
         [yStringify]="yStringify" />
     </tui-axes>
-  </ng-container>
+  </ng-container>   </div>
 </section>

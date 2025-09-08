@@ -1,6 +1,6 @@
 <section class="m-6">
-  <div class="flex gap-2">
-    <a routerLink="/app/ventas/crear"> <button iconStart="@tui.plus" tuiButton appearance="info" tuiButtonVertical
+  <div class="flex gap-2" *ngIf="(ventasState$ | async)?.ventas?.length !== 0 && !!(ventasState$ | async)?.loading">
+    <a routerLink="/app/ventas/crear"> <button iconStart="@tui.plus" tuiButton appearance="primary-grayscale" tuiButtonVertical
         type="button" class="my-5 pr-3">
 
         Crear una venta
@@ -12,20 +12,24 @@
 
 
   <tui-block-status *ngIf="(ventasState$ | async)?.ventas?.length === 0 && !(ventasState$ | async)?.loading else tabla"
-     class="m-auto">
-     <div>
+     size="m" class="m-auto">
+        <img alt="survived"
+            src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+            tuiSlot="top" />
+
+        <h4>Aun no cuentas con ventas</h4>
+
+        <span>Empieza hacer tu primera venta</span>
+         <a routerLink="/app/ventas/crear">
+ <button iconStart="@tui.plus" size="s" tuiButton appearance="primary-grayscale" 
+        type="button" >
+
+        Crear una venta
 
 
-    <img alt="survived" class="w-[500px] object-contain m-auto"
-      src="https://res.cloudinary.com/ddksrkond/image/upload/v1754237996/search-product_aw8lfe.png"
-       />
-
-    <h4>Aun no tienes ningun producto en el Inventario</h4>
-
-    <span>Empieza a hacer el inventario</span>
-     </div>
-
-  </tui-block-status>
+      </button></a>
+      
+    </tui-block-status>
 
 
 

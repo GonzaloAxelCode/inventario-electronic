@@ -12,9 +12,10 @@ import { TuiAlertService, TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/c
 import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiRadio, TuiSegmented, TuiSkeleton, TuiSwitch } from '@taiga-ui/kit';
 import { map, Observable, take } from 'rxjs';
 
-import { Categoria, CategoriaState } from '@/app/models/categoria.models';
+import { Categoria } from '@/app/models/categoria.models';
 import { DialogUpdateProductService } from '@/app/services/dialogs-services/dialog-updateproduct.service';
 import { QuerySearchProduct } from '@/app/services/utils/querys';
+import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { tuiCountFilledControls } from '@taiga-ui/cdk';
@@ -52,6 +53,8 @@ export class TableproductComponent implements OnInit {
     nombre: new FormControl(),
     categoria: new FormControl<any>(null),
     activo: new FormControl(),
+
+    sku: new FormControl(),
   });
   compareCategorias = (a: Categoria, b: Categoria) => a && b && a.id === b.id;
 
@@ -96,7 +99,7 @@ export class TableproductComponent implements OnInit {
 
   clearSearch() {
     this.store.dispatch(clearSearchProductos())
-    this.store.dispatch(loadProductosAction({}))
+    this.store.dispatch(searchProductosAction({ query: {}, page_size: 10 }))
 
   }
   onSubmitSearch() {
@@ -104,9 +107,10 @@ export class TableproductComponent implements OnInit {
     const searchQuery: Partial<QuerySearchProduct> = {
       nombre: this.form.value.nombre || "",
       categoria: this.form.value?.categoria?.id || 0,
-      activo: this.form.value.activo === null ? null : this.form.value.activo === "Activo"
+      activo: this.form.value.activo === null ? null : this.form.value.activo === "Activo",
+      sku: this.form.value.sku,
     }
-    this.store.dispatch(searchProductosAction({ query: searchQuery }))
+    this.store.dispatch(searchProductosAction({ query: searchQuery, page_size: 10 }))
 
   }
 
@@ -130,7 +134,7 @@ export class TableproductComponent implements OnInit {
 
           this.productosState$?.pipe(take(1)).subscribe(state => {
 
-            this.store.dispatch(loadProductosAction({ page: state?.index_page + 1 }));
+            this.store.dispatch(loadProductosAction({ page: state?.index_page + 1, page_size: 10 }));
 
           });
           this.alerts.open('Producto eliminado exitosamente.').subscribe();
@@ -150,17 +154,17 @@ export class TableproductComponent implements OnInit {
 
 
   protected goToPage(index: number): void {
+
     this.productosState$?.pipe(take(1)).subscribe(state => {
-      if (state?.search_products_found === '') {
-        this.store.dispatch(loadProductosAction({ page: index + 1 }));
-      } else {
-        const searchQuery: Partial<QuerySearchProduct> = {
-          nombre: this.form.value.nombre || "",
-          categoria: this.form.value?.categoria?.id || 0,
-          activo: this.form.value.activo === null ? null : this.form.value.activo === "Activo"
-        };
-        this.store.dispatch(searchProductosAction({ query: searchQuery, page: index + 1 }));
-      }
+
+      const searchQuery: Partial<QuerySearchProduct> = {
+        nombre: this.form.value.nombre || "",
+        categoria: this.form.value?.categoria?.id || 0,
+        activo: this.form.value.activo === null ? null : this.form.value.activo === "Activo",
+        sku: this.form.value.sku,
+      };
+      this.store.dispatch(searchProductosAction({ query: searchQuery, page: index + 1, page_size: 10 }));
+
     });
   }
 

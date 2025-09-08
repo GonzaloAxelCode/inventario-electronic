@@ -1,10 +1,4 @@
 
-export interface CategoriaState {
-    categorias: Categoria[],
-    loadingCategorias?: boolean,
-    errors?: any
-}
-
 export interface Categoria {
     id?: number;
     nombre: string;
@@ -18,7 +12,8 @@ export interface Categoria {
     parent?: number | null;
     destacado: boolean;
     color?: string;
-    siglas_nombre_categoria?: string
+    siglas_nombre_categoria?: string,
+    date_created?: any
 }
 
 export type CategoriaCreate = Omit<Categoria, 'id' | 'fechaCreacion' | 'fechaActualizacion' | 'parent' | 'destacado' | 'color'>;

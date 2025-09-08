@@ -1,4 +1,4 @@
-<div class="py-6">
+<div class="py-6 rounded-lg" [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos">
     <!-- Si no hay productos, mostramos el mensaje con el botón -->
     <tui-block-status
         *ngIf="(productosState$ | async)?.productos?.length === 0 && !(productosState$ | async)?.loadingProductos else tabla"
@@ -13,12 +13,17 @@
 
       
     </tui-block-status>
+    <div>
 
+    
     <!-- Si hay productos, mostramos la tabla -->
     <ng-template #tabla>
         <search tuiSearch class="pb-4">
             <form [formGroup]="form" (submit)="onSubmitSearch()">
                 <fieldset tuiTextfieldSize="s">
+                     <tui-textfield iconStart="@tui.search">
+                        <input tuiTheme="ligth" formControlName="sku" placeholder="Buscar por Codigo" tuiTextfield />
+                    </tui-textfield>
                     <tui-textfield iconStart="@tui.search">
                         <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre" tuiTextfield />
                     </tui-textfield>
@@ -28,7 +33,7 @@
                         <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
                     </tui-select>
                     <button size="s" appearance="primary-grayscale" tuiButton type="submit" (click)="onSubmitSearch()"
-                        [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null">
+                        [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null && !form.value.sku">
                         >
                         Buscar
                     </button>
@@ -69,7 +74,7 @@
                         <th tuiTh>Acciones</th>
                     </tr>
                 </thead>
-                <tbody tuiTbody>
+                <tbody tody>
 
                     <tr
                         *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)">
@@ -93,7 +98,7 @@
                         <td tuiTd>
                             <div class="flex gap-2 ">
                                 <button appearance="positive" iconStart="@tui.pencil" tuiButton 
-                                    type="button" (click)="showDialogUpdate(producto)">
+                               uiTb     type="button" (click)="showDialogUpdate(producto)">
                                     Actualizar
                                 </button>
                                 <button appearance="error" iconStart="@tui.trash" tuiButton

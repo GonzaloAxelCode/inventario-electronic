@@ -1,6 +1,6 @@
 import { cargarVentasRangoFechasTienda } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
-import { selectUsersState } from '@/app/state/selectors/user.selectors';
+import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectVentaState } from '@/app/state/selectors/venta.selectors';
 import { AsyncPipe, CommonModule, NgIf } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
@@ -11,6 +11,7 @@ import { TuiTable } from '@taiga-ui/addon-table';
 import type { TuiDayLike, TuiStringHandler } from '@taiga-ui/cdk';
 import { TuiDay, TuiDayRange, TuiMonth, tuiPure } from '@taiga-ui/cdk';
 import { TUI_MONTHS, TuiAppearance, TuiButton } from '@taiga-ui/core';
+import { TuiSkeleton } from '@taiga-ui/kit';
 import { TuiInputDateRangeModule } from '@taiga-ui/legacy';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
@@ -29,13 +30,13 @@ import { distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
     NgIf,
     TuiAxes,
     TuiInputDateRangeModule,
-    TuiLineDaysChart,
+    TuiLineDaysChart, TuiSkeleton
   ],
   templateUrl: './chartsalesbetweentwodates.component.html',
   styleUrls: ['./chartsalesbetweentwodates.component.scss'],
 })
 export class ChartsalesbetweentwodatesComponent implements OnInit {
-  tiendaUser!: number
+
 
   protected readonly axisYSecondaryLabels = [
     's/. 300', 's/. 600', 's/. 900', 's/. 1200', 's/. 1500',
@@ -68,7 +69,7 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
 
     distinctUntilChanged()
   );
-
+  selectVentas$: Observable<VentaState> = this.store.select(selectVentaState)
   protected readonly xStringify$ = this.months$.pipe(
     map(months => ({ month, day }: TuiDay) => `${months[month]}, ${day}`)
   );
@@ -92,12 +93,6 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
   ngOnInit() {
     this.loadInitialData();
 
-
-    this.store.select(selectUsersState).pipe(
-      map(userState => userState.user.tienda)
-    ).subscribe(tienda => {
-      this.tiendaUser = tienda || 0;
-    });
 
   }
   allSalesYear() {

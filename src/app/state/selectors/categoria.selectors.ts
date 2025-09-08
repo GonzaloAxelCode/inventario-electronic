@@ -1,6 +1,7 @@
-import { CategoriaState } from '@/app/models/categoria.models';
+
 import { createSelector } from '@ngrx/store';
 import { AppState } from '../app.state';
+import { CategoriaState } from '../reducers/categoria.reducer';
 
 
 

@@ -1,4 +1,4 @@
-import { Caja, OperacionCaja } from '@/app/models/caja.models';
+import { OperacionCaja } from '@/app/models/caja.models';
 import { DialogAperturaCajaService } from '@/app/services/dialogs-services/dialog-apertura-caja.service';
 import { DialogCerrarCajaService } from '@/app/services/dialogs-services/dialog-cerrar-caja.service';
 import { DialogRealizarPrestamoService } from '@/app/services/dialogs-services/dialog-realizar-prestamo.service';
@@ -7,7 +7,7 @@ import { DialogRegistrarIngresoService } from '@/app/services/dialogs-services/d
 import { DialogReinicializarCajaService } from '@/app/services/dialogs-services/dialog-reinicializar-caja.service';
 import { createCaja, loadCaja } from '@/app/state/actions/caja.actions';
 import { AppState } from '@/app/state/app.state';
-import { selectCaja, selectCajaState } from '@/app/state/selectors/caja.selectors';
+import { selectCaja } from '@/app/state/selectors/caja.selectors';
 import { AsyncPipe, CommonModule, NgIf } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -25,10 +25,11 @@ import {
   TuiTextfield,
   TuiTitle,
 } from '@taiga-ui/core';
-import { TuiFieldErrorPipe, TuiInputInline, TuiInputNumber, TuiSegmented, TuiSwitch, TuiTooltip } from '@taiga-ui/kit';
+import { TuiFieldErrorPipe, TuiInputInline, TuiInputNumber, TuiSegmented, TuiSkeleton, TuiSwitch, TuiTooltip } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiCell, TuiForm, TuiHeader } from '@taiga-ui/layout';
 import { TuiInputDateModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 
+import { CajaState } from '@/app/state/reducers/caja.reducer';
 import { selectAuth } from '@/app/state/selectors/auth.selectors';
 import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { isPlatformBrowser } from '@angular/common';
@@ -72,7 +73,7 @@ export class FormatService extends TuiFormatDateService {
     TuiTooltip, TuiFormatNumberPipe, TuiTable,
     TuiTextfieldControllerModule, TuiSelectModule,
     TuiInputModule, TuiTextareaModule,
-    TuiInputDateModule, TuiCell, TuiFormatDatePipe
+    TuiInputDateModule, TuiCell, TuiFormatDatePipe, TuiSkeleton
   ],
 
   templateUrl: './caja.component.html',
@@ -87,7 +88,7 @@ export class FormatService extends TuiFormatDateService {
 export class CajaComponent implements OnInit {
   caja_is_open$!: Observable<boolean>;
   operaciones: OperacionCaja[] = []
-  selectCaja$!: Observable<Caja>;
+  selectCaja$!: Observable<CajaState>;
   authState$ = this.store.pipe(select(selectAuth));
   tiendaUser!: number
 
@@ -105,11 +106,11 @@ export class CajaComponent implements OnInit {
       this.tiendaUser = tienda || 0;
     });
     this.store.dispatch(loadCaja());
-    this.caja_is_open$ = this.store.select(selectCajaState).pipe(
-      map(caja => caja.caja_is_open)
+    this.caja_is_open$ = this.store.select(selectCaja).pipe(
+      map(state => state.caja_is_open)
     );
-    this.selectCaja$ = this.store.select(selectCajaState).pipe(
-      map(caja => caja.caja)
+    this.selectCaja$ = this.store.select(selectCaja).pipe(
+      map(state => state)
     );
 
   }

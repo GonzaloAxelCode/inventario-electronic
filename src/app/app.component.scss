@@ -1,0 +1,18 @@
+table {
+  width: 100%;
+  
+}
+
+
+[tuiTh],
+[tuiTd] {
+    border-inline-start: none;
+    border-inline-end: none;  background-color: transparent;
+}
+
+[tuiTable] [tuiTitle] {
+    flex-direction: row;
+    gap: 0.375rem;
+    
+}
+

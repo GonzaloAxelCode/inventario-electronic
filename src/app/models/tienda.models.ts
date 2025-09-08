@@ -9,6 +9,7 @@ export interface Tienda {
     activo?: boolean;
     encargado?: User | null;     // 👈 objeto completo, no solo ID
     capacidad?: number;
+    date_created?: any
     ruc?: string;
     imagen?: string | null;
     users_tienda?: User[];       // 👈 array de usuarios

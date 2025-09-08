@@ -35,7 +35,7 @@
 
     </div>
     <div class="data">
-      <p class="text-slate-700 dark:text-gray-300">
+      <p class="text-slate-700 dark:text-gray-300 rounded-lg" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
         <span>S/.</span> {{ todaySales}}
       </p>
 
@@ -61,7 +61,7 @@
 
     </div>
     <div class="data">
-      <p class="text-slate-700 dark:text-gray-300">
+      <p class="text-slate-700 dark:text-gray-300 rounded-lg"  [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
         <span>S/.</span> {{ thisWeekSales}}
       </p>
 
@@ -73,7 +73,7 @@
     <div class=" flex items-center justify-between gap-3">
       <span class="flex gap-2 items-center text-slate-700 dark:text-gray-300">
         <ng-container *ngTemplateOutlet="iconoVentas" class="text-slate-700 dark:text-gray-300"></ng-container>
-        <p class="title-text text-slate-700 dark:text-gray-300">
+        <p class="title-text text-slate-700 dark:text-gray-300 "  >
           Ventas Mensual
         </p>
 
@@ -90,7 +90,7 @@
 
     </div>
     <div class="data">
-      <p class="text-slate-700 dark:text-gray-300">
+      <p class="text-slate-700 dark:text-gray-300 rounded-lg" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
         <span>S/.</span> {{ thisMonthSales }}
       </p>
 

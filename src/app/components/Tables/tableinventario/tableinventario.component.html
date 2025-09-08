@@ -1,156 +1,171 @@
-  <section>
+<section class="py-6 rounded-lg" [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario">
 
-    <tui-block-status
-      *ngIf="(inventariosState$ | async)?.inventarios?.length === 0 && !(inventariosState$ | async)?.loadingProductosInventario else tabla"
-      size="m" class="m-auto">
-      <img alt="survived"
-        src="https://res.cloudinary.com/ddksrkond/image/upload/v1754237996/search-product_aw8lfe.png"
-        tuiSlot="top" />
+  <!-- Caso 1: no hay inventarios y no se ha hecho búsqueda -->
+  <tui-block-status
+    *ngIf="!isTheSearchWasDone 
+           && (inventariosState$ | async)?.inventarios?.length === 0 
+           && !(inventariosState$ | async)?.loadingProductosInventario; else tabla"
+    size="m"
+    class="m-auto">
+    <img alt="no data"
+         src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+         tuiSlot="top" />
+    <h4>Aún no tienes ningún inventario</h4>
+    <span>Empieza a crear un inventario</span>
+  </tui-block-status>
 
-      <h4>Aun no tienes ningun producto en el Inventario</h4>
+  <ng-template #tabla>
+    <!-- buscador -->
+    <search tuiSearch class="pb-4">
+      <form [formGroup]="form" (submit)="onSubmitSearch()">
+        <fieldset tuiTextfieldSize="s">
+          <tui-textfield iconStart="@tui.search">
+            <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre o codigo de producto"
+              tuiTextfield />
+          </tui-textfield>
 
-      <span>Empieza a hacer el inventario</span>
+          <tui-select class="w-44" formControlName="categoria" [stringify]="stringify">
+            Categoria
+            <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
+          </tui-select>
 
-      
-    </tui-block-status>
+          <button size="s" appearance="primary-grayscale" tuiButton type="submit" (click)="onSubmitSearch()"
+            [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null">
+            Buscar
+          </button>
+        </fieldset>
 
-    <ng-template #tabla>
-      <search tuiSearch class="pb-4">
-        <form [formGroup]="form" (submit)="onSubmitSearch()">
-          <fieldset tuiTextfieldSize="s">
-            <tui-textfield iconStart="@tui.search">
-              <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre o codigo de producto" tuiTextfield />
-            </tui-textfield>
+        <fieldset>
+          Resultados: {{ ( isTheSearchWasDone ? (inventariosState$ | async)?.inventarios_search?.length : (inventariosState$ | async)?.inventarios?.length)}}
+          <hr />
+          <button iconEnd="@tui.list-filter-plus" tuiButton type="button" size="xs"  appearance="flat-grayscale"  (click)="expanded = !expanded">
+            Filtros
+          </button>
+          <hr />
+          <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
+            (click)="clearSearch()">
+            Limpiar {{ count() ? '(' + count() + ')' : '' }}
+          </button>
+        </fieldset>
+       
+        <tui-expand [expanded]="expanded">
+          <div class="flex gap-3 items-center ">
+            <fieldset>
+              <tui-input-range formControlName="stockRange">
+                <label tuiLabel>Rango de Stock</label>
+              </tui-input-range>
+            </fieldset>
 
-            <tui-select class="w-44" formControlName="categoria" [stringify]="stringify">
-              Categoria
-              <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
-            </tui-select>
-             <tui-select class="w-44" formControlName="proveedor" [stringify]="stringify">
-              Proveedor
-              <select placeholder="Proveedor" tuiSelect [items]="(selectProveedores$ | async)"></select>
-            </tui-select>
-            <button size="s" appearance="primary-grayscale" tuiButton type="submit" (click)="onSubmitSearch()"
-              [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null">
-              >
-              Buscar
-            </button>
-          </fieldset>
-          <fieldset>
-            Resultados: {{((inventariosState$ | async)?.count )}}
-            <hr />
-            <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
-              (click)="clearSearch()">
-              Limpiar {{ count() ? '(' + count() + ')' : '' }}
-            </button>
+            <fieldset>
+              <tui-input-range formControlName="precioCompraRange">
+                <label tuiLabel>Rango de Precio de Compra</label>
+              </tui-input-range>
+            </fieldset>
 
-          </fieldset>
-        </form>
-      </search>
+            <fieldset>
+              <tui-input-range formControlName="precioVentaRange">
+                <label tuiLabel>Rango de Precio de Venta</label>
+              </tui-input-range>
+            </fieldset>
+          </div>
+        </tui-expand>
+      </form>
+    </search>
 
-      <tui-loader [overlay]="true" [showLoader]="!!(inventariosState$ | async)?.loadingSearch ">
-        <div
-          *ngIf="((inventariosState$ | async)?.search_products_found ) === '' || ((inventariosState$ | async)?.search_products_found === 'products_found') ">
-          <table tuiTable [columns]="allColumnKeys" size="s">
-            <thead>
-              <tr>
-                <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
-                <th tuiTh>Activo</th>
-                <th tuiTh>Costo Compra</th>
-                <th tuiTh>Costo Venta</th>
-                <th tuiTh>Stock</th>
-                <th tuiTh>Proveedor</th>
-                <th tuiTh>Acciones</th>
+    <div class="rounded-lg" [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario">
 
+      <!-- Caso 2: mostrar tabla si hay inventarios o inventarios_search -->
+      <div *ngIf="(isTheSearchWasDone ? ((inventariosState$ | async)?.inventarios_search?.length || 0) : ((inventariosState$ | async)?.inventarios?.length || 0)) > 0">
+        <table tuiTable [columns]="allColumnKeys" size="s">
+          <thead>
+            <tr>
+              <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
+              <th tuiTh>Activo</th>
+              <th tuiTh>Costo Compra</th>
+              <th tuiTh>Costo Venta</th>
+              <th tuiTh>Stock</th>
+              <th tuiTh>Proveedor</th>
+              <th tuiTh>Categoria</th>
+              <th tuiTh>Acciones</th>
+            </tr>
+          </thead>
+          <tbody tuiTbody>
+            <tr
+              *ngFor="let inventario of (isTheSearchWasDone 
+                                         ? (inventariosState$ | async)?.inventarios_search 
+                                         : (inventariosState$ | async)?.inventarios)">
+              <td *ngFor="let column of allColumns" tuiTd>{{ getInventarioValue(inventario, column.key) }}</td>
+              <td tuiTd>
+                <tui-badge [appearance]="inventario.activo ? 'positive' : 'negative'">
+                  {{ inventario.activo ? 'Activo' : 'No activo' }}
+                </tui-badge>
+              </td>
+              <td tuiTd>
+                <div tuiBlockDetails>
+                  <span class="  text-lg">S/. {{ inventario.costo_compra }}</span>
+                </div>
+              </td>
+              <td tuiTd>
+                <div tuiBlockDetails>
+                  <span class=" text-lg">S/. {{ inventario.costo_venta }}</span>
+                </div>
+              </td>
+              <td tuiTd>
+                <div tuiBlockDetails>
+                  <span class="-translate-y-1" [ngClass]="getColorClass(inventario.cantidad)">
+                    {{ inventario.cantidad }}
+                  </span>
+                </div>
+              </td>
+              <td tuiTd>
+                <div>
+                  <span>{{ inventario.proveedor_nombre }}</span>
+                </div>
+              </td>
+              <td tuiTd>
+                <div tuiBlockDetails>
+                  <span class="  text-lg"> {{ inventario.categoria_nombre }}</span>
+                </div>
+              </td>
+              <td tuiTd>
+                <div class="flex gap-2 " *ngIf="mode === 'normal'">
+                  <button appearance="error" (click)="eliminarInventario(inventario.id)" iconStart="@tui.trash"
+                    tuiButton type="button">
+                    Eliminar
+                  </button>
+                  <button appearance="info" [disabled]="!inventario.activo"
+                    (click)="showDialogEditInventario(inventario)" iconStart="@tui.pencil" tuiButton type="button">
+                    Actualizar
+                  </button>
+                </div>
+                <div class="flex gap-2 " *ngIf="mode === 'select_product_sale_mode'">
+                  <button [disabled]="inventario.cantidad <= 0  || !inventario.activo"
+                    [appearance]="inventario.cantidad <= 0 ? 'secondary-grayscale': 'positive'" class="w-full"
+                    (click)="cerrarDialogo(inventario)"
+                    [iconStart]="inventario.cantidad <= 0 ? '@tui.lock': '@tui.plus'" tuiButton type="button">
+                    Agregar producto
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-              </tr>
-            </thead>
-            <tbody tuiTbody>
-              <tr *ngFor="let inventario of (inventariosState$ | async)?.inventarios ?? []">
-                <td *ngFor="let column of allColumns" tuiTd>{{ getInventarioValue(inventario, column.key) }}</td>
-                <td tuiTd>
-                  <tui-badge [appearance]="inventario.activo ? 'positive' : 'negative'">{{ inventario.activo ? 'Activo'
-                    : 'No
-                    activo' }}</tui-badge>
-                </td>
-                <td tuiTd>
-                  <div tuiBlockDetails>
-                    <span class="  text-lg">
-                      S/. {{ inventario.costo_compra }}
-                    </span>
-                  </div>
+      <!-- Caso 3: búsqueda hecha pero sin resultados -->
+      <tui-block-status
+        *ngIf="isTheSearchWasDone 
+               && (inventariosState$ | async)?.inventarios_search?.length === 0"
+        size="m"
+        class="m-auto">
+        <img alt="no matches"
+             src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+             tuiSlot="top" />
+        <h4>Productos no encontrados en el inventario</h4>
+        <span>No coincidimos con ningún producto</span>
+      </tui-block-status>
 
-                </td>
+    </div>
+  </ng-template>
 
- <td tuiTd>
-                  <div tuiBlockDetails>
-                    <span class=" text-lg">
-                      S/. {{ inventario.costo_venta }}
-                    </span>
-                  </div>
-                </td>
-               
-                <td tuiTd>
-                  <div tuiBlockDetails>
-                    <span class="-translate-y-1" [ngClass]="getColorClass(inventario.cantidad)">
-                      {{ inventario.cantidad }}
-                    </span>
-                  </div>
-                </td>
-                <td tuiTd>
-                  <div >
-                    <span class="" >
-                      {{ inventario.proveedor_nombre  }}
-                    </span>
-                  </div>
-                </td>
-                <td tuiTd>
-                  <div class="flex gap-2 " *ngIf="mode === 'normal'">
-
-                    <button appearance="error" (click)="eliminarInventario(inventario.id)"  iconStart="@tui.trash"
-                      tuiButton  type="button">
-                      Eliminar
-                    </button>
-
-                    <button appearance="info" [disabled]="!inventario.activo" (click)="showDialogEditInventario(inventario)" iconStart="@tui.pencil"
-                      tuiButton  type="button">
-                      Actualizar
-                    </button>
-                  </div>
-                 <div class="flex gap-2 " *ngIf="mode === 'select_product_sale_mode'">
-                    <button [disabled]="inventario.cantidad <= 0  || !inventario.activo"
-                        [appearance]="inventario.cantidad <= 0 ? 'secondary-grayscale': 'positive'" class="w-full"
-                        (click)="cerrarDialogo(inventario)"   [iconStart]="inventario.cantidad <= 0 ? '@tui.lock': '@tui.plus'"
-                        tuiButton  type="button">
-                        Agregar producto
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-
-        <tui-block-status *ngIf="((inventariosState$ | async)?.search_products_found ) === 'products_not_found'"
-          size="m" class="m-auto">
-          <img alt="survived"
-            src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-            tuiSlot="top" />
-
-          <h4>Productos no encontrados en el Inventario</h4>
-
-          <span>No coicidimos con ningun producto </span>
-
-
-        </tui-block-status>
-        <div class="pt-4"
-          *ngIf="((inventariosState$ | async)?.search_products_found ) === 'products_found' || ((inventariosState$ | async)?.search_products_found ) === '' ">
-          <tui-pagination [index]="(inventariosState$ | async)?.index_page"
-            [length]="(inventariosState$ | async)?.length_pages" (indexChange)="goToPage($event)" />
-        </div>
-      </tui-loader>
-
-    </ng-template>
-
-  </section>
+</section>

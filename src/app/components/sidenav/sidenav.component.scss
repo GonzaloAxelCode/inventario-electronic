@@ -2,19 +2,25 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@100..900&display=swap');
 @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap");
+/* asegurar alturas para que h-screen y overflow funcionen bien */
+html, body, app-root {
+  height: 100%;
+}
+body {
+  /* evitamos que el body haga scroll; el scroll será del contenido principal */
+  overflow: hidden;
+}
 
 body {
-  display: grid;
-  grid: [stack] 1fr / min-content [stack] 1fr;
+  
+  
   font-family: "Rubik", sans-serif;
 }
-nav a{
-  margin-top: 3px;
-}
+
 .drawer {
     top: 0;
     border-radius: 0;
-      max-width: 250px;
+    max-width: 250px;
 }
 
 .header {

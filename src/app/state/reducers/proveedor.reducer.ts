@@ -19,11 +19,17 @@ export interface ProveedorState {
     proveedores: Proveedor[];
     loadingProveedores?: boolean;
     errors?: any;
+    loadingCreateProveedor: boolean,
+    loadingUpdateProveedor: boolean,
+    loadingDesactivateProveedor: boolean,
 }
 
 export const initialState: ProveedorState = {
     proveedores: [],
     loadingProveedores: false,
+    loadingCreateProveedor: false,
+    loadingUpdateProveedor: false,
+    loadingDesactivateProveedor: false,
     errors: {}
 };
 
@@ -45,31 +51,31 @@ export const proveedorReducer = createReducer(
     })),
     on(createProveedorAction, (state) => ({
         ...state,
-        loadingProveedores: true
+        loadingCreateProveedor: true
     })),
     on(createProveedorSuccess, (state, { proveedor }) => ({
         ...state,
         proveedores: [...state.proveedores, proveedor],
-        loadingProveedores: false
+        loadingCreateProveedor: false
     })),
     on(createProveedorFail, (state, { error }) => ({
         ...state,
         errors: error,
-        loadingProveedores: false
+        loadingCreateProveedor: false
     })),
     on(updateProveedorAction, (state) => ({
         ...state,
-        loadingProveedores: true
+        loadingUpdateProveedor: true
     })),
     on(updateProveedorSuccess, (state, { proveedor }) => ({
         ...state,
         proveedores: state.proveedores.map(p => p.id === proveedor.id ? proveedor : p),
-        loadingProveedores: false
+        loadingUpdateProveedor: false
     })),
     on(updateProveedorFail, (state, { error }) => ({
         ...state,
         errors: error,
-        loadingProveedores: false
+        loadingUpdateProveedor: false
     })),
     on(onActiveToggleProveedorAction, (state) => ({
         ...state,

@@ -117,15 +117,6 @@ export class VentaService {
                 })
             );
     }
-    getLowStockProductsPorTienda(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.siteURL}/productos-menor-stock/`).pipe(
-            catchError(error => {
-                console.error('Error al obtener productos con menor stock', error);
-                return throwError(error);
-            })
-        );
-    }
-
     createVenta(venta: CreateVenta): Observable<Venta> {
         return this.http.post<Venta>(`${this.siteURL}/ventas/crear/`, venta).pipe(
             catchError(error => {

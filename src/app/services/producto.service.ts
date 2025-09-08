@@ -17,7 +17,8 @@ export interface PaginationResponse {
     results: Producto[],
     index_page: any
     length_pages: any
-    search_products_found: boolean
+    search_products_found: boolean,
+    all_results: Producto[],
 }
 @Injectable({
     providedIn: 'root',

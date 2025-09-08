@@ -9,10 +9,11 @@ import {
 } from '@taiga-ui/legacy';
 
 
+import { TableproductComponent } from '@/app/components/Tables/tableproduct/tableproduct.component';
 import { DialogCreateCategoriaService } from '@/app/services/dialogs-services/dialog-create-categoria.service';
 import { DialogCreateProductService } from '@/app/services/dialogs-services/dialog-create-product.service';
 import { TablecategoriesComponent } from "../../components/Tables/tablecategories/tablecategories.component";
-import { TableproductComponent } from "../../components/Tables/tableproduct/tableproduct.component";
+
 
 @Component({
   selector: 'app-productos',

@@ -5,7 +5,7 @@
             <tui-notification appearance="error">
                 <h3 tuiTitle>
                     Importante
-                    <span tuiSubtitle>Solo realizar en caso de error al iniciar una caja.Esta operacion quedara registrada.</span>
+                    <span tuiSubtitle>Solo realizar en caso de inconsitencias al iniciar una caja.Esta operacion quedara registrada.</span>
                 </h3>
             </tui-notification>
             <tui-textfield>
@@ -13,13 +13,11 @@
                 <input formControlName="saldo_inicial" tuiInputNumber placeholder="S/. 0.0" tuiTextfieldSize="l" />
             </tui-textfield>
 
-
-
             <footer>
 
-                <button tuiButton type="submit" [disabled]="form.invalid" iconStart="@tui.money"
+                <button [disabled]="form.invalid || !!(cajaState$ | async)?.loadingReinicializarCaja" tuiButton type="submit" [disabled]="form.invalid" iconStart="@tui.money"
                     appearance="primary-grayscale" class="grid w-full">
-                    Reinicializar Caja
+                    Reinicializar Caja        <tui-loader [showLoader]="!!(cajaState$ | async)?.loadingReinicializarCaja"></tui-loader>
                 </button>
             </footer>
         </form>

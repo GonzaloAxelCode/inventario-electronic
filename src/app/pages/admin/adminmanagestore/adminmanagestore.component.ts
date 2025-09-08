@@ -3,12 +3,13 @@ import { FormaddstoreComponent } from '@/app/components/Forms/formaddstore/forma
 import { TabletiendasComponent } from '@/app/components/Tables/tabletiendas/tabletiendas.component';
 import { Component } from '@angular/core';
 import { TuiAppearance, TuiButton, tuiDialog } from '@taiga-ui/core';
+import { TuiSkeleton } from '@taiga-ui/kit';
 
 
 
 @Component({
   selector: 'app-adminmanagestore',
-  standalone: true, imports: [FormaddstoreComponent, TabletiendasComponent, TuiButton, TuiAppearance],
+  standalone: true, imports: [FormaddstoreComponent, TabletiendasComponent, TuiButton, TuiAppearance, TuiSkeleton],
   templateUrl: './adminmanagestore.component.html',
   styleUrl: './adminmanagestore.component.scss'
 })

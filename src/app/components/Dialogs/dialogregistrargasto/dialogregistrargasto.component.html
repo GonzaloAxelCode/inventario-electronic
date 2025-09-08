@@ -23,8 +23,9 @@
     >
        Motivo o descripccion del gasto.
     </tui-textarea>
-     <button iconStart="@tui.dollar-sign" [disabled]="testForm.invalid" class="grid w-full my-3" tuiButton type="submit"
+     <button iconStart="@tui.dollar-sign" [disabled]="testForm.invalid || !!(cajaState$ | async)?.loadingRealizarGasto" class="grid w-full my-3" tuiButton type="submit"
         appearance="primary-grayscale">
        Registrar Gasto
+       <tui-loader [showLoader]="!!(cajaState$ | async)?.loadingRealizarGasto"></tui-loader>
     </button>
 </form>

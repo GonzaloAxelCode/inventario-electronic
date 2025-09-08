@@ -11,13 +11,14 @@ import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiConfirmData } from '@taiga-ui/kit';
+import { TUI_CONFIRM, TuiBadge, TuiConfirmData, TuiSkeleton } from '@taiga-ui/kit';
+import { TuiCardLarge } from '@taiga-ui/layout';
 import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-tabletiendas',
   standalone: true,
-  imports: [CommonModule, FormsModule, TuiTable, TuiBadge, TuiAppearance, TuiButton],
+  imports: [CommonModule, FormsModule, TuiTable, TuiBadge, TuiAppearance, TuiButton, TuiSkeleton, TuiCardLarge, TuiAppearance],
   templateUrl: './tabletiendas.component.html',
   styleUrl: './tabletiendas.component.scss'
 })

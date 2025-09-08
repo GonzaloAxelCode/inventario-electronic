@@ -1,9 +1,13 @@
 import { Inventario } from '@/app/models/inventario.models';
+import { Producto } from '@/app/models/producto.models';
 import { createReducer, on } from '@ngrx/store';
 import {
     actualizarInventario,
     actualizarInventarioFail,
     actualizarInventarioSuccess,
+    cargarProductosMenorStock,
+    cargarProductosMenorStockFailure,
+    cargarProductosMenorStockSuccess,
     clearSearchInventarios,
     createInventario,
     createInventarioFail,
@@ -24,8 +28,12 @@ import {
     verificarStockFail,
     verificarStockSuccess
 } from '../actions/inventario.actions';
+export interface InventarioLowStock {
+    item: Producto
+    inventario: Inventario
+}
 export interface InventarioState {
-    search_products_found: string;
+    search_found: boolean;
     count: number;
     next: any;
     previous: any;
@@ -40,11 +48,13 @@ export interface InventarioState {
     loadingDeactivate: boolean;
     loadingDelete: boolean;
     loadingSearch: boolean;
-    productos_search: Inventario[];
+    inventarios_search: Inventario[];
+    lowStockProducts: InventarioLowStock[],
+    loadingLowStock: boolean
 }
 
 const initialState: InventarioState = {
-    search_products_found: "",  // Inicializa como string vacío si es que no hay un valor predeterminado
+    search_found: false,  // Inicializa como string vacío si es que no hay un valor predeterminado
     count: 0,
     next: null,
     previous: null,
@@ -59,7 +69,10 @@ const initialState: InventarioState = {
     loadingDeactivate: false,
     loadingDelete: false,
     loadingSearch: false,
-    productos_search: []  // Inicializa como un array vacío
+
+    lowStockProducts: [] as unknown as InventarioLowStock[],
+    loadingLowStock: false,
+    inventarios_search: []  // Inicializa como un array vacío
 };
 export const inventarioReducer = createReducer(
     initialState,
@@ -69,10 +82,9 @@ export const inventarioReducer = createReducer(
         ...state,
         loadingProductosInventario: true
     })),
-    on(loadInventariosSuccess, (state, { inventarios, next, previous, index_page, length_pages }) => ({
+    on(loadInventariosSuccess, (state, { inventarios }) => ({
         ...state,
         inventarios,
-        next, previous, index_page, length_pages,
         loadingProductosInventario: false
     })),
     on(loadInventariosFail, (state, { error }) => ({
@@ -120,17 +132,19 @@ export const inventarioReducer = createReducer(
     })),
     on(actualizarInventarioSuccess, (state, { newInventario }) => ({
         ...state,
-
-        inventarios: state.inventarios.map(i =>
-            i.id === newInventario.id ? { ...i, ...newInventario } : i
-        ),
-        loading: false
+        inventarios: state.inventarios
+            .map(i => i.id === newInventario.id ? { ...i, ...newInventario } : i)
+            .sort((a, b) => Date.parse(b.date_created) - Date.parse(a.date_created)),
+        loading: false,
     })),
-    on(actualizarInventarioFail, (state, { error }) => ({
-        ...state,
-        errors: error,
-        loading: false
-    })),
+    on(actualizarInventarioFail, (state, { error }) => {
+        console.log(error)
+        return {
+            ...state,
+            errors: error,
+            loading: false
+        }
+    }),
 
 
     on(verificarStock, state => ({
@@ -167,13 +181,11 @@ export const inventarioReducer = createReducer(
         ...state,
         loadingSearch: true
     })),
-    on(searchInventarioSuccess, (state, { inventarios, search_products_found, count, next, previous, index_page, length_pages }) => ({
+    on(searchInventarioSuccess, (state, { inventarios_search, search_found }) => ({
         ...state,
-        productos_search: inventarios,
-        loadingSearch: false,
-        search_products_found: search_products_found,
-        count: count,
-        next, previous, index_page, length_pages
+        inventarios_search: inventarios_search,
+        search_found: search_found
+
     })),
     on(searchInventarioFail, (state, { error }) => ({
         ...state,
@@ -184,8 +196,27 @@ export const inventarioReducer = createReducer(
         ...state,
         count: 0,
         loadingSearch: false,
-        productos_search: [],
-        search_products_found: ""
-    }))
+        inventarios_search: [],
+        search_found: false
+    })),
+    on(cargarProductosMenorStock, (state) => ({
+        ...state,
+        loadingLowStock: true,
+        error: null,
+    })),
+
+    on(cargarProductosMenorStockSuccess, (state, { lowStockProducts }) => ({
+        ...state,
+        lowStockProducts: lowStockProducts,
+        loadingLowStock: false,
+    })),
+
+    on(cargarProductosMenorStockFailure, (state, { error }) => ({
+        ...state,
+        errorLowStock: error,
+        loadingLowStock: false,
+    })),
+
+
 );
 

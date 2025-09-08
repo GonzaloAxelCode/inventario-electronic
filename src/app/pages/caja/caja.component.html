@@ -1,185 +1,200 @@
-<div *ngIf="(caja_is_open$ | async)">
-    <div class="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cosl-3 lg:grid-cols-3 gap-4 pb-4">
-        <div class="card_2">
-            <div class="flex items-center justify-between gap-3">
-                <span class="flex items-center gap-2">
-                    <!-- Usar el ng-template aquí -->
+<div class="" *ngIf="!!(selectCaja$ | async)?.loadingDataCaja">
+    <div class=" items-center m-auto  flex mt-32 h-full flex-col gap-3 justify-center
+                 ">
 
-                    <p class="title-text">
-                        Gastos Hoy
-                    </p>
-                </span>
-                <form [formGroup]="testForm">
-                    <p tuiDropdownOpen [tuiDropdown]="dropdown">
-                        <button [disabled]="true" tuiButton appearance="outline-grayscale" iconEnd="@tui.calendar-1"
-                            size="s" type="button">
-                            Fecha
-                        </button>
-                        <ng-template #dropdown>
-                            <tui-input-date [disabled]="true" formControlName="testValue" tuiTextfieldSize="l">
-                                Seleccionar
-                            </tui-input-date>
-                        </ng-template>
-                    </p>
-                </form>
-
-            </div>
-            <div class="data">
-
-                <p class="text-red-500">
-                    <span class="mr-2">-</span> <span>S/.</span> {{ ( selectCaja$ | async)?.egresos }}
-                </p>
-
-            </div>
-        </div>
-
-        <div class="card_3">
-            <div class=" flex items-center justify-between gap-3">
-                <span class="flex gap-2 items-center">
-
-                    <p class="title-text">
-                        Ingresos Hoy
-                    </p>
-                </span>
-
-                <button tuiButton appearance="outline-grayscale" class="mb-2" disabled iconEnd="@tui.calendar-1"
-                    size="s" type="button">
-                    Fecha
-                </button>
-            </div>
-            <div class="data">
-                <p class="text-green-500">
-                    <span class="mr-2">+</span> <span>S/.</span> {{ ( selectCaja$ | async)?.ingresos }}
-                </p>
-
-
-            </div>
-        </div>
-        <div class="card">
-            <div class=" flex items-center justify-between gap-3">
-                <span class="flex gap-2 items-center">
-
-                    <p class="title-text">
-                        Saldo Efectivo
-                    </p>
-
-                </span>
-                <button tuiButton appearance="outline-grayscale" class="mb-2" disabled iconEnd="@tui.calendar-1"
-                    size="s" type="button">
-                    Fecha
-                </button>
-
-
-
-            </div>
-            <div class="data">
-                <p>
-                    <span>S/.</span> {{ ( selectCaja$ | async)?.saldo_final }}
-                </p>
-
-            </div>
-        </div>
+        <img src="https://cdn.prod.website-files.com/642fb32de87a48d3c780840d/66a74a18f139635a337f1fbd_7.png"
+            class="text-center w-60 transition-all duration-300 " alt="">
+        <h2 class="text-center font-bold">Cargando Caja</h2>
+        <div class="text-center mx-auto animate-spin rounded-full h-8 w-8 border-4 border-white border-t-transparent"></div>
     </div>
-
-
-    <div class=" p-6 text-white">
-
-        <div class="sm:grid grid-cols-12 gap-4">
-            <!-- Botones con Taiga UI -->
-            <div class="col-span-12  flex  gap-4">
-                <a (click)="openRegistrarGasto()" iconStart="@tui.badge-dollar-sign" tuiButtonVertical tuiButton
-                    appearance="positive" class="bg-blue-600 text-white ">
-                    Registrar Gasto
-                </a>
-
-                <a (click)="openRegistrarIngreso()" iconStart="@tui.badge-dollar-sign" tuiButton appearance="warning"
-                    class="bg-gray-600 text-white" tuiButtonVertical>
-                    Registrar Ingreso
-                </a>
-
-                <button disabled iconStart="@tui.hand-coins" tuiButton appearance="info" tuiButtonVertical
-                    class="bg-yellow-600 text-white border-none">
-                    Realizar un prestamo
-                </button>
-
-                <a (click)="openReabriCaja()" iconStart="@tui.refresh-ccw-dot" tuiButton appearance="glass"
-                    tuiButtonVertical class="bg-green-600 text-white">
-                    Reinicializar Caja
-                </a>
-
-                <button (click)="openCerrarCaja()" tuiButton appearance="negative" iconStart="@tui.bookmark-x"
-                    tuiButtonVertical class="text-white">
-                    Cerrar Caja
-                </button>
-
-            </div>
-
-        </div>
-    </div>
-    <div class="p-6">
-        <table tuiTable size="s" class="table" [columns]="columns">
-            <thead>
-                <tr tuiThGroup>
-                    <th tuiTh> ID Operacion</th>
-
-                    <th tuiTh>Detalles</th>
-                    <th tuiTh>Tipo Operacion</th>
-                    <th tuiTh>Responsable </th>
-                    <th tuiTh>Fecha </th>
-                    <th tuiTh>Monto</th>
-                </tr>
-            </thead>
-            <tbody tuiTbody [data]="operaciones">
-                <tr *ngFor="let operacion of operaciones" tuiTr>
-                    <td tuiTd *tuiCell="'monto'">
-                        <span [class]="operacion.tipo == 'gasto' ? 'text-xl text-red-500' : 'text-xl text-green-500'">
-                            {{ operacion.tipo === "gasto" ? "-":"+"}} S/. {{ operacion.monto }}
-                        </span>
-                    </td>
-                  
-
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
 </div>
 
+<div class="" *ngIf="!!!(selectCaja$ | async)?.loadingDataCaja">
+
+    <div *ngIf="(caja_is_open$ | async)">
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cosl-3 lg:grid-cols-3 gap-4 pb-4">
+            <div class="card_2">
+                <div class="flex items-center justify-between gap-3">
+                    <span class="flex items-center gap-2">
+                        <!-- Usar el ng-template aquí -->
+
+                        <p class="title-text">
+                            Gastos Hoy
+                        </p>
+                    </span>
+                    <form [formGroup]="testForm">
+                        <p tuiDropdownOpen [tuiDropdown]="dropdown">
+                            <button [disabled]="true" tuiButton appearance="outline-grayscale" iconEnd="@tui.calendar-1"
+                                size="s" type="button">
+                                Fecha
+                            </button>
+                            <ng-template #dropdown>
+                                <tui-input-date [disabled]="true" formControlName="testValue" tuiTextfieldSize="l">
+                                    Seleccionar
+                                </tui-input-date>
+                            </ng-template>
+                        </p>
+                    </form>
+
+                </div>
+                <div class="data">
+
+                    <p class="text-red-500" [tuiSkeleton]="!!(selectCaja$ | async)?.loadingDataCaja">
+                        <span class="mr-2">-</span> <span>S/.</span> {{ ( selectCaja$ | async)?.caja?.egresos }}
+                    </p>
+
+                </div>
+            </div>
+
+            <div class="card_3">
+                <div class=" flex items-center justify-between gap-3">
+                    <span class="flex gap-2 items-center">
+
+                        <p class="title-text">
+                            Ingresos Hoy
+                        </p>
+                    </span>
+
+                    <button tuiButton appearance="outline-grayscale" class="mb-2" disabled iconEnd="@tui.calendar-1"
+                        size="s" type="button">
+                        Fecha
+                    </button>
+                </div>
+                <div class="data">
+                    <p class="text-green-500">
+                        <span class="mr-2">+</span> <span>S/.</span> {{ ( selectCaja$ | async)?.caja?.ingresos }}
+                    </p>
 
 
-<div *ngIf="!(caja_is_open$ | async)" class="w-full m-auto">
-    <div class="m-auto  grid place-content-center mt-20">
-        <form tuiAppearance="floating" class="my-auto mx-auto" tuiCardLarge tuiForm="m" (ngSubmit)="onSubmit()"
-            [formGroup]="form" [style.max-width.rem]="32">
-            <header tuiHeader>
-                <h2 tuiTitle>
-                    CAJA
-                    <span tuiSubtitle>Efectivo en caja de hoy</span>
-                </h2>
+                </div>
+            </div>
+            <div class="card">
+                <div class=" flex items-center justify-between gap-3">
+                    <span class="flex gap-2 items-center">
 
-            </header>
-            <tui-notification appearance="positive">
-                <h3 tuiTitle>
-                    Importante
-                    <span tuiSubtitle> Revisa muy bien la cantidad de efectivo que colocaras en la caja.</span>
-                </h3>
-            </tui-notification>
-            <tui-textfield>
-                <label tuiLabel>Efectivo Incial</label>
-                <input formControlName="saldo_inicial" tuiInputNumber placeholder="S/. 0.0" tuiTextfieldSize="l" />
-            </tui-textfield>
+                        <p class="title-text">
+                            Saldo Efectivo
+                        </p>
+
+                    </span>
+                    <button tuiButton appearance="outline-grayscale" class="mb-2" disabled iconEnd="@tui.calendar-1"
+                        size="s" type="button">
+                        Fecha
+                    </button>
 
 
 
-            <footer>
+                </div>
+                <div class="data">
+                    <p>
+                        <span>S/.</span> {{ ( selectCaja$ | async)?.caja?.saldo_final }}
+                    </p>
 
-                <button tuiButton type="submit" [disabled]="form.invalid" iconStart="@tui.money"
-                    appearance="primary-grayscale" class="grid w-full">
-                    Iniciar Caja
-                </button>
-            </footer>
-        </form>
+                </div>
+            </div>
+        </div>
+
+
+        <div class=" p-6 text-white">
+
+            <div class="sm:grid grid-cols-12 gap-4">
+                <!-- Botones con Taiga UI -->
+                <div class="col-span-12  flex  gap-4">
+                    <a (click)="openRegistrarGasto()" iconStart="@tui.badge-dollar-sign" tuiButtonVertical tuiButton
+                        appearance="positive" class="bg-blue-600 text-white ">
+                        Registrar Gasto
+                    </a>
+
+                    <a (click)="openRegistrarIngreso()" iconStart="@tui.badge-dollar-sign" tuiButton
+                        appearance="warning" class="bg-gray-600 text-white" tuiButtonVertical>
+                        Registrar Ingreso
+                    </a>
+
+                    <button disabled iconStart="@tui.hand-coins" tuiButton appearance="info" tuiButtonVertical
+                        class="bg-yellow-600 text-white border-none">
+                        Realizar un prestamo
+                    </button>
+
+                    <a (click)="openReabriCaja()" iconStart="@tui.refresh-ccw-dot" tuiButton appearance="glass"
+                        tuiButtonVertical class="bg-green-600 text-white">
+                        Reinicializar Caja
+                    </a>
+
+                    <button (click)="openCerrarCaja()" tuiButton appearance="negative" iconStart="@tui.bookmark-x"
+                        tuiButtonVertical class="text-white">
+                        Cerrar Caja
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="p-6">
+            <table tuiTable size="s" class="table" [columns]="columns">
+                <thead>
+                    <tr tuiThGroup>
+                        <th tuiTh> ID Operacion</th>
+
+                        <th tuiTh>Detalles</th>
+                        <th tuiTh>Tipo Operacion</th>
+                        
+                        <th tuiTh>Fecha </th>
+                        <th tuiTh>Monto</th>
+                    </tr>
+                </thead>
+                <tbody tuiTbody [data]="operaciones">
+                    <tr *ngFor="let operacion of operaciones" tuiTr>
+                        <td tuiTd *tuiCell="'monto'">
+                            <span
+                                [class]="operacion.tipo == 'gasto' ? 'text-xl text-red-500' : 'text-xl text-green-500'">
+                                {{ operacion.tipo === "gasto" ? "-":"+"}} S/. {{ operacion.monto }}
+                            </span>
+                        </td>
+
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
     </div>
 
+
+
+    <div *ngIf="!(caja_is_open$ | async)" class="w-full m-auto">
+        <div class="m-auto  grid place-content-center mt-20">
+            <form tuiAppearance="floating" class="my-auto mx-auto" tuiCardLarge tuiForm="m" (ngSubmit)="onSubmit()"
+                [formGroup]="form" [style.max-width.rem]="32">
+                <header tuiHeader>
+                    <h2 tuiTitle>
+                        CAJA
+                        <span tuiSubtitle>Efectivo en caja de hoy</span>
+                    </h2>
+
+                </header>
+                <tui-notification appearance="positive">
+                    <h3 tuiTitle>
+                        Importante
+                        <span tuiSubtitle> Revisa muy bien la cantidad de efectivo que colocaras en la caja.</span>
+                    </h3>
+                </tui-notification>
+                <tui-textfield>
+                    <label tuiLabel>Efectivo Incial</label>
+                    <input formControlName="saldo_inicial" tuiInputNumber placeholder="S/. 0.0" tuiTextfieldSize="l" />
+                </tui-textfield>
+
+
+
+                <footer>
+
+                    <button tuiButton type="submit" [disabled]="form.invalid" iconStart="@tui.money"
+                        appearance="primary-grayscale" class="grid w-full">
+                        Iniciar Caja
+                    </button>
+                </footer>
+            </form>
+
+        </div>
+
+    </div>
 </div>

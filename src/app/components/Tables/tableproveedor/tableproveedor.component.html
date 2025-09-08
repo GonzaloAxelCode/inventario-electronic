@@ -1,62 +1,67 @@
 <div class="p-10">
 
   <div class="flex gap-2">
-    <button iconStart="@tui.plus" tuiButton appearance="info" tuiButtonVertical type="button" class="my-5 pr-3"
-      (click)="showDialog()">
+    <button iconStart="@tui.plus" tuiButton appearance="primary-grayscale" tuiButtonVertical type="button" class="my-5 pr-3"
+      (click)="showDialogCreate()">
       Agregar Proveedor
     </button>
 
   </div>
-  <ng-template #tabla>
-    <table tuiTable size="s">
-      <thead>
-        <tr>
-          <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
-          <th tuiTh>Activo</th>
-          <th tuiTh>Acciones</th>
+  <div class="rounded-lg h-[200px] min-h-[200px]" [tuiSkeleton]="!!(proveedoresState$ | async)?.loadingProveedores">
+
+
+    <ng-template #tabla>
+      <table tuiTable size="s">
+        <thead>
+          <tr>
+            <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
+            <th tuiTh>Activo</th>
+            <th tuiTh>Acciones</th>
 
 
 
-        </tr>
-      </thead>
-      <tbody tuiTbody *ngIf="(proveedoresState$ | async)?.proveedores?.length">
-        <tr *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []">
+          </tr>
+        </thead>
+        <tbody tuiTbody *ngIf="(proveedoresState$ | async)?.proveedores?.length">
+          <tr *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []">
 
-          <td *ngFor="let column of allColumns" tuiTd>{{ getProveedorValue(proveedor, column.key) }}</td>
+            <td *ngFor="let column of allColumns" tuiTd>{{ getProveedorValue(proveedor, column.key) }}</td>
 
-          <td tuiTd>
-            <tui-badge [appearance]="proveedor.activo ? 'positive' : 'negative'">{{ proveedor.activo ? 'Activo' : 'No
-              activo' }}</tui-badge>
-          </td>
-          <td tuiTd>
-            <div class="flex gap-2 ">
-              <button appearance="positive" iconStart="@tui.users" tuiButton type="button"
-                (click)="showDialogUpdate(proveedor)">
-                Actualizar
-              </button>
-              <button [appearance]="proveedor.activo ? 'error' : 'secondary'" iconStart="@tui.trash" tuiButton
-                type="button" (click)=" onActiveToggle(proveedor)">
-                {{ proveedor.activo ? 'Desactivar' : 'Activar' }}
-              </button>
-            </div>
+            <td tuiTd>
+              <tui-badge [appearance]="proveedor.activo ? 'positive' : 'negative'">{{ proveedor.activo ? 'Activo' : 'No
+                activo' }}</tui-badge>
+            </td>
+            <td tuiTd>
+              <div class="flex gap-2 ">
+                <button appearance="positive" iconStart="@tui.users" tuiButton type="button"
+                  (click)="showDialogUpdate(proveedor)">
+                  Actualizar
+                </button>
+                <button [appearance]="proveedor.activo ? 'error' : 'secondary'" iconStart="@tui.trash" tuiButton
+                  type="button" (click)=" onActiveToggle(proveedor)">
+                  {{ proveedor.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+              </div>
 
-          </td>
+            </td>
 
-        </tr>
+          </tr>
 
-      </tbody>
-    </table>
-  </ng-template>
-  <tui-block-status
-    *ngIf="(proveedoresState$ | async)?.proveedores?.length === 0 && !(proveedoresState$ | async)?.loadingProveedores else tabla"
-    size="m" class="m-auto">
-    <img alt="survived"
-      src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-      tuiSlot="top" />
+        </tbody>
+      </table>
+    </ng-template>
+    <tui-block-status
+      *ngIf="(proveedoresState$ | async)?.proveedores?.length === 0 && !(proveedoresState$ | async)?.loadingProveedores else tabla"
+      size="m" class="m-auto">
+      <img alt="survived"
+        src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+        tuiSlot="top" />
 
-    <h4>Aun no tienes ningun proveedor</h4>
+      <h4>Aun no tienes ningun proveedor</h4>
 
-    <span>Empieza a crear tus primeros productos</span>
+      <span>Empieza a crear tus primeros productos</span>
 
 
-  </tui-block-status>
+    </tui-block-status>
+
+  </div>

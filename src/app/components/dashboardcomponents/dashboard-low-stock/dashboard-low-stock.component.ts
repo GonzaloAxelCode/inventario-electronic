@@ -1,27 +1,30 @@
-import { cargarProductosMenorStock } from '@/app/state/actions/venta.actions';
+
+import { cargarProductosMenorStock } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
-import { VentaState } from '@/app/state/reducers/venta.reducer';
+import { InventarioState } from '@/app/state/reducers/inventario.reducer';
+import { selectInventarioState } from '@/app/state/selectors/inventario.selectors';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
-import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiFormatNumberPipe } from '@taiga-ui/core';
+import { TuiSkeleton } from '@taiga-ui/kit';
 import { TuiBlockDetails } from '@taiga-ui/layout';
 import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard-low-stock',
   standalone: true,
-  imports: [CommonModule, TuiBlockDetails, AsyncPipe, TuiFormatNumberPipe, TuiTable],
+  imports: [CommonModule, TuiBlockDetails, AsyncPipe, TuiFormatNumberPipe, TuiTable, TuiSkeleton],
 
   templateUrl: './dashboard-low-stock.component.html',
-  styleUrl: './dashboard-low-stock.component.scss'
+  styleUrl: './dashboard-low-stock.component.scss',
+
 })
 export class DashboardLowStockComponent implements OnInit {
   private readonly store = inject(Store<AppState>);
-  selectVentas$?: Observable<VentaState>
+  selectInventario$!: Observable<InventarioState>
   tiendaUser!: number
   constructor() {
     this.store.select(selectUsersState).pipe(
@@ -33,10 +36,8 @@ export class DashboardLowStockComponent implements OnInit {
   }
   ngOnInit() {
 
-    this.selectVentas$ = this.store.select(selectVenta);
-    this.selectVentas$.subscribe((ventas) => {
+    this.selectInventario$ = this.store.select(selectInventarioState);
 
-    });
   }
   getColorClass(cantidad: number): string {
     if (cantidad >= 0 && cantidad <= 3) {

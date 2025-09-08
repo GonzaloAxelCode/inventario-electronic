@@ -1,11 +1,13 @@
-import { Categoria, CategoriaState } from '@/app/models/categoria.models';
+import { Categoria } from '@/app/models/categoria.models';
 import { Inventario } from '@/app/models/inventario.models';
 import { Producto, ProductoState } from '@/app/models/producto.models';
 import { Proveedor } from '@/app/models/proveedor.models';
 import { TiendaState } from '@/app/models/tienda.models';
 import { DialogEditInventarioDetailService } from '@/app/services/dialogs-services/dialog-edit-inventario.service';
-import { clearSearchInventarios, createInventario, eliminarInventarioAction, loadInventarios, searchInventarios } from '@/app/state/actions/inventario.actions';
+import { QuerySearchInventario } from '@/app/services/inventario.service';
+import { clearSearchInventarios, createInventario, eliminarInventarioAction, searchInventarios } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
+import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { InventarioState } from '@/app/state/reducers/inventario.reducer';
 import { ProveedorState } from '@/app/state/reducers/proveedor.reducer';
 import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
@@ -21,19 +23,11 @@ import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { tuiCountFilledControls } from '@taiga-ui/cdk';
-import { TuiAppearance, TuiButton, TuiDataList, TuiLink, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiConfirmData, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiSegmented, TuiStatus, TuiSwitch, tuiValidationErrorsProvider } from '@taiga-ui/kit';
+import { TuiAppearance, TuiButton, TuiDataList, TuiExpand, TuiLink, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiConfirmData, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiSegmented, TuiSkeleton, TuiStatus, TuiSwitch, tuiValidationErrorsProvider } from '@taiga-ui/kit';
 import { TuiBlockDetails, TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
-import { TuiInputModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
-import { map, Observable, take } from 'rxjs';
-interface QuerySearchInventario {
-  nombre?: string;
-  categoria?: string;
-  sku?: string;
-  marca?: string;
-  modelo?: string;
-  activo?: any;
-}
+import { TuiInputModule, TuiInputRangeModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
+import { map, Observable } from 'rxjs';
 @Component({
   selector: 'app-tableinventario',
   standalone: true,
@@ -52,14 +46,14 @@ interface QuerySearchInventario {
     TuiBadge, TuiButton, TuiAppearance, TuiStatus, TuiSegmented, NgForOf,
     ReactiveFormsModule,
     TuiButton,
-    TuiChevron,
+    TuiChevron, TuiInputRangeModule,
     TuiDataListWrapper,
     TuiFilter,
     TuiLink,
     TuiSearch,
-    TuiSegmented,
-    TuiSwitch,
-    TuiTextfield, TuiLoader, TuiPagination, TuiBlockStatus,
+    TuiSegmented, TuiSkeleton,
+    TuiSwitch, TuiExpand,
+    TuiTextfield, TuiLoader, TuiPagination, TuiBlockStatus, TuiSkeleton
   ],
   templateUrl: './tableinventario.component.html',
   providers: [tuiValidationErrorsProvider({
@@ -72,12 +66,15 @@ interface QuerySearchInventario {
 export class TableinventarioComponent {
   @Input() mode?: string
   @Input() cerrarDialogo!: (valor: Inventario) => void;
+  value = [0, 0];
 
   inventariosState$?: Observable<InventarioState>;
   tiendasState$?: Observable<TiendaState>
+  productState$?: Observable<ProductoState>
   inventarioForm2!: FormGroup;
   productos: Producto[] = [];
   proveedores: any[] = [];
+  inventarios!: Inventario[]
   private readonly dialogs = inject(TuiResponsiveDialogService);
 
   private readonly dialogEditInventarioService = inject(DialogEditInventarioDetailService);
@@ -92,11 +89,16 @@ export class TableinventarioComponent {
     { key: 'producto_nombre', label: 'Producto' },
 
   ];
+  protected expanded = false;
+
   protected readonly form = new FormGroup({
     nombre: new FormControl(),
     categoria: new FormControl<any>(null),
     proveedor: new FormControl<any>(null),
-    activo: new FormControl(),
+    activo: new FormControl(), // Rango de stock (array [min, max])
+    stockRange: new FormControl<[number, number] | null>(null),
+    precioCompraRange: new FormControl<[number, number] | null>(null),
+    precioVentaRange: new FormControl<[number, number] | null>(null)
   });
   filteredData: any = []
   allColumnKeys = this.allColumns.map(c => c.key);
@@ -104,7 +106,7 @@ export class TableinventarioComponent {
   selectCategorias$?: Observable<Categoria[]>;
   selectProveedores$?: Observable<Proveedor[]>;
   tiendaUser!: number
-
+  isTheSearchWasDone: boolean = false
   compareCategorias = (a: Categoria, b: Categoria) => a && b && a.id === b.id;
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
     this.store.select(selectUsersState).pipe(
@@ -119,25 +121,38 @@ export class TableinventarioComponent {
   );
   clearSearch() {
     this.store.dispatch(clearSearchInventarios());
+    this.isTheSearchWasDone = false
   }
   onSubmitSearch() {
+    const values = this.form.value;
 
     const searchQuery: Partial<QuerySearchInventario> = {
       nombre: this.form.value.nombre || "",
       categoria: this.form.value?.categoria?.id || 0,
-      activo: this.form.value.activo === null ? null : this.form.value.activo === "Activo"
+      stock_min: values.stockRange?.[0] ?? null,
+      stock_max: values.stockRange?.[1] ?? null,
+      precio_compra_min: values.precioCompraRange?.[0] ?? null,
+      precio_compra_max: values.precioCompraRange?.[1] ?? null,
+
+      precio_venta_min: values.precioVentaRange?.[0] ?? null,
+      precio_venta_max: values.precioVentaRange?.[1] ?? null,
     }
     console.log(searchQuery)
-    this.store.dispatch(searchInventarios({ query: searchQuery, }))
 
+    this.store.dispatch(searchInventarios({ inventarios: this.inventarios, query: searchQuery }))
+    this.isTheSearchWasDone = true
   }
 
 
   ngOnInit() {
-    this.inventariosState$ = this.store.select(selectInventario)
+    this.store.select(selectInventario).subscribe((state) => {
+
+      this.inventarios = state.inventarios
+    })
     this.store.select(selectProductoState).subscribe((state: ProductoState) => {
       this.productos = state.productos;
     });
+
     this.store.select(selectProveedorState).subscribe((state: ProveedorState) => {
       this.proveedores = state.proveedores;
     });
@@ -150,6 +165,12 @@ export class TableinventarioComponent {
     this.selectProveedores$ = this.store.select(selectProveedorState).pipe(
       map((state: ProveedorState) => state.proveedores)
     );
+
+
+    this.form.valueChanges.subscribe(values => {
+      this.onSubmitSearch()
+    });
+
   }
   onSubmit(): void {
     if (this.inventarioForm2.valid) {
@@ -162,6 +183,7 @@ export class TableinventarioComponent {
 
       this.store.dispatch(createInventario({ inventario: preparedData }));
     }
+    this.isTheSearchWasDone = true
   }
 
   stringify = (item: { id: number; nombre: string } | null) => item ? item.nombre : '';
@@ -207,23 +229,5 @@ export class TableinventarioComponent {
     });
   }
 
-  protected readonly items = inject<readonly string[]>('Pythons' as any);
-  protected readonly filters = ['Python', 'JavaScript', 'TypeScript'];
-  protected readonly segments = [null, 'Unread', 'Archived'];
 
-
-  protected goToPage(index: number): void {
-    this.inventariosState$?.pipe(take(1)).subscribe(state => {
-      if (state?.search_products_found === '') {
-        this.store.dispatch(loadInventarios({ page: index + 1 }));
-      } else {
-        const searchQuery: Partial<QuerySearchInventario> = {
-          nombre: this.form.value.nombre || "",
-          categoria: this.form.value?.categoria?.id || 0,
-          activo: this.form.value.activo === null ? null : this.form.value.activo === "Activo"
-        };
-        this.store.dispatch(searchInventarios({ query: searchQuery, }));
-      }
-    });
-  }
 }

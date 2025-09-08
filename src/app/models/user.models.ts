@@ -15,6 +15,7 @@ export interface User {
     permissions: UserPermissions;
     user_permissions_list: string[];   // 👈 faltaba
     all_permissions_meta: string[];    // 👈 faltaba
+    date_created?: any
 }
 
 export interface UserPermissions {

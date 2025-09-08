@@ -18,7 +18,7 @@ import { selectInventarioState } from '@/app/state/selectors/inventario.selector
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { selectProveedorState } from '@/app/state/selectors/proveedor.selectors';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
-import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
+import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
@@ -53,7 +53,7 @@ import { map, Observable } from 'rxjs';
 export class DialogcreateinventarioComponent implements OnInit {
 
   tiendasState$?: Observable<TiendaState>
-  userId!: number
+
   inventarioForm2!: FormGroup;
   productos: Producto[] = [];
   tiendas: any[] = [];
@@ -65,12 +65,11 @@ export class DialogcreateinventarioComponent implements OnInit {
 
   }
   ngOnInit() {
-    this.store.select(selectCurrenttUser).subscribe((state) => {
-      this.userId = state.id;
-    });
+
 
     this.store.select(selectProductoState).subscribe((state: ProductoState) => {
-      this.productos = state.productos;
+      console.log(state.all_products)
+      this.productos = state.all_products;
     });
     this.store.select(selectProveedorState).subscribe((state: ProveedorState) => {
       // Filtra solo proveedores activos
@@ -87,7 +86,7 @@ export class DialogcreateinventarioComponent implements OnInit {
       producto: [null, Validators.required],
       tienda: [1, Validators.required],
       proveedor: [null, Validators.required],
-      responsable: [this.userId],
+
       cantidad: [1, [Validators.required, Validators.min(1)]],
       stock_minimo: [1, [Validators.required, Validators.min(0)]],
       stock_maximo: [100, [Validators.required, Validators.min(1)]],

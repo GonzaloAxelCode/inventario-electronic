@@ -1,47 +1,68 @@
-<table tuiTable size="s">
-  <thead>
-    <tr>
-      <th tuiTh>ID</th>
-      <th tuiTh>Nombre</th>
-      <th tuiTh>Descripción</th>
-      <th tuiTh>Abreviado</th>
-      <th tuiTh>Acciones</th>
-    </tr>
-  </thead>
-  <tbody tuiTbody *ngIf="(selectCategorias$| async)?.categorias?.length">
-    <tr *ngFor="let categoria of (selectCategorias$| async)?.categorias">
-      <td tuiTd>{{ categoria.id }}</td>
-      
-      <td tuiTd>
-      
-       {{ categoria.nombre }}
-      </td>
-      
-      <td tuiTd>
-       
-       {{ categoria.descripcion }}
-      </td>
-      
-      <td tuiTd>
-      
-       {{ categoria.siglas_nombre_categoria }}
-      </td>
-      
-      <td tuiTd>
-        <div class="flex gap-2">
-         
-        
-          <button appearance="positive" iconStart="@tui.pencil" tuiButton  type="button" (click)="showDialogUpdate(categoria)"
-                     >
-                     Actualizar
-                    </button>
-                    <button appearance="error" (click)="onDeleteCategoria(categoria.id)" iconStart="@tui.x" tuiButton type="button"
-                        >
-                        Desactivar
-                    </button>
-        
-        </div>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="rounded-lg h-[200px] h-min-[200px]" [tuiSkeleton]="!!(selectCategorias$ | async)?.loadingCategorias">
+
+  <tui-block-status
+    *ngIf="(selectCategorias$ | async)?.categorias?.length === 0 && !(selectCategorias$ | async)?.loadingCategorias; else  tabla1"
+    size="m" class="m-auto">
+    <img alt="survived"
+      src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+      tuiSlot="top" />
+
+    <h4>Aun no tienes ninguna categoria</h4>
+
+    <span>Empieza a crear una categoria</span>
+
+
+  </tui-block-status>
+
+  <ng-template #tabla1>
+
+
+    <table tuiTable size="s">
+      <thead>
+        <tr>
+          <th tuiTh>ID</th>
+          <th tuiTh>Nombre</th>
+          <th tuiTh>Descripción</th>
+          <th tuiTh>Abreviado</th>
+          <th tuiTh>Acciones</th>
+        </tr>
+      </thead>
+      <tbody tuiTbody *ngIf="(selectCategorias$| async)?.categorias?.length">
+        <tr *ngFor="let categoria of (selectCategorias$| async)?.categorias">
+          <td tuiTd>{{ categoria.id }}</td>
+
+          <td tuiTd>
+
+            {{ categoria.nombre }}
+          </td>
+
+          <td tuiTd>
+
+            {{ categoria.descripcion }}
+          </td>
+
+          <td tuiTd>
+
+            {{ categoria.siglas_nombre_categoria }}
+          </td>
+
+          <td tuiTd>
+            <div class="flex gap-2">
+
+
+              <button appearance="positive" iconStart="@tui.pencil" tuiButton type="button"
+                (click)="showDialogUpdate(categoria)">
+                Actualizar
+              </button>
+              <button appearance="error" (click)="onDeleteCategoria(categoria.id)" iconStart="@tui.x" tuiButton
+                type="button">
+                Desactivar
+              </button>
+
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-template>
+</div>

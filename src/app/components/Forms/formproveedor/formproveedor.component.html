@@ -26,10 +26,12 @@
 			</div>
 		</div>
 
-		<div class="my-3">
-			<button tuiButton size="m" type="submit" [disabled]="proveedorForm.invalid">
-				Agregar Proveedor
+
+			<button class="w-full mt-5" appearance="primary-grayscale" tuiButton size="m" type="submit"  [disabled]="proveedorForm.invalid || !!(loadingCreateProveedor$ | async) ">
+
+				Crear
+				<tui-loader size="s" [showLoader]="!!(loadingCreateProveedor$ | async)"></tui-loader>
 			</button>
-		</div>
+			
 	</form>
 </div>

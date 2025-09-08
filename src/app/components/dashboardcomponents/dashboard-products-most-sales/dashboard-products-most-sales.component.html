@@ -1,13 +1,15 @@
 <div class="wrapper">
   <tui-ring-chart
+  [tuiSkeleton]="!!(selectVentas$ | async)?.loadingMostSales"
     [value]="value"
     [(activeItemIndex)]="activeItemIndex"
   >
     <div>Total</div>
   </tui-ring-chart>
 
-  <div class="legend">
+  <div class="legend rounded-lg"   [tuiSkeleton]="!!(selectVentas$ | async)?.loadingMostSales">
     <tui-legend-item
+    
       *ngFor="let label of labels; let index = index"
       size="s"
       class="item"

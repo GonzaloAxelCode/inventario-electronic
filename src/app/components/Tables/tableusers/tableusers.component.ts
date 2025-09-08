@@ -12,14 +12,14 @@ import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAppearance, TuiButton, TuiIcon } from '@taiga-ui/core';
-import { TuiSwitch } from '@taiga-ui/kit';
+import { TuiSkeleton, TuiSwitch } from '@taiga-ui/kit';
 import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-tableusers',
   standalone: true,
 
-  imports: [TuiTable, CommonModule, TuiTable, TuiSwitch, FormsModule, TuiAppearance, TuiButton, TuiIcon],
+  imports: [TuiTable, CommonModule, TuiTable, TuiSwitch, FormsModule, TuiAppearance, TuiButton, TuiIcon, TuiSkeleton],
   templateUrl: './tableusers.component.html',
   styleUrl: './tableusers.component.scss'
 })
