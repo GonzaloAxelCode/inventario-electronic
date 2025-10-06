@@ -1,4 +1,4 @@
-<body class="grid relative h-screen">
+<body class="flex relative h-screen">
   <ng-template #sidebarTemplate>
     <nav class="flex flex-col  justify-between h-full bg-tui-background  max-w-[200px] ">
 
@@ -40,11 +40,7 @@
           <tui-icon icon="building" class="text-purple-500"></tui-icon> <span>Proveedores</span>
         </a>
 
-        <!-- Tiendas -->
-        <a (click)="onClose()" routerLink="/app/compras" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
-          class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
-          <tui-icon icon="store" class="text-green-500"></tui-icon> <span>Compras</span>
-        </a>
+        
         <!-- Tiendas -->
         <a (click)="onClose()" routerLink="/app/caja" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
           class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
@@ -56,13 +52,7 @@
           <tui-icon icon="settings" class="text-red-500"></tui-icon> <span>Configuración</span>
         </a>
 
-        <!-- Reportes -->
-        <a (click)="onClose()" routerLink="/app/reportes" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
-          class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
-          <tui-icon icon="bar-chart" class="text-blue-500"></tui-icon> <span>Reportes</span>
-        </a>
-
-      </div>
+            </div>
 
 
     </nav>
@@ -93,7 +83,7 @@
       </aside>
 
       <!-- Contenido principal (scrollable) -->
-      <div class="flex-1 relative overflow-y-auto h-screen">
+      <div class="flex-1 relative overflow-auto h-screen">
         <app-header></app-header>
         <router-outlet></router-outlet>
       </div>
