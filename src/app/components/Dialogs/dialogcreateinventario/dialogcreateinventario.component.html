@@ -74,7 +74,7 @@
     <!-- Botón -->
 
     <button tuiButton [iconStart]="loadingCreateInventario ? '' : '@tui.plus'" size="m" class="w-full flex col-span-2" type="submit" type="submit"
-      appearance="primary-grayscale" [disabled]="inventarioForm2.invalid || loadingCreateInventario" >
+      appearance="textfield" [disabled]="inventarioForm2.invalid || loadingCreateInventario" >
       <span *ngIf="loadingCreateInventario" >
         <tui-loader [showLoader]="loadingCreateInventario" />
 

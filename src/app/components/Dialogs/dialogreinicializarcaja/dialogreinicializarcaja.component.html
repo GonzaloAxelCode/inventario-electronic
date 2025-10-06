@@ -16,7 +16,7 @@
             <footer>
 
                 <button [disabled]="form.invalid || !!(cajaState$ | async)?.loadingReinicializarCaja" tuiButton type="submit" [disabled]="form.invalid" iconStart="@tui.money"
-                    appearance="primary-grayscale" class="grid w-full">
+                    appearance="textfield" class="grid w-full">
                     Reinicializar Caja        <tui-loader [showLoader]="!!(cajaState$ | async)?.loadingReinicializarCaja"></tui-loader>
                 </button>
             </footer>

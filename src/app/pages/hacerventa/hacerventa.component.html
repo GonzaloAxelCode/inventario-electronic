@@ -1,151 +1,181 @@
-<tui-loader [showLoader]="loaderSearchCliente  || (loadingCreateVenta$  | async)?.loadingCreateVenta" [overlay]="true">
-    <form [formGroup]="ventaForm" class="grid grid-cols-1 mt-10 gap-3 p-4">
-        <div class="grid gap-3 grid-cols-1 md:grid-cols-[1fr_1fr] lg:grid-cols-[1fr_2fr]">
-            <div class="flex flex-col gap-4">
-
-                <tui-select formControlName="tipoComprobante" class="w-full">
-                    Tipo de comprobante
-                    <tui-data-list *tuiDataList>
-                        <button *ngFor="let comprobante of tipoComprobantes" tuiOption [value]="comprobante">
-                            {{ comprobante }}
-                        </button>
-                    </tui-data-list>
-                </tui-select>
+<div class="flex flex-col p-4">
 
 
 
-                <div class="grid grid-cols-1 gap-2">
-
-                    <div class="flex gap-2">
-                        <tui-input *ngIf="!ventaForm.get('nombre_cliente')?.value" class="col-span-2 w-full"
-                            formControlName="documento_cliente">
-                            {{ ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'DNI' : 'RUC' }}
-
-                            <input
-                                [placeholder]="ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'Ingrese DNI' : 'Ingrese RUC'"
-                                tuiTextfieldLegacy size="s" type="text" />
-                        </tui-input>
-
-                        <!-- Muestra el nombre del cliente si existe -->
-                        <tui-textfield class="flex-1" *ngIf="ventaForm.get('nombre_cliente')?.value">
-                            <input class="rounded-input" disabled [value]="ventaForm.get('nombre_cliente')?.value || ''"
-                                size="m" placeholder="Nombre del Cliente" />
-                        </tui-textfield>
-
-                        <!-- Botón para buscar cliente -->
-                        <button *ngIf="!ventaForm.get('cliente')?.value" class="col-span-1" tuiButton
-                            iconStart="@tui.search" type="button" appearance="positive" (click)="buscarCliente()">
-
-                        </button>
-
-                        <button *ngIf="ventaForm.get('cliente')?.value" class="col-span-1" tuiButton type="button"
-                            iconStart="@tui.x" appearance="error" (click)="borrarCliente()">
-
-                        </button>
-                    </div>
-                    <label class="flex items-center gap-2">
-                        <input tuiCheckbox type="checkbox" formControlName="is_send_sunat" [size]="'m'" />
-                        Enviar comprobante a SUNAT
-                    </label>
-                </div>
+    <tui-loader [showLoader]="loaderSearchCliente  || (loadingCreateVenta$  | async)?.loadingCreateVenta"
+        [overlay]="true">
 
 
 
-                <tui-select formControlName="metodoPago" class="w-full">
-                    Metodo de pago
-                    <tui-data-list *tuiDataList>
-                        <button *ngFor="let metodo of listMetodosPago" tuiOption [value]="metodo">
-                            {{ metodo }}
-                        </button>
-                    </tui-data-list>
-                </tui-select>
+        <form [formGroup]="ventaForm" class="grid grid-cols-1 mt-10 gap-3 p-4">
+            <div class="grid gap-3 grid-cols-1 md:grid-cols-[1fr_1fr] lg:grid-cols-[1fr_2fr]">
+                <div class="flex flex-col gap-4">
 
-                <tui-select formControlName="formaPago" class="w-full">
-                    Forma de pago
-                    <tui-data-list *tuiDataList>
-                        <button *ngFor="let pago of formasPago" tuiOption [value]="pago">
-                            {{ pago }}
-                        </button>
-                    </tui-data-list>
-                </tui-select>
-
-            </div>
-
-            <div tuiCardLarge class="flex flex-col items-start">
-                <header tuiHeader class="flex justify-between items-center">
-                    <h1 tuiTitle>
-                        Productos
-                        <span tuiSubtitle>{{ productosFormArray.length }} productos</span>
-                    </h1>
-                    <button iconStart="@tui.plus" tuiButton appearance="info" tuiButtonVertical type="button"
-                        class="pr-3" (click)="showDialog()">
-                        Agregar
-                    </button>
-                </header>
-
-                <!-- Iterar sobre el FormArray -->
-                <div *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item" tuiCell
-                    class="flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <span>
-
-
-                            <tui-select formControlName="cantidad_final" class="w-20" tuiTextfieldSize="s">
-                                <tui-data-list *tuiDataList>
-                                    <button *ngFor="let cantidad of arrayCantidades" tuiOption type="button"
-                                        [value]="cantidad">
-                                        {{ cantidad }}
-                                    </button>
-                                </tui-data-list>
-                            </tui-select>
-                        </span>
-                        <span class="text-md flex flex-col gap-1">
-                            <strong>{{ item.get('producto_nombre')?.value }}</strong>
-                            <span class="text-sm">
-                                {{ item.get('nombre_categoria')?.value }}
-                            </span>
-                        </span>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <span class="text-lg font-semibold" [style.color]="'var(--tui-text-info)'">
-                            {{ item.get('costo_venta')?.value | tuiAmount: 'S/.' : 'left' | async }}
-                        </span>
-                        <span>
-                            <button appearance="error" tuiButton iconStart="@tui.x" type="button"
-                                (click)="eliminarProductoForm(i)">
+                    <tui-select formControlName="tipoComprobante" class="w-full">
+                        Tipo de comprobante
+                        <tui-data-list *tuiDataList>
+                            <button *ngFor="let comprobante of tipoComprobantes" tuiOption [value]="comprobante">
+                                {{ comprobante }}
                             </button>
-                        </span>
+                        </tui-data-list>
+                    </tui-select>
+
+
+
+                    <div class="grid grid-cols-1 gap-2">
+
+                        <div class="flex gap-2">
+                            <tui-input *ngIf="!ventaForm.get('nombre_cliente')?.value" class="col-span-2 w-full"
+                                formControlName="documento_cliente">
+                                {{ ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'DNI' : 'RUC' }}
+
+                                <input
+                                    [placeholder]="ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'Ingrese DNI' : 'Ingrese RUC'"
+                                    tuiTextfieldLegacy size="s" type="text" />
+                            </tui-input>
+
+
+
+                            <!-- Muestra el nombre del cliente si existe -->
+                            <tui-textfield class="flex-1" *ngIf="ventaForm.get('nombre_cliente')?.value">
+                                
+
+
+                                <input class="rounded-input" disabled
+                                    [value]="ventaForm.get('nombre_cliente')?.value || 'No encontrado'" size="m"
+                                    placeholder="Nombre del Cliente" />
+                                                              
+                            </tui-textfield>
+                           
+
+                            <button *ngIf="!ventaForm.get('cliente')?.value" class="col-span-1" tuiButton type="button"
+                                appearance="positive" iconStart="@tui.search" (click)="buscarCliente()"
+                                [disabled]="ventaForm.get('documento_cliente')?.invalid">
+                            </button>
+
+
+                            <button *ngIf="ventaForm.get('cliente')?.value" class="col-span-1" tuiButton type="button"
+                                iconStart="@tui.x" appearance="error" (click)="borrarCliente()">
+
+                            </button>
+                        </div>
+                        <span *ngIf="errorClientNotFound" class="text-red-500 text-xs font-bold">Cliente no
+                            encontrado o el servicio no esta disponible.Intente mas tarde.</span>
+                        <label class="flex items-center gap-2"
+                            *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Sin Comprobante'">
+                            <input tuiCheckbox type="checkbox" formControlName="is_send_sunat" [size]="'m'" />
+                            Enviar comprobante a SUNAT
+                        </label>
                     </div>
+
+
+
+                    <tui-select formControlName="metodoPago" class="w-full">
+                        Metodo de pago
+                        <tui-data-list *tuiDataList>
+                            <button *ngFor="let metodo of listMetodosPago" tuiOption [value]="metodo">
+                                {{ metodo }}
+                            </button>
+                        </tui-data-list>
+                    </tui-select>
+
+                    <tui-select formControlName="formaPago" class="w-full">
+                        Forma de pago
+                        <tui-data-list *tuiDataList>
+                            <button *ngFor="let pago of formasPago" tuiOption [value]="pago">
+                                {{ pago }}
+                            </button>
+                        </tui-data-list>
+                    </tui-select>
+
                 </div>
 
+                <div tuiCardLarge class="flex flex-col items-start">
+                    <header tuiHeader class="flex justify-between items-center">
+                        <h1 tuiTitle>
+                            Productos
+                            <span tuiSubtitle>{{ productosFormArray.length }} productos</span>
+                        </h1>
+                        <button iconStart="@tui.plus" tuiButton appearance="info" tuiButtonVertical type="button"
+                            class="pr-3" (click)="showDialog()">
+                            Agregar
+                        </button>
+                    </header>
 
-                <div class="w-full mt-4   rounded-lg ">
-                    <!-- Subtotal -->
-                    <div class="flex justify-between items-center pb-2 border-b border-gray-600">
-                        <span class="text-gray-400 text-lg">Subtotal</span>
-                        <span class="text-white font-medium">{{ salesTotals.subtotal | currency:'PEN' }}</span>
+                    <!-- Iterar sobre el FormArray -->
+                    <div *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item" tuiCell
+                        class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <span>
+
+
+                                <tui-select formControlName="cantidad_final" class="w-20" tuiTextfieldSize="s">
+                                    <tui-data-list *tuiDataList>
+                                        <button *ngFor="let cantidad of arrayCantidades" tuiOption type="button"
+                                            [value]="cantidad">
+                                            {{ cantidad }}
+                                        </button>
+                                    </tui-data-list>
+                                </tui-select>
+                            </span>
+                            <span class="text-md flex flex-col gap-1">
+                                <strong>{{ item.get('producto_nombre')?.value }}</strong>
+                                <span class="text-sm">
+                                    {{ item.get('nombre_categoria')?.value }}
+                                </span>
+                            </span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg font-semibold" [style.color]="'var(--tui-text-info)'">
+                                {{ item.get('costo_venta')?.value | tuiAmount: 'S/.' : 'left' | async }}
+                            </span>
+                            <span>
+                                <button appearance="error" tuiButton iconStart="@tui.x" type="button"
+                                    (click)="eliminarProductoForm(i)">
+                                </button>
+                            </span>
+                        </div>
                     </div>
 
-                    <!-- IGV -->
-                    <div class="flex justify-between items-center py-2 border-b border-gray-600">
-                        <span class="text-gray-400 text-lg">IGV (18%)</span>
-                        <span class="text-white font-medium">{{ salesTotals.igv | currency:'PEN' }}</span>
+
+                    <div class="w-full mt-4 rounded-lg">
+                        <!-- Subtotal -->
+                        <div
+                            class="flex justify-between items-center pb-2 border-b border-neutral-200 dark:border-neutral-600">
+                            <span class="text-neutral-600 dark:text-neutral-400 text-lg">Subtotal</span>
+                            <span class="text-neutral-900 dark:text-white font-medium">
+                                {{ salesTotals.subtotal | currency:'S/' }}
+                            </span>
+                        </div>
+
+                        <!-- IGV -->
+                        <div
+                            class="flex justify-between items-center py-2 border-b border-neutral-200 dark:border-neutral-600">
+                            <span class="text-neutral-600 dark:text-neutral-400 text-lg">IGV (18%)</span>
+                            <span class="text-neutral-900 dark:text-white font-medium">
+                                {{ salesTotals.igv | currency:'S/' }}
+                            </span>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="flex justify-between items-center pt-3">
+                            <span class="text-neutral-900 dark:text-white text-xl font-semibold">Total</span>
+                            <span class="text-neutral-900 dark:text-white text-xl font-semibold">
+                                {{ salesTotals.total | currency:'S/' }}
+                            </span>
+                        </div>
                     </div>
 
-                    <!-- Total -->
-                    <div class="flex justify-between items-center pt-3">
-                        <span class="text-white text-xl font-semibold">Total</span>
-                        <span class="text-white text-xl font-semibold">{{ salesTotals.total | currency:'PEN' }}</span>
-                    </div>
                 </div>
             </div>
-        </div>
 
-        <button iconStart="@tui.dollar-sign"
-            [disabled]="ventaForm.get('tipoComprobante')?.value !== 'Sin Comprobante' && !ventaForm.valid"
-            class="flex w-full my-3" tuiButton type="submit" (click)="hacerVenta()" appearance="primary-grayscale">
-            Realizar Venta
-        </button>
-    </form>
-</tui-loader>
+            <button iconStart="@tui.dollar-sign"
+                [disabled]="ventaForm.get('tipoComprobante')?.value !== 'Sin Comprobante' && !ventaForm.valid"
+                class="flex w-full my-3" tuiButton type="submit" (click)="hacerVenta()" appearance="textfield">
+                Realizar Venta
+            </button>
+        </form>
+    </tui-loader>
+
+</div>

@@ -1,166 +1,236 @@
+<!-- LOADING STATE -->
 <div class="" *ngIf="!!(selectCaja$ | async)?.loadingDataCaja">
-    <div class=" items-center m-auto  flex mt-32 h-full flex-col gap-3 justify-center
-                 ">
-
-        <img src="https://cdn.prod.website-files.com/642fb32de87a48d3c780840d/66a74a18f139635a337f1fbd_7.png"
-            class="text-center w-60 transition-all duration-300 " alt="">
-        <h2 class="text-center font-bold">Cargando Caja</h2>
-        <div class="text-center mx-auto animate-spin rounded-full h-8 w-8 border-4 border-white border-t-transparent"></div>
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="text-center space-y-6 p-8">
+          
+            <div class="space-y-3">
+                <h2 class="text-2xl sm:text-3xl font-bold dark:text-white bg-clip-text text-transparent">
+                    Cargando Caja
+                </h2>
+                <div class="flex justify-center">
+                    <div class="relative">
+                        <div class="h-12 w-12 rounded-full border-4 border-slate-200 dark:border-slate-700"></div>
+                        <div class="absolute top-0 h-12 w-12 animate-spin rounded-full border-4 border-transparent border-t-blue-600"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="" *ngIf="!!!(selectCaja$ | async)?.loadingDataCaja">
+<!-- MAIN CONTENT -->
+<div class="min-h-screen transition-colors duration-300" 
+    *ngIf="!!!(selectCaja$ | async)?.loadingDataCaja">
 
-    <div *ngIf="(caja_is_open$ | async)">
-        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cosl-3 lg:grid-cols-3 gap-4 pb-4">
-            <div class="card_2">
-                <div class="flex items-center justify-between gap-3">
-                    <span class="flex items-center gap-2">
-                        <!-- Usar el ng-template aquí -->
+    <!-- CAJA ABIERTA -->
+    <div *ngIf="(caja_is_open$ | async)" class="container mx-auto px-4 py-6 sm:py-8 max-w-7xl">
+        
+        <!-- Header con degradado -->
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black mb-2 dark:text-white text-black bg-clip-text text-transparent">
+                Panel de Caja
+            </h1>
+            <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base">Gestiona tus operaciones diarias</p>
+        </div>
 
-                        <p class="title-text">
-                            Gastos Hoy
-                        </p>
-                    </span>
-                    <form [formGroup]="testForm">
-                        <p tuiDropdownOpen [tuiDropdown]="dropdown">
-                            <button [disabled]="true" tuiButton appearance="outline-grayscale" iconEnd="@tui.calendar-1"
-                                size="s" type="button">
-                                Fecha
+        <!-- Stats Cards con Glassmorphism -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+            
+            <!-- Card Gastos -->
+            <div class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-slate-200/50 dark:border-neutral-700 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div class="absolute inset-0 bg-gradient-to-br from-red-500/10 to-pink-500/10 dark:from-red-500/5 dark:to-pink-500/5"></div>
+                <div class="relative p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Gastos</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-500">Hoy</p>
+                            </div>
+                        </div>
+                        <form [formGroup]="testForm">
+                            <button [disabled]="true" tuiButton appearance="outline-grayscale" 
+                                iconEnd="@tui.calendar-1" size="xs" type="button" 
+                                class="opacity-60 dark:opacity-40">
                             </button>
-                            <ng-template #dropdown>
-                                <tui-input-date [disabled]="true" formControlName="testValue" tuiTextfieldSize="l">
-                                    Seleccionar
-                                </tui-input-date>
-                            </ng-template>
-                        </p>
-                    </form>
-
-                </div>
-                <div class="data">
-
-                    <p class="text-red-500" [tuiSkeleton]="!!(selectCaja$ | async)?.loadingDataCaja">
-                        <span class="mr-2">-</span> <span>S/.</span> {{ ( selectCaja$ | async)?.caja?.egresos }}
+                        </form>
+                    </div>
+                    <p class="text-3xl sm:text-4xl font-black text-red-600 dark:text-red-400" 
+                        [tuiSkeleton]="!!(selectCaja$ | async)?.loadingDataCaja">
+                        <span class="text-2xl">-S/.</span> {{ (selectCaja$ | async)?.caja?.egresos }}
                     </p>
-
                 </div>
             </div>
 
-            <div class="card_3">
-                <div class=" flex items-center justify-between gap-3">
-                    <span class="flex gap-2 items-center">
-
-                        <p class="title-text">
-                            Ingresos Hoy
-                        </p>
-                    </span>
-
-                    <button tuiButton appearance="outline-grayscale" class="mb-2" disabled iconEnd="@tui.calendar-1"
-                        size="s" type="button">
-                        Fecha
-                    </button>
-                </div>
-                <div class="data">
-                    <p class="text-green-500">
-                        <span class="mr-2">+</span> <span>S/.</span> {{ ( selectCaja$ | async)?.caja?.ingresos }}
+            <!-- Card Ingresos -->
+            <div class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-slate-200/50 dark:border-neutral-700 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div class="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 dark:from-green-500/5 dark:to-emerald-500/5"></div>
+                <div class="relative p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Ingresos</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-500">Hoy</p>
+                            </div>
+                        </div>
+                        <button disabled tuiButton appearance="outline-grayscale" 
+                            iconEnd="@tui.calendar-1" size="xs" type="button"
+                            class="opacity-60 dark:opacity-40">
+                        </button>
+                    </div>
+                    <p class="text-3xl sm:text-4xl font-black text-green-600 dark:text-green-400">
+                        <span class="text-2xl">+S/.</span> {{ (selectCaja$ | async)?.caja?.ingresos }}
                     </p>
-
-
                 </div>
             </div>
-            <div class="card">
-                <div class=" flex items-center justify-between gap-3">
-                    <span class="flex gap-2 items-center">
 
-                        <p class="title-text">
-                            Saldo Efectivo
-                        </p>
-
-                    </span>
-                    <button tuiButton appearance="outline-grayscale" class="mb-2" disabled iconEnd="@tui.calendar-1"
-                        size="s" type="button">
-                        Fecha
-                    </button>
-
-
-
-                </div>
-                <div class="data">
-                    <p>
-                        <span>S/.</span> {{ ( selectCaja$ | async)?.caja?.saldo_final }}
+            <!-- Card Saldo -->
+            <div class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-neutral-800 backdrop-blur-xl border border-slate-200/50 dark:border-neutral-700 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 sm:col-span-2 lg:col-span-1">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 dark:from-blue-500/5 dark:to-purple-500/5"></div>
+                <div class="relative p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 rounded-xl bg-gradient-to-br  text-white shadow-lg">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Saldo Efectivo</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-500">Disponible</p>
+                            </div>
+                        </div>
+                        <button disabled tuiButton appearance="outline-grayscale" 
+                            iconEnd="@tui.calendar-1" size="xs" type="button"
+                            class="opacity-60 dark:opacity-40">
+                        </button>
+                    </div>
+                    <p class="text-3xl sm:text-4xl font-black bg-gradient-to-r  text-black dark:text-white bg-clip-text text-transparent">
+                        <span class="text-2xl">S/.</span> {{ (selectCaja$ | async)?.caja?.saldo_final }}
                     </p>
-
                 </div>
             </div>
         </div>
 
-
-        <div class=" p-6 text-white">
-
-            <div class="sm:grid grid-cols-12 gap-4">
-                <!-- Botones con Taiga UI -->
-                <div class="col-span-12  flex  gap-4">
-                    <a (click)="openRegistrarGasto()" iconStart="@tui.badge-dollar-sign" tuiButtonVertical tuiButton
-                        appearance="positive" class="bg-blue-600 text-white ">
-                        Registrar Gasto
-                    </a>
-
-                    <a (click)="openRegistrarIngreso()" iconStart="@tui.badge-dollar-sign" tuiButton
-                        appearance="warning" class="bg-gray-600 text-white" tuiButtonVertical>
-                        Registrar Ingreso
-                    </a>
-
-                    <button disabled iconStart="@tui.hand-coins" tuiButton appearance="info" tuiButtonVertical
-                        class="bg-yellow-600 text-white border-none">
-                        Realizar un prestamo
-                    </button>
-
-                    <a (click)="openReabriCaja()" iconStart="@tui.refresh-ccw-dot" tuiButton appearance="glass"
-                        tuiButtonVertical class="bg-green-600 text-white">
-                        Reinicializar Caja
-                    </a>
-
-                    <button (click)="openCerrarCaja()" tuiButton appearance="negative" iconStart="@tui.bookmark-x"
-                        tuiButtonVertical class="text-white">
-                        Cerrar Caja
-                    </button>
-
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
+            
+            <button (click)="openRegistrarGasto()" 
+                class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95">
+                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <div class="relative flex flex-col items-center gap-2 sm:gap-3">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                    </svg>
+                    <span class="text-xs sm:text-sm font-bold text-center">Registrar Gasto</span>
                 </div>
+            </button>
 
+            <button (click)="openRegistrarIngreso()" 
+                class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-green-600 to-green-700 dark:from-green-500 dark:to-green-600 p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95">
+                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <div class="relative flex flex-col items-center gap-2 sm:gap-3">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span class="text-xs sm:text-sm font-bold text-center">Registrar Ingreso</span>
+                </div>
+            </button>
+
+            <button disabled 
+                class="relative overflow-hidden rounded-xl bg-gradient-to-br from-slate-400 to-slate-500 dark:from-slate-600 dark:to-slate-700 p-4 sm:p-6 text-white shadow-lg opacity-50 cursor-not-allowed">
+                <div class="flex flex-col items-center gap-2 sm:gap-3">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    <span class="text-xs sm:text-sm font-bold text-center">Préstamo</span>
+                </div>
+            </button>
+
+            <button (click)="openReabriCaja()" 
+                class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 dark:from-amber-600 dark:to-orange-700 p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95">
+                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <div class="relative flex flex-col items-center gap-2 sm:gap-3">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span class="text-xs sm:text-sm font-bold text-center">Reiniciar</span>
+                </div>
+            </button>
+
+            <button (click)="openCerrarCaja()" 
+                class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-red-600 to-red-700 dark:from-red-500 dark:to-red-600 p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95 col-span-2 sm:col-span-1">
+                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <div class="relative flex flex-col items-center gap-2 sm:gap-3">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    <span class="text-xs sm:text-sm font-bold text-center">Cerrar Caja</span>
+                </div>
+            </button>
+        </div>
+
+     <!-- Lista de Operaciones Responsive -->
+<div class="rounded-2xl bg-white/70 dark:bg-neutral-800 backdrop-blur-xl border border-slate-200/50 dark:border-neutral-700 shadow-xl overflow-hidden">
+    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-neutral-700">
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">
+            Operaciones Recientes
+        </h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Historial de movimientos del día</p>
+    </div>
+    
+    <div class="p-4 space-y-3">
+        <div *ngFor="let operacion of operaciones" 
+             class="bg-slate-50 dark:bg-neutral-800 rounded-xl p-4 hover:shadow-md transition-all duration-200 border border-slate-200/50 dark:border-neutral-700">
+            
+            <!-- Header: ID y Tipo -->
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-mono text-slate-500 dark:text-slate-400">
+                    #{{ operacion.id }}
+                </span>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold"
+                    [class]="operacion.tipo == 'gasto' 
+                        ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' 
+                        : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'">
+                    {{ operacion.tipo | titlecase }}
+                </span>
+            </div>
+            
+            <!-- Detalles -->
+            <div class="mb-3">
+                <p class="text-sm sm:text-base text-slate-800 dark:text-slate-200 font-medium">
+                    {{ operacion.detalles }}
+                </p>
+            </div>
+            
+            <!-- Footer: Fecha y Monto -->
+            <div class="flex items-center justify-between">
+                <span class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                    {{ operacion.fecha }}
+                </span>
+                <span class="text-lg sm:text-xl font-bold"
+                    [class]="operacion.tipo == 'gasto' 
+                        ? 'text-red-600 dark:text-red-400' 
+                        : 'text-green-600 dark:text-green-400'">
+                    {{ operacion.tipo === "gasto" ? "-" : "+" }} S/. {{ operacion.monto | number:'1.2-2' }}
+                </span>
             </div>
         </div>
-        <div class="p-6">
-            <table tuiTable size="s" class="table" [columns]="columns">
-                <thead>
-                    <tr tuiThGroup>
-                        <th tuiTh> ID Operacion</th>
-
-                        <th tuiTh>Detalles</th>
-                        <th tuiTh>Tipo Operacion</th>
-                        
-                        <th tuiTh>Fecha </th>
-                        <th tuiTh>Monto</th>
-                    </tr>
-                </thead>
-                <tbody tuiTbody [data]="operaciones">
-                    <tr *ngFor="let operacion of operaciones" tuiTr>
-                        <td tuiTd *tuiCell="'monto'">
-                            <span
-                                [class]="operacion.tipo == 'gasto' ? 'text-xl text-red-500' : 'text-xl text-green-500'">
-                                {{ operacion.tipo === "gasto" ? "-":"+"}} S/. {{ operacion.monto }}
-                            </span>
-                        </td>
-
-
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
+    </div>
+</div> 
     </div>
 
-
-
+    <!-- CAJA CERRADA - Formulario Moderno -->
+    
     <div *ngIf="!(caja_is_open$ | async)" class="w-full m-auto">
         <div class="m-auto  grid place-content-center mt-20">
             <form tuiAppearance="floating" class="my-auto mx-auto" tuiCardLarge tuiForm="m" (ngSubmit)="onSubmit()"
@@ -188,7 +258,7 @@
                 <footer>
 
                     <button tuiButton type="submit" [disabled]="form.invalid" iconStart="@tui.money"
-                        appearance="primary-grayscale" class="grid w-full">
+                        appearance="textfield" class="grid w-full">
                         Iniciar Caja
                     </button>
                 </footer>
@@ -196,5 +266,5 @@
 
         </div>
 
-    </div>
+
 </div>

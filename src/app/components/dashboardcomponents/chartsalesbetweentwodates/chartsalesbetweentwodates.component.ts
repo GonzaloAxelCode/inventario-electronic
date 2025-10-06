@@ -91,7 +91,6 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
   );
 
   ngOnInit() {
-    this.loadInitialData();
 
 
   }
@@ -112,22 +111,14 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
     }));
     this._range.next(newRange);
   }
-  private loadInitialData(): void {
-    const initialRange = this.range;
-    this.store.dispatch(cargarVentasRangoFechasTienda({
 
-      fromDate: new Date(initialRange.from.year, initialRange.from.month, initialRange.from.day),
-      toDate: new Date(initialRange.to.year, initialRange.to.month, initialRange.to.day)
-    }));
-
-  }
 
   // Método para actualizar el rango
   onRangeChange(newRange: TuiDayRange): void {
-    // Actualizar el BehaviorSubject
+
     this._range.next(newRange);
 
-    // Disparar la carga de nuevos datos
+
     this.store.dispatch(cargarVentasRangoFechasTienda({
 
       fromDate: new Date(newRange.from.year, newRange.from.month, newRange.from.day),

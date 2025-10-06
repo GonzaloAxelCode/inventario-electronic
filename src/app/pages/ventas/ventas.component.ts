@@ -16,7 +16,7 @@ import { TuiAxes, TuiLineDaysChart } from '@taiga-ui/addon-charts';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { tuiCountFilledControls, TuiDay, TuiDayLike, TuiDayRange } from '@taiga-ui/cdk';
 import { TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiBadge, TuiChip, TuiDataListWrapper, TuiPagination, TuiStatus } from '@taiga-ui/kit';
+import { TuiBadge, TuiChip, TuiDataListWrapper, TuiPagination, TuiSkeleton, TuiStatus } from '@taiga-ui/kit';
 import { TuiAppBar, TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputDateModule, TuiInputDateRangeModule, TuiInputModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
 import { BehaviorSubject, map, Observable, take } from 'rxjs';
@@ -37,7 +37,7 @@ import { BehaviorSubject, map, Observable, take } from 'rxjs';
     TuiBlockStatus,
     TuiButton,
 
-    TuiChip,
+    TuiChip, TuiSkeleton,
     TuiDataList,
     TuiDataListWrapper,
     TuiDropdown,
@@ -102,28 +102,15 @@ export class VentasComponent implements OnInit {
   displayedColumns = [...this.allColumnKeys];
   tiendaUser!: number
 
-  constructor(private fb: FormBuilder, private store: Store<AppState>) { }
+  constructor(private fb: FormBuilder, private store: Store<AppState>) {
+
+  }
   ngOnInit() {
     this.store.select(selectUsersState).pipe(
       map(userState => userState.user.tienda)
     ).subscribe(tienda => {
       this.tiendaUser = tienda || 0;
     });
-    this.loadInitialData();
-  }
-
-  private loadInitialData(): void {
-    const initialRange = this.range;
-
-    this.store.dispatch(cargarVentasTienda({
-
-
-      from_date: [initialRange.from.year, initialRange.from.month, initialRange.from.day],
-      to_date: [initialRange.to.year, initialRange.to.month, initialRange.to.day]
-
-    }))
-
-
     this.ventasState$ = this.store.select(selectVentaState);
     this.ventasState$.subscribe(ventas => {
       this.ventas = ventas.ventas;
@@ -131,7 +118,6 @@ export class VentasComponent implements OnInit {
 
     })
   }
-
   getVentaValue(venta: Venta, key: string): any {
     return venta[key as keyof Venta];
   }

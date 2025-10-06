@@ -1,9 +1,9 @@
 export interface Producto {
     id: number,
-    nombre?: string;
-    descripcion?: string | null;
-    categoria?: number | null;
-    sku?: string;
+    nombre: string;
+    descripcion: string | null;
+    categoria: number
+    sku: string;
     marca?: string | null;
     modelo?: string | null;
     caracteristica?: Record<string, any>;
@@ -26,7 +26,7 @@ export type ProductoCreate = Omit<Producto, 'id' |
 export interface ProductoState {
     loadingSearch: boolean,
     count: number,
-    search_products_found: string,
+    search_found: boolean,
     next: any,
     previous: any,
     index_page: any,
@@ -35,7 +35,7 @@ export interface ProductoState {
     productos_search: Producto[];
     loadingProductos?: boolean;
     errors?: any;
-    all_products: Producto[]
+
     loadingCreate: boolean;
     loadingUpdate: boolean;
     loadingDeactivate: boolean;

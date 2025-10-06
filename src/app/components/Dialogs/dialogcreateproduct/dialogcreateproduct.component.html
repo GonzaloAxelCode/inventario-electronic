@@ -67,7 +67,7 @@
 
       <!-- Botón de envío -->
       <div class="grid w-full col-span-2">
-        <button tuiButton type="submit"   iconStart="@tui.plus" appearance="primary-grayscale" [disabled]="productoForm.invalid || !!(loadingCreateProduct$ | async)"
+        <button tuiButton type="submit"   iconStart="@tui.plus" appearance="textfield" [disabled]="productoForm.invalid || !!(loadingCreateProduct$ | async)"
           class="px-6 py-2 transition">
           Agregar Producto         <tui-loader [showLoader]="!!(loadingCreateProduct$ | async)"></tui-loader>
         </button>

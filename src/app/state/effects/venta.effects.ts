@@ -90,8 +90,8 @@ export class VentaEffects {
             ofType(cargarTopProductosVentas),
             exhaustMap(({ fromDate, toDate }) =>
                 this.ventaService.getTopProductosMasVendidos(fromDate, toDate).pipe(
-                    map(response =>
-                        cargarTopProductosVentasExito({ topProductoMostSales: response.topProductoMostSales })
+                    map((response: any) =>
+                        cargarTopProductosVentasExito({ topProductoMostSales: response.results })
                     ),
                     catchError(error =>
                         of(cargarTopProductosVentasError({ error }))

@@ -1,5 +1,6 @@
 
 
+
 import { ConsultaService } from '@/app/services/consultas.service';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
@@ -9,7 +10,7 @@ import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { AsyncPipe, CommonModule, NgForOf } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
@@ -18,7 +19,6 @@ import { TuiCheckbox, TuiDataListWrapper, TuiItemsWithMore, TuiRadio, TuiStepper
 import { TuiAppBar, TuiCardLarge, TuiCell, TuiHeader } from '@taiga-ui/layout';
 import { TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { catchError, finalize, map, Observable, of, timeout } from 'rxjs';
-
 @Component({
   selector: 'app-hacerventa',
   standalone: true,
@@ -27,13 +27,9 @@ import { catchError, finalize, map, Observable, of, timeout } from 'rxjs';
     TuiStepper,
     TuiTable,
     TuiItemsWithMore,
-
     TuiRadio,
     TuiDropdown,
-
     FormsModule,
-
-
     TuiAppBar,
     TuiTextfield,
     TuiInputModule,
@@ -42,8 +38,7 @@ import { catchError, finalize, map, Observable, of, timeout } from 'rxjs';
     TuiDataList, AsyncPipe, NgForOf,
     TuiCardLarge, TuiHeader, TuiCell, TuiTitle, TuiAmountPipe,
     TuiDataListWrapper, TuiSelectModule,
-    TuiTextfieldControllerModule, TuiLoader
-  ],
+    TuiTextfieldControllerModule, TuiLoader],
   providers: [
     { provide: 'Pythons', useValue: ['Python One', 'Python Two', 'Python Three'] },
   ],
@@ -54,7 +49,7 @@ import { catchError, finalize, map, Observable, of, timeout } from 'rxjs';
 })
 export class HacerventaComponent implements OnInit {
 
-
+  errorClientNotFound = false;
   selectCurrentStep = signal("Start Up");
   protected readonly units = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
   protected value = this.units[0]!;
@@ -102,22 +97,26 @@ export class HacerventaComponent implements OnInit {
     })
 
     this.ventaForm = this.fb.group({
-
-
       usuarioId: [this.userId],
-
       metodoPago: [this.listMetodosPago[1], Validators.required],
       formaPago: [this.formasPago[0], Validators.required],
       tipoComprobante: [this.tipoComprobantes[0], Validators.required],
       cliente: [null, Validators.required],
-      documento_cliente: ["76881855"],
+      documento_cliente: [
+        "",
+        [
+          (control: any) => documentoValidator(this.ventaForm?.get('tipoComprobante')?.value)(control)
+        ]
+      ],
       nombre_cliente: [""],
       productos: this.fb.array([], [Validators.required, Validators.minLength(1)]),
       is_send_sunat: [true]
-
-
     });
-    this.productosFormArray.valueChanges.subscribe(() => {
+
+    this.productosFormArray.valueChanges.subscribe((tipo: any) => {
+      const documentoCtrl = this.ventaForm.get('documento_cliente');
+      documentoCtrl?.setValidators([documentoValidator(tipo)]);
+      documentoCtrl?.updateValueAndValidity();
       this.validarStock();
 
       this.calcularTotales();
@@ -203,6 +202,7 @@ export class HacerventaComponent implements OnInit {
   }
 
   buscarCliente() {
+    this.errorClientNotFound = false;
     const documento = this.ventaForm.get('documento_cliente')!.value;
 
     if (!documento) {
@@ -226,6 +226,8 @@ export class HacerventaComponent implements OnInit {
       timeout(5000), // 5 segundos
       catchError(error => {
         // Si hay error o timeout, devolvemos null
+        console.log(error)
+        this.errorClientNotFound = true;
         return of(null);
       }),
       finalize(() => {
@@ -234,12 +236,14 @@ export class HacerventaComponent implements OnInit {
         this.cdr.detectChanges();
       })
     ).subscribe(response => {
+
       if (response?.data) {
         this.ventaForm.patchValue({
           nombre_cliente: response.data.nombre_completo || response.data.nombre_o_razon_social,
           cliente: response.data
         });
       } else {
+        this.errorClientNotFound = true;
         this.ventaForm.patchValue({
           nombre_cliente: '',
           cliente: null
@@ -278,4 +282,32 @@ export class HacerventaComponent implements OnInit {
   }
   private readonly dialogServiceVentaDetail = inject(DialogVentaDetailService);
 
+}
+
+
+
+
+
+
+
+
+
+export function documentoValidator(tipoControl: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value?.toString() ?? '';
+    if (!value) return { required: true };
+
+    const isNumeric = /^[0-9]+$/.test(value);
+    if (!isNumeric) return { numeric: true };
+
+    if (tipoControl === 'Boleta' && value.length !== 8) {
+      return { length: true };
+    }
+
+    if (tipoControl === 'Factura' && value.length !== 11) {
+      return { length: true };
+    }
+
+    return null; // ✅ válido
+  };
 }

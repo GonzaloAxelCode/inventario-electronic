@@ -1,9 +1,9 @@
-import { cargarResumenVentas, cargarResumenVentasByDate } from '@/app/state/actions/venta.actions';
+import { cargarResumenVentasByDate } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectVentaState } from '@/app/state/selectors/venta.selectors';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiDay } from '@taiga-ui/cdk';
@@ -12,7 +12,7 @@ import { TuiDataListWrapper, TuiSkeleton } from '@taiga-ui/kit';
 import { TuiInputDateModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { format } from 'date-fns'; // Importa la función format de date-fns
 import { es } from 'date-fns/locale'; // Importa la configuración regional para español
-import { map, Observable } from 'rxjs';
+import { map, Observable, Subject, takeUntil } from 'rxjs';
 
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
@@ -31,7 +31,8 @@ import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
   templateUrl: './dashboard-sales-cards.component.html',
   styleUrl: './dashboard-sales-cards.component.scss'
 })
-export class DashboardSalesCardsComponent implements OnInit {
+export class DashboardSalesCardsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
 
   todaySales = 0
   thisWeekSales = 0
@@ -51,7 +52,7 @@ export class DashboardSalesCardsComponent implements OnInit {
     this.currentDay = this.getDayName(today.getDay());
     this.currentMonth = this.getMonthName(today.getMonth());
     this.currentWeek = this.getWeekNumber(today);
-    this.store.dispatch(cargarResumenVentas()); // Cambia el 1 por el id de tu tienda
+
 
   }
   protected readonly testForm = new FormGroup({
@@ -111,19 +112,18 @@ export class DashboardSalesCardsComponent implements OnInit {
       })
     );
     this.ventasState$.subscribe();
-
-    this.testForm.get('testValue')?.valueChanges.subscribe((date: TuiDay | null) => {
-      if (date) {
-
-        this.store.dispatch(cargarResumenVentasByDate({
-
-          month: date.month + 1,
-          day: date.day,
-          year: date.year, // Año actual
-          tipo: "day_month_year"
-        }))
-      }
-    });
+    this.testForm.get('testValue')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((date: any) => {
+        if (date) {
+          this.store.dispatch(cargarResumenVentasByDate({
+            month: date.month + 1,
+            day: date.day,
+            year: date.year,
+            tipo: 'day_month_year'
+          }));
+        }
+      });
   }
   getFormattedDate() {
     const date = this.testForm.get('testValue')?.value as TuiDay;
@@ -160,5 +160,10 @@ export class DashboardSalesCardsComponent implements OnInit {
     const weekNumber = Math.ceil((dayOfMonth + startOffset - 1) / 7);
 
     return weekNumber;
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

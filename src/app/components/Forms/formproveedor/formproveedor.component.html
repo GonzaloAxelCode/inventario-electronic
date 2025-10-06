@@ -27,7 +27,7 @@
 		</div>
 
 
-			<button class="w-full mt-5" appearance="primary-grayscale" tuiButton size="m" type="submit"  [disabled]="proveedorForm.invalid || !!(loadingCreateProveedor$ | async) ">
+			<button class="w-full mt-5" appearance="textfield" tuiButton size="m" type="submit"  [disabled]="proveedorForm.invalid || !!(loadingCreateProveedor$ | async) ">
 
 				Crear
 				<tui-loader size="s" [showLoader]="!!(loadingCreateProveedor$ | async)"></tui-loader>

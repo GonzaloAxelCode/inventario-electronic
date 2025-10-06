@@ -1,7 +1,9 @@
-<section class="m-6">
-  <div class="flex gap-2" *ngIf="(ventasState$ | async)?.ventas?.length !== 0 && !!(ventasState$ | async)?.loading">
-    <a routerLink="/app/ventas/crear"> <button iconStart="@tui.plus" tuiButton appearance="primary-grayscale" tuiButtonVertical
-        type="button" class="my-5 pr-3">
+<div class="m-6">
+
+
+<div class="flex gap-2" >
+    <a routerLink="/app/ventas/crear"> <button  iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical
+        type="button" class="my-5 pr-3 tui-shadow-popup">
 
         Crear una venta
 
@@ -11,7 +13,9 @@
   </div>
 
 
-  <tui-block-status *ngIf="(ventasState$ | async)?.ventas?.length === 0 && !(ventasState$ | async)?.loading else tabla"
+<section [tuiSkeleton]="!!(ventasState$ | async)?.loadingLoadVentas" >
+  
+  <tui-block-status *ngIf="(ventasState$ | async)?.ventas?.length === 0 && !(ventasState$ | async)?.loadingLoadVentas else tabla"
      size="m" class="m-auto">
         <img alt="survived"
             src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
@@ -20,14 +24,7 @@
         <h4>Aun no cuentas con ventas</h4>
 
         <span>Empieza hacer tu primera venta</span>
-         <a routerLink="/app/ventas/crear">
- <button iconStart="@tui.plus" size="s" tuiButton appearance="primary-grayscale" 
-        type="button" >
-
-        Crear una venta
-
-
-      </button></a>
+        
       
     </tui-block-status>
 
@@ -72,7 +69,7 @@
           <tui-textfield iconStart="@tui.search">
             <input tuiTheme="ligth" formControlName="numero_documento_cliente" placeholder="Dni o Ruc" tuiTextfield />
           </tui-textfield>
-          <button size="s" appearance="primary-grayscale" tuiButton type="submit" (click)="onSubmitSearch()">
+          <button size="s" appearance="textfield" tuiButton type="submit" (click)="onSubmitSearch()">
             Buscar
           </button>
         </fieldset>
@@ -167,18 +164,8 @@
             (indexChange)="goToPage($event)" />
         </div>
         
-
-
-
     </tui-loader>
-
 
   </ng-template>
 
-
-
-
-
-
-
-</section>
+</section></div>

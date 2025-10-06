@@ -24,7 +24,7 @@
        Motivo o descripccion del ingreso.
     </tui-textarea>
      <button iconStart="@tui.dollar-sign" [disabled]="testForm.invalid || !!(cajaState$ | async)?.loadingRealizarIngreso" class="grid w-full my-3" tuiButton type="submit"
-        appearance="primary-grayscale">
+        appearance="textfield">
        Registrar Ingreso        <tui-loader [showLoader]="!!(cajaState$ | async)?.loadingRealizarIngreso"></tui-loader>
     </button>
 </form>

@@ -27,3 +27,4 @@ export class AppComponent {
 
   }
 }
+//freddy199393@gmail.com (validado)	

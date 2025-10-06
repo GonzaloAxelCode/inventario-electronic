@@ -127,7 +127,7 @@ export class TableinventarioComponent {
     const values = this.form.value;
 
     const searchQuery: Partial<QuerySearchInventario> = {
-      nombre: this.form.value.nombre || "",
+      nombre: (this.form.value.nombre || "").trim(),
       categoria: this.form.value?.categoria?.id || 0,
       stock_min: values.stockRange?.[0] ?? null,
       stock_max: values.stockRange?.[1] ?? null,

@@ -10,14 +10,14 @@
 <table tuiTable size="s">
   <thead>
     <tr>
-      <th tuiTh class="text-slate-700 dark:text-gray-300">Cod Producto</th>
+      
       <th tuiTh class="text-slate-700 dark:text-gray-300">Nombre</th>
       <th tuiTh class="text-slate-700 dark:text-gray-300">Stock</th>
     </tr>
   </thead>
   <tbody tuiTbody *ngIf="(selectInventario$| async)?.lowStockProducts?.length">
     <tr *ngFor="let item of (selectInventario$| async)?.lowStockProducts">
-      <td tuiTd class="text-slate-700 dark:text-gray-300">{{ item.item.sku }}</td>
+      
 
       <td tuiTd class="text-slate-700 dark:text-gray-300">
 
@@ -27,8 +27,8 @@
       <td tuiTd>
 
 
-        <div tuiBlockDetails class="">
-          <span class="-translate-y-1 text-slate-700 dark:text-gray-300" [ngClass]="getColorClass(item.inventario.cantidad)">
+        <div  class="">
+          <span class="-translate-y-1 font-bold text-2xl" [ngClass]="getColorClass(item.inventario.cantidad)">
             {{ item.inventario.cantidad }}
           </span>
         </div>

@@ -92,17 +92,17 @@ export const ventaReducer = createReducer(
     initialState,
     on(cargarVentasRangoFechasTienda, state => ({
         ...state,
-        loading: true
+
     })),
     on(cargarVentasRangoFechasTiendaExito, (state, { salesDateRangePerDay }) => ({
         ...state,
         salesDateRangePerDay,
-        loading: false
+
     })),
     on(cargarVentasRangoFechasTiendaError, (state, { error }) => ({
         ...state,
         error,
-        loading: false
+
     })),
 
     on(cargarVentasTienda, state => ({

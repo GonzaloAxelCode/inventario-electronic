@@ -23,7 +23,7 @@ import {
 } from '../actions/producto.actions';
 
 const initialState: ProductoState = {
-    search_products_found: "",
+    search_found: false,
     count: 0,
     next: null,
     previous: null,
@@ -38,7 +38,7 @@ const initialState: ProductoState = {
     loadingDelete: false,
     loadingSearch: false,
     productos_search: [],
-    all_products: []
+
 };
 
 export const productoReducer = createReducer(
@@ -51,12 +51,12 @@ export const productoReducer = createReducer(
 
 
     })),
-    on(loadProductosSuccess, (state, { productos, next, previous, index_page, length_pages, all_products }) => ({
+    on(loadProductosSuccess, (state, { productos }) => ({
         ...state,
         productos,
         loadingProductos: false,
-        all_products,
-        next, previous, index_page, length_pages
+
+
     })),
     on(loadProductosFail, (state, { error }) => ({
         ...state,
@@ -133,13 +133,11 @@ export const productoReducer = createReducer(
         ...state,
         loadingSearch: true
     })),
-    on(searchProductoSuccess, (state, { productos, search_products_found, count, next, previous, index_page, length_pages }) => ({
+    on(searchProductoSuccess, (state, { productos_search, search_found }) => ({
         ...state,
-        productos_search: productos,
+        productos_search,
         loadingSearch: false,
-        search_products_found: search_products_found,
-        count: count,
-        next, previous, index_page, length_pages
+        search_found,
     })),
     on(searchProductoFail, (state, { error }) => ({
         ...state,
@@ -151,7 +149,7 @@ export const productoReducer = createReducer(
         count: 0,
         loadingSearch: false,
         productos_search: [],
-        search_products_found: ""
+        search_found: false
     }))
 );
 

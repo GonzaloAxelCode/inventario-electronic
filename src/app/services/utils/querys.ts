@@ -1,8 +1,8 @@
 export interface QuerySearchProduct {
-    nombre?: string;
-    categoria?: string;
-    sku?: string;
+    nombre: string;
+    categoria: number;
+    sku: string;
     marca?: string;
     modelo?: string;
-    activo?: any;
+    activo: any;
 }

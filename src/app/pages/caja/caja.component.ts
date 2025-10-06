@@ -5,7 +5,7 @@ import { DialogRealizarPrestamoService } from '@/app/services/dialogs-services/d
 import { DialogRegistrarGastoService } from '@/app/services/dialogs-services/dialog-registrar-gasto.service';
 import { DialogRegistrarIngresoService } from '@/app/services/dialogs-services/dialog-registrar-ingreso.service';
 import { DialogReinicializarCajaService } from '@/app/services/dialogs-services/dialog-reinicializar-caja.service';
-import { createCaja, loadCaja } from '@/app/state/actions/caja.actions';
+import { createCaja } from '@/app/state/actions/caja.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectCaja } from '@/app/state/selectors/caja.selectors';
 import { AsyncPipe, CommonModule, NgIf } from '@angular/common';
@@ -105,7 +105,7 @@ export class CajaComponent implements OnInit {
     ).subscribe(tienda => {
       this.tiendaUser = tienda || 0;
     });
-    this.store.dispatch(loadCaja());
+
     this.caja_is_open$ = this.store.select(selectCaja).pipe(
       map(state => state.caja_is_open)
     );

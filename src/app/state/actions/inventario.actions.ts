@@ -41,7 +41,7 @@ export enum InventarioActionTypes {
 
 export const loadInventarios = createAction(
     InventarioActionTypes.LOAD_INVENTARIOS,
-    props<{ page?: number, page_size?: number }>()
+
 );
 export const loadInventariosSuccess = createAction(
     InventarioActionTypes.LOAD_INVENTARIOS_SUCCESS,

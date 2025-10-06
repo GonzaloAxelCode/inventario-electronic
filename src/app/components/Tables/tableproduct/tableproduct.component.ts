@@ -1,5 +1,5 @@
 import { Producto, ProductoState } from '@/app/models/producto.models';
-import { clearSearchProductos, deleteProductoAction, loadProductosAction, searchProductosAction } from '@/app/state/actions/producto.actions';
+import { clearSearchProductos, deleteProductoAction, searchProductosAction } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { CommonModule, NgForOf } from '@angular/common';
@@ -10,7 +10,7 @@ import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiRadio, TuiSegmented, TuiSkeleton, TuiSwitch } from '@taiga-ui/kit';
-import { map, Observable, take } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 import { Categoria } from '@/app/models/categoria.models';
 import { DialogUpdateProductService } from '@/app/services/dialogs-services/dialog-updateproduct.service';
@@ -46,7 +46,7 @@ import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy'
 })
 export class TableproductComponent implements OnInit {
   productosState$?: Observable<ProductoState>;
-
+  productos: Producto[] = []
   editingId: number | null = null;
   editedProducto: Partial<Producto> = {};
   protected readonly form = new FormGroup({
@@ -81,6 +81,7 @@ export class TableproductComponent implements OnInit {
     { key: 'fechaCreacion', label: 'Fecha Creación' },
     { key: 'activo', label: 'Activo' },
   ];
+  isTheSearchWasDone: boolean = false
   filteredData: any = []
   allColumnKeys = this.allColumns.map(c => c.key);
   displayedColumns = [...this.allColumnKeys];
@@ -94,24 +95,32 @@ export class TableproductComponent implements OnInit {
     this.selectCategorias$ = this.store.select(selectCategoria).pipe(
       map((state: CategoriaState) => state.categorias)
     );
+    this.store.select(selectProductoState).subscribe((state) => {
+      this.productos = state.productos
+    })
+
+    this.form.valueChanges.subscribe(values => {
+      this.onSubmitSearch()
+    });
   }
 
 
   clearSearch() {
     this.store.dispatch(clearSearchProductos())
-    this.store.dispatch(searchProductosAction({ query: {}, page_size: 10 }))
+    this.isTheSearchWasDone = false
 
   }
   onSubmitSearch() {
-    console.log(this.form.value)
-    const searchQuery: Partial<QuerySearchProduct> = {
-      nombre: this.form.value.nombre || "",
-      categoria: this.form.value?.categoria?.id || 0,
-      activo: this.form.value.activo === null ? null : this.form.value.activo === "Activo",
-      sku: this.form.value.sku,
-    }
-    this.store.dispatch(searchProductosAction({ query: searchQuery, page_size: 10 }))
 
+    const searchQuery: Partial<QuerySearchProduct> = {
+      nombre: (this.form.value.nombre || "").trim(),
+      categoria: this.form.value?.categoria?.id || 0,
+
+      sku: (this.form.value.sku || "").trim(),
+    }
+    this.store.dispatch(searchProductosAction({ products: this.productos, query: searchQuery }))
+    console.log(searchQuery)
+    this.isTheSearchWasDone = true
   }
 
   protected onDeleteProducto(id: any): void {
@@ -129,14 +138,7 @@ export class TableproductComponent implements OnInit {
       })
       .subscribe((confirm) => {
         if (confirm) {
-
           this.store.dispatch(deleteProductoAction({ id }));
-
-          this.productosState$?.pipe(take(1)).subscribe(state => {
-
-            this.store.dispatch(loadProductosAction({ page: state?.index_page + 1, page_size: 10 }));
-
-          });
           this.alerts.open('Producto eliminado exitosamente.').subscribe();
         } else {
 
@@ -153,19 +155,5 @@ export class TableproductComponent implements OnInit {
 
 
 
-  protected goToPage(index: number): void {
-
-    this.productosState$?.pipe(take(1)).subscribe(state => {
-
-      const searchQuery: Partial<QuerySearchProduct> = {
-        nombre: this.form.value.nombre || "",
-        categoria: this.form.value?.categoria?.id || 0,
-        activo: this.form.value.activo === null ? null : this.form.value.activo === "Activo",
-        sku: this.form.value.sku,
-      };
-      this.store.dispatch(searchProductosAction({ query: searchQuery, page: index + 1, page_size: 10 }));
-
-    });
-  }
 
 }

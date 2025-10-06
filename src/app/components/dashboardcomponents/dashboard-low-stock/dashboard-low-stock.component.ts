@@ -1,5 +1,4 @@
 
-import { cargarProductosMenorStock } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
 import { InventarioState } from '@/app/state/reducers/inventario.reducer';
 import { selectInventarioState } from '@/app/state/selectors/inventario.selectors';
@@ -32,11 +31,14 @@ export class DashboardLowStockComponent implements OnInit {
     ).subscribe(tienda => {
       this.tiendaUser = tienda || 0;
     });
-    this.store.dispatch(cargarProductosMenorStock());
+
   }
   ngOnInit() {
 
     this.selectInventario$ = this.store.select(selectInventarioState);
+    this.store.select(selectInventarioState).subscribe((state) => {
+      console.log(state)
+    })
 
   }
   getColorClass(cantidad: number): string {

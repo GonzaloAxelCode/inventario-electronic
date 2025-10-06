@@ -3,12 +3,12 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { ProductoService } from '@/app/services/producto.service';
+import { ProductoSearchService } from '@/app/services/search-services/producto-search.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
 import {
     createProductoAction, createProductoFail, createProductoSuccess,
     deleteProductoAction, deleteProductoFail, deleteProductoSuccess,
     loadProductosAction, loadProductosFail, loadProductosSuccess,
-    searchProductoFail,
     searchProductosAction,
     searchProductoSuccess,
     updateProductoAction, updateProductoFail, updateProductoSuccess
@@ -22,22 +22,20 @@ export class ProductoEffects {
     constructor(
         private actions$: Actions,
         private productoService: ProductoService,
-        private alertService: CustomAlertService
+        private alertService: CustomAlertService,
+
+        private productSearchService: ProductoSearchService,
     ) { }
 
     loadProductosEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(loadProductosAction),
             exhaustMap((action) =>
-                this.productoService.fetchLoadProductos(action.page || 1, action.page_size).pipe(
+                this.productoService.fetchLoadProductos().pipe(
                     map((response) =>
                         loadProductosSuccess({
                             productos: response.results,
-                            next: response.next,
-                            previous: response.previous,
-                            index_page: response.index_page,
-                            length_pages: response.length_pages,
-                            all_products: response.all_results
+
                         })
                     ),
                     catchError((error) => {
@@ -100,33 +98,22 @@ export class ProductoEffects {
     );
 
 
-    searchProductosEffect = createEffect(() =>
+    searchProductsEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(searchProductosAction),
-            exhaustMap((action) =>
-                this.productoService.searchProducts(action.query, action.page || 1, action.page_size || 5).pipe(
-                    map(response => {
-                        console.log(response)
-                        return searchProductoSuccess({
-                            productos: response.results,
-                            search_products_found: response.search_products_found,
-                            count: response.count, next: response.next,
-                            previous: response.previous,
-                            index_page: response.index_page,
-                            length_pages: response.length_pages
-                        });
-                    }),
-                    catchError(error => {
+            map(action => {
 
-                        this.alertService
-                            .showError('Error al buscar los productos.')
-                            .subscribe();
-                        return of(searchProductoFail({ error }));
-                    })
-                )
-            )
+                const resultados = this.productSearchService.filtrarProducto(action.products, action.query);
+
+
+                return searchProductoSuccess({
+                    productos_search: resultados.data,
+                    search_found: resultados.found
+                });
+            })
         )
     );
+
 
 
     deleteProductoEffect = createEffect(() =>

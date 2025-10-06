@@ -68,8 +68,8 @@ export class DialogcreateinventarioComponent implements OnInit {
 
 
     this.store.select(selectProductoState).subscribe((state: ProductoState) => {
-      console.log(state.all_products)
-      this.productos = state.all_products;
+
+      this.productos = state.productos;
     });
     this.store.select(selectProveedorState).subscribe((state: ProveedorState) => {
       // Filtra solo proveedores activos

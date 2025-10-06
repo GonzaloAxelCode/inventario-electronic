@@ -167,7 +167,7 @@ export class InventarioEffects {
     );
 
 
-    searchProductosEffect = createEffect(() =>
+    searchInventariosEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(searchInventarios),
             map(action => {

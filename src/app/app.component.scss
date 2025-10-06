@@ -16,3 +16,36 @@ table {
     
 }
 
+/* 🌑 Basic shadow */
+.shadow-tui-shadow {
+  box-shadow: var(--tui-shadow);
+  transition: box-shadow 0.2s ease-in-out;
+}
+.shadow-tui-shadow:hover {
+  box-shadow: var(--tui-shadow-small-hover);
+}
+
+/* ⬇️ Dropdown shadow */
+.shadow-tui-shadow-medium {
+  box-shadow: var(--tui-shadow-medium);
+}
+
+/* 🪟 Modal shadow */
+.shadow-tui-shadow-popup {
+  box-shadow: var(--tui-shadow-popup);
+}
+
+/* 📑 Sidebar shadow */
+.shadow-tui-shadow-medium {
+  box-shadow: var(--tui-shadow-medium);
+}
+
+/* 🧭 Navigation shadow */
+.shadow-tui-shadow-small {
+  box-shadow: var(--tui-shadow-small);
+}
+
+/* 📱 Mobile modal shadow */
+.shadow-tui-shadow-popup {
+  box-shadow: var(--tui-shadow-popup);
+}

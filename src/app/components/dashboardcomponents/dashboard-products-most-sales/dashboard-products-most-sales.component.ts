@@ -1,4 +1,3 @@
-import { cargarTopProductosVentas } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
@@ -29,24 +28,20 @@ export class DashboardProductsMostSalesComponent implements OnInit {
   protected selectVentas$: Observable<VentaState>;
 
   constructor() {
-    // Inicializamos el observable para obtener los productos más vendidos
+
     this.selectVentas$ = this.store.select(selectVenta);
   }
 
   ngOnInit() {
 
-    const fromDate = new Date(2025, 0, 1); // Enero 1, 2025
-    const toDate = new Date(2025, 4, 4); // Abril 4, 2025
 
-    // Despachamos la acción para cargar los productos más vendidos
-    this.store.dispatch(cargarTopProductosVentas({ fromDate, toDate }));
-
-    // Suscribimos a la respuesta de los productos más vendidos
     this.selectVentas$.subscribe((productos) => {
       if (productos && productos.topProductoMostSales) {
         this.labels = productos.topProductoMostSales.map((producto: any) => producto.nombre);
         this.value = productos.topProductoMostSales.map((producto: any) => producto.cantidad_total_vendida);
+
       }
+
     });
   }
 

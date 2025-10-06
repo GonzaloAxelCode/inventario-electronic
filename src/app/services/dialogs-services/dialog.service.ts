@@ -15,7 +15,7 @@ export class DialogService {
         const component = new PolymorpheusComponent(DialogselectproductsComponent);
         const options: Partial<TuiDialogOptions<any>> = {
             dismissible: true,
-            size: "l",
+            size: "auto",
             label: "Stock de productos",
         };
 

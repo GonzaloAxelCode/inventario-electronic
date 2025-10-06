@@ -16,7 +16,7 @@
       </div>
       <div class="text-right">
         
-        <p class="text-gray-800 text-2xl font-bold dark:text-gray-400">{{ comprobante.tipo_comprobante | uppercase }} #{{ comprobante.serie }}{{ comprobante.numero }}</p>
+        <p class="text-gray-800 text-2xl font-bold dark:text-gray-400">{{ comprobante.tipo_comprobante | uppercase }} #{{ comprobante.correlativo }}</p>
         <p class="text-gray-600 dark:text-gray-400">Fecha: {{ venta.fecha_realizacion || venta.fecha_hora | date:'mediumDate' }}</p>
        </div>
     </div>
@@ -24,11 +24,11 @@
     <!-- Cliente / Detalles de Factura / Proveedor / Responsable -->
     <div class="p-2  border-b border-gray-200 dark:border-gray-700 grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <p class="font-medium mb-2 text-gray-700 dark:text-gray-200">Cliente:</p>
-        <p class=" text-sm text-gray-600 dark:text-gray-300">{{ comprobante.nombre_cliente || 'Cliente Ejemplo' }}</p>
+        <p class="font-medium mb-2 text-gray-700 dark:text-gray-200">Datos de cliente:</p>
+        <p class=" text-sm text-gray-600 dark:text-gray-300"> {{ comprobante.nombre_cliente || 'Cliente Ejemplo' }}</p>
         <p class=" text-sm text-gray-600 dark:text-gray-300"> {{ comprobante.numero_documento_cliente || '12345678' }}</p>
-        <p class=" text-sm text-gray-600 dark:text-gray-300">Dirección: {{  'Calle Inventada 123, Ciudad' }}</p>
-        <p class=" text-sm text-gray-600 dark:text-gray-300">Teléfono: {{ '+51 999 888 777' }}</p>
+        
+        
       </div>
       <div>
         <p class="font-medium mb-2 text-gray-700 dark:text-gray-200">Detalles de Factura:</p>
@@ -46,20 +46,13 @@
               <td class="pr-4">IGV:</td>
               <td class="text-right">S/{{ getValorVentaRedondeado(comprobante.igv) }}</td>
             </tr>
-            <tr>
-              <td class="pr-4">Proveedor:</td>
-              <td class="text-right">{{ 'Proveedor Ejemplo' }}</td>
-            </tr>
+        
             <tr>
               <td class="pr-4">Responsable:</td>
               <td class="text-right">{{ venta.usuario || 'Admin' }}</td>
             </tr>
           
-            
-            
-            
-
-            <tr>
+                        <tr>
               <td class="pr-4">Estado:</td>
               <td class="text-right">{{ venta.estado || 'Pendiente' }}</td>
             </tr>
