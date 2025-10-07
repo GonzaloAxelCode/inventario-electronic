@@ -22,9 +22,25 @@ export interface Venta {
     numero_documento_cliente: string
     nombre_cliente: string
     date_created?: any
-
+    comprobante_nota_credito: NotaCredito
 }
-
+export interface NotaCredito {
+    id: number;
+    serie: string;
+    correlativo: string;
+    tipo_comprobante_modifica: string;
+    serie_modifica: string;
+    correlativo_modifica: string;
+    tipo_motivo: string;
+    motivo: string;
+    moneda: string;
+    total: number;
+    estado_sunat: string;
+    xml_url?: string;
+    pdf_url?: string;
+    cdr_url?: string;
+    fecha_emision: string;
+}
 export interface ComprobanteElectronico {
     tipo_comprobante: string;
     serie: string;

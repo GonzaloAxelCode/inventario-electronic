@@ -18,6 +18,8 @@
         
         <p class="text-gray-800 text-2xl font-bold dark:text-gray-400">{{ comprobante.tipo_comprobante | uppercase }} #{{ comprobante.correlativo }}</p>
         <p class="text-gray-600 dark:text-gray-400">Fecha: {{ venta.fecha_realizacion || venta.fecha_hora | date:'mediumDate' }}</p>
+
+        <p *ngIf="venta.estado === 'ANULADA'" class="text-red-600 text-2xl font-bold ">ANULADO EN SUNAT</p>
        </div>
     </div>
 
@@ -105,9 +107,9 @@
 
   <div  class="w-full md:w-72 flex-shrink-0 flex flex-col gap-4">
     
-   
+      <h3 class="text-black dark:text-white">Operaciones comprobante </h3>
         <!-- Botones -->
-        <div class="flex flex-row gap-4 flex-wrap">
+        <div *ngIf="venta.estado !== 'ANULADA'" class="flex flex-row gap-4 flex-wrap">
             <a [href]="comprobante.pdf_url" target="_blank" iconStart="@tui.file-chart-column-increasing"
                 tuiButtonVertical tuiButton appearance="positive"
                 class="bg-blue-600  text-white rounded-lg shadow transition">
@@ -133,16 +135,51 @@
                 class="bg-green-600  text-white rounded-lg shadow transition">
                 Ver Ticket
             </a>
-   <button tuiButton appearance="floating" iconStart="@tui.send-horizontal"
+   <button   tuiButton appearance="floating" iconStart="@tui.send-horizontal"
                 tuiButtonVertical
                 class=" text-white rounded-lg shadow transition">
                Enviar por correo
             </button>
-            <button tuiButton appearance="negative" iconStart="@tui.ban"
-                tuiButtonVertical
+            <button  tuiButton appearance="negative" 
+            
+            iconStart="@tui.ban"
+                tuiButtonVertical (click)="anularVenta(venta.id)"
+                [disabled]="loadingAnularVenta"
+                
                 class="bg-red-600  text-white rounded-lg shadow transition">
-                Eliminar definitivo
+              <tui-loader *ngIf="loadingAnularVenta" size="m"></tui-loader>
+                Anular Venta por nota de credito
+              </button>
+        </div>
+
+
+          <div *ngIf="venta.estado === 'ANULADA'" class="flex flex-row gap-4 flex-wrap">
+            <a [href]="venta.comprobante_nota_credito.pdf_url" target="_blank" iconStart="@tui.file-chart-column-increasing"
+                tuiButtonVertical tuiButton appearance="positive"
+                class="bg-blue-600  text-white  w-full rounded-lg shadow transition">
+                Ver PDF Nota de credito
+            </a>
+
+            <a [href]="venta.comprobante_nota_credito.xml_url" target="_blank" iconStart="@tui.file-code-2"
+                tuiButton appearance="warning" 
+                class="bg-gray-600  text-white   w-full rounded-lg shadow transition" tuiButtonVertical>
+                Ver XML Nota de credito
+            </a>
+
+            <a iconStart="@tui.folder-archive" [href]="venta.comprobante_nota_credito.cdr_url" target="_blank"
+                tuiButton appearance="info"
+                tuiButtonVertical
+                class="bg-yellow-600  w-full text-white rounded-lg shadow transition">
+                Ver CDR Nota de Credito
+            </a>
+
+            
+   <button   tuiButton appearance="floating" iconStart="@tui.send-horizontal"
+                tuiButtonVertical
+                class=" text-white w-full rounded-lg shadow transition">
+               Enviar por correo 
             </button>
+           
         </div>
   </div>
 

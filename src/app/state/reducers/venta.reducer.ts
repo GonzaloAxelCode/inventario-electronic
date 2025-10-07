@@ -1,6 +1,9 @@
 import { Venta } from '@/app/models/venta.models';
 import { createReducer, on } from '@ngrx/store';
 import {
+    anularVenta,
+    anularVentaError,
+    anularVentaExito,
     cancelarVenta,
     cancelarVentaError,
     cancelarVentaExito,
@@ -60,6 +63,7 @@ export interface VentaState {
     ventas_search: Venta[];
     loadingResumenVentas: boolean
     loadingMostSales: boolean
+    loadingNotaCredito: boolean
 }
 
 export const initialState: VentaState = {
@@ -78,6 +82,7 @@ export const initialState: VentaState = {
     loadingMostSales: false,
 
     loadingResumenVentas: false,
+    loadingNotaCredito: false,
     search_ventas_found: "",  // Inicializa como string vacío si es que no hay un valor predeterminado
     count: 0,
     next: null,
@@ -247,5 +252,20 @@ export const ventaReducer = createReducer(
         loadingSearch: false,
         ventas_search: [],
         search_ventas_found: ""
+    })),
+    on(anularVenta, (state) => ({
+        ...state,
+        loadingNotaCredito: true,
+        errors: null
+    })),
+    on(anularVentaExito, (state, { ventaId }) => ({
+        ...state,
+        loadingNotaCredito: false,
+        errors: null
+    })),
+    on(anularVentaError, (state, { error }) => ({
+        ...state,
+        loadingNotaCredito: false,
+        errors: error
     }))
 );

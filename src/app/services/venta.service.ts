@@ -166,4 +166,24 @@ export class VentaService {
             catchError(error => throwError(error))
         );
     }
+
+
+    anularVenta(ventaId: number, motivo: string, tipo_motivo: string): Observable<any> {
+        const body = {
+            venta_id: ventaId,
+            motivo: motivo,
+            tipo_motivo: tipo_motivo // Ejemplo: "01" → Anulación de la operación
+        };
+
+        return this.http.post<any>(
+            `${this.siteURL}/nota-credito/registrar/`,
+            body
+        ).pipe(
+            catchError(error => {
+                console.error('Error al anular la venta', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
 }

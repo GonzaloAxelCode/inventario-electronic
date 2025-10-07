@@ -103,6 +103,7 @@ export class VentasComponent implements OnInit {
   tiendaUser!: number
 
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
+    this.form.reset();
 
   }
   ngOnInit() {

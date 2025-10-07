@@ -9,7 +9,9 @@ export enum VentaActionTypes {
     CARGAR_VENTAS_TIENDA = '[Venta] Cargar Ventas por Tienda',
     CARGAR_VENTAS_TIENDA_EXITO = '[Venta] Cargar Ventas por Tienda Éxito',
     CARGAR_VENTAS_TIENDA_ERROR = '[Venta] Cargar Ventas por Tienda Error',
-
+    ANULAR_VENTA = '[Venta] Anular Venta',
+    ANULAR_VENTA_EXITO = '[Venta] Anular Venta Éxito',
+    ANULAR_VENTA_ERROR = '[Venta] Anular Venta Error',
     CREAR_VENTA = '[Venta] Crear Venta',
     CREAR_VENTA_EXITO = '[Venta] Crear Venta Éxito',
     CREAR_VENTA_ERROR = '[Venta] Crear Venta Error',
@@ -189,3 +191,17 @@ export const clearVentaSearch = createAction(
 
 
 
+export const anularVenta = createAction(
+    VentaActionTypes.ANULAR_VENTA,
+    props<{ ventaId: number, motivo: string, tipo_motivo: string }>() // enviamos el motivo para SUNAT
+);
+
+export const anularVentaExito = createAction(
+    VentaActionTypes.ANULAR_VENTA_EXITO,
+    props<{ ventaId: number }>() // respuesta del backend con info de la nota
+);
+
+export const anularVentaError = createAction(
+    VentaActionTypes.ANULAR_VENTA_ERROR,
+    props<{ error: any }>()
+);

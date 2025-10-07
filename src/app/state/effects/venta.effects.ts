@@ -8,6 +8,9 @@ import { catchError, exhaustMap, map, of } from 'rxjs';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
 import { VentaService } from '@/app/services/venta.service';
 import {
+    anularVenta,
+    anularVentaError,
+    anularVentaExito,
     cancelarVenta,
     cancelarVentaError,
     cancelarVentaExito,
@@ -218,4 +221,27 @@ export class VentaEffects {
             )
         )
     );
+
+
+    anularVentaEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(anularVenta),
+            exhaustMap(({ ventaId, motivo, tipo_motivo }) =>
+                // Llamamos al servicio que emite la nota de crédito (anula la venta)
+                this.ventaService.anularVenta(ventaId, motivo, tipo_motivo).pipe(
+                    map((response) => {
+                        this.toastr.success('La venta fue anulada correctamente', 'Nota de Crédito emitida');
+                        console.log(response)
+                        return anularVentaExito({ ventaId });
+                    }),
+                    catchError((error) => {
+                        this.toastr.error('No se pudo anular la venta', 'Error');
+                        console.error('Error al anular venta:', error);
+                        return of(anularVentaError({ error }));
+                    })
+                )
+            )
+        )
+    );
+
 }
