@@ -110,27 +110,27 @@
       <h3 class="text-black dark:text-white">Operaciones comprobante </h3>
         <!-- Botones -->
         <div *ngIf="venta.estado !== 'ANULADA'" class="flex flex-row gap-4 flex-wrap">
-            <a [href]="comprobante.pdf_url" target="_blank" iconStart="@tui.file-chart-column-increasing"
+            <a [href]="stripDomain(comprobante.pdf_url)" target="_blank" iconStart="@tui.file-chart-column-increasing"
                 tuiButtonVertical tuiButton appearance="positive"
                 class="bg-blue-600  text-white rounded-lg shadow transition">
                 Ver PDF
             </a>
 
-            <a [href]="comprobante.xml_url" target="_blank" iconStart="@tui.file-code-2"
+            <a [href]="stripDomain(comprobante.xml_url)" target="_blank" iconStart="@tui.file-code-2"
                 tuiButton appearance="warning"
                 class="bg-gray-600  text-white rounded-lg shadow transition" tuiButtonVertical>
                 Ver XML
             </a>
 
-            <a iconStart="@tui.folder-archive" [href]="comprobante.cdr_url" target="_blank"
+            <a iconStart="@tui.folder-archive" [href]="stripDomain(comprobante.cdr_url)" target="_blank"
                 tuiButton appearance="info"
                 tuiButtonVertical
                 class="bg-yellow-600  text-white rounded-lg shadow transition">
                 Ver CDR
             </a>
 
-            <a iconStart="@tui.ticket-check" [href]="comprobante.ticket_url" target="_blank"
-                tuiButton 
+            <a iconStart="@tui.ticket-check" [href]="stripDomain(comprobante.ticket_url)" target="_blank"
+                tuiButton
                 tuiButtonVertical
                 class="bg-green-600  text-white rounded-lg shadow transition">
                 Ver Ticket
@@ -154,19 +154,19 @@
 
 
           <div *ngIf="venta.estado === 'ANULADA'" class="flex flex-row gap-4 flex-wrap">
-            <a [href]="venta.comprobante_nota_credito.pdf_url" target="_blank" iconStart="@tui.file-chart-column-increasing"
+            <a [href]="stripDomain(venta.comprobante_nota_credito.pdf_url)" target="_blank" iconStart="@tui.file-chart-column-increasing"
                 tuiButtonVertical tuiButton appearance="positive"
                 class="bg-blue-600  text-white  w-full rounded-lg shadow transition">
                 Ver PDF Nota de credito
             </a>
 
-            <a [href]="venta.comprobante_nota_credito.xml_url" target="_blank" iconStart="@tui.file-code-2"
-                tuiButton appearance="warning" 
+            <a [href]="stripDomain(venta.comprobante_nota_credito.xml_url)" target="_blank" iconStart="@tui.file-code-2"
+                tuiButton appearance="warning"
                 class="bg-gray-600  text-white   w-full rounded-lg shadow transition" tuiButtonVertical>
                 Ver XML Nota de credito
             </a>
 
-            <a iconStart="@tui.folder-archive" [href]="venta.comprobante_nota_credito.cdr_url" target="_blank"
+            <a iconStart="@tui.folder-archive" [href]="stripDomain(venta.comprobante_nota_credito.cdr_url)" target="_blank"
                 tuiButton appearance="info"
                 tuiButtonVertical
                 class="bg-yellow-600  w-full text-white rounded-lg shadow transition">

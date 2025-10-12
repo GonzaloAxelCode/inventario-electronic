@@ -35,6 +35,27 @@ export class DialogventadetailComponent {
     });
   }
 
+
+  stripDomain(url?: string): string {
+    if (!url) return '';
+    try {
+      // Obtener solo la parte del path
+      const u = new URL(url);
+      let path = u.pathname + u.search + u.hash;
+
+      // Quitar el subdirectorio "axelmovilcomprobantes" si existe
+      path = path.replace(/^\/?axelmovilcomprobantes\/?/, '/');
+
+      return "https://pub-6b79c76579594222bdd6f486ae49157e.r2.dev" + path;
+    } catch {
+      // Si la URL no es válida, usar regex como respaldo
+      return url
+        .replace(/^https?:\/\/[^\/]+/i, '') // quitar dominio
+        .replace(/^\/?axelmovilcomprobantes\/?/, '/'); // quitar subcarpeta
+    }
+  }
+
+
   getValorVentaRedondeado(valor: number) {
     return valor ? parseFloat(valor.toFixed(2)) : 0.0;
   }

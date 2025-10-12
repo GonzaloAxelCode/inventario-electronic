@@ -185,7 +185,7 @@ export class VentaEffects {
                         });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al cargar el resumen de ventas', 'Error');
+
                         return of(cargarResumenVentasError({ error }));
                     })
                 )

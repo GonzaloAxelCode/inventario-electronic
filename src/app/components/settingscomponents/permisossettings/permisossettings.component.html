@@ -1,129 +1,198 @@
-<div *ngIf="user.permissions" class="w-full max-w-2xl mx-auto space-y-6 pt-4 px-2">
-
-  <!-- Sección: Ventas -->
-  <div class="space-y-2">
-    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center">Ventas</h2>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede hacer una venta</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_make_sale" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede cancelar una venta</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_cancel_sale" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede ver las ventas</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_sale" (click)="$event.preventDefault()" />
-    </label>
+<div *ngIf="user.permissions" class="w-full space-y-6 pt-6 px-4 pb-8">
+  
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">Permisos de Usuario</h1>
+    <p class="text-sm text-slate-600 dark:text-slate-400">Configura los permisos y accesos del usuario al sistema</p>
   </div>
 
-  <!-- Sección: Inventario -->
-  <div class="space-y-2">
-    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center" >Inventario</h2>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede crear inventario</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_inventory" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede modificar inventario</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_inventory" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede actualizar inventario</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_update_inventory" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede eliminar inventario</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_inventory" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede ver el inventario</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_inventory" (click)="$event.preventDefault()" />
-    </label>
+  <!-- Grid de Secciones -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-cols-fr">
+    
+    <!-- Sección: Ventas -->
+    <div class="bg-white dark:bg-neutral-800 border-2 border-slate-200 dark:border-neutral-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div class="flex items-center space-x-3 mb-5 pb-4 border-b-2 border-slate-100 dark:border-neutral-700">
+        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+        </div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">Ventas</h2>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Realizar ventas</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_make_sale" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Cancelar ventas</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_cancel_sale" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Ver ventas</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_sale" (click)="$event.preventDefault()" />
+        </label>
+      </div>
+    </div>
+
+    <!-- Sección: Inventario -->
+    <div class="bg-white dark:bg-neutral-800 border-2 border-slate-200 dark:border-neutral-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div class="flex items-center space-x-3 mb-5 pb-4 border-b-2 border-slate-100 dark:border-neutral-700">
+        <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+          </svg>
+        </div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">Inventario</h2>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Crear inventario</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_inventory" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Modificar inventario</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_inventory" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Actualizar inventario</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_update_inventory" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Eliminar inventario</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_inventory" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Ver inventario</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_inventory" (click)="$event.preventDefault()" />
+        </label>
+      </div>
+    </div>
+
+    <!-- Sección: Productos -->
+    <div class="bg-white dark:bg-neutral-800 border-2 border-slate-200 dark:border-neutral-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div class="flex items-center space-x-3 mb-5 pb-4 border-b-2 border-slate-100 dark:border-neutral-700">
+        <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+          </svg>
+        </div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">Productos</h2>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Crear productos</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_product" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Actualizar productos</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_update_product" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Eliminar productos</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_product" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Ver productos</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_product" (click)="$event.preventDefault()" />
+        </label>
+      </div>
+    </div>
+
+    <!-- Sección: Categorías -->
+    <div class="bg-white dark:bg-neutral-800 border-2 border-slate-200 dark:border-neutral-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div class="flex items-center space-x-3 mb-5 pb-4 border-b-2 border-slate-100 dark:border-neutral-700">
+        <div class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+          </svg>
+        </div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">Categorías</h2>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Crear categorías</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_category" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Modificar categorías</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_category" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Eliminar categorías</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_category" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Ver categorías</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_category" (click)="$event.preventDefault()" />
+        </label>
+      </div>
+    </div> 
+    
+
+
+    <!-- Sección: Proveedores -->
+    <div class="bg-white dark:bg-neutral-800 border-2 border-slate-200 dark:border-neutral-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div class="flex items-center space-x-3 mb-5 pb-4 border-b-2 border-slate-100 dark:border-neutral-700">
+        <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+        </div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">Proveedores</h2>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Crear proveedores</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_supplier" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Modificar proveedores</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_supplier" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Eliminar proveedores</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_supplier" (click)="$event.preventDefault()" />
+        </label>
+        <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100">Ver proveedores</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_supplier" (click)="$event.preventDefault()" />
+        </label>
+      </div>
+    </div>
+
+    <!-- Sección: Tiendas -->
+    
+          <div class="bg-white dark:bg-neutral-800 border-2 border-slate-200 dark:border-neutral-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div class="flex items-center space-x-3 mb-5 pb-4 border-b-2 border-slate-100 dark:border-neutral-700">
+        <div class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+          </svg>
+        </div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Tiendas</h2>
+      </div>
+      <div class="space-y-3">
+                      <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+        <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900 dark:text-white">Crear tiendas</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_store" (click)="$event.preventDefault()" />
+        </label>
+        
+                       <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900 dark:text-white">Modificar tiendas</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_store" (click)="$event.preventDefault()" />
+        </label>
+               <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:text-white dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+        <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900 dark:text-white">Eliminar tiendas</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_store" (click)="$event.preventDefault()" />
+        </label>
+               <label class="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors  group">
+          <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900 dark:text-white">Ver tiendas</span>
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_store" (click)="$event.preventDefault()" />
+        </label>
+      </div>
+    </div>
+
   </div>
 
-  <!-- Sección: Productos -->
-  <div class="space-y-2">
-    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center">Productos</h2>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede crear un producto</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_product" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede actualizar un producto</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_update_product" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede eliminar un producto</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_product" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede ver los productos</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_product" (click)="$event.preventDefault()" />
-    </label>
-  </div>
-
-  <!-- Sección: Categorías -->
-  <div class="space-y-2">
-    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center">Categorías</h2>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede crear una categoría</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_category" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede modificar una categoría</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_category" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede eliminar una categoría</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_category" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede ver las categorías</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_category" (click)="$event.preventDefault()" />
-    </label>
-  </div>
-
-  <!-- Sección: Proveedores -->
-  <div class="space-y-2">
-    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center">Proveedores</h2>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede crear proveedores</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_supplier" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede modificar proveedores</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_supplier" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede eliminar proveedores</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_supplier" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede ver los proveedores</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_supplier" (click)="$event.preventDefault()" />
-    </label>
-  </div>
-
-  <!-- Sección: Tiendas -->
-  <div class="space-y-2">
-    <h2 class="text-lg font-semibold text-neutral-200 border-b border-neutral-700 pb-1 text-center">Tiendas</h2>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede crear una tienda</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_store" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede modificar una tienda</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_store" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede eliminar una tienda</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_store" (click)="$event.preventDefault()" />
-    </label>
-    <label class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-800 shadow-sm">
-      <span>Puede ver las tiendas</span>
-      <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.view_store" (click)="$event.preventDefault()" />
-    </label>
-  </div>
-
-</div>
+ </div>
