@@ -9,12 +9,17 @@ export interface CategoriaState {
   loadingCategorias: boolean;
   errors?: any;
   loadingCreateCategoria: boolean
+  loadingDesactivateCategoria: boolean
+  loadingUpdateCategoria: boolean
+
 }
 
 export const initialState: CategoriaState = {
   categorias: [],
   loadingCategorias: false,
   loadingCreateCategoria: false,
+  loadingDesactivateCategoria: false,
+  loadingUpdateCategoria: false,
   errors: {}
 };
 
@@ -50,26 +55,31 @@ export const categoriaReducer = createReducer(
     loadingCreateCategoria: false
   })), on(updateCategoriaAction, (state, { categoria }) => ({
     ...state,
-
+    loadingUpdateCategoria: true
   })),
   on(updateCategoriaFail, (state, { error }) => ({
     ...state,
-    errors: error
+    errors: error,
+    loadingUpdateCategoria: false
+
   })),
   on(updateCategoriaSuccess, (state, { categoria }) => ({
     ...state,
-    categorias: state.categorias.map(cat => cat.id === categoria.id ? categoria : cat)
-
+    categorias: state.categorias.map(cat => cat.id === categoria.id ? categoria : cat),
+    loadingUpdateCategoria: false
   })),
   on(deleteCategoriaAction, (state) => ({
     ...state,
+    loadingDesactivateCategoria: true
   })),
   on(deleteCategoriaFail, (state, { error }) => ({
     ...state,
-    errors: error
+    errors: error,
+    loadingDesactivateCategoria: false
   })),
   on(deleteCategoriaSuccess, (state, { id }) => ({
     ...state,
-    categorias: state.categorias.filter(cat => cat.id !== id)
+    categorias: state.categorias.filter(cat => cat.id !== id),
+    loadingDesactivateCategoria: false
   }))
 );

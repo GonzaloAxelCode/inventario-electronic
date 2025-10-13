@@ -14,28 +14,19 @@
     >
       Dirección
     </tui-input>
-       <tui-input 
-      formControlName="telefono" 
-      placeholder="Ingrese el teléfono de la tienda" 
-      class="full-width"
-    >
-      Teléfono
-    </tui-input>
 
-
-    <tui-input 
-      formControlName="ruc" 
-      placeholder="Ingrese el RUC de la tienda" 
-      class="full-width"
-    >
-      RUC
-    </tui-input>
  
 
-    <div class="my-3">
-      <button tuiButton size="m" type="submit" [disabled]="tiendaForm.invalid">
-        Crear Tienda
+    <div class="w-full flex flex-1">
+      <button tuiButton size="m"
+       appearance="outline-grayscale"
+        class="w-full"
+         type="submit" [disabled]="tiendaForm.invalid"
+         
+        >
+        Crear Tienda     <tui-loader [showLoader]="!!(loadingCreateTienda$  | async)?.loadingCreateTienda"></tui-loader>
       </button>
     </div>
   </form>
 </div>
+

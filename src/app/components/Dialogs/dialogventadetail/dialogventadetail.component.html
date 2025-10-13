@@ -1,4 +1,4 @@
-<div    *ngIf="venta.estado !== 'Pendiente' && venta.tipo_comprobante !== 'Sin Comprobante'"  class="flex flex-col md:flex-row gap-6 ">
+<div    *ngIf="venta.estado !== 'Pendiente' && venta.tipo_comprobante !== 'Anonima'"  class="flex flex-col md:flex-row gap-6 ">
 
 
   <div class="flex-1 bg-transparent  rounded-2xl overflow-hidden">
@@ -25,15 +25,9 @@
 
     <!-- Cliente / Detalles de Factura / Proveedor / Responsable -->
     <div class="p-2  border-b border-gray-200 dark:border-gray-700 grid grid-cols-1 md:grid-cols-2 gap-6">
+      
       <div>
-        <p class="font-medium mb-2 text-gray-700 dark:text-gray-200">Datos de cliente:</p>
-        <p class=" text-sm text-gray-600 dark:text-gray-300"> {{ comprobante.nombre_cliente || 'Cliente Ejemplo' }}</p>
-        <p class=" text-sm text-gray-600 dark:text-gray-300"> {{ comprobante.numero_documento_cliente || '12345678' }}</p>
-        
-        
-      </div>
-      <div>
-        <p class="font-medium mb-2 text-gray-700 dark:text-gray-200">Detalles de Factura:</p>
+        <p class="font-medium mb-2 text-gray-700 dark:text-gray-200">Detalles del comprobante</p>
         <table class="w-full text-sm text-gray-600 dark:text-gray-300">
           <tbody>
             <tr>
@@ -65,6 +59,13 @@
 
           </tbody>
         </table>
+      </div>
+      <div>
+        <p class="font-medium mb-2 text-gray-700 dark:text-gray-200">Datos de cliente:</p>
+        <p class=" text-sm text-gray-600 dark:text-gray-300"> {{ comprobante.nombre_cliente || 'Cliente Ejemplo' }}</p>
+        <p class=" text-sm text-gray-600 dark:text-gray-300"> {{ comprobante.numero_documento_cliente || '12345678' }}</p>
+        
+        
       </div>
     </div>
 
@@ -107,9 +108,56 @@
 
   <div  class="w-full md:w-72 flex-shrink-0 flex flex-col gap-4">
     
-      <h3 class="text-black dark:text-white">Operaciones comprobante </h3>
+    
         <!-- Botones -->
-        <div *ngIf="venta.estado !== 'ANULADA'" class="flex flex-row gap-4 flex-wrap">
+    
+          <div  *ngIf="venta.estado === 'ANULADA'"  class="flex flex-row gap-4 flex-wrap">
+            
+                   <button   tuiButton appearance="floating" iconStart="@tui.arrow-down-right"
+                
+                class=" text-white w-full rounded-lg shadow transition " >Nota de Credito
+              </button>
+              <div class="flex flex-wrap gap-2">
+
+
+            <a [href]="stripDomain(venta.comprobante_nota_credito.pdf_url)" target="_blank" iconStart="@tui.file-chart-column-increasing"
+                tuiButtonVertical tuiButton appearance="positive"
+                class="bg-blue-600  text-white   rounded-lg shadow transition">
+                PDF
+            </a>
+
+            <a [href]="stripDomain(venta.comprobante_nota_credito.xml_url)" target="_blank" iconStart="@tui.file-code-2"
+                tuiButton appearance="warning"
+                class="bg-gray-600  text-white  rounded-lg shadow transition" tuiButtonVertical>
+             XML
+            </a>
+
+            <a iconStart="@tui.folder-archive" [href]="stripDomain(venta.comprobante_nota_credito.cdr_url)" target="_blank"
+                tuiButton appearance="info"
+                tuiButtonVertical
+                class="bg-yellow-600  text-white rounded-lg shadow transition">
+               CDR
+            </a>
+
+            
+   <button   tuiButton appearance="floating" iconStart="@tui.send-horizontal"
+                tuiButtonVertical
+                class=" text-white w-full rounded-lg shadow transition">
+               Enviar por correo 
+            </button>
+                          </div>
+           
+        </div>
+            <div  class="flex flex-row gap-4 flex-wrap">
+              
+                    
+ <button   tuiButton appearance="floating" iconStart="@tui.arrow-down-right"
+                
+                class=" text-white w-full rounded-lg shadow transition "  (click)="expanded = !expanded">Comprobante Original 
+              </button>
+<tui-expand [expanded]="expanded" *ngIf="venta.estado === 'ANULADA'">
+            <div  class="flex flex-row gap-4 flex-wrap">
+
             <a [href]="stripDomain(comprobante.pdf_url)" target="_blank" iconStart="@tui.file-chart-column-increasing"
                 tuiButtonVertical tuiButton appearance="positive"
                 class="bg-blue-600  text-white rounded-lg shadow transition">
@@ -150,38 +198,55 @@
               <tui-loader *ngIf="loadingAnularVenta" size="m"></tui-loader>
                 Anular Venta por nota de credito
               </button>
-        </div>
+              </div>
+              </tui-expand>
 
+                <div  *ngIf="venta.estado !== 'ANULADA'" class="flex flex-row gap-4 flex-wrap">
 
-          <div *ngIf="venta.estado === 'ANULADA'" class="flex flex-row gap-4 flex-wrap">
-            <a [href]="stripDomain(venta.comprobante_nota_credito.pdf_url)" target="_blank" iconStart="@tui.file-chart-column-increasing"
+            <a [href]="stripDomain(comprobante.pdf_url)" target="_blank" iconStart="@tui.file-chart-column-increasing"
                 tuiButtonVertical tuiButton appearance="positive"
-                class="bg-blue-600  text-white  w-full rounded-lg shadow transition">
-                Ver PDF Nota de credito
+                class="bg-blue-600  text-white rounded-lg shadow transition">
+                Ver PDF
             </a>
 
-            <a [href]="stripDomain(venta.comprobante_nota_credito.xml_url)" target="_blank" iconStart="@tui.file-code-2"
+            <a [href]="stripDomain(comprobante.xml_url)" target="_blank" iconStart="@tui.file-code-2"
                 tuiButton appearance="warning"
-                class="bg-gray-600  text-white   w-full rounded-lg shadow transition" tuiButtonVertical>
-                Ver XML Nota de credito
+                class="bg-gray-600  text-white rounded-lg shadow transition" tuiButtonVertical>
+                Ver XML
             </a>
 
-            <a iconStart="@tui.folder-archive" [href]="stripDomain(venta.comprobante_nota_credito.cdr_url)" target="_blank"
+            <a iconStart="@tui.folder-archive" [href]="stripDomain(comprobante.cdr_url)" target="_blank"
                 tuiButton appearance="info"
                 tuiButtonVertical
-                class="bg-yellow-600  w-full text-white rounded-lg shadow transition">
-                Ver CDR Nota de Credito
+                class="bg-yellow-600  text-white rounded-lg shadow transition">
+                Ver CDR
             </a>
 
-            
+            <a iconStart="@tui.ticket-check" [href]="stripDomain(comprobante.ticket_url)" target="_blank"
+                tuiButton
+                tuiButtonVertical
+                class="bg-green-600  text-white rounded-lg shadow transition">
+                Ver Ticket
+            </a>
    <button   tuiButton appearance="floating" iconStart="@tui.send-horizontal"
                 tuiButtonVertical
-                class=" text-white w-full rounded-lg shadow transition">
-               Enviar por correo 
+                class=" text-white rounded-lg shadow transition">
+               Enviar por correo
             </button>
-           
+            <button  tuiButton appearance="negative" 
+            *ngIf="venta.nombre_cliente === 'CONSUMIDOR FINAL' " 
+            iconStart="@tui.ban"
+                tuiButtonVertical (click)="anularVenta(venta.id)"
+                [disabled]="loadingAnularVenta"
+                
+                class="bg-red-600  text-white rounded-lg shadow transition">
+              <tui-loader *ngIf="loadingAnularVenta" size="m"></tui-loader>
+                Anular Venta por nota de credito
+              </button>
+              </div>
         </div>
-  </div>
+
+      </div>
 
 </div>
 

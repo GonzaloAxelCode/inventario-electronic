@@ -12,13 +12,13 @@ import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiBadge, TuiConfirmData, TuiSkeleton } from '@taiga-ui/kit';
-import { TuiCardLarge } from '@taiga-ui/layout';
+import { TuiBlockStatus, TuiCardLarge } from '@taiga-ui/layout';
 import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-tabletiendas',
   standalone: true,
-  imports: [CommonModule, FormsModule, TuiTable, TuiBadge, TuiAppearance, TuiButton, TuiSkeleton, TuiCardLarge, TuiAppearance],
+  imports: [TuiBlockStatus, CommonModule, FormsModule, TuiTable, TuiBadge, TuiAppearance, TuiButton, TuiSkeleton, TuiCardLarge, TuiAppearance],
   templateUrl: './tabletiendas.component.html',
   styleUrl: './tabletiendas.component.scss'
 })
@@ -89,8 +89,8 @@ export class TabletiendasComponent implements OnInit {
       .subscribe((confirm) => {
         if (confirm) {
 
-
-          this.alerts.open(' eliminado exitosamente.').subscribe();
+          this.store.dispatch(desactivateTiendaAction({ id, activo: false }));
+          this.alerts.open('Eliminado exitosamente.').subscribe();
         } else {
 
           this.alerts.open('Eliminación cancelada.').subscribe();

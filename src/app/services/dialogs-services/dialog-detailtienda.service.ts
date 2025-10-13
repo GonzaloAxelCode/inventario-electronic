@@ -17,7 +17,7 @@ export class DialogDetailTiendaService {
         const options: Partial<any> = {
             dismissible: true,
 
-            size: "auto",
+            size: "l",
             data
         };
 

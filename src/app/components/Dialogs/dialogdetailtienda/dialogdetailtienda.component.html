@@ -37,33 +37,15 @@
               <span class="font-medium">ID:</span>
               <span class="tabular-nums">{{ tienda?.id ?? '—' }}</span>
             </div>
-            <div class="flex items-center gap-2" *ngIf="tienda?.ruc">
-              <span class="font-medium">RUC:</span>
-              <span class="tabular-nums">{{ tienda?.ruc }}</span>
-            </div>
-            <div class="flex items-center gap-2" *ngIf="tienda?.capacidad !== undefined">
-              <span class="font-medium">Capacidad:</span>
-              <span class="tabular-nums">{{ tienda?.capacidad }}</span>
-            </div>
+          
+          
 
             <div class="flex items-center gap-2" *ngIf="tienda?.capacidad !== undefined">
               <span class="font-medium">Direccion:</span>
               <span class="tabular-nums">{{ tienda?.direccion }}</span>
             </div>
-             <div class="flex items-center gap-2" *ngIf="tienda?.capacidad !== undefined">
-              <span class="font-medium">Ciudad:</span>
-              <span class="tabular-nums">{{ tienda?.ciudad }}</span>
-            </div>
-
-              <div class="flex items-center gap-2" *ngIf="tienda?.capacidad !== undefined">
-              <span class="font-medium">Telefono:</span>
-              <span class="tabular-nums">{{ tienda?.telefono }}</span>
-            </div>
            
-            <div class="flex items-center gap-2" *ngIf="tienda?.encargado">
-              <span class="font-medium">Encargado:</span>
-              <span class="tabular-nums">{{ tienda?.encargado?.first_name || '—' }} {{ tienda?.encargado?.last_name || '—' }}</span>
-            </div>
+
           </div>
         </div>
       </div>

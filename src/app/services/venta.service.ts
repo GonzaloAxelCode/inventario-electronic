@@ -88,7 +88,7 @@ export class VentaService {
         from_date: [number, number, number],
         to_date: [number, number, number],
         page: number = 1,
-        page_size: number = 5
+        page_size: number = 30
     ): Observable<VentaResponse> {
 
         // Construir los query params
@@ -125,8 +125,16 @@ export class VentaService {
             })
         );
     }
-    createVenta_sin_comprobante(venta: CreateVenta): Observable<Venta> {
-        return this.http.post<Venta>(`${this.siteURL}/ventas/crear/sin_comprobante/`, venta).pipe(
+    createVentaPendiente(venta: CreateVenta): Observable<Venta> {
+        return this.http.post<Venta>(`${this.siteURL}/ventas/crear/pendiente/`, venta).pipe(
+            catchError(error => {
+                console.error('Error al crear la venta', error);
+                return throwError(error);
+            })
+        );
+    }
+    createVentaAnonima(venta: CreateVenta): Observable<Venta> {
+        return this.http.post<Venta>(`${this.siteURL}/ventas/crear/anonima/`, venta).pipe(
             catchError(error => {
                 console.error('Error al crear la venta', error);
                 return throwError(error);

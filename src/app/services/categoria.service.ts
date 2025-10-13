@@ -16,7 +16,7 @@ export class CategoriaService {
 
 
   fetchCategorias(): Observable<Categoria[]> {
-    return this.http.get<Categoria[]>(`${this.siteURL}/categorias`).pipe(
+    return this.http.get<Categoria[]>(`${this.siteURL}/categorias/`).pipe(
       catchError(error => throwError(error))
     );
   }

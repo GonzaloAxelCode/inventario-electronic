@@ -134,9 +134,14 @@ export class VentaEffects {
         this.actions$.pipe(
             ofType(crearVenta),
             exhaustMap(({ venta }) => {
-                const servicio = venta.tipoComprobante === 'Sin Comprobante' || !venta.estado
-                    ? this.ventaService.createVenta_sin_comprobante(venta)
-                    : this.ventaService.createVenta(venta);
+                const servicio = venta.tipoComprobante === 'Anonima'
+                    ? this.ventaService.createVentaAnonima(venta)
+                    : venta.is_send_sunat ? this.ventaService.createVenta(venta) :
+                        this.ventaService.createVentaPendiente(venta)
+
+
+
+
 
                 return servicio.pipe(
                     map(createdVenta => {
@@ -200,7 +205,7 @@ export class VentaEffects {
         this.actions$.pipe(
             ofType(searchVenta),
             exhaustMap((action) =>
-                this.ventaService.fetchSearchVentas(action.query, action.page || 1, action.page_size || 5).pipe(
+                this.ventaService.fetchSearchVentas(action.query, action.page || 1, action.page_size || 30).pipe(
                     map(response => {
                         console.log(response)
                         return searchVentaSuccess({

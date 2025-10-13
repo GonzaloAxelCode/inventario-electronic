@@ -132,7 +132,7 @@ export class VentasComponent implements OnInit {
 
   estados_sunat = ["Pendiente", "Aceptado", "Rechazado"]
   metodos_pago = ["YAPE", "Efectivo", "Deposito", "Plin"]
-  tipoComprobantes = ["Factura", "Boleta", "Sin Comprobante"]
+  tipoComprobantes = ["Factura", "Boleta", "Anonima"]
   tipoDocumento = ["Dni", "Ruc"]
 
 

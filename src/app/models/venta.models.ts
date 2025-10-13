@@ -21,7 +21,11 @@ export interface Venta {
     tipo_documento_cliente: string
     numero_documento_cliente: string
     nombre_cliente: string
-    date_created?: any
+    date_created?: any,
+    is_send_sunat?: boolean
+    correo_cliente: string,
+    direccion_cliente: string,
+    telefono_cliente: string,
     comprobante_nota_credito: NotaCredito
 }
 export interface NotaCredito {
@@ -110,6 +114,10 @@ export interface CreateVenta {
     totalPagar: number;
     estado: boolean;
     productos: ProductoVenta[];
+    correo_cliente: string,
+    direccion_cliente: string,
+    telefono_cliente: string,
+    is_send_sunat: boolean
 }
 
 export interface ClienteTemp {

@@ -30,9 +30,11 @@
     </div>
 
     <!-- Botón de envío -->
-    <div class="col-span-2 flex justify-end">
-      <button tuiButton type="submit" [disabled]="categoryForm.invalid" class="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">
-        Actualizar 
+    <div class="flex-1 w-full col-span-2 flex justify-end">
+      <button tuiButton type="submit" [disabled]="categoryForm.invalid" 
+      appearance="outline-grayscale"
+      class="px-6 py-2 w-full  text-white rounded-full transition">
+        Actualizar  <tui-loader [showLoader]="!!(loadingUpdateCategoria$ | async)?.loadingUpdateCategoria"></tui-loader>
       </button>
     </div>
   </form>

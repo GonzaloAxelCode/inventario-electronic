@@ -30,8 +30,12 @@ export interface UserState {
     users: User[];
     user: User,
     loadingUsers: boolean;
+    loadingCreateUser: boolean;
+    loadingActivateUser: boolean;
     errors: any;
     loadingCurrentUser: boolean
+    loadingUpdateUser: boolean;
+    loadingUpdatePermissions: boolean
 }
 export const userInitial = {
     id: 0,
@@ -76,6 +80,10 @@ export const initialStateUser: UserState = {
     users: [],
     loadingUsers: false,
     errors: {},
+    loadingCreateUser: false,
+    loadingActivateUser: false,
+    loadingUpdateUser: false,
+    loadingUpdatePermissions: false,
     user: null as unknown as User,
     loadingCurrentUser: false
 };
@@ -102,58 +110,67 @@ export const userReducer = createReducer(
 
     on(createUserAction, state => ({
         ...state,
-        loadingUsers: true
+        loadingCreateUser: true
     })),
     on(createUserSuccess, (state, { user }) => ({
         ...state,
         users: [...state.users, user],
-        loadingUsers: false
+        loadingCreateUser: false
     })),
     on(createUserFail, (state, { error }) => ({
         ...state,
         errors: error,
-        loadingUsers: false
+        loadingCreateUser: false
     })),
 
 
     on(updateUserAction, state => ({
-        ...state
+        ...state,
+        loadingUpdateUser: true
     })),
     on(updateUserSuccess, (state, { user }) => ({
         ...state,
-        users: state.users.map(u => u.id === user.id ? user : u)
+        users: state.users.map(u => u.id === user.id ? user : u),
+        loadingUpdateUser: false
     })),
     on(updateUserFail, (state, { error }) => ({
         ...state,
-        errors: error
+        errors: error,
+        loadingUpdateUser: false
     })),
 
 
     on(desactivateUserAction, state => ({
-        ...state
+        ...state,
+        loadingActivateUser: true
     })),
     on(desactivateUserSuccess, (state, { id, is_active }) => ({
         ...state,
         users: state.users.map((user) =>
             user.id === id ? { ...user, is_active } : user
         ),
+        loadingActivateUser: false
     })),
     on(desactivateUserFail, (state, { error }) => ({
         ...state,
-        errors: error
+        errors: error,
+        loadingActivateUser: false
     })),
 
 
     on(deleteUserAction, state => ({
-        ...state
+        ...state,
+        loadingDeleteUser: true
     })),
     on(deleteUserSuccess, (state, { id }) => ({
         ...state,
-        users: state.users.filter(user => user.id !== id)
+        users: state.users.filter(user => user.id !== id),
+        loadingDeleteUser: false
     })),
     on(deleteUserFail, (state, { error }) => ({
         ...state,
-        errors: error
+        errors: error,
+        loadingDeleteUser: false
     })),
     on(clearUserAction, (state) => {
 
@@ -187,6 +204,7 @@ export const userReducer = createReducer(
     })),
     on(updateUserPermissionsAction, (state) => ({
         ...state,
+        loadingUpdatePermissions: true
     })),
     on(updateUserPermissionsSuccess, (state, { id, permissions }) => ({
         ...state,
@@ -201,11 +219,13 @@ export const userReducer = createReducer(
                 }
                 : user
         ),
+        loadingUpdatePermissions: false
     })),
 
     on(updateUserPermissionsFail, (state, { error }) => ({
         ...state,
         errors: error,
+        loadingUpdatePermissions: false
 
     })),
 );

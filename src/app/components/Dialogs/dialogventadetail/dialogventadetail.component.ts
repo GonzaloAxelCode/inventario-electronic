@@ -7,20 +7,21 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAppearance, TuiButton, TuiDialogContext, TuiLoader } from '@taiga-ui/core';
+import { TuiAppearance, TuiButton, TuiDialogContext, TuiExpand, TuiLoader } from '@taiga-ui/core';
 import { TuiBadge, TuiChip } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
 
 @Component({
   selector: 'app-dialogventadetail',
   standalone: true,
-  imports: [CommonModule, TuiLoader, TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiChip, TuiLoader],
+  imports: [CommonModule, TuiLoader, TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiChip, TuiLoader, TuiExpand],
   templateUrl: './dialogventadetail.component.html',
   styleUrl: './dialogventadetail.component.scss'
 })
 export class DialogventadetailComponent {
   protected readonly context = injectContext<TuiDialogContext<boolean, Venta>>();
   public venta: Venta = this.context.data ?? {} as Venta;
+  protected expanded = false;
 
   public comprobante: ComprobanteElectronico = this.venta?.comprobante ?? {} as ComprobanteElectronico;
   constructor(private store: Store<AppState>) {

@@ -1,52 +1,78 @@
-
-<div class="">
-    <button
+<div>
+  <button
     iconStart="@tui.plus"
     tuiButton
     appearance="textfield"
     tuiButtonVertical
     type="button"
-    class="my-5 pr-3 "
+    class="my-5 pr-3"
     (click)="showDialogCreateUser(tienda)"
-    
->
+  >
     Agregar nuevo personal
-</button>
+  </button>
 
-        <table size="s" tuiTable     
->
-            <thead>
-                <tr class="bg-neutral-700">
-                    <th tuiTh class="text-left p-3">#</th>
-                    <th tuiTh class="text-left p-3">Username</th>
-                    <th tuiTh class="text-left p-3">Nombres y Apellidos</th>
-                    <th tuiTh class="text-left p-3">Activo</th>
-                    <th tuiTh class="text-left p-3">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let user of users; let i = index" class="hover:bg-neutral-700">
-                    <td tuiTd class="p-3">{{ user.id}}</td>
-                    <td tuiTd class="p-3">{{ user.username }}</td>
-                    <td tuiTd class="p-3">{{ user.first_name }} {{user.last_name}}</td>
-                    <td tuiTd class="p-3"> <input tuiSwitch type="checkbox" [(ngModel)]="user.is_active"
-                           [disabled]="user.is_superuser"   (click)="toggleUpdateStateUser($event,user)" /></td>
+  <!-- 🔹 Si hay usuarios, muestra la tabla -->
+  <table *ngIf="users && users.length > 0; else noUsers" size="s" tuiTable>
+    <thead>
+      <tr class="bg-neutral-200 dark:bg-neutral-800">
+        <th tuiTh class="text-left p-3">#</th>
+        <th tuiTh class="text-left p-3">Username</th>
+        <th tuiTh class="text-left p-3">Nombres y Apellidos</th>
+        <th tuiTh class="text-left p-3">Activo</th>
+        <th tuiTh class="text-left p-3">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users; let i = index" class="">
+        <td tuiTd class="p-3">{{ user.id }}</td>
+        <td tuiTd class="p-3">{{ user.username }}</td>
+        <td tuiTd class="p-3">{{ user.first_name }} {{ user.last_name }}</td>
+        <td tuiTd class="p-3">
+          <input
+            tuiSwitch
+            type="checkbox"
+            [(ngModel)]="user.is_active"
+            [disabled]="user.is_superuser"
+            (click)="toggleUpdateStateUser($event, user)"
+          />
+        </td>
+        <td tuiTd class="p-3">
+          <div class="flex gap-2">
+            <button
+              appearance="positive"
+              iconStart="@tui.shield-half"
+              tuiButton
+              tuiButtonVertical
+              type="button"
+              [disabled]="user.is_superuser"
+              (click)="showDialogEditPermissions(user)"
+            >
+              Gestionar Permisos
+            </button>
+            <button
+              appearance="textfield"
+              iconStart="@tui.key-round"
+              tuiButton
+              tuiButtonVertical
+              type="button"
+              [disabled]="user.is_superuser"
+              (click)="showDialogUpdatePassword(user)"
+            >
+              Cambiar Password
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-                    <td tuiTd class="p-3">
-
-                        <div class="flex gap-2 ">
-                            <button appearance="positive" iconStart="@tui.shield-half" tuiButton tuiButtonVertical
-                                type="button"  [disabled]="user.is_superuser"   (click)="showDialogEditPermissions(user)">
-                                Gestionar Permisos
-                            </button>
-                              <button appearance="textfield" iconStart="@tui.key-round" tuiButton tuiButtonVertical
-                                type="button"  [disabled]="user.is_superuser"  (click)="showDialogUpdatePassword(user)">
-                               Cambiar Password
-                            </button>
-                        </div>
-
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+  <!-- 🔹 Si NO hay usuarios -->
+  <ng-template #noUsers>
+    <div class="flex flex-col items-center justify-center text-center py-10 text-neutral-400 border border-dashed border-neutral-600 rounded-lg">
+      <tui-icon icon="@tui.user" class="text-5xl mb-3"></tui-icon>
+      <p class="text-lg font-medium mb-2">No hay personal registrado</p>
+      <p class="text-sm mb-4">Agrega un nuevo miembro para esta tienda.</p>
+     
     </div>
+  </ng-template>
+</div>

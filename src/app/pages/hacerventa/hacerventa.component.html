@@ -24,10 +24,10 @@
 
                     <div class="grid grid-cols-1 gap-2">
 
-                        <div class="flex gap-2">
+                        <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'" class="flex gap-2">
                             <tui-input *ngIf="!ventaForm.get('nombre_cliente')?.value" class="col-span-2 w-full"
                                 formControlName="documento_cliente">
-                                {{ ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'DNI' : 'RUC' }}
+                                {{ ventaForm.get('tipoComprobante')?.value === 'Boleta' || ventaForm.get('tipoComprobante')?.value === 'Anonima' ? 'DNI' : 'RUC' }}
 
                                 <input
                                     [placeholder]="ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'Ingrese DNI' : 'Ingrese RUC'"
@@ -61,8 +61,43 @@
                         </div>
                         <span *ngIf="errorClientNotFound" class="text-red-500 text-xs font-bold">Cliente no
                             encontrado o el servicio no esta disponible.Intente mas tarde.</span>
+<span
+*ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'"
+       class="underline text-sm text-neutral-400 cursor-pointer"
+    (click)="expanded = !expanded"
+>
+   Agregar mas informacion del cliente
+</span>
+                    
+
+
+<div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'" [@expandCollapse]="expanded ? 'open' : 'closed'" class="overflow-hidden transition-all duration-300">
+  <div class="space-y-2">
+
+   
+
+    <tui-textfield class="flex-1">
+      <label>Dirección del Cliente</label>
+      <input tuiTextfield size="m" formControlName="direccion_cliente" placeholder="Dirección del Cliente" />
+    </tui-textfield>
+
+    <tui-textfield class="flex-1">
+      <label>Correo del Cliente</label>
+      <input tuiTextfield size="m" type="email" formControlName="correo_cliente" placeholder="Correo del Cliente" />
+    </tui-textfield>
+
+    <tui-textfield class="flex-1">
+      <label>Teléfono del Cliente</label>
+      <input tuiTextfield size="m" type="text" formControlName="telefono_cliente" placeholder="Teléfono del Cliente" />
+    </tui-textfield>
+
+  </div>
+</div>
+
+
+
                         <label class="flex items-center gap-2"
-                            *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Sin Comprobante'">
+                            >
                             <input tuiCheckbox type="checkbox" formControlName="is_send_sunat" [size]="'m'" />
                             Enviar comprobante a SUNAT
                         </label>
@@ -170,10 +205,15 @@
                 </div>
             </div>
 
-            <button iconStart="@tui.dollar-sign"
-                [disabled]="ventaForm.get('tipoComprobante')?.value !== 'Sin Comprobante' && !ventaForm.valid"
+            <button iconStart="@tui.dollar-sign" *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'"
+                [disabled]="ventaForm.get('tipoComprobante')?.value !== 'Anonima' && !ventaForm.valid && ventaForm.get('productos')?.value !== []"
                 class="flex w-full my-3" tuiButton type="submit" (click)="hacerVenta()" appearance="textfield">
                 Realizar Venta
+            </button>
+             <button iconStart="@tui.dollar-sign" *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'"
+                [disabled]=" ventaForm.get('productos')?.value.length === 0"
+                class="flex w-full my-3" tuiButton type="submit" (click)="hacerVenta()" appearance="textfield">
+                Realizar Venta Anonima
             </button>
         </form>
     </tui-loader>

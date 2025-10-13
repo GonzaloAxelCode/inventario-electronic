@@ -8,13 +8,14 @@ import { crearVenta } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AsyncPipe, CommonModule, NgForOf } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiLoader, TuiTextfield, TuiTitle } from '@taiga-ui/core';
+import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiExpand, TuiLoader, TuiTextfield, TuiTitle } from '@taiga-ui/core';
 import { TuiCheckbox, TuiDataListWrapper, TuiItemsWithMore, TuiRadio, TuiStepper } from '@taiga-ui/kit';
 import { TuiAppBar, TuiCardLarge, TuiCell, TuiHeader } from '@taiga-ui/layout';
 import { TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
@@ -38,9 +39,16 @@ import { catchError, finalize, map, Observable, of, timeout } from 'rxjs';
     TuiDataList, AsyncPipe, NgForOf,
     TuiCardLarge, TuiHeader, TuiCell, TuiTitle, TuiAmountPipe,
     TuiDataListWrapper, TuiSelectModule,
-    TuiTextfieldControllerModule, TuiLoader],
+    TuiTextfieldControllerModule, TuiLoader, TuiExpand],
   providers: [
     { provide: 'Pythons', useValue: ['Python One', 'Python Two', 'Python Three'] },
+  ],
+  animations: [
+    trigger('expandCollapse', [
+      state('open', style({ height: '*', opacity: 1 })),
+      state('closed', style({ height: '0px', opacity: 0 })),
+      transition('open <=> closed', animate('300ms ease-in-out')),
+    ])
   ],
   templateUrl: './hacerventa.component.html',
   styleUrl: './hacerventa.component.scss',
@@ -48,6 +56,7 @@ import { catchError, finalize, map, Observable, of, timeout } from 'rxjs';
 
 })
 export class HacerventaComponent implements OnInit {
+  protected expanded = false;
 
   errorClientNotFound = false;
   selectCurrentStep = signal("Start Up");
@@ -60,7 +69,7 @@ export class HacerventaComponent implements OnInit {
   };
   ventaForm: FormGroup;
   listMetodosPago = [" YAPE", "PLIN", "Transferencia(No disponible)", "Efectivo"]
-  tipoComprobantes = ["Boleta", "Factura", "Sin Comprobante"]
+  tipoComprobantes = ["Boleta", "Factura", "Anonima"]
   formasPago = ["Contado"]
   protected readonly options = { updateOn: 'blur' } as const;
   loaderSearchCliente = false;
@@ -98,7 +107,7 @@ export class HacerventaComponent implements OnInit {
 
     this.ventaForm = this.fb.group({
       usuarioId: [this.userId],
-      metodoPago: [this.listMetodosPago[1], Validators.required],
+      metodoPago: [this.listMetodosPago[3], Validators.required],
       formaPago: [this.formasPago[0], Validators.required],
       tipoComprobante: [this.tipoComprobantes[0], Validators.required],
       cliente: [null, Validators.required],
@@ -109,6 +118,9 @@ export class HacerventaComponent implements OnInit {
         ]
       ],
       nombre_cliente: [""],
+      correo_cliente: [""],
+      direccion_cliente: [""],
+      telefono_cliente: [""],
       productos: this.fb.array([], [Validators.required, Validators.minLength(1)]),
       is_send_sunat: [true]
     });
@@ -129,6 +141,16 @@ export class HacerventaComponent implements OnInit {
       .subscribe(value => {
         this.onChangeEnviarSunat(value);
       });
+
+
+    this.ventaForm.get('tipoComprobante')?.valueChanges.subscribe((nuevoValor) => {
+      console.log('Tipo comprobante cambió a:', nuevoValor);
+
+      // Resetea el documento del cliente
+      this.borrarCliente()
+      this.ventaForm.get('documento_cliente')?.reset('');
+      this.ventaForm.get('cliente')?.reset(null);
+    });
   }
 
 
@@ -144,7 +166,7 @@ export class HacerventaComponent implements OnInit {
 
       console.log({ stock_despues: stock - cantidad })
       if (stock - cantidad < 0) {
-        console.log("Stck incifuciente")
+        console.log("Stock incifuciente")
         control.get('cantidad_final')?.setValue(1);
         this.alerts.open('No hay stock suficiente para agregar mas para este producto.', { label: 'Mensaje informacion', appearance: "warning" }).subscribe();
         // aca tienes que resetear el valor de cantidad final a 1
@@ -225,24 +247,36 @@ export class HacerventaComponent implements OnInit {
     consultaObservable.pipe(
       timeout(5000), // 5 segundos
       catchError(error => {
-        // Si hay error o timeout, devolvemos null
-        console.log(error)
+        console.error('Error al consultar documento:', error);
         this.errorClientNotFound = true;
-        return of(null);
+        return of(null); // Devuelve null para seguir la cadena
       }),
       finalize(() => {
-        // Siempre se ejecuta, éxito o error
+        // Se ejecuta siempre, éxito o error
         this.loaderSearchCliente = false;
         this.cdr.detectChanges();
       })
     ).subscribe(response => {
+      if (response.nombre_completo || response.nombre_o_razon_social) {
+        const data = response;
 
-      if (response?.data) {
+        // Mapear un objeto unificado para el formulario
+        const clienteForm = {
+          nombre_o_razon_social: data.nombre_o_razon_social || data.nombre_completo || '',
+          ruc: data.numero || '',            // Solo RUC
+          numero: data.numero || '',      // Solo DNI
+          nombre_completo: data.nombre_completo || data.nombre_o_razon_social || ''
+        };
+
         this.ventaForm.patchValue({
-          nombre_cliente: response.data.nombre_completo || response.data.nombre_o_razon_social,
-          cliente: response.data
+          nombre_cliente: clienteForm.nombre_completo || clienteForm.nombre_o_razon_social,
+          cliente: clienteForm
         });
+
+        this.errorClientNotFound = false; // Resetea el error si hay datos
       } else {
+        // No se encontró el documento
+
         this.errorClientNotFound = true;
         this.ventaForm.patchValue({
           nombre_cliente: '',
@@ -250,6 +284,7 @@ export class HacerventaComponent implements OnInit {
         });
       }
     });
+
   }
 
   borrarCliente() {

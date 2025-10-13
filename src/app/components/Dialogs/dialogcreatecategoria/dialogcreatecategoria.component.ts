@@ -38,7 +38,7 @@ export class DialogcreatecategoriaComponent {
       slug: [''],
       siglas_nombre_categoria: ['', [
         Validators.required,
-        Validators.pattern(/^[A-Z]{3}$/)
+        Validators.pattern(/^[A-Z]{4}$/)
       ]]
     });
   }

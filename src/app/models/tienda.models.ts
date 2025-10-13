@@ -20,6 +20,8 @@ export type TiendaCreate = Omit<Tienda, 'id' | 'users_tienda' | 'activo' | 'enca
 
 export interface TiendaState {
     tiendas: Tienda[];
+    loadingCreateTienda: boolean,
+    loadingActiveTienda: boolean,
     loadingTiendas?: boolean;
     errors?: any;
 }

@@ -14,7 +14,7 @@ export class ProveedorService {
     private http = inject(HttpClient);
 
     fetchProveedores(): Observable<Proveedor[]> {
-        return this.http.get<Proveedor[]>(`${this.siteURL}/proveedores`).pipe(
+        return this.http.get<Proveedor[]>(`${this.siteURL}/proveedores/`).pipe(
             catchError(error => throwError(error))
         );
     }
