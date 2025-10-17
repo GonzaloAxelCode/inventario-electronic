@@ -1,6 +1,8 @@
 
 import { Proveedor } from '@/app/models/proveedor.models';
 import { updateProveedorAction } from '@/app/state/actions/proveedor.actions';
+import { AppState } from '@/app/state/app.state';
+import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -28,7 +30,7 @@ export class DialogupdateproveedorComponent {
 
   proveedorForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private store: Store) {
+  constructor(private fb: FormBuilder, private store: Store<AppState>) {
     this.proveedorForm = this.fb.group({
       nombre: [this.proveedor.nombre, Validators.required],
       direccion: [this.proveedor.direccion, Validators.required],
@@ -36,7 +38,7 @@ export class DialogupdateproveedorComponent {
       tipo_producto: [this.proveedor.tipo_producto, Validators.required]
     });
   }
-
+  userPermissions$ = this.store.select(selectPermissions);
   ngOnInit(): void {
     this.proveedorForm.get('nombre')?.disable();
     this.proveedorForm.get('tipo_producto')?.disable();

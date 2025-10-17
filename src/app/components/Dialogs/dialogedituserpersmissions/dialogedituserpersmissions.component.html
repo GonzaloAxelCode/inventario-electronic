@@ -1,141 +1,31 @@
-<form [formGroup]="permissionsForm" class="wrapper grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 pt-4 text-white p-3">
-  
-  <!-- Sección: Ventas -->
-  <div>
-    <h3 class="text-xl font-semibold mb-4 border-b border-neutral-700 pb-2">Ventas</h3>
+<form
+  [formGroup]="permissionsForm"
+  class="wrapper grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 pt-6 px-4 pb-10 
+         text-black dark:text-white transition-colors duration-500"
+>
+
+  <!-- 🔹 Sección genérica reutilizable -->
+  <div *ngFor="let section of permissionSections" class="space-y-4">
+    <h3 class="text-lg font-semibold mb-3 border-b border-neutral-400 dark:border-neutral-700 pb-2 uppercase tracking-wide">
+      {{ section.title }}
+    </h3>
+
     <div class="space-y-3">
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede hacer una venta</span>
-        <input tuiSwitch type="checkbox" formControlName="can_make_sale" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede cancelar una venta</span>
-        <input tuiSwitch type="checkbox" formControlName="can_cancel_sale" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede ver ventas</span> 
-        <input tuiSwitch type="checkbox" formControlName="view_sale" />
+      <label
+        *ngFor="let perm of section.items"
+        class="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer 
+               bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700
+               border border-neutral-300 dark:border-neutral-700 transition-all duration-300"
+      >
+        <span class="text-sm font-medium">{{ perm.label }}</span>
+        <input
+          tuiSwitch
+          type="checkbox"
+          formControlName="{{ perm.name }}"
+          (change)="onPermissionChange(perm.name, $event)"
+          class="accent-black dark:accent-white"
+        />
       </label>
     </div>
   </div>
-
-  <!-- Sección: Inventario -->
-  <div>
-    <h3 class="text-xl font-semibold mb-4 border-b border-neutral-700 pb-2">Inventario</h3>
-    <div class="space-y-3">
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede crear inventario</span>
-        <input tuiSwitch type="checkbox" formControlName="can_create_inventory" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede modificar inventario</span>
-        <input tuiSwitch type="checkbox" formControlName="can_modify_inventory" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede actualizar inventario</span>
-        <input tuiSwitch type="checkbox" formControlName="can_update_inventory" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede eliminar inventario</span>
-        <input tuiSwitch type="checkbox" formControlName="can_delete_inventory" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede ver inventario</span>
-        <input tuiSwitch type="checkbox" formControlName="view_inventory" />
-      </label>
-    </div>
-  </div>
-
-  <!-- Sección: Productos -->
-  <div>
-    <h3 class="text-xl font-semibold mb-4 border-b border-neutral-700 pb-2">Productos</h3>
-    <div class="space-y-3">
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede crear productos</span>
-        <input tuiSwitch type="checkbox" formControlName="can_create_product" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede modificar productos</span>
-        <input tuiSwitch type="checkbox" formControlName="can_update_product" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede eliminar productos</span>
-        <input tuiSwitch type="checkbox" formControlName="can_delete_product" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede ver productos</span>
-        <input tuiSwitch type="checkbox" formControlName="view_product" />
-      </label>
-    </div>
-  </div>
-
-  <!-- Sección: Categorías -->
-  <div>
-    <h3 class="text-xl font-semibold mb-4 border-b border-neutral-700 pb-2">Categorías</h3>
-    <div class="space-y-3">
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede crear categorías</span>
-        <input tuiSwitch type="checkbox" formControlName="can_create_category" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede modificar categorías</span>
-        <input tuiSwitch type="checkbox" formControlName="can_modify_category" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede eliminar categorías</span>
-        <input tuiSwitch type="checkbox" formControlName="can_delete_category" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede ver categorías</span>
-        <input tuiSwitch type="checkbox" formControlName="view_category" />
-      </label>
-    </div>
-  </div>
-
-  <!-- Sección: Proveedores -->
-  <div>
-    <h3 class="text-xl font-semibold mb-4 border-b border-neutral-700 pb-2">Proveedores</h3>
-    <div class="space-y-3">
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede crear proveedores</span>
-        <input tuiSwitch type="checkbox" formControlName="can_create_supplier" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede modificar proveedores</span>
-        <input tuiSwitch type="checkbox" formControlName="can_modify_supplier" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede eliminar proveedores</span>
-        <input tuiSwitch type="checkbox" formControlName="can_delete_supplier" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede ver proveedores</span>
-        <input tuiSwitch type="checkbox" formControlName="view_supplier" />
-      </label>
-    </div>
-  </div>
-
-  <!-- Sección: Tiendas -->
-  <div>
-    <h3 class="text-xl font-semibold mb-4 border-b border-neutral-700 pb-2">Tiendas</h3>
-    <div class="space-y-3">
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede crear una tienda</span>
-        <input tuiSwitch type="checkbox" formControlName="can_create_store" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede modificar una tienda</span>
-        <input tuiSwitch type="checkbox" formControlName="can_modify_store" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede eliminar una tienda</span>
-        <input tuiSwitch type="checkbox" formControlName="can_delete_store" />
-      </label>
-      <label class="flex items-center justify-between p-3 bg-neutral-800 rounded-lg shadow-sm">
-        <span>Puede ver tiendas</span>
-        <input tuiSwitch type="checkbox" formControlName="view_store" />
-      </label>
-    </div>
-  </div>
-
 </form>

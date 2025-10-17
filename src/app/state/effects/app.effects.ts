@@ -4,7 +4,7 @@ import { cargarProductosMenorStock, loadInventarios } from '@/app/state/actions/
 import { loadProductosAction } from '@/app/state/actions/producto.actions';
 import { loadProveedores } from '@/app/state/actions/proveedor.actions';
 import { loadTiendasAction } from '@/app/state/actions/tienda.actions';
-import { loadUserAction, loadUsersAction } from '@/app/state/actions/user.actions';
+import { loadUserAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
@@ -65,7 +65,7 @@ export class AppEffects {
                         toDate: new Date(initialRange.to.year, initialRange.to.month, initialRange.to.day)
                     }));
                     this.store.dispatch(loadCaja());
-                    this.store.dispatch(loadUsersAction());
+
                 })
             ),
         { dispatch: false }

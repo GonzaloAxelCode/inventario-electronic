@@ -129,7 +129,11 @@
               </td>
               <td tuiTd>
                 <div class="flex gap-2 " *ngIf="mode === 'normal'">
-                  <button appearance="error" (click)="eliminarInventario(inventario.id)" iconStart="@tui.trash"
+                  <button disabled="!(userPermissions$ | async)?.can_delete_inventory" 
+                  [appearance]="(userPermissions$ | async)?.can_delete_inventory ? 'error':'secondary-grayscale'"
+                  (click)="eliminarInventario(inventario.id)" 
+                  iconStart="@tui.trash"
+
                     tuiButton type="button">
                     Eliminar
                   </button>

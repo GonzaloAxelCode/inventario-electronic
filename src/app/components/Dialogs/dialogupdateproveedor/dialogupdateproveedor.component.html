@@ -23,8 +23,14 @@
         </tui-input>
       </div>
     </div>
+<div *ngIf="!(userPermissions$ | async)?.can_update_proveedor" class="w-full col-span-2">
+      
+       <span class="text-yellow-400">* Permisos insuficientes para editar un proveedor </span>
 
-    <div class="my-3">
+    </div>
+
+
+    <div *ngIf="(userPermissions$ | async)?.can_update_proveedor" class="my-3">
       <button tuiButton size="m" type="submit" [disabled]="proveedorForm.invalid">
         Actualizar Proveedor
       </button>

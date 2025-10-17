@@ -44,6 +44,9 @@ export interface UserPermissions {
     view_supplier: boolean;
     view_store: boolean;
     can_create_user: boolean;   // 👈 también faltaba
+    can_create_proveedor: boolean
+    can_update_proveedor: boolean
+    can_delete_proveedor: boolean
 }
 
 export interface CreateUser {

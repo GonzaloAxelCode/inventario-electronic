@@ -69,11 +69,17 @@
           La descripción es obligatoria
         </tui-error>
       </div>
+<div *ngIf="!(userPermissions$ | async)?.can_modify_inventory" class="w-full col-span-2">
+      
+       <span class="text-yellow-400">* Permisos insuficientes para editar un producto </span>
+
+    </div>
+
 
 
       <!-- Botón de envío -->
       <div class="grid w-full col-span-2">
-        <button iconStart="@tui.pencil" tuiButton appearance="positive" type="submit" size="l" [disabled]="productoForm.invalid"
+        <button  *ngIf="(userPermissions$ | async)?.can_update_product"  iconStart="@tui.pencil" tuiButton appearance="positive" type="submit" size="l" [disabled]="productoForm.invalid"
           class="px-6 py-2 transition"> 
           Actualizar
         </button>

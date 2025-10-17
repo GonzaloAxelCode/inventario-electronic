@@ -45,6 +45,7 @@ export class PermisossettingsComponent {
   ngOnInit() {
     this.userState$?.subscribe(userState => {
       this.user = userState.user;
+      console.log("Mis permisos", userState.user.permissions)
     });
   }
 }

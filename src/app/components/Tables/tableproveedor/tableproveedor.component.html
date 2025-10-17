@@ -1,4 +1,110 @@
-<div class="p-10">
+<div class="p-4 sm:p-6 w-full md:hidden">
+  <!-- Botón agregar -->
+  <div class="flex justify-start mb-4">
+    <button
+      iconStart="@tui.plus"
+      tuiButton
+      appearance="textfield"
+      tuiButtonVertical
+      type="button"
+      class="w-full sm:w-auto"
+      (click)="showDialogCreate()"
+    >
+      Agregar Proveedor
+    </button>
+  </div>
+
+  <!-- Skeleton mientras carga -->
+  <div
+    class="rounded-2xl"
+    [tuiSkeleton]="!!(proveedoresState$ | async)?.loadingProveedores"
+  >
+    <!-- ✅ Si hay proveedores -->
+    <ng-container *ngIf="(proveedoresState$ | async)?.proveedores?.length; else noProveedores">
+      <div class="flex flex-col gap-4 mt-3">
+        <div
+          *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []"
+          class="rounded-2xl border border-gray-300 dark:border-gray-700 shadow-sm p-4 transition-all duration-300"
+        >
+          <!-- Encabezado -->
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+                {{ proveedor.nombre }}
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                <strong>RUC:</strong> {{  '100000001' }}
+              </p>
+            </div>
+            <tui-badge
+              [appearance]="proveedor.activo ? 'positive' : 'negative'"
+              class="text-xs"
+            >
+              {{ proveedor.activo ? 'Activo' : 'Inactivo' }}
+            </tui-badge>
+          </div>
+
+          <!-- Detalles -->
+          <div class="text-sm text-gray-700 dark:text-gray-300 space-y-0.5 mb-3">
+            <p><strong>Teléfono:</strong> {{ proveedor.telefono || '—' }}</p>
+            <p><strong>Correo:</strong> {{ proveedor.email || '—' }}</p>
+            <p><strong>Dirección:</strong> {{ proveedor.direccion || '—' }}</p>
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex flex-col sm:flex-row gap-2 mt-3">
+            <button
+              appearance="positive"
+              iconStart="@tui.users"
+              tuiButton
+              type="button"
+              class="w-full sm:w-auto"
+              (click)="showDialogUpdate(proveedor)"
+            >
+              Actualizar
+            </button>
+
+            <button
+              [disabled]="!(userPermissions$ | async)?.can_delete_proveedor"
+              [appearance]="
+                (userPermissions$ | async)?.can_delete_proveedor
+                  ? (proveedor.activo ? 'error' : 'secondary')
+                  : 'secondary-grayscale'
+              "
+              iconStart="@tui.trash"
+              tuiButton
+              type="button"
+              class="w-full sm:w-auto"
+              (click)="onActiveToggle(proveedor)"
+            >
+              {{ proveedor.activo ? 'Desactivar' : 'Activar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- 🚫 Si no hay proveedores -->
+    <ng-template #noProveedores>
+      <tui-block-status class="mt-10">
+        <img
+          alt="no-data"
+          src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+          tuiSlot="top"
+        />
+
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
+          Aún no tienes ningún proveedor
+        </h4>
+        <span class="text-gray-600 dark:text-gray-400">
+          Empieza a crear tus primeros proveedores
+        </span>
+      </tui-block-status>
+    </ng-template>
+  </div>
+</div>
+
+<div class="p-10 hidden md:block">
 
   <div class="flex gap-2">
     <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button" class="my-5 pr-3"

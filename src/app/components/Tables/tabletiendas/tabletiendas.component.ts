@@ -111,6 +111,7 @@ export class TabletiendasComponent implements OnInit {
     });
   }
   protected showDialogDetailTienda(tienda: Tienda): void {
+    console.log("TIENDA", tienda)
     this.dialogServiceDetail.open(tienda).subscribe((result: any) => {
 
     });

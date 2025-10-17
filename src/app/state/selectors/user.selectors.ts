@@ -19,6 +19,10 @@ export const selectCurrenttUser = createSelector(
     (state: UserState) => state.user
 );
 
+export const selectPermissions = createSelector(
+    selectUsersState,
+    (state: UserState) => state.user.permissions
+)
 
 
 

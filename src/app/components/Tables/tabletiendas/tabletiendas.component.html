@@ -1,78 +1,95 @@
-<div class="w-full rounded-2xl"
+<div
+  class="w-full rounded-2xl"
   [ngClass]="(tiendasState$ | async)?.loadingTiendas ? 'h-[200px]' : 'h-auto'"
-  [tuiSkeleton]="!!(tiendasState$ | async)?.loadingTiendas">
-
-  <!-- ✅ Si hay tiendas, mostrar la tabla -->
+  [tuiSkeleton]="!!(tiendasState$ | async)?.loadingTiendas"
+>
+  <!-- ✅ Si hay tiendas -->
   <ng-container *ngIf="(tiendasState$ | async)?.tiendas?.length; else noTiendas">
-    <table tuiTable class="w-full pt-3">
-      <thead>
-        <tr>
-          <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
-          <th tuiTh>Activo</th>
-          <th tuiTh>Acciones</th>
-        </tr>
-      </thead>
+    <div class="flex flex-col gap-4 mt-3 px-2">
+      <div
+        *ngFor="let tienda of (tiendasState$ | async)?.tiendas ?? []"
+        class="rounded-2xl border border-gray-300 dark:border-gray-700  shadow-sm p-4 flex flex-col justify-between transition-all duration-300"
+      >
+        <!-- Nombre -->
+        <div>
+          <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-1">
+            {{ tienda.nombre }}
+          </h3>
 
-      <tbody tuiTbody>
-        <tr *ngFor="let tienda of (tiendasState$ | async)?.tiendas ?? []">
-          <td *ngFor="let column of allColumns" tuiTd>{{ getTiendaValue(tienda, column.key) }}</td>
+          <div class="text-sm text-gray-600 dark:text-gray-400 space-y-0.5">
+            <p><strong>Dirección:</strong> {{ tienda.direccion || '—' }}</p>
+            <p><strong>Ciudad:</strong> {{ tienda.ciudad || '—' }}</p>
+            <p><strong>Teléfono:</strong> {{ tienda.telefono || '—' }}</p>
+          </div>
+        </div>
 
-          <td tuiTd>
-            <tui-badge [appearance]="tienda.activo ? 'positive' : 'negative'">
-              {{ tienda.activo ? 'Activo' : 'No activo' }}
-            </tui-badge>
-          </td>
+        <!-- Estado -->
+        <div class="mt-3 flex items-center justify-between">
+          <tui-badge
+            [appearance]="tienda.activo ? 'positive' : 'negative'"
+            class="text-xs"
+          >
+            {{ tienda.activo ? 'Activo' : 'No activo' }}
+          </tui-badge>
+        </div>
 
-          <td tuiTd>
-            <div class="flex gap-2">
-              <button 
-              *ngIf="tienda.activo"
-                appearance="info"
-                iconStart="@tui.list"
-                tuiButton
-                
-                type="button"
-                (click)="showDialogDetailTienda(tienda)">
-                Detalles
-              </button>
- <button
-              *ngIf="!tienda.activo"
-                appearance="neutral"
-                disabled
-                iconStart="@tui.circle-slash-2"
-                tuiButton
-                type="button"
-                (click)="showDialogDetailTienda(tienda)">
-                Inabilitado
-              </button>
-              <button
-              *ngIf="tienda.activo"
-                appearance="error"
-                iconStart="@tui.badge-minus"
-                tuiButton
-                
-                type="button"
-                (click)="onDeleteTienda(tienda.id)">
-                Desabilitar
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <!-- Acciones -->
+        <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
+          <button
+            *ngIf="tienda.activo"
+            tuiButton
+            appearance="info"
+            iconStart="@tui.list"
+            size="s"
+            class="w-full sm:w-auto"
+            (click)="showDialogDetailTienda(tienda)"
+          >
+            Detalles
+          </button>
+
+          <button
+            *ngIf="!tienda.activo"
+            tuiButton
+            appearance="neutral"
+            iconStart="@tui.circle-slash-2"
+            size="s"
+            disabled
+            class="w-full sm:w-auto"
+          >
+            Inhabilitado
+          </button>
+
+          <button
+            *ngIf="tienda.activo"
+            tuiButton
+            appearance="error"
+            iconStart="@tui.badge-minus"
+            size="s"
+            class="w-full sm:w-auto"
+            (click)="onDeleteTienda(tienda.id)"
+          >
+            Deshabilitar
+          </button>
+        </div>
+      </div>
+    </div>
   </ng-container>
 
   <!-- 🚫 No hay tiendas -->
   <ng-template #noTiendas>
-    <tui-block-status class="mt-6">
+    <tui-block-status class="mt-10 px-4">
       <img
         alt="no-data"
         src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-        tuiSlot="top" />
+        tuiSlot="top"
+      />
 
-      <h4 class="text-xl">Aún no tienes ninguna tienda creada</h4>
-      <span>Empieza a crear tus sucursales</span>
+      <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center">
+        Aún no tienes ninguna tienda creada
+      </h4>
+      <span class="text-gray-600 dark:text-gray-400 text-center block">
+        Empieza a crear tus sucursales
+      </span>
     </tui-block-status>
   </ng-template>
-
 </div>

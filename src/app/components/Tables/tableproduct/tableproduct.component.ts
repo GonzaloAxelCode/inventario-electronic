@@ -17,6 +17,7 @@ import { DialogUpdateProductService } from '@/app/services/dialogs-services/dial
 import { QuerySearchProduct } from '@/app/services/utils/querys';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
+import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { tuiCountFilledControls } from '@taiga-ui/cdk';
 import type { TuiConfirmData } from '@taiga-ui/kit';
@@ -46,6 +47,7 @@ import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy'
 })
 export class TableproductComponent implements OnInit {
   productosState$?: Observable<ProductoState>;
+  userPermissions$ = this.store.select(selectPermissions);
   productos: Producto[] = []
   editingId: number | null = null;
   editedProducto: Partial<Producto> = {};

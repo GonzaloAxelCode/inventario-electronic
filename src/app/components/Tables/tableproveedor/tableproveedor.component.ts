@@ -5,6 +5,7 @@ import { onActiveToggleProveedorAction } from '@/app/state/actions/proveedor.act
 import { AppState } from '@/app/state/app.state';
 import { ProveedorState } from '@/app/state/reducers/proveedor.reducer';
 import { selectProveedores } from '@/app/state/selectors/proveedor.selectors';
+import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -29,6 +30,7 @@ import { DialogcreateproveedorComponent } from '../../Dialogs/dialogcreateprovee
   styleUrl: './tableproveedor.component.scss'
 })
 export class TableproveedorComponent implements OnInit {
+  userPermissions$ = this.store.select(selectPermissions);
 
 
 

@@ -18,7 +18,7 @@ import { selectInventarioState } from '@/app/state/selectors/inventario.selector
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { selectProveedorState } from '@/app/state/selectors/proveedor.selectors';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
-import { selectUsersState } from '@/app/state/selectors/user.selectors';
+import { selectPermissions, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
@@ -53,6 +53,7 @@ import { map, Observable } from 'rxjs';
 export class DialogcreateinventarioComponent implements OnInit {
 
   tiendasState$?: Observable<TiendaState>
+  userPermissions$ = this.store.select(selectPermissions);
 
   inventarioForm2!: FormGroup;
   productos: Producto[] = [];

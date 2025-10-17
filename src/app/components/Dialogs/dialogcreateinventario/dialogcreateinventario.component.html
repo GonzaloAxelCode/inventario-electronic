@@ -73,7 +73,15 @@
     </tui-textarea>
     <!-- Botón -->
 
-    <button tuiButton [iconStart]="loadingCreateInventario ? '' : '@tui.plus'" size="m" class="w-full flex col-span-2" type="submit" type="submit"
+
+    <div *ngIf="!(userPermissions$ | async)?.can_create_inventory" class="w-full col-span-2">
+      
+       <span class="text-yellow-400">* Permisos insuficientes para crear un inventario </span>
+
+    </div>
+
+
+    <button *ngIf="(userPermissions$ | async)?.can_create_inventory" tuiButton [iconStart]="loadingCreateInventario ? '' : '@tui.plus'" size="m" class="w-full flex col-span-2" type="submit" type="submit"
       appearance="textfield" [disabled]="inventarioForm2.invalid || loadingCreateInventario" >
       <span *ngIf="loadingCreateInventario" >
         <tui-loader [showLoader]="loadingCreateInventario" />

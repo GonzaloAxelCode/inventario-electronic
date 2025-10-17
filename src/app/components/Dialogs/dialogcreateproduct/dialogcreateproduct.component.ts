@@ -11,7 +11,7 @@ import { createProductoAction, createProductoFail, createProductoSuccess } from 
 import { AppState } from '@/app/state/app.state';
 import { selectCategoriaState } from '@/app/state/selectors/categoria.selectors';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
-import { selectUsersState } from '@/app/state/selectors/user.selectors';
+import { selectPermissions, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { Actions, ofType } from '@ngrx/effects';
 import { TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
 import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
@@ -39,6 +39,7 @@ import { map, Observable, Subject, takeUntil } from 'rxjs';
 })
 export class DialogcreateproductComponent {
   protected expanded = false;
+  userPermissions$ = this.store.select(selectPermissions);
   protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Categoria>>>();
   productoForm: FormGroup;
   categorias: Categoria[] = [];

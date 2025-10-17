@@ -4,6 +4,7 @@ import { deleteCategoriaAction } from '@/app/state/actions/categoria.actions';
 import { AppState } from '@/app/state/app.state';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
+import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +30,7 @@ import { Observable, tap } from 'rxjs';
 })
 export class TablecategoriesComponent implements OnInit {
   selectCategorias$?: Observable<CategoriaState>
-
+  userPermissions$ = this.store.select(selectPermissions);
   allColumns = [
     { key: 'id', label: 'ID' },
     { key: 'nombre', label: 'Nombre' },

@@ -27,9 +27,15 @@
       </tui-textfield>
     </div>
 
+  <div *ngIf="!(userPermissions$ | async)?.can_modify_inventory" class="w-full col-span-2">
+      
+       <span class="text-yellow-400">* Permisos insuficientes para editar un inventario </span>
+
+    </div>
+
 
     <!-- Botón -->
-    <div class="md:col-span-2 flex justify-end">
+    <div *ngIf="(userPermissions$ | async)?.can_modify_inventory" class="md:col-span-2 flex justify-end">
       <button tuiButton size="m" type="submit" appearance="positive" [disabled]="inventarioFormEdit.invalid">
         Actualizar Inventario
       </button>

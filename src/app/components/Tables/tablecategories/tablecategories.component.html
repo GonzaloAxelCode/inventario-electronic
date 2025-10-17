@@ -54,7 +54,9 @@
                 (click)="showDialogUpdate(categoria)">
                 Actualizar
               </button>
-              <button appearance="error" (click)="onDeleteCategoria(categoria.id)" iconStart="@tui.x" tuiButton
+              <button [appearance]="(userPermissions$ | async)?.can_delete_category ? 'error':'secondary-grayscale'" (click)="onDeleteCategoria(categoria.id)" 
+                disabled="!(userPermissions$ | async)?.can_delete_category"
+              iconStart="@tui.x" tuiButton
                 type="button">
                 Desactivar
               </button>

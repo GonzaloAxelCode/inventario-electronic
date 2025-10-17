@@ -10,6 +10,7 @@ import { Producto } from '@/app/models/producto.models';
 import { updateProductoAction } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectCategoriaState } from '@/app/state/selectors/categoria.selectors';
+import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
 import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
@@ -40,7 +41,7 @@ export class DialogupdateproductComponent implements OnInit {
   protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Producto>>>();
   public producto: Partial<Producto> = this.context.data ?? {};
   selectedCategory: any;
-
+  userPermissions$ = this.store.select(selectPermissions);
   protected expanded = false;
 
   productoForm: FormGroup;

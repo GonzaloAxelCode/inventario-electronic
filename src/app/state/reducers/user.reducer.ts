@@ -206,7 +206,7 @@ export const userReducer = createReducer(
         ...state,
         loadingUpdatePermissions: true
     })),
-    on(updateUserPermissionsSuccess, (state, { id, permissions }) => ({
+    on(updateUserPermissionsSuccess, (state, { id, permiso, valor }) => ({
         ...state,
         users: state.users.map(user =>
             user.id === id
@@ -214,13 +214,14 @@ export const userReducer = createReducer(
                     ...user,
                     permissions: {
                         ...user.permissions,
-                        ...permissions,
+                        [permiso]: valor, // 👈 solo actualiza el permiso específico
                     },
                 }
                 : user
         ),
-        loadingUpdatePermissions: false
+        loadingUpdatePermissions: false,
     })),
+
 
     on(updateUserPermissionsFail, (state, { error }) => ({
         ...state,

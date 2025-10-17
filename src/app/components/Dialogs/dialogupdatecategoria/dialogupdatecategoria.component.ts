@@ -12,6 +12,7 @@ import urlSlug from 'url-slug';
 
 import { AppState } from '@/app/state/app.state';
 import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
+import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Actions, ofType } from '@ngrx/effects';
 import { TuiFieldErrorPipe } from '@taiga-ui/kit';
@@ -27,6 +28,7 @@ import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
   styleUrl: './dialogupdatecategoria.component.scss'
 })
 export class DialogupdatecategoriaComponent {
+  userPermissions$ = this.store.select(selectPermissions);
   protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Categoria>>>();
   public categoria: Partial<Categoria> = this.context.data ?? {};
   categoryForm: FormGroup;

@@ -14,7 +14,7 @@
                     <tui-select formControlName="tipoComprobante" class="w-full">
                         Tipo de comprobante
                         <tui-data-list *tuiDataList>
-                            <button *ngFor="let comprobante of tipoComprobantes" tuiOption [value]="comprobante">
+                            <button   [disabled]="!(userPermissions$ | async)?.can_make_sale"  *ngFor="let comprobante of tipoComprobantes" tuiOption [value]="comprobante">
                                 {{ comprobante }}
                             </button>
                         </tui-data-list>
@@ -22,26 +22,26 @@
 
 
 
-                    <div class="grid grid-cols-1 gap-2">
+                    <div  *ngIf="(userPermissions$ | async)?.can_make_sale" class="grid grid-cols-1 gap-2">
 
                         <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'" class="flex gap-2">
-                            <tui-input *ngIf="!ventaForm.get('nombre_cliente')?.value" class="col-span-2 w-full"
+                            <tui-input  [disabled]="!(userPermissions$ | async)?.can_make_sale"  *ngIf="!ventaForm.get('nombre_cliente')?.value" class="col-span-2 w-full"
                                 formControlName="documento_cliente">
                                 {{ ventaForm.get('tipoComprobante')?.value === 'Boleta' || ventaForm.get('tipoComprobante')?.value === 'Anonima' ? 'DNI' : 'RUC' }}
 
                                 <input
                                     [placeholder]="ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'Ingrese DNI' : 'Ingrese RUC'"
-                                    tuiTextfieldLegacy size="s" type="text" />
+                                    tuiTextfieldLegacy size="s" type="text"  disabled="!(userPermissions$ | async)?.can_make_sale"  />
                             </tui-input>
 
 
 
                             <!-- Muestra el nombre del cliente si existe -->
-                            <tui-textfield class="flex-1" *ngIf="ventaForm.get('nombre_cliente')?.value">
+                            <tui-textfield class="flex-1"  *ngIf="ventaForm.get('nombre_cliente')?.value">
                                 
 
 
-                                <input class="rounded-input" disabled
+                                <input class="rounded-input" disabled 
                                     [value]="ventaForm.get('nombre_cliente')?.value || 'No encontrado'" size="m"
                                     placeholder="Nombre del Cliente" />
                                                               
@@ -50,7 +50,7 @@
 
                             <button *ngIf="!ventaForm.get('cliente')?.value" class="col-span-1" tuiButton type="button"
                                 appearance="positive" iconStart="@tui.search" (click)="buscarCliente()"
-                                [disabled]="ventaForm.get('documento_cliente')?.invalid">
+                                [disabled]="ventaForm.get('documento_cliente')?.invalid || !(userPermissions$ | async)?.can_make_sale">
                             </button>
 
 
@@ -98,26 +98,26 @@
 
                         <label class="flex items-center gap-2"
                             >
-                            <input tuiCheckbox type="checkbox" formControlName="is_send_sunat" [size]="'m'" />
+                            <input  [disabled]="!(userPermissions$ | async)?.can_make_sale"  tuiCheckbox type="checkbox" formControlName="is_send_sunat" [size]="'m'" />
                             Enviar comprobante a SUNAT
                         </label>
                     </div>
 
 
 
-                    <tui-select formControlName="metodoPago" class="w-full">
+                    <tui-select  formControlName="metodoPago" class="w-full">
                         Metodo de pago
-                        <tui-data-list *tuiDataList>
-                            <button *ngFor="let metodo of listMetodosPago" tuiOption [value]="metodo">
+                        <tui-data-list   *tuiDataList>
+                            <button   [disabled]="!(userPermissions$ | async)?.can_make_sale"  *ngFor="let metodo of listMetodosPago" tuiOption [value]="metodo">
                                 {{ metodo }}
                             </button>
                         </tui-data-list>
                     </tui-select>
 
-                    <tui-select formControlName="formaPago" class="w-full">
+                    <tui-select   formControlName="formaPago" class="w-full">
                         Forma de pago
                         <tui-data-list *tuiDataList>
-                            <button *ngFor="let pago of formasPago" tuiOption [value]="pago">
+                            <button  [disabled]="!(userPermissions$ | async)?.can_make_sale"   *ngFor="let pago of formasPago" tuiOption [value]="pago">
                                 {{ pago }}
                             </button>
                         </tui-data-list>
@@ -131,7 +131,7 @@
                             Productos
                             <span tuiSubtitle>{{ productosFormArray.length }} productos</span>
                         </h1>
-                        <button iconStart="@tui.plus" tuiButton appearance="info" tuiButtonVertical type="button"
+                        <button  iconStart="@tui.plus" tuiButton appearance="info" tuiButtonVertical type="button"
                             class="pr-3" (click)="showDialog()">
                             Agregar
                         </button>
@@ -204,6 +204,14 @@
 
                 </div>
             </div>
+              <div *ngIf="!(userPermissions$ | async)?.can_make_sale" class="w-full col-span-2">
+      
+       <span class="text-yellow-400">* Permisos insuficientes para realizar una venta </span>
+
+    </div>
+
+           <ng-template *ngIf="(userPermissions$ | async)?.can_make_sale">
+
 
             <button iconStart="@tui.dollar-sign" *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'"
                 [disabled]="ventaForm.get('tipoComprobante')?.value !== 'Anonima' && !ventaForm.valid && ventaForm.get('productos')?.value !== []"
@@ -215,6 +223,7 @@
                 class="flex w-full my-3" tuiButton type="submit" (click)="hacerVenta()" appearance="textfield">
                 Realizar Venta Anonima
             </button>
+                       </ng-template> 
         </form>
     </tui-loader>
 

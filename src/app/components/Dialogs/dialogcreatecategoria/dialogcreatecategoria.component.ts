@@ -5,6 +5,7 @@ import { createCategoriaAction, createCategoriaFail, createCategoriaSuccess } fr
 import { AppState } from '@/app/state/app.state';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { selectCategoriaState } from '@/app/state/selectors/categoria.selectors';
+import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Actions, ofType } from '@ngrx/effects';
@@ -31,6 +32,7 @@ export class DialogcreatecategoriaComponent {
   private destroy$ = new Subject<void>();
   loadingCreateCategoria$!: Observable<boolean>
   protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Categoria>>>();
+  userPermissions$ = this.store.select(selectPermissions);
   constructor(private store: Store<AppState>, private fb: FormBuilder, private actions$: Actions) {
     this.categoryForm = this.fb.group({
       nombre: ['', Validators.required],

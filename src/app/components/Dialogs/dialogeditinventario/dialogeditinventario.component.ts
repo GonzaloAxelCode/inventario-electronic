@@ -11,6 +11,7 @@ import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from
 import { Inventario } from '@/app/models/inventario.models';
 import { actualizarInventario } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
+import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
@@ -56,7 +57,7 @@ export class DialogeditinventarioComponent {
 
 
 
-
+  userPermissions$ = this.store.select(selectPermissions);
   inventarioFormEdit!: FormGroup;
 
   protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Inventario>>>();

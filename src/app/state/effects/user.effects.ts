@@ -32,7 +32,7 @@ export class UserEffects {
             exhaustMap(() =>
                 this.userService.fetchCurrentUser().pipe(
                     map((data: any) => {
-                        console.log(data)
+                        console.log("Current User Data:", data);
                         return loadUserSuccess({ user: data });
                     }),
                     catchError(error => of(loadUserFail({ error })))
@@ -45,9 +45,12 @@ export class UserEffects {
     loadUsersEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(loadUsersAction),
-            exhaustMap(() =>
-                this.userService.fetchUsers().pipe(
-                    map(users => loadUsersSuccess({ users })),
+            exhaustMap(({ idTienda }) =>
+                this.userService.fetchUsers(idTienda).pipe(
+                    map(users => {
+                        console.log(users)
+                        return loadUsersSuccess({ users })
+                    }),
                     catchError(error => of(loadUsersFail({ error })))
                 )
             )
@@ -94,11 +97,11 @@ export class UserEffects {
     updateUserPermisionsEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(updateUserPermissionsAction),
-            exhaustMap(({ id, permissions }) =>
-                this.userService.updateUserPermissions(id, permissions).pipe(
+            exhaustMap(({ id, permiso, valor }) =>
+                this.userService.updateUserPermissions(id, permiso, valor).pipe(
                     map(() => {
                         this.toastr.success('Permisos actualizados exitosamente', 'Éxito');
-                        return updateUserPermissionsSuccess({ id, permissions });
+                        return updateUserPermissionsSuccess({ id, permiso, valor });
                     }),
                     catchError(error => {
                         this.toastr.error('Error al actualizar los permisos', 'Error');

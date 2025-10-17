@@ -1,4 +1,4 @@
-import { User, UserPermissions } from '@/app/models/user.models';
+import { User } from '@/app/models/user.models';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -27,11 +27,11 @@ export class UserService {
             })
         );
     }
-    fetchUsers(): Observable<User[]> {
+    fetchUsers(idTienda: number): Observable<User[]> {
         const { accessToken } = getAuthDataFromLocalStorage()
         const headers = new HttpHeaders().set('Authorization', `JWT ${accessToken}`);
 
-        return this.http.get<User[]>(`${this.siteURL}/usuarios/`, {
+        return this.http.get<User[]>(`${this.siteURL}/usuarios/tienda/${idTienda}/`, {
             headers
         }).pipe(
             catchError(error => {
@@ -61,8 +61,8 @@ export class UserService {
     }
 
 
-    updateUserPermissions(id: any, permissions: Partial<UserPermissions>): Observable<User> {
-        return this.http.put<User>(`${this.siteURL}/usuarios/update/permissions/${id}/`, { permissions }).pipe(
+    updateUserPermissions(id: any, permiso: string, valor: boolean): Observable<User> {
+        return this.http.put<User>(`${this.siteURL}/usuarios/update/permissions/${id}/`, { permiso, valor }).pipe(
             catchError(error => {
                 console.error(error);
                 return throwError(error);

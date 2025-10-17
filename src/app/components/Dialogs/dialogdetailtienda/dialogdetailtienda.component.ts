@@ -12,6 +12,12 @@ import { TableUsersComponent } from '../../Tables/tableusers/tableusers.componen
   styleUrl: './dialogdetailtienda.component.scss'
 })
 export class DialogdetailtiendaComponent {
-  protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Tienda>>>();
-  public tienda: Partial<Tienda> = this.context.data ?? {};
+  protected readonly context = injectContext<TuiDialogContext<boolean, Tienda>>();
+  public tienda: Tienda = this.context.data ?? {};
+  constructor() {
+
+
+  }
+
+
 }

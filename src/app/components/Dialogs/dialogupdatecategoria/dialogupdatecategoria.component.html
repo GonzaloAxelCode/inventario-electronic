@@ -28,10 +28,14 @@
         La descripción es obligatoria
       </tui-error>
     </div>
+ <div *ngIf="!(userPermissions$ | async)?.can_modify_category" class="w-full col-span-2">
+      
+       <span class="text-yellow-400">* Permisos insuficientes para editar una categoria </span>
 
+    </div>
     <!-- Botón de envío -->
-    <div class="flex-1 w-full col-span-2 flex justify-end">
-      <button tuiButton type="submit" [disabled]="categoryForm.invalid" 
+    <div  *ngIf="(userPermissions$ | async)?.can_modify_category"   class="flex-1 w-full col-span-2 flex justify-end">
+      <button tuiButton type="submit" [disabled]="categoryForm.invalid || !(userPermissions$ | async)?.can_modify_category"
       appearance="outline-grayscale"
       class="px-6 py-2 w-full  text-white rounded-full transition">
         Actualizar  <tui-loader [showLoader]="!!(loadingUpdateCategoria$ | async)?.loadingUpdateCategoria"></tui-loader>

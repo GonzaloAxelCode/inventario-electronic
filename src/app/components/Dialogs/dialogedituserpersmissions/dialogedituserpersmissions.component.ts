@@ -1,7 +1,6 @@
-import { User, UserPermissions } from '@/app/models/user.models';
+import { User } from '@/app/models/user.models';
 import { updateUserPermissionsAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
-import { userInitial } from '@/app/state/reducers/user.reducer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -18,67 +17,105 @@ import { injectContext } from '@taiga-ui/polymorpheus';
   providers: [tuiSwitchOptionsProvider({ showIcons: true, appearance: () => 'neutral' }),]
 })
 export class DialogedituserpersmissionsComponent {
-  protected readonly context = injectContext<TuiDialogContext<boolean, Partial<User>>>();
-  public user: Partial<User> = this.context.data || userInitial
+  protected readonly context = injectContext<TuiDialogContext<boolean, User>>();
+  public user: User = this.context.data
 
   public permissionsForm: FormGroup;
 
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
     this.permissionsForm = this.fb.group({
 
+      // 🛒 Ventas
       can_make_sale: [this.user.permissions?.can_make_sale ?? false],
       can_cancel_sale: [this.user.permissions?.can_cancel_sale ?? false],
-      view_sale: [this.user.permissions?.view_sale ?? false],
 
 
+      // 📦 Inventario
       can_create_inventory: [this.user.permissions?.can_create_inventory ?? false],
       can_modify_inventory: [this.user.permissions?.can_modify_inventory ?? false],
-      can_update_inventory: [this.user.permissions?.can_update_inventory ?? false],
+
       can_delete_inventory: [this.user.permissions?.can_delete_inventory ?? false],
-      view_inventory: [this.user.permissions?.view_inventory ?? false],
 
 
+      // 🧴 Productos
       can_create_product: [this.user.permissions?.can_create_product ?? false],
       can_update_product: [this.user.permissions?.can_update_product ?? false],
       can_delete_product: [this.user.permissions?.can_delete_product ?? false],
-      view_product: [this.user.permissions?.view_product ?? false],
 
 
+      // 🏷️ Categorías
       can_create_category: [this.user.permissions?.can_create_category ?? false],
       can_modify_category: [this.user.permissions?.can_modify_category ?? false],
       can_delete_category: [this.user.permissions?.can_delete_category ?? false],
-      view_category: [this.user.permissions?.view_category ?? false],
 
 
-      can_create_supplier: [this.user.permissions?.can_create_supplier ?? false],
-      can_modify_supplier: [this.user.permissions?.can_modify_supplier ?? false],
-      can_delete_supplier: [this.user.permissions?.can_delete_supplier ?? false],
-      view_supplier: [this.user.permissions?.view_supplier ?? false],
+      // 🚚 Proveedores
+      can_create_proveedor: [this.user.permissions?.can_create_proveedor ?? false],
+      can_update_proveedor: [this.user.permissions?.can_update_proveedor ?? false],
+      can_delete_proveedor: [this.user.permissions?.can_delete_proveedor ?? false],
 
 
-      can_create_store: [this.user.permissions?.can_create_store ?? false],
-      can_modify_store: [this.user.permissions?.can_modify_store ?? false],
-      can_delete_store: [this.user.permissions?.can_delete_store ?? false],
-      view_store: [this.user.permissions?.view_store ?? false],
     });
+
     console.log(this.user)
   }
+  permissionSections = [
+    {
+      title: 'Ventas',
+      items: [
+        { name: 'can_make_sale', label: 'Puede hacer una venta' },
+        { name: 'can_cancel_sale', label: 'Puede cancelar una venta' },
+      ],
+    },
+    {
+      title: 'Inventario',
+      items: [
+        { name: 'can_create_inventory', label: 'Puede crear inventario' },
+        { name: 'can_modify_inventory', label: 'Puede modificar inventario' },
+        { name: 'can_delete_inventory', label: 'Puede eliminar inventario' },
+      ],
+    },
+    {
+      title: 'Productos',
+      items: [
+        { name: 'can_create_product', label: 'Puede crear productos' },
+        { name: 'can_update_product', label: 'Puede modificar productos' },
+        { name: 'can_delete_product', label: 'Puede eliminar productos' },
+      ],
+    },
+    {
+      title: 'Categorías',
+      items: [
+        { name: 'can_create_category', label: 'Puede crear categorías' },
+        { name: 'can_modify_category', label: 'Puede modificar categorías' },
+        { name: 'can_delete_category', label: 'Puede eliminar categorías' },
+      ],
+    },
+    {
+      title: 'Proveedores',
+      items: [
+        { name: 'can_create_proveedor', label: 'Puede crear proveedores' },
+        { name: 'can_update_proveedor', label: 'Puede modificar proveedores' },
+        { name: 'can_delete_proveedor', label: 'Puede eliminar proveedores' },
+      ],
+    },
+  ];
 
 
-  ngOnInit(): void {
+  onPermissionChange(permissionKey: string, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.checked;
 
-    this.permissionsForm.valueChanges.subscribe((permissions) => {
-      this.updatePermissions(permissions);
-    });
-  }
+    console.log(`Actualizando ${permissionKey}:`, value);
 
-  private updatePermissions(permissions: Partial<UserPermissions>): void {
-    console.log(permissions)
     this.store.dispatch(
       updateUserPermissionsAction({
         id: this.user.id,
-        permissions: permissions,
+        permiso: permissionKey,
+        valor: value,
       })
     );
   }
+
+
 }

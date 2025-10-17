@@ -14,7 +14,7 @@ import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
 import { selectInventario } from '@/app/state/selectors/inventario.selectors';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { selectProveedorState } from '@/app/state/selectors/proveedor.selectors';
-import { selectUsersState } from '@/app/state/selectors/user.selectors';
+import { selectPermissions, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule, NgForOf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -67,7 +67,7 @@ export class TableinventarioComponent {
   @Input() mode?: string
   @Input() cerrarDialogo!: (valor: Inventario) => void;
   value = [0, 0];
-
+  userPermissions$ = this.store.select(selectPermissions);
   inventariosState$?: Observable<InventarioState>;
   tiendasState$?: Observable<TiendaState>
   productState$?: Observable<ProductoState>
@@ -206,6 +206,7 @@ export class TableinventarioComponent {
       content: '¿Estás seguro de que deseas eliminar este inventario?',
       yes: 'Eliminar',
       no: 'Cancelar',
+
     };
 
     this.dialogs

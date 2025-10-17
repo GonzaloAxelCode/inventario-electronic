@@ -28,9 +28,15 @@
         La descripción es obligatoria
       </tui-error>
     </div>
+<div *ngIf="!(userPermissions$ | async)?.can_create_category" class="w-full col-span-2">
+      
+       <span class="text-yellow-400">* Permisos insuficientes para crear una categoria </span>
+
+    </div>
+
 
     <!-- Botón de envío -->
-    <div class="grid w-full col-span-2">
+    <div  *ngIf="(userPermissions$ | async)?.can_create_category" class="grid w-full col-span-2">
       <button tuiButton iconStart="@tui.plus" appearance="textfield" type="submit" [disabled]="categoryForm.invalid || !!(loadingCreateCategoria$ | async)" class="px-6 py-2  text-white  transition">
         Guardar Categoría
         <tui-loader [showLoader]="!!(loadingCreateCategoria$ | async)"></tui-loader>

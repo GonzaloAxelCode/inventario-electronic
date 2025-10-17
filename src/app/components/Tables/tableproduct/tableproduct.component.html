@@ -110,7 +110,9 @@
                                             type="button" (click)="showDialogUpdate(producto)">
                                             Actualizar
                                         </button>
-                                        <button appearance="error" iconStart="@tui.trash" tuiButton type="button"
+                                        <button [disabled]="!(userPermissions$ | async)?.can_delete_product" 
+                                            [appearance]="(userPermissions$ | async)?.can_delete_product ? 'error':'secondary-grayscale'"
+                                            iconStart="@tui.trash" tuiButton type="button"
                                             (click)="onDeleteProducto(producto.id)">
                                             Desactivar
                                         </button>
@@ -140,4 +142,9 @@
 
         </ng-template>
 
-    </div>
+    </div> 
+  </div>
+
+
+
+    

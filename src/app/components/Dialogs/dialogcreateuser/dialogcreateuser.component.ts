@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TuiButton, TuiDialogContext, TuiError, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 
-import { Tienda } from '@/app/models/tienda.models';
 import { createUserAction, createUserFail, createUserSuccess } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectUser } from '@/app/state/selectors/user.selectors';
@@ -28,8 +27,8 @@ export class DialogcreateuserComponent {
   private readonly actions$ = inject(Actions); // 🔹 para escuchar acciones
 
   loadingCreateUser$ = this.store.select(selectUser);
-  protected readonly context = injectContext<TuiDialogContext<boolean, Tienda>>();
-  public tienda: Tienda = this.context.data ?? {};
+  protected readonly context = injectContext<TuiDialogContext<boolean, number>>();
+  public idTienda: number = this.context.data
   constructor(private store: Store<AppState>, private fb: FormBuilder) {
     this.userForm = this.fb.group({
       first_name: ['', Validators.required],
@@ -55,7 +54,7 @@ export class DialogcreateuserComponent {
       const newUser = this.userForm.value;
       this.store.dispatch(createUserAction({
         user: { ...newUser },
-        tienda_id: this.tienda.id
+        tienda_id: this.idTienda
       }))
 
     } else {

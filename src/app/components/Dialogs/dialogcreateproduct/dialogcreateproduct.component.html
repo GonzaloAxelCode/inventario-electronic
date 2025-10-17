@@ -64,10 +64,16 @@
         </tui-error>
       </div>
 
+  <div *ngIf="!(userPermissions$ | async)?.can_create_product" class="w-full col-span-2">
+      
+       <span class="text-yellow-400">* Permisos insuficientes para crear un producto</span>
+
+    </div>
+
 
       <!-- Botón de envío -->
-      <div class="grid w-full col-span-2">
-        <button tuiButton type="submit"   iconStart="@tui.plus" appearance="textfield" [disabled]="productoForm.invalid || !!(loadingCreateProduct$ | async)"
+      <div *ngIf="(userPermissions$ | async)?.can_create_product" class="grid w-full col-span-2">
+        <button  tuiButton type="submit"   iconStart="@tui.plus" appearance="textfield" [disabled]="productoForm.invalid || !!(loadingCreateProduct$ | async)"
           class="px-6 py-2 transition">
           Agregar Producto         <tui-loader [showLoader]="!!(loadingCreateProduct$ | async)"></tui-loader>
         </button>

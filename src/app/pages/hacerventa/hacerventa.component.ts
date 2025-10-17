@@ -6,7 +6,7 @@ import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { crearVenta } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
-import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
+import { selectCurrenttUser, selectPermissions, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AsyncPipe, CommonModule, NgForOf } from '@angular/common';
@@ -90,7 +90,7 @@ export class HacerventaComponent implements OnInit {
   private readonly store = inject(Store<AppState>);
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogService = inject(DialogService);
-
+  userPermissions$ = this.store.select(selectPermissions);
   tiendaUser!: number
   userId!: number;
   constructor(private fb: FormBuilder, private consultaService: ConsultaService, private cdr: ChangeDetectorRef) {

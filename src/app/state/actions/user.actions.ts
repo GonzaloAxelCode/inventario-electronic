@@ -1,4 +1,4 @@
-import { User, UserPermissions } from '@/app/models/user.models';
+import { User } from '@/app/models/user.models';
 import { createAction, props } from '@ngrx/store';
 
 export enum ActionTypes {
@@ -27,7 +27,9 @@ export enum ActionTypes {
 }
 
 
-export const loadUsersAction = createAction(ActionTypes.LOAD_USERS);
+export const loadUsersAction = createAction(ActionTypes.LOAD_USERS
+    , props<{ idTienda: number }>()
+);
 
 export const loadUsersSuccess = createAction(
     ActionTypes.LOAD_USERS_SUCCESS,
@@ -120,12 +122,12 @@ export const loadUserFail = createAction(
 
 export const updateUserPermissionsAction = createAction(
     ActionTypes.UPDATE_PERMISSIONS_USER,
-    props<{ id: any; permissions: Partial<UserPermissions> }>()
+    props<{ id: any; permiso: string; valor: boolean }>()
 );
 
 export const updateUserPermissionsSuccess = createAction(
     ActionTypes.UPDATE_PERMISSIONS_USER_SUCCESS,
-    props<{ id: any; permissions: Partial<UserPermissions> }>()
+    props<{ id: any; permiso: string, valor: boolean }>()
 );
 
 export const updateUserPermissionsFail = createAction(
