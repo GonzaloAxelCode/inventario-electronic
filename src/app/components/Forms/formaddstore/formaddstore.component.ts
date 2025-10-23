@@ -43,7 +43,7 @@ export class FormaddstoreComponent {
       }))
       this.tiendaForm.reset();
 
-      window.location.href = window.location.href;
+
 
     }
   }
