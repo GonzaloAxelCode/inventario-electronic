@@ -6,7 +6,9 @@
     "package": "ng build --configuration production --base-href ./",
     "e2e": "ng e2e",
     "start:electron": "concurrently \"ng build --watch\" \"wait-on dist/angular-app/index.html && electron .\"",
-    "electron:build": "ng build && electron ."
+    "electron:build": "ng build && electron .",
+      "build": "ng build --configuration=production"
+
   },
   "main": "electron/main.js",
   "private": true,

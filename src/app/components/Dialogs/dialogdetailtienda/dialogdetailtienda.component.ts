@@ -33,7 +33,7 @@ export class DialogdetailtiendaComponent {
   protected onDeleteTienda(id: any): void {
     const data: TuiConfirmData = {
       appearance: "negative",
-      content: '¿Estás seguro de que deseas eliminar esta Tienda?',
+      content: '¿Estás seguro de que deseas eliminar esta tienda',
       yes: 'Eliminar Permanentemente',
       no: 'Cancelar',
 
