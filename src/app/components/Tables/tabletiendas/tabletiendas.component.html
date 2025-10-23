@@ -5,72 +5,60 @@
 >
   <!-- ✅ Si hay tiendas -->
   <ng-container *ngIf="(tiendasState$ | async)?.tiendas?.length; else noTiendas">
-    <div class="flex flex-col gap-4 mt-3 px-2">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3 px-2">
       <div
-        *ngFor="let tienda of (tiendasState$ | async)?.tiendas ?? []"
-        class="rounded-2xl border border-gray-300 dark:border-gray-700  shadow-sm p-4 flex flex-col justify-between transition-all duration-300"
+        *ngFor="let tienda of (tiendasState$ | async)?.tiendas ?? []; let i = index"
+        class="rounded-3xl shadow-sm p-5 flex flex-col transition-all duration-300  hover:scale-[1.0001] cursor-pointer overflow-hidden"
+        [ngClass]="getCardColor(i)"
+        
       >
-        <!-- Nombre -->
-        <div>
-          <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-1">
-            {{ tienda.nombre }}
-          </h3>
+        
+       
 
-          <div class="text-sm text-gray-600 dark:text-gray-400 space-y-0.5">
-            <p><strong>Dirección:</strong> {{ tienda.direccion || '—' }}</p>
-            <p><strong>Ciudad:</strong> {{ tienda.ciudad || '—' }}</p>
-            <p><strong>Teléfono:</strong> {{ tienda.telefono || '—' }}</p>
+        <!-- Contenido principal: Nombre y dirección -->
+        <div class="flex-1 mb-4">
+          <h3  class=" text-xs font-medium opacity-80 mb-1 uppercase tracking-wide">
+            {{   tienda.direccion || 'Sin dirección registrada'}}
+          </h3>
+          <p   (click)="tienda.activo && showDialogDetailTienda(tienda) "  class=" hover:underline text-2xl font-bold leading-tight line-clamp-2">
+            {{ tienda.nombre    }}
+          </p>
+        </div>
+
+        <!-- Información adicional: Teléfono -->
+        <div class="mb-4">
+          <div class="flex items-center gap-1.5 text-xs opacity-80">
+            <tui-icon icon="@tui.phone" class="text-sm"></tui-icon>
+            <span>{{ tienda.telefono || 'Sin teléfono' }}</span>
           </div>
         </div>
 
-        <!-- Estado -->
-        <div class="mt-3 flex items-center justify-between">
-          <tui-badge
-            [appearance]="tienda.activo ? 'positive' : 'negative'"
-            class="text-xs"
-          >
-            {{ tienda.activo ? 'Activo' : 'No activo' }}
-          </tui-badge>
-        </div>
+        <!-- Footer: Estado y avatares -->
+        <footer class="flex items-center justify-between pt-3 border-t border-white/20">
+          <div class="flex items-center gap-2">
+            <div 
+              class="w-2 h-2 rounded-full"
+              [ngClass]="tienda.activo ? 'bg-green-300' : 'bg-red-300'"
+            ></div>
+            <span class="text-xs font-medium">
+              {{ tienda.activo ? 'Activa' : 'Inactiva' }}
+            </span>
+            <input tuiSwitch type="checkbox" [disabled]="loadingDesactivateTienda" [(ngModel)]="tienda.activo"
+              (click)="toggleDesactivateTienda($event, tienda)" />
+            <tui-loader *ngIf="loadingDesactivateTienda" size="m" class="ml-2"></tui-loader>
+          </div>
 
-        <!-- Acciones -->
-        <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
-          <button
-            *ngIf="tienda.activo"
-            tuiButton
-            appearance="info"
-            iconStart="@tui.list"
-            size="s"
-            class="w-full sm:w-auto"
-            (click)="showDialogDetailTienda(tienda)"
-          >
-            Detalles
-          </button>
+          <div class="flex -space-x-2">
+            <div 
+              *ngFor="let n of [1, 2, 3]"
+              class="w-7 h-7 rounded-full bg-white/30 backdrop-blur-sm border-2 flex items-center justify-center"
+              [ngClass]="getCardBorderColor(i)"
+            >
+              <tui-icon icon="@tui.user" class="text-xs"></tui-icon>
+            </div>
+          </div>
+        </footer>
 
-          <button
-            *ngIf="!tienda.activo"
-            tuiButton
-            appearance="neutral"
-            iconStart="@tui.circle-slash-2"
-            size="s"
-            disabled
-            class="w-full sm:w-auto"
-          >
-            Inhabilitado
-          </button>
-
-          <button
-            *ngIf="tienda.activo"
-            tuiButton
-            appearance="error"
-            iconStart="@tui.badge-minus"
-            size="s"
-            class="w-full sm:w-auto"
-            (click)="onDeleteTienda(tienda.id)"
-          >
-            Deshabilitar
-          </button>
-        </div>
       </div>
     </div>
   </ng-container>

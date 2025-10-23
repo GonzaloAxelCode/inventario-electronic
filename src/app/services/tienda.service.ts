@@ -36,6 +36,14 @@ export class TiendaService {
             })
         );
     }
+    eliminarTiendaPermanently(id: number): Observable<any> {
+        return this.http.delete(`${this.siteURL}/tiendas/delete/${id}/`).pipe(
+            catchError(error => {
+                printError(error)
+                return throwError(error)
+            })
+        );
+    }
 
 
 

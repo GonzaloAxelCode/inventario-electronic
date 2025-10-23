@@ -1,74 +1,64 @@
+  <tui-loader [showLoader]="loadingUsers || loadingUpdateUser  "
+        [overlay]="true">
+        
 <div class="w-full">
   <!-- Botón Agregar -->
-  <button
-    iconStart="@tui.plus"
-    tuiButton
-    appearance="textfield"
-    tuiButtonVertical
-    type="button"
-    class="my-5 pr-3 w-full sm:w-auto"
-    (click)="showDialogCreateUser(idtienda)"
-  >
+  <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button"
+    class="my-5 pr-3 w-full sm:w-auto" (click)="showDialogCreateUser(idtienda)">
     Agregar nuevo personal
   </button>
 
   <!-- 🔹 Si hay usuarios -->
   <ng-container *ngIf="users && users.length > 0; else noUsers">
     <div class="flex flex-col gap-4 mt-3 px-2">
-      <div
-        *ngFor="let user of users; let i = index"
-        class="rounded-2xl border border-gray-300 dark:border-gray-700  shadow-sm p-4 flex flex-col justify-between transition-all duration-300"
-      >
+      <div *ngFor="let user of users; let i = index"
+        class="rounded-2xl border border-gray-300 dark:border-gray-700  shadow-sm p-4 flex flex-wrap justify-between transition-all duration-300">
         <!-- Encabezado -->
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
-            {{ user.first_name }} {{ user.last_name }}
-          </h3>
-          <span class="text-xs text-gray-500 dark:text-gray-400">#{{ user.id }}</span>
+        <div class="flex items-center mb-2">
+          <div class="flex flex-col ">
+            <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <span>
+
+               {{ user.first_name }} {{ user.last_name }}
+              </span>
+              
+                 <input tuiSwitch type="checkbox" [(ngModel)]="user.is_active" [disabled]="user.is_superuser"
+            (click)="toggleUpdateStateUser($event, user)" />
+            </h3>
+
+
+            <!-- Username -->
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              <strong>Usuario:</strong> {{ user.username }}
+            </p>
+              <span class="text-xs font-medium">
+               <strong>Estado: </strong>
+<tui-badge
+  [appearance]="user.is_active ? 'success' : 'error'"
+  size="m"
+>
+  {{ user.is_active ? 'Activo' : 'Inactivo' }}
+</tui-badge>
+
+            </span>
+          </div>
+       
+
         </div>
 
-        <!-- Username -->
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
-          <strong>Usuario:</strong> {{ user.username }}
-        </p>
 
-        <!-- Estado -->
-        <div class="flex items-center justify-between mt-2">
-          <span class="text-sm text-gray-700 dark:text-gray-300">Activo</span>
-          <input
-            tuiSwitch
-            type="checkbox"
-            [(ngModel)]="user.is_active"
-            [disabled]="user.is_superuser"
-            (click)="toggleUpdateStateUser($event, user)"
-          />
-        </div>
+
+
 
         <!-- Acciones -->
         <div class="mt-4 flex flex-col sm:flex-row gap-2">
-          <button
-            appearance="positive"
-            iconStart="@tui.shield-half"
-            tuiButton
-            tuiButtonVertical
-            type="button"
-            [disabled]="user.is_superuser"
-            class="w-full sm:w-auto"
-            (click)="showDialogEditPermissions(user)"
-          >
+          <button appearance="positive" iconStart="@tui.shield-half" tuiButton tuiButtonVertical type="button"
+            [disabled]="user.is_superuser" class="w-full sm:w-auto" (click)="showDialogEditPermissions(user)">
             Gestionar Permisos
           </button>
 
-          <button
-            appearance="textfield"
-            iconStart="@tui.key-round"
-            tuiButton
-            tuiButtonVertical
-            type="button"
-            disabled
-            class="w-full sm:w-auto"
-            (click)="showDialogUpdatePassword(user)"
-          >
+          <button appearance="textfield" iconStart="@tui.key-round" tuiButton tuiButtonVertical type="button" disabled
+            class="w-full sm:w-auto" (click)="showDialogUpdatePassword(user)">
             Cambiar Password
           </button>
         </div>
@@ -79,11 +69,12 @@
   <!-- 🔹 Si NO hay usuarios -->
   <ng-template #noUsers>
     <div
-      class="flex flex-col items-center justify-center text-center py-10 text-neutral-500 dark:text-neutral-400 border border-dashed border-neutral-400 dark:border-neutral-600 rounded-2xl mx-2"
-    >
+      class="flex flex-col items-center justify-center text-center py-10 text-neutral-500 dark:text-neutral-400 border border-dashed border-neutral-400 dark:border-neutral-600 rounded-2xl mx-2">
       <tui-icon icon="@tui.user" class="text-5xl mb-3"></tui-icon>
       <p class="text-lg font-medium mb-2">No hay personal registrado</p>
       <p class="text-sm mb-4">Agrega un nuevo miembro para esta tienda.</p>
     </div>
   </ng-template>
 </div>
+
+      </tui-loader>

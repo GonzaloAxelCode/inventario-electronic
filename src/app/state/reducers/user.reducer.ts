@@ -90,8 +90,6 @@ export const initialStateUser: UserState = {
 
 export const userReducer = createReducer(
     initialStateUser,
-
-
     on(loadUsersAction, state => ({
         ...state,
         loadingUsers: true

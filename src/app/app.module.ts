@@ -26,7 +26,7 @@ import { provideToastr, ToastrModule } from 'ngx-toastr';
 
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 
-import { TuiNotification, TuiRoot } from '@taiga-ui/core';
+import { TuiLoader, TuiNotification, TuiRoot } from '@taiga-ui/core';
 import { SidenavComponent } from "./components/sidenav/sidenav.component";
 import { ConsultaService } from './services/consultas.service';
 import { InventarioService } from './services/inventario.service';
@@ -49,7 +49,7 @@ import { VentaEffects } from './state/effects/venta.effects';
 
 	declarations: [AppComponent],
 	imports: [
-		BrowserAnimationsModule,
+		BrowserAnimationsModule, TuiLoader,
 		TuiNotification,
 		BrowserModule,
 		AppRoutingModule,
@@ -57,10 +57,7 @@ import { VentaEffects } from './state/effects/venta.effects';
 		LoginComponent,
 		CommonModule,
 		TuiRoot,
-
-		ToastrModule.forRoot({
-
-		}),
+		ToastrModule.forRoot({}),
 		StoreModule.forRoot(ROOT_REDUCER),
 		EffectsModule.forRoot([
 			AppEffects,
@@ -73,13 +70,12 @@ import { VentaEffects } from './state/effects/venta.effects';
 			ProveedorEffects,
 			VentaEffects,
 			CajaEffects,
-
 		]),
 		TranslateModule.forRoot({
 			defaultLanguage: 'en',
 		}),
 		SidenavComponent,
-
+		TuiLoader
 	],
 	providers: [
 		AuthService,

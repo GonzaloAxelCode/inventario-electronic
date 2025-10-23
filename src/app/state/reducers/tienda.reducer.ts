@@ -7,6 +7,9 @@ import {
     desactivateTiendaAction,
     desactivateTiendaFail,
     desactivateTiendaSuccess,
+    eliminarTiendaPermanently,
+    eliminarTiendaPermanentlyFail,
+    eliminarTiendaPermanentlySuccess,
     loadTiendasAction,
     loadTiendasFail,
     loadTiendasSuccess
@@ -17,6 +20,7 @@ const initialState: TiendaState = {
     loadingTiendas: false,
     loadingCreateTienda: false,
     loadingActiveTienda: false,
+    loadingDeleteTienda: false,
     errors: {}
 };
 
@@ -44,11 +48,14 @@ export const tiendaReducer = createReducer(
         ...state,
         loadingCreateTienda: true
     })),
-    on(createTiendaSuccess, (state, { tienda }) => ({
-        ...state,
-        tiendas: [...state.tiendas, tienda],
-        loadingCreateTienda: false
-    })),
+    on(createTiendaSuccess, (state, { tienda }) => {
+        return {
+            ...state,
+            tiendas: [...state.tiendas, tienda],
+            loadingCreateTienda: false
+        }
+    }),
+
     on(createTiendaFail, (state, { error }) => ({
         ...state,
         errors: error,
@@ -71,5 +78,19 @@ export const tiendaReducer = createReducer(
         ...state,
         errors: error,
         loadingActiveTienda: false
+    })),
+    on(eliminarTiendaPermanently, (state) => ({
+        ...state,
+        loadingDeleteTienda: true
+    })),
+    on(eliminarTiendaPermanentlySuccess, (state, { id }) => ({
+        ...state,
+        tiendas: state.tiendas.filter(tienda => tienda.id !== id),
+        loadingDeleteTienda: false
+    })),
+    on(eliminarTiendaPermanentlyFail, (state, { error }) => ({
+        ...state,
+        errors: error,
+        loadingDeleteTienda: false
     }))
 );

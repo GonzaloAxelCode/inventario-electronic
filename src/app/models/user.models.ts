@@ -10,7 +10,7 @@ export interface User {
     is_superuser: boolean;
     es_empleado: boolean;
     desactivate_account: boolean;
-    tienda?: number | null
+    tienda: any | number
     tienda_nombre?: string | null
     permissions: UserPermissions;
     user_permissions_list: string[];   // 👈 faltaba

@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { TiendaService } from '@/app/services/tienda.service';
-import { createTiendaAction, createTiendaFail, createTiendaSuccess, desactivateTiendaAction, desactivateTiendaFail, desactivateTiendaSuccess, loadTiendasAction, loadTiendasFail, loadTiendasSuccess } from '../actions/tienda.actions';
+import { createTiendaAction, createTiendaFail, createTiendaSuccess, desactivateTiendaAction, desactivateTiendaFail, desactivateTiendaSuccess, eliminarTiendaPermanently, eliminarTiendaPermanentlyFail, eliminarTiendaPermanentlySuccess, loadTiendasAction, loadTiendasFail, loadTiendasSuccess } from '../actions/tienda.actions';
 
 @Injectable()
 export class TiendaEffects {
@@ -78,8 +78,21 @@ export class TiendaEffects {
             )
         )
     );
-
-
-
-
+    delteTiendaPermanentlyEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(eliminarTiendaPermanently),
+            exhaustMap(({ id }) =>
+                this.tiendaService.eliminarTiendaPermanently(id).pipe(
+                    map(() => {
+                        this.toastr.success('Tienda eliminada permanentemente', 'Éxito');
+                        return eliminarTiendaPermanentlySuccess({ id });
+                    }),
+                    catchError(error => {
+                        this.toastr.error('Error al eliminar la tienda', 'Error');
+                        return of(eliminarTiendaPermanentlyFail({ error }));
+                    })
+                )
+            )
+        )
+    );
 }

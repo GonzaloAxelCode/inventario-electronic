@@ -10,15 +10,15 @@ import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAlertService, TuiAppearance, TuiButton } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiConfirmData, TuiSkeleton } from '@taiga-ui/kit';
+import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiDropdownComponent, TuiIcon, TuiLoader } from '@taiga-ui/core';
+import { TuiAvatar, TuiBadge, TuiSkeleton, TuiSwitch } from '@taiga-ui/kit';
 import { TuiBlockStatus, TuiCardLarge } from '@taiga-ui/layout';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-tabletiendas',
   standalone: true,
-  imports: [TuiBlockStatus, CommonModule, FormsModule, TuiTable, TuiBadge, TuiAppearance, TuiButton, TuiSkeleton, TuiCardLarge, TuiAppearance],
+  imports: [TuiLoader, TuiSwitch, TuiBadge, TuiBlockStatus, TuiDropdownComponent, TuiDataList, CommonModule, TuiIcon, TuiAvatar, FormsModule, TuiTable, TuiBadge, TuiAppearance, TuiButton, TuiSkeleton, TuiCardLarge, TuiAppearance],
   templateUrl: './tabletiendas.component.html',
   styleUrl: './tabletiendas.component.scss'
 })
@@ -39,7 +39,7 @@ export class TabletiendasComponent implements OnInit {
   filteredData: any = []
   allColumnKeys = this.allColumns.map(c => c.key);
   displayedColumns = [...this.allColumnKeys];
-
+  loadingDesactivateTienda: boolean = false;
   editingId: number | any = null;
   editedTienda: Partial<Tienda> = {};
 
@@ -49,8 +49,21 @@ export class TabletiendasComponent implements OnInit {
 
     this.tiendasState$ = this.store.select(selectTiendaState);
 
-  }
+    this.store.select(selectTiendaState).pipe(
+      tap((tiendaState: TiendaState) => {
 
+        this.loadingDesactivateTienda = tiendaState.loadingActiveTienda;
+
+      })
+    ).subscribe();
+
+
+  }
+  toggleDesactivateTienda(event: Event, tienda: Tienda) {
+    event.stopPropagation();
+    const newTienda = { ...tienda, activo: !tienda.activo };
+    this.store.dispatch(desactivateTiendaAction({ id: newTienda.id, activo: newTienda.activo }));
+  }
 
 
   onEditTienda(tienda: Tienda) {
@@ -73,30 +86,7 @@ export class TabletiendasComponent implements OnInit {
   }
   private readonly dialogs = inject(TuiResponsiveDialogService);
   private readonly alerts = inject(TuiAlertService);
-  protected onDeleteTienda(id: any): void {
-    const data: TuiConfirmData = {
-      content: '¿Estás seguro de que deseas eliminar esta Tienda?',
-      yes: 'Eliminar',
-      no: 'Cancelar',
-    };
 
-    this.dialogs
-      .open<boolean>(TUI_CONFIRM, {
-        label: 'Confirmación de Eliminación',
-        size: 's',
-        data,
-      })
-      .subscribe((confirm) => {
-        if (confirm) {
-
-          this.store.dispatch(desactivateTiendaAction({ id, activo: false }));
-          this.alerts.open('Eliminado exitosamente.').subscribe();
-        } else {
-
-          this.alerts.open('Eliminación cancelada.').subscribe();
-        }
-      });
-  }
   getTiendaValue(venta: Tienda, key: string): any {
     return venta[key as keyof Tienda];
   }
@@ -111,9 +101,28 @@ export class TabletiendasComponent implements OnInit {
     });
   }
   protected showDialogDetailTienda(tienda: Tienda): void {
-    console.log("TIENDA", tienda)
+
     this.dialogServiceDetail.open(tienda).subscribe((result: any) => {
 
     });
   }
+  private cardColors = [
+
+    'dark:bg-zinc-800 bg-white text-gray-900 dark:text-white border-neutral-200 dark:border-neutral-700 border-2'    // 💡 Amarillo acento moderno
+  ];
+
+  getCardColor(index: number): string {
+    return this.cardColors[index % this.cardColors.length];
+  }
+
+  getCardBorderColor(index: number): string {
+    const borders = [
+
+      'dark:border-neutral-700 border-neutral-200'     // 💛 Amarillo acento para el matching
+    ];
+    return borders[index % borders.length];
+  }
+
+
+
 }

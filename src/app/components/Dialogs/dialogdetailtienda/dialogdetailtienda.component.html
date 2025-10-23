@@ -1,4 +1,8 @@
 <!-- Dialog: Detalle de Tienda -->
+
+  <tui-loader [showLoader]="deleteTiendaLoader"
+        [overlay]="true">
+        
 <div class="w-full max-w-4xl mx-auto ">
   <!-- Card -->
   <div class="rounded-2xl b">
@@ -63,8 +67,19 @@
         <div class="rounded-2xl overflow-hidden">
           <!-- Tu tabla existente -->
           <app-tableusers [idtienda]="tienda.id"></app-tableusers>
+          
         </div>
+        
+                  <button
+                   tuiButton
+                    appearance="outline-destructive"
+                    [disabled]="deleteTiendaLoader"
+
+                    (click)="onDeleteTienda(tienda.id)"
+                    class="mt-10 flex flex-1 text-center" >Eliminar tienda permanentemente</button>
       </div>
     </div>
   </div>
 </div>
+
+      </tui-loader>

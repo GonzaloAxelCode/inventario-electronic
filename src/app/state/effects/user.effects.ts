@@ -64,8 +64,11 @@ export class UserEffects {
             exhaustMap(({ user, tienda_id }) =>
                 this.userService.createUser(user, tienda_id).pipe(
                     map((data: any) => {
+                        console.log("DATA", data)
                         this.toastr.success('Usuario creado exitosamente', 'Éxito');
-                        return createUserSuccess({ user: data.user });
+
+
+                        return createUserSuccess({ user: data.usuario });
                     }),
                     catchError(error => {
                         this.toastr.error('Error al crear el usuario', 'Error');
@@ -78,12 +81,15 @@ export class UserEffects {
 
 
     updateUserEffect = createEffect(() =>
+
         this.actions$.pipe(
             ofType(updateUserAction),
             exhaustMap(({ user }) =>
                 this.userService.updateUser(user).pipe(
                     map((res: any) => {
                         this.toastr.success('Usuario actualizado exitosamente', 'Éxito');
+
+
                         return updateUserSuccess({ user: res.user });
                     }),
                     catchError(error => {

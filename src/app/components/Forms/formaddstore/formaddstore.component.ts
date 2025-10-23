@@ -41,6 +41,10 @@ export class FormaddstoreComponent {
       this.store.dispatch(createTiendaAction({
         tienda: newTienda
       }))
+      this.tiendaForm.reset();
+
+      window.location.href = window.location.href;
+
     }
   }
 }

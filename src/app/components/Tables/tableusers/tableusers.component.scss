@@ -1,0 +1,38 @@
+═══════════════════════════════════════════════════════════
+
+// Switch personalizado con verde neón
+input[type="checkbox"][tuiSwitch]:checked {
+  background-color: #C6FF00 !important;
+}
+
+input[type="checkbox"][tuiSwitch]:checked::before {
+  background-color: #000 !important;
+}
+
+// Animación de pulso para el estado activo
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+// Scrollbar personalizado (opcional)
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0e1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C6FF00;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d4ff33;
+}

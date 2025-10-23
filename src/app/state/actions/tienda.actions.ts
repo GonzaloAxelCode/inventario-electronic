@@ -1,4 +1,5 @@
 import { Tienda, TiendaCreate } from '@/app/models/tienda.models';
+import { User } from '@/app/models/user.models';
 import { createAction, props } from '@ngrx/store';
 
 export enum ActionTypes {
@@ -11,12 +12,19 @@ export enum ActionTypes {
     DESACTIVATE_TIENDA = 'DESACTIVATE_TIENDA',
     DESACTIVATE_TIENDA_SUCCESS = 'DESACTIVATE_TIENDA_SUCCESS',
     DESACTIVATE_TIENDA_FAIL = 'DESACTIVATE_TIENDA_FAIL',
-
+    ELIMINAR_TIENDA_PERMANENTEMENTE = 'ELIMINAR_TIENDA_PERMANENTEMENTE',
+    ELIMINAR_TIENDA_PERMANENTEMENTE_SUCCESS = 'ELIMINAR_TIENDA_PERMANENTEMENTE_SUCCESS',
+    ELIMINAR_TIENDA_PERMANENTEMENTE_FAIL = 'ELIMINAR_TIENDA_PERMANENTEMENTE_FAIL',
+    AGREGATE_USERS_IN_TIENDA = 'AGREGATE_USERS_IN_TIENDA',
 }
 
 export const loadTiendasAction = createAction(
     ActionTypes.LOAD_TIENDAS,
 
+);
+export const agregateUsersInTienda = createAction(
+    ActionTypes.AGREGATE_USERS_IN_TIENDA,
+    props<{ tienda_id: number, newUser: User }>()
 );
 
 export const loadTiendasSuccess = createAction(
@@ -61,5 +69,18 @@ export const desactivateTiendaSuccess = createAction(
 
 export const desactivateTiendaFail = createAction(
     ActionTypes.DESACTIVATE_TIENDA_FAIL,
+    props<{ error: any }>()
+);
+
+export const eliminarTiendaPermanently = createAction(
+    ActionTypes.ELIMINAR_TIENDA_PERMANENTEMENTE,
+    props<{ id: number }>()
+);
+export const eliminarTiendaPermanentlySuccess = createAction(
+    ActionTypes.ELIMINAR_TIENDA_PERMANENTEMENTE_SUCCESS,
+    props<{ id: number }>()
+);
+export const eliminarTiendaPermanentlyFail = createAction(
+    ActionTypes.ELIMINAR_TIENDA_PERMANENTEMENTE_FAIL,
     props<{ error: any }>()
 );

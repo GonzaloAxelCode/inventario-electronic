@@ -1,17 +1,18 @@
 import { User } from '@/app/models/user.models';
 import { updateUserPermissionsAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
+import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { TuiAppearance, TuiDialogContext } from '@taiga-ui/core';
+import { TuiAppearance, TuiDialogContext, TuiLoader } from '@taiga-ui/core';
 import { TuiSwitch, tuiSwitchOptionsProvider } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
 @Component({
   selector: 'app-dialogedituserpersmissions',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TuiSwitch, FormsModule, TuiAppearance],
+  imports: [CommonModule, ReactiveFormsModule, TuiSwitch, FormsModule, TuiAppearance, TuiLoader],
   templateUrl: './dialogedituserpersmissions.component.html',
   styleUrl: './dialogedituserpersmissions.component.scss',
   providers: [tuiSwitchOptionsProvider({ showIcons: true, appearance: () => 'neutral' }),]
@@ -21,6 +22,7 @@ export class DialogedituserpersmissionsComponent {
   public user: User = this.context.data
 
   public permissionsForm: FormGroup;
+  loaderUpdatePermission: boolean = false
 
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
     this.permissionsForm = this.fb.group({
@@ -58,6 +60,15 @@ export class DialogedituserpersmissionsComponent {
     });
 
     console.log(this.user)
+  }
+
+  ngOnInit() {
+    this.store.select(selectUsersState).subscribe((state) => {
+      this.loaderUpdatePermission = state.loadingUpdatePermissions;
+
+    })
+
+    //aca escuchar el reducer si fue eliminado exitosamente para cerrar el dialog escucha el action 
   }
   permissionSections = [
     {
