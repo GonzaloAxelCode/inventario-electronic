@@ -5,7 +5,7 @@
     "start": "ng serve",
     "package": "ng build --configuration production --base-href ./",
     "e2e": "ng e2e",
-    "start:electron": "concurrently \"ng build --watch\" \"wait-on .dist/angular-app/index.html && electron .\"",
+    "start:electron": "concurrently \"ng build --watch\" \"wait-on dist/angular-app/index.html && electron .\"",
     "electron:build": "ng build && electron ."
   },
   "main": "electron/main.js",

@@ -17,7 +17,7 @@ function createWindow() {
   });
 
   // Carga la app Angular compilada
-  win.loadFile(path.join(__dirname, '../.dist/angular-app/index.html'));
+  win.loadFile(path.join(__dirname, '../dist/angular-app/index.html'));
   win.setMenu(null);
 
   win.webContents.openDevTools(); // opcional
