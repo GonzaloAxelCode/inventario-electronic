@@ -107,7 +107,7 @@
                                 <td tuiTd>
                                     <div class="flex gap-2 ">
                                         <button appearance="positive" iconStart="@tui.pencil" tuiButton uiTb
-                                            type="button" (click)="showDialogUpdate(producto)">
+                                            type="button" (click)="showDialogUpdate(producto)" [disabled]="!(userPermissions$ | async)?.can_update_product">
                                             Actualizar
                                         </button>
                                         <button [disabled]="!(userPermissions$ | async)?.can_delete_product" 

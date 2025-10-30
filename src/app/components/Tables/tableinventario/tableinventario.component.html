@@ -94,7 +94,7 @@
               *ngFor="let inventario of (isTheSearchWasDone 
                                          ? (inventariosState$ | async)?.inventarios_search 
                                          : (inventariosState$ | async)?.inventarios)">
-              <td *ngFor="let column of allColumns" tuiTd>{{ getInventarioValue(inventario, column.key) }}</td>
+              <td *ngFor="let column of allColumns"   tuiTd>{{ getInventarioValue(inventario, column.key) }}</td>
               <td tuiTd>
                 <tui-badge [appearance]="inventario.activo ? 'positive' : 'negative'">
                   {{ inventario.activo ? 'Activo' : 'No activo' }}
@@ -102,12 +102,12 @@
               </td>
               <td tuiTd>
                 <div tuiBlockDetails>
-                  <span class="  text-lg">S/. {{ inventario.costo_compra }}</span>
+                  <span class="  text-xl">S/. {{ inventario.costo_compra }}</span>
                 </div>
               </td>
               <td tuiTd>
                 <div tuiBlockDetails>
-                  <span class=" text-lg">S/. {{ inventario.costo_venta }}</span>
+                  <span class=" text-xl">S/. {{ inventario.costo_venta }}</span>
                 </div>
               </td>
               <td tuiTd>
@@ -123,14 +123,14 @@
                 </div>
               </td>
               <td tuiTd>
-                <div tuiBlockDetails>
-                  <span class="  text-lg"> {{ inventario.categoria_nombre }}</span>
+                <div >
+                  <span > {{ inventario.categoria_nombre }}</span>
                 </div>
               </td>
               <td tuiTd>
                 <div class="flex gap-2 " *ngIf="mode === 'normal'">
-                  <button disabled="!(userPermissions$ | async)?.can_delete_inventory" 
-                  [appearance]="(userPermissions$ | async)?.can_delete_inventory ? 'error':'secondary-grayscale'"
+                  <button [disabled]="!!!(userPermissions$ | async)?.can_delete_inventory" 
+                  [appearance]="!!(userPermissions$ | async)?.can_delete_inventory ? 'error':'secondary-grayscale'"
                   (click)="eliminarInventario(inventario.id)" 
                   iconStart="@tui.trash"
 

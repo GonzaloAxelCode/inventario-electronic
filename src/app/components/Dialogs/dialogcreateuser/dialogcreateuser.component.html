@@ -31,7 +31,7 @@
     </div>
     <!-- Botón de envío -->
     <div class="flex-1 col-span-2 w-full flex">
-      <button tuiButton appearance="outline-grayscale" type="submit" [disabled]="userForm.invalid"
+      <button tuiButton appearance="outline-grayscale" type="submit" [disabled]="userForm.invalid || !!(loadingCreateUser$ | async)?.loadingCreateUser"
         class="px-6 py-2 w-full ">
         Crear Personal <tui-loader [showLoader]="!!(loadingCreateUser$ | async)?.loadingCreateUser"></tui-loader>
       </button>

@@ -210,7 +210,7 @@
 
     </div>
 
-           <ng-template *ngIf="(userPermissions$ | async)?.can_make_sale">
+           <div *ngIf="(userPermissions$ | async)?.can_make_sale">
 
 
             <button iconStart="@tui.dollar-sign" *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'"
@@ -223,7 +223,7 @@
                 class="flex w-full my-3" tuiButton type="submit" (click)="hacerVenta()" appearance="textfield">
                 Realizar Venta Anonima
             </button>
-                       </ng-template> 
+                       </div> 
         </form>
     </tui-loader>
 
