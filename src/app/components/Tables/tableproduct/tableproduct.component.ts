@@ -14,6 +14,7 @@ import { map, Observable } from 'rxjs';
 
 import { Categoria } from '@/app/models/categoria.models';
 import { DialogUpdateProductService } from '@/app/services/dialogs-services/dialog-updateproduct.service';
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import { QuerySearchProduct } from '@/app/services/utils/querys';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
@@ -109,6 +110,7 @@ export class TableproductComponent implements OnInit {
     { key: 'fechaCreacion', label: 'Fecha Creación' },
     { key: 'activo', label: 'Activo' },
   ];
+  URL_BASE = URL_BASE
   isTheSearchWasDone: boolean = false
   filteredData: any = []
   allColumnKeys = this.allColumns.map(c => c.key);
@@ -119,7 +121,7 @@ export class TableproductComponent implements OnInit {
   onSetImageProduct(producto: Producto) {
 
     this.titles = [producto.nombre || "Producto Sin Nombre"]
-    this.content = ["http://localhost:8000/" + producto.imagen]
+    this.content = [URL_BASE + producto.imagen]
   }
   ngOnInit(): void {
 

@@ -5,6 +5,7 @@ import { Proveedor } from '@/app/models/proveedor.models';
 import { TiendaState } from '@/app/models/tienda.models';
 import { DialogEditInventarioDetailService } from '@/app/services/dialogs-services/dialog-edit-inventario.service';
 import { QuerySearchInventario } from '@/app/services/inventario.service';
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import { clearSearchInventarios, createInventario, eliminarInventarioAction, searchInventarios } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
@@ -68,6 +69,7 @@ export class TableinventarioComponent {
   @Input() mode?: string
   @Input() cerrarDialogo!: (valor: Inventario) => void;
   value = [0, 0];
+  URL_BASE = URL_BASE
   userPermissions$ = this.store.select(selectPermissions);
   inventariosState$?: Observable<InventarioState>;
   tiendasState$?: Observable<TiendaState>
@@ -241,7 +243,7 @@ export class TableinventarioComponent {
   onSetImageProduct(inventario: Inventario) {
 
     this.titles = [inventario.producto_nombre || "Producto Sin Nombre"]
-    this.content = ["http://localhost:8000/" + inventario.imagen_producto]
+    this.content = [URL_BASE + inventario.imagen_producto]
   }
   mostrarAdvertencia(name: any) {
     return name?.includes("(Delete)")

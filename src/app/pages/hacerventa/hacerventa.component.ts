@@ -8,6 +8,7 @@ import { ConsultaService } from '@/app/services/consultas.service';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { normalizeSku } from "@/app/services/search-services/producto-search.service";
+import { URL_BASE } from "@/app/services/utils/endpoints";
 import { crearVenta } from "@/app/state/actions/venta.actions";
 import { AppState } from '@/app/state/app.state';
 import { selectClienteState } from "@/app/state/selectors/cliente.selectors";
@@ -314,7 +315,7 @@ export class HacerventaComponent implements OnInit {
           productoId: [result.producto.id,],
           stock_actual: [result.cantidad],
           producto_sku: [result.producto_sku],
-          imagen_producto: ["http://localhost:8000/" + result.imagen_producto],
+          imagen_producto: [URL_BASE + result.imagen_producto],
         });
         productosArray.push(nuevoProducto);
         this.calcularTotales();

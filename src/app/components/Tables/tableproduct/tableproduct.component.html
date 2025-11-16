@@ -80,7 +80,7 @@
                                             <div     (click)="onSetImageProduct(producto); open = true;"
  class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
                                                 <img 
-                                                    [src]="'http://localhost:8000' + producto.imagen" 
+                                                    [src]="URL_BASE + producto.imagen" 
                                                     [alt]="producto.nombre"
                                                     class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200"
                                                     />

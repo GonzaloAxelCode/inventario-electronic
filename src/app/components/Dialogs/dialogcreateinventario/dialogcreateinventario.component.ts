@@ -12,6 +12,7 @@ import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from
 import { Producto, ProductoState } from '@/app/models/producto.models';
 import { TiendaState } from '@/app/models/tienda.models';
 import { normalizeSku } from '@/app/services/search-services/producto-search.service';
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import { createInventario } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
 import { InventarioState } from '@/app/state/reducers/inventario.reducer';
@@ -61,7 +62,7 @@ import { map, Observable, Subject } from 'rxjs';
 export class DialogcreateinventarioComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private readonly context = inject<TuiDialogContext<any>>(POLYMORPHEUS_CONTEXT);
-
+  URL_BASE = URL_BASE
   productSelected: Producto = {} as Producto
   tiendasState$?: Observable<TiendaState>
   userPermissions$ = this.store.select(selectPermissions);

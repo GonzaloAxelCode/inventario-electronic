@@ -7,6 +7,7 @@ import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
 
 import { Categoria } from '@/app/models/categoria.models';
 import { Producto } from '@/app/models/producto.models';
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import { updateProductoAction, updateProductoFail, updateProductoSuccess } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectCategoriaState } from '@/app/state/selectors/categoria.selectors';
@@ -154,7 +155,7 @@ export class DialogupdateproductComponent implements OnInit {
   }
 
 
-  previewImage: string | ArrayBuffer | null = "http://localhost:8000/" + this.producto.imagen || null;
+  previewImage: string | ArrayBuffer | null = URL_BASE + this.producto.imagen || null;
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
