@@ -14,6 +14,7 @@ export interface QuerySearchInventario {
     nombre?: string;
     categoria?: number;
     activo?: any;
+    producto_sku?: string
     stock_min?: number | null
     stock_max?: number | null
     precio_compra_min?: number | null

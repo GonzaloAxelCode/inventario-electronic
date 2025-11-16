@@ -15,6 +15,9 @@ export enum VentaActionTypes {
     CREAR_VENTA = '[Venta] Crear Venta',
     CREAR_VENTA_EXITO = '[Venta] Crear Venta Éxito',
     CREAR_VENTA_ERROR = '[Venta] Crear Venta Error',
+    GENERAR_COMPROBANTE_VENTA = '[Venta] Generar Comprobante Venta',
+    GENERAR_COMPROBANTE_VENTA_EXITO = '[Venta] Generar Comprobante Venta Éxito',
+    GENERAR_COMPROBANTE_VENTA_ERROR = '[Venta] Generar Comprobante Venta Error',
     CARGAR_RESUMEN_VENTAS = '[Venta] Cargar Resumen Ventas',
     CARGAR_RESUMEN_VENTAS_EXITO = '[Venta] Cargar Resumen Ventas Éxito',
     CARGAR_RESUMEN_VENTAS_ERROR = '[Venta] Cargar Resumen Ventas Error',
@@ -105,7 +108,20 @@ export const crearVentaError = createAction(
     props<{ error: any }>()
 );
 
+export const generarComprobanteVenta = createAction(
+    VentaActionTypes.GENERAR_COMPROBANTE_VENTA,
+    props<{ ventaId: number }>()
+);
 
+export const generarComprobanteVentaExito = createAction(
+    VentaActionTypes.GENERAR_COMPROBANTE_VENTA_EXITO,
+    props<{ venta: Venta }>()
+);
+
+export const generarComprobanteVentaError = createAction(
+    VentaActionTypes.GENERAR_COMPROBANTE_VENTA_ERROR,
+    props<{ error: any }>()
+);
 
 export const cancelarVenta = createAction(
     VentaActionTypes.CANCELAR_VENTA,

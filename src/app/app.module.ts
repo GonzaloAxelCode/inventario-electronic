@@ -37,6 +37,7 @@ import { UserService } from './services/user.service';
 import { VentaService } from './services/venta.service';
 import { AppEffects } from './state/effects/app.effects';
 import { CajaEffects } from './state/effects/caja.effect';
+import { ClienteEffects } from './state/effects/cliente.effects';
 import { InventarioEffects } from './state/effects/inventario.effects';
 import { ProductoEffects } from './state/effects/producto.effects';
 import { ProveedorEffects } from './state/effects/proveedor.effects';
@@ -70,6 +71,7 @@ import { VentaEffects } from './state/effects/venta.effects';
 			ProveedorEffects,
 			VentaEffects,
 			CajaEffects,
+			ClienteEffects
 		]),
 		TranslateModule.forRoot({
 			defaultLanguage: 'en',

@@ -1,22 +1,38 @@
 <div class="form-container mt-6  rounded-lg ">
   <form [formGroup]="inventarioForm2" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
     <div class="flex flex-wrap w-full flex-1 gap-3">
-      <tui-select class="w-full flex-1" formControlName="producto" [valueContent]="productContent">
-        Selecciona un producto
-        <tui-data-list-wrapper *tuiDataList [itemContent]="productContent" [items]="productos" />
-      </tui-select>
+      <div class="col-span-2 flex w-full justify-start gap-3">
 
+  <div class="flex ">
+        <div class="text-center">
+          <div class="flex justify-center items-center">
+            <div
+              class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
+
+
+              <img [src]="'http://localhost:8000' + productSelected.imagen"
+                class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200" />
+
+            </div>
+          </div>
+        </div>
+        </div>
+        <tui-combo-box formControlName="producto" class="w-full" [stringify]="stringify">
+          CODIGO DE PRODUCTO <tui-data-list-wrapper *tuiDataList [itemContent]="stringify | tuiStringifyContent"
+            [items]="productos | tuiFilterByInput: matcherProduct" />
+
+        </tui-combo-box>
+      
+
+        
+      </div>
       <ng-template #productContent let-item>
         <div class="card-item">
-          
+
           <span class="card-name">{{ item.nombre }}</span>
 
         </div>
       </ng-template>
-      <tui-select class="w-full flex-1" formControlName="proveedor" [valueContent]="proveedorContent">
-        Selecciona un proveedor
-        <tui-data-list-wrapper *tuiDataList [itemContent]="proveedorContent" [items]="proveedores" />
-      </tui-select>
     </div>
 
     <ng-template #proveedorContent let-item>
@@ -40,17 +56,17 @@
     <div class="flex gap-3 col-span-1 md:col-span-2 w-full flex-wrap">
       <tui-textfield class="flex-1">
         <label tuiLabel>Cantidad</label>
-        <input [max]="100" [min]="0" [step]="1" tuiInputNumber formControlName="cantidad" />
+        <input [max]="500" [min]="1" [step]="1" tuiInputNumber formControlName="cantidad" />
       </tui-textfield>
 
       <tui-textfield class="flex-1">
         <label tuiLabel>Stock Minimo</label>
-        <input [max]="100" [min]="0" [step]="1" tuiInputNumber formControlName="stock_minimo" />
+        <input [max]="500" [min]="1" [step]="1" tuiInputNumber formControlName="stock_minimo" />
       </tui-textfield>
 
       <tui-textfield class="flex-1">
         <label tuiLabel>Stock Maximo</label>
-        <input [max]="100" [min]="0" [step]="1" tuiInputNumber formControlName="stock_maximo" />
+        <input [max]="500" [min]="1" [step]="1" tuiInputNumber formControlName="stock_maximo" />
       </tui-textfield>
 
     </div>
@@ -73,17 +89,19 @@
     </tui-textarea>
     <!-- Botón -->
 
+    <img #barcodeImg />
 
     <div *ngIf="!(userPermissions$ | async)?.can_create_inventory" class="w-full col-span-2">
-      
-       <span class="text-yellow-400">* Permisos insuficientes para crear un inventario </span>
+
+      <span class="text-yellow-400">* Permisos insuficientes para crear un inventario </span>
 
     </div>
 
 
-    <button *ngIf="(userPermissions$ | async)?.can_create_inventory" tuiButton [iconStart]="loadingCreateInventario ? '' : '@tui.plus'" size="m" class="w-full flex col-span-2" type="submit" type="submit"
-      appearance="textfield" [disabled]="inventarioForm2.invalid || loadingCreateInventario" >
-      <span *ngIf="loadingCreateInventario" >
+    <button *ngIf="(userPermissions$ | async)?.can_create_inventory" tuiButton
+      [iconStart]="loadingCreateInventario ? '' : '@tui.plus'" size="m" class="w-full flex col-span-2" type="submit"
+      type="submit" appearance="textfield" [disabled]="inventarioForm2.invalid || loadingCreateInventario">
+      <span *ngIf="loadingCreateInventario">
         <tui-loader [showLoader]="loadingCreateInventario" />
 
       </span>

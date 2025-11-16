@@ -1,11 +1,50 @@
-<div class="p-5">
+<main tuiNavigationMain>
+  <header tuiSubheader>
+    <div class="flex gap-4 items-center">
+      <h2 tuiHeader>
+        <div tuiTitle>
+          <div tuiNavigationLogo>
+            <tui-icon icon="@tui.gitlab" />
+            <span tuiFade>Gestión de Inventario</span>
+          </div>
 
-  <div class="flex gap-2">
-    <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button" class="my-5 pr-3"
-      (click)="showDialog()">
-      Crear Inventario
-    </button>
+          <div tuiSubtitle [style.display]="'flex'" [style.gap.rem]="1">
+            <span>120 Items en inventario</span>
+            <span>- 15 Proveedores registrados</span>
+          </div>
+        </div>
+      </h2>
+    </div>
 
+    <!-- PESTAÑAS SIN ROUTER -->
+    <nav tuiTabs class="flex flex-wrap gap-2">
+      <button tuiTab (click)="setTab('inventario')" 
+        [class.active-link]="activeTab === 'inventario'">
+        Inventario
+      </button>
+    </nav>
+  </header>
+
+  <div>
+    <div class="py-4">
+
+      <!-- TAB: INVENTARIO -->
+      <ng-container *ngIf="activeTab === 'inventario'">
+        <div class="flex gap-2">
+          <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button" class="my-5 pr-3"
+            (click)="showDialog()">
+            Crear Inventario
+          </button>
+        </div>
+
+        <app-tableinventario mode="normal"></app-tableinventario>
+      </ng-container>
+
+      <!-- TAB: PROVEEDORES -->
+      <ng-container *ngIf="activeTab === 'proveedor'">
+               <app-tableproveedor></app-tableproveedor>
+      </ng-container>
+
+    </div>
   </div>
-
-<app-tableinventario mode="normal"></app-tableinventario>
+</main>

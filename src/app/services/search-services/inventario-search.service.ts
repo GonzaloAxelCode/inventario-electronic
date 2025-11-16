@@ -11,7 +11,17 @@ export class InventarioSearchService {
 
     filtrarInventario(inventarios: Inventario[], query: QuerySearchInventario): { found: boolean, data: Inventario[] } {
         const resultado = inventarios.filter(item => {
-            if (query.nombre && !item.producto_nombre.toLowerCase().includes(query.nombre.toLowerCase())) return false;
+            if (query.nombre) {
+                const term = query.nombre.toLowerCase();
+
+
+                if (
+                    !item.producto_nombre.toLowerCase().includes(term) &&
+                    !item.producto_sku.toLowerCase().includes(term)
+                ) {
+                    return false;
+                }
+            }
             if (query.categoria && item.categoria_id !== query.categoria) {
                 return false;
             }

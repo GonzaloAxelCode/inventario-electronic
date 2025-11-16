@@ -3,13 +3,13 @@ import { clearSearchProductos, deleteProductoAction, searchProductosAction } fro
 import { AppState } from '@/app/state/app.state';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { CommonModule, NgForOf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiRadio, TuiSegmented, TuiSkeleton, TuiSwitch } from '@taiga-ui/kit';
+import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiChip, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiRadio, TuiSegmented, TuiSkeleton, TuiSwitch } from '@taiga-ui/kit';
 import { map, Observable } from 'rxjs';
 
 import { Categoria } from '@/app/models/categoria.models';
@@ -18,6 +18,7 @@ import { QuerySearchProduct } from '@/app/services/utils/querys';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
+import { generarBarcode } from '@/app/utils/barcode';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { tuiCountFilledControls } from '@taiga-ui/cdk';
 import type { TuiConfirmData } from '@taiga-ui/kit';
@@ -29,13 +30,13 @@ import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy'
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule,
-    TuiBadge,
-    TuiRadio,
+    TuiBadge, TuiPreview, TuiPreviewTitle, TuiPreviewDialogDirective,
+    TuiRadio, TuiChip,
     FormsModule,
     TuiTable,
     TuiBlockStatus, TuiButton, TuiSkeleton, TuiCardLarge, TuiChevron,
     TuiDataListWrapper,
-    TuiFilter,
+    TuiFilter, TuiButton,
     TuiSegmented,
     TuiSwitch, TuiTextfield, TuiSearch, FormsModule, TuiDataListWrapper, NgForOf, TuiLoader,
     TuiSelectModule, TuiTextfieldControllerModule, TuiPagination
@@ -46,6 +47,16 @@ import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableproductComponent implements OnInit {
+  @ViewChild('barcodeInput') barcodeInput!: ElementRef<HTMLInputElement>;
+  private buffer: string = '';
+  protected open = false;
+  protected index = 0;
+  protected length = 1;
+
+  @ViewChildren('barcodeImg') barcodeImgs!: QueryList<ElementRef<HTMLImageElement>>;
+
+  protected titles = ["Producto Sin Imagen"]
+  protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
   productosState$?: Observable<ProductoState>;
   userPermissions$ = this.store.select(selectPermissions);
   productos: Producto[] = []
@@ -58,10 +69,25 @@ export class TableproductComponent implements OnInit {
 
     sku: new FormControl(),
   });
+  ngAfterViewInit() {
+    this.barcodeImgs.forEach((img, index) => {
+      const codigo = this.productos[index].sku;
+      generarBarcode(img.nativeElement, codigo);
+    });
+  }
+  imprimir() {
+    window.print();
+  }
+
   compareCategorias = (a: Categoria, b: Categoria) => a && b && a.id === b.id;
 
   selectCategorias$?: Observable<Categoria[]>;
 
+  mostrarAdvertencia(categoria: any) {
+    return categoria?.includes("(Delete)")
+      ? "⚠️ Urgente: Asignar una nueva categoría"
+      : "";
+  }
 
   stringify = (item: { id: number; nombre: string } | null) => item ? item.nombre : '';
 
@@ -90,7 +116,11 @@ export class TableproductComponent implements OnInit {
   private readonly dialogs = inject(TuiResponsiveDialogService);
   private readonly alerts = inject(TuiAlertService);
   constructor(private store: Store<AppState>) { }
+  onSetImageProduct(producto: Producto) {
 
+    this.titles = [producto.nombre || "Producto Sin Nombre"]
+    this.content = ["http://localhost:8000/" + producto.imagen]
+  }
   ngOnInit(): void {
 
     this.productosState$ = this.store.select(selectProductoState);
@@ -154,7 +184,6 @@ export class TableproductComponent implements OnInit {
 
     });
   }
-
 
 
 

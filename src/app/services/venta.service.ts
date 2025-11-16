@@ -194,4 +194,20 @@ export class VentaService {
         );
     }
 
+    generarComprobanteVenta(ventaId: number): Observable<any> {
+        const body = {
+            venta_id: ventaId
+        };
+
+        return this.http.post<any>(
+            `${this.siteURL}/ventas/generar-comprobante/`,
+            body
+        ).pipe(
+            catchError(error => {
+                console.error('Error al generar el comprobante', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
 }

@@ -12,15 +12,19 @@ export interface Producto {
     activo?: boolean;
     categoria_nombre?: string
     date_created?: any
+    imagen: string;
 }
 
-export type ProductoCreate = Omit<Producto, 'id' |
-    'fechaCreacion' |
-    'fechaActualizacion' |
+export type ProductoCreate = Omit<Producto,
+    'id' |
+    'fecha_creacion' |
+    'fecha_actualizacion' |
     'activo' |
-    'imagen' |
-    'proveedorId'>;
-
+    'categoria_nombre' |
+    'imagen'  // quitamos string URL, la reemplazaremos con File
+> & {
+    imagen?: File | null; // nuevo campo para subir archivo
+};
 
 
 export interface ProductoState {

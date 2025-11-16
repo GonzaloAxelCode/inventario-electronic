@@ -118,7 +118,7 @@
 
               <td *ngFor="let column of allColumns" tuiTd>{{ getVentaValue(venta, column.key) }}</td>
               <td tuiTd>
-                <tui-badge [appearance]="venta.estado === 'Cancelado' ? 'error' : 
+                <tui-badge [appearance]="venta.estado === 'ANULADA' ? 'error' : 
                  venta.estado === 'Completada' ? 'positive' : 
                  venta.estado === 'En Espera Sunat' ? 'warning' : 'neutral'" tuiStatus>
                   {{ venta.estado }}

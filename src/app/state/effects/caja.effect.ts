@@ -65,11 +65,11 @@ export class CajaEffects {
             exhaustMap(({ saldoInicial, }) =>
                 this.cajaService.createCaja(saldoInicial,).pipe(
                     map(({ caja, operaciones, caja_is_open }) => {
-                        this.toastr.success('Caja iniciada', 'Éxito');
+                        this.alertService.showSuccess('Caja iniciada', 'Éxito').subscribe();
                         return createCajaSuccess({ caja, operaciones, caja_is_open });
                     }),
                     catchError((error) => {
-                        this.toastr.error('Error al iniciar la caja', 'Error');
+                        this.alertService.showError('Error al iniciar la caja', 'Error').subscribe();
                         return of(createCajaFail({ error }));
                     })
                 )
@@ -85,11 +85,11 @@ export class CajaEffects {
             exhaustMap(({ cajaId, monto, descripcion, }) =>
                 this.cajaService.realizarGasto(cajaId, monto, descripcion,).pipe(
                     map(({ operacion, caja }) => {
-                        this.toastr.success('Gasto registrado', 'Éxito');
+                        this.alertService.showSuccess('Gasto registrado', 'Éxito').subscribe();
                         return realizarGastoSuccess({ operacion, caja });
                     }),
                     catchError((error) => {
-                        this.toastr.error('Error al registrar el gasto', 'Error');
+                        this.alertService.showError('Error al registrar el gasto', 'Error').subscribe();
                         return of(realizarGastoFail({ error }));
                     })
                 )
@@ -104,11 +104,11 @@ export class CajaEffects {
             exhaustMap(({ cajaId, monto, descripcion }) =>
                 this.cajaService.realizarIngreso(cajaId, monto, descripcion,).pipe(
                     map(({ operacion, caja }) => {
-                        this.toastr.success('Ingreso registrado', 'Éxito');
+                        this.alertService.showSuccess('Ingreso registrado', 'Éxito').subscribe();
                         return realizarIngresoSuccess({ operacion, caja });
                     }),
                     catchError((error) => {
-                        this.toastr.error('Error al registrar el ingreso', 'Error');
+                        this.alertService.showError('Error al registrar el ingreso', 'Error').subscribe();
                         return of(realizarIngresoFail({ error }));
                     })
                 )
@@ -123,11 +123,11 @@ export class CajaEffects {
             exhaustMap(({ monto, descripcion, }) =>
                 this.cajaService.registrarPrestamo(monto, descripcion,).pipe(
                     map(({ operacion, caja }) => {
-                        this.toastr.success('Préstamo registrado', 'Éxito');
+                        this.alertService.showSuccess('Préstamo registrado', 'Éxito').subscribe();
                         return realizarPrestamoSuccess({ operacion, caja });
                     }),
                     catchError((error) => {
-                        this.toastr.error('Error al registrar el préstamo', 'Error');
+                        this.alertService.showError('Error al registrar el préstamo', 'Error').subscribe();
                         return of(realizarPrestamoFail({ error }));
                     })
                 )
@@ -142,11 +142,11 @@ export class CajaEffects {
             exhaustMap(({ cajaId, }) =>
                 this.cajaService.cerrarCaja(cajaId,).pipe(
                     map((res) => {
-                        this.toastr.success('Caja cerrada', 'Éxito');
+                        this.alertService.showSuccess('Caja cerrada', 'Éxito').subscribe();
                         return cerrarCajaSuccess({ caja_is_open: false });
                     }),
                     catchError((error) => {
-                        this.toastr.error('Error al cerrar la caja', 'Error');
+                        this.alertService.showError('Error al cerrar la caja', 'Error').subscribe();
                         return of(cerrarCajaFail({ error }));
                     })
                 )
@@ -161,11 +161,11 @@ export class CajaEffects {
             exhaustMap(({ cajaId, saldoInicial }) =>
                 this.cajaService.reinicializarCaja(cajaId, saldoInicial).pipe(
                     map(({ caja, operaciones }) => {
-                        this.toastr.success('Caja reiniciada', 'Éxito');
+                        this.alertService.showSuccess('Caja reiniciada', 'Éxito').subscribe();
                         return reinicializarCajaSuccess({ caja, operaciones, caja_is_open: true });
                     }),
                     catchError((error) => {
-                        this.toastr.error('Error al reiniciar la caja', 'Error');
+                        this.alertService.showError('Error al reiniciar la caja', 'Error').subscribe();
                         return of(reinicializarCajaFail({ error }));
                     })
                 )

@@ -1,21 +1,66 @@
-<div class="p-10">
+<main tuiNavigationMain>
+    <header tuiSubheader>
+        <div class="flex gap-4 items-center">
+            <h2 tuiHeader>
+                <div tuiTitle>
+                    <div tuiNavigationLogo>
+                        <tui-icon icon="@tui.gitlab" />
+                        <span tuiFade>Gestion de Productos</span>
+                    </div>
 
-    <div class="flex gap-2">
-        <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button" class="my-5 pr-3"
-            (click)="showDialogCreateProduct()">
-            Agregar nuevo producto
-        </button>
-        <button iconStart="@tui.pencil" disabled tuiButton appearance="positive" tuiButtonVertical type="button"
-            class="my-5 pr-3">
-            Actualizar por lotes
-        </button>
-    </div>
-    <app-tableproduct></app-tableproduct>
-        <div class="flex gap-2 py-4">
-            <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button"
-                class="my-5 pl-4" (click)="showDialogCreateCategoria()">
-                Agregar categoria
-            </button>
+                    <div tuiSubtitle [style.display]="'flex'" [style.gap.rem]="1">
+                        <span>119 Productos activos</span>
+                        <span>. 19 Categorias habilitadas</span>
+                    </div>
+                </div>
+            </h2>
         </div>
-        <app-tablecategories></app-tablecategories>
-</div>
+
+        <!-- PESTAÑAS SIN ROUTER -->
+        <nav tuiTabs class="flex flex-wrap gap-2">
+            <button tuiTab (click)="setTab('productos')" 
+                [class.active-link]="activeTab === 'productos'">
+                Productos
+            </button>
+
+            <button tuiTab (click)="setTab('categorias')" 
+                [class.active-link]="activeTab === 'categorias'">
+                Categorías
+            </button>
+        </nav>
+    </header>
+
+
+    <div>
+        <div class="py-4">
+
+            <!-- TAB: PRODUCTOS -->
+            <ng-container *ngIf="activeTab === 'productos'">
+                <div class="flex gap-2">
+                    <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button" class="my-5 pr-3"
+                        (click)="showDialogCreateProduct()">
+                        Agregar nuevo producto
+                    </button>
+                   
+                </div>
+
+                <app-tableproduct></app-tableproduct>
+            </ng-container>
+
+
+            <!-- TAB: CATEGORÍAS -->
+            <ng-container *ngIf="activeTab === 'categorias'">
+                <div class="flex gap-2 py-4">
+                    <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button"
+                        class="my-5 pl-4" (click)="showDialogCreateCategoria()">
+                        Agregar categoria
+                    </button>
+                </div>
+
+                <app-tablecategories></app-tablecategories>
+            </ng-container>
+
+        </div>
+    </div>
+
+</main>

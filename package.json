@@ -7,8 +7,7 @@
     "e2e": "ng e2e",
     "start:electron": "concurrently \"ng build --watch\" \"wait-on dist/angular-app/index.html && electron .\"",
     "electron:build": "ng build && electron .",
-      "build": "ng build --configuration=production"
-
+    "build": "ng build --configuration=production"
   },
   "main": "electron/main.js",
   "private": true,
@@ -48,10 +47,13 @@
     "@tinkoff/ng-polymorpheus": "^4.3.0",
     "date-fns": "^4.1.0",
     "electron-updater": "^6.6.2",
+    "jsbarcode": "^3.12.1",
     "ng2-pdf-viewer": "^10.4.0",
     "ngx-toast-notifications": "^1.3.0",
     "ngx-toastr": "^19.0.0",
+    "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^5.4.54",
+    "qz-tray": "^2.2.5",
     "rxjs": "~7.8.1",
     "tslib": "^2.6.2",
     "url-slug": "^4.0.1",
@@ -63,6 +65,7 @@
     "@angular/compiler-cli": "^17.0.3",
     "@cypress/schematic": "^2.5.1",
     "@types/node": "^20.19.21",
+    "@types/qz-tray": "^2.2.2",
     "autoprefixer": "^10.4.20",
     "concurrently": "^9.2.1",
     "cypress": "^13.5.1",

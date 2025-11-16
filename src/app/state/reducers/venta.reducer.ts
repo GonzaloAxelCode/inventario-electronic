@@ -27,6 +27,9 @@ import {
     crearVenta,
     crearVentaError,
     crearVentaExito,
+    generarComprobanteVenta,
+    generarComprobanteVentaError,
+    generarComprobanteVentaExito,
     searchVenta,
     searchVentaFail,
     searchVentaSuccess
@@ -64,6 +67,7 @@ export interface VentaState {
     loadingResumenVentas: boolean
     loadingMostSales: boolean
     loadingNotaCredito: boolean
+    loadingGenerarComprobante: boolean
 }
 
 export const initialState: VentaState = {
@@ -83,6 +87,7 @@ export const initialState: VentaState = {
 
     loadingResumenVentas: false,
     loadingNotaCredito: false,
+    loadingGenerarComprobante: false,
     search_ventas_found: "",  // Inicializa como string vacío si es que no hay un valor predeterminado
     count: 0,
     next: null,
@@ -140,6 +145,23 @@ export const ventaReducer = createReducer(
         ...state,
         error,
         loadingCreateVenta: false
+    })),
+    on(generarComprobanteVenta, state => ({
+        ...state,
+        loadingGenerarComprobante: true
+    })),
+    on(generarComprobanteVentaExito, (state, { venta }) => ({
+        ...state,
+        ventas: state.ventas.map(v => v.id === venta.id ? venta : v),
+        ventas_search: state.ventas_search.map(v => v.id === venta.id ? venta : v),
+        temporaryVenta: venta,
+        showVentaDetailTemporary: true,
+        loadingGenerarComprobante: false
+    })),
+    on(generarComprobanteVentaError, (state, { error }) => ({
+        ...state,
+        error,
+        loadingGenerarComprobante: false
     })),
     on(cancelarVenta, state => ({
         ...state,

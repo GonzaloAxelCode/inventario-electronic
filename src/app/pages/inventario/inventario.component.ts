@@ -1,11 +1,13 @@
 import { DialogcreateinventarioComponent } from '@/app/components/Dialogs/dialogcreateinventario/dialogcreateinventario.component';
+import { TableproveedorComponent } from '@/app/components/Tables/tableproveedor/tableproveedor.component';
 import { CommonModule, NgForOf } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAppearance, TuiButton, TuiDataList, tuiDialog, TuiLink, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiBadge, TuiChevron, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiSegmented, TuiStatus, TuiSwitch, tuiValidationErrorsProvider } from '@taiga-ui/kit';
-import { TuiBlockDetails, TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
+import { TuiRepeatTimes } from '@taiga-ui/cdk';
+import { TuiAppearance, TuiButton, TuiDataList, tuiDialog, TuiGroup, TuiIcon, TuiLink, TuiLoader, TuiTextfield, TuiTitle } from '@taiga-ui/core';
+import { TuiAvatar, TuiBadge, TuiChevron, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiSegmented, TuiStatus, TuiSwitch, TuiTabs, tuiValidationErrorsProvider } from '@taiga-ui/kit';
+import { TuiBlockDetails, TuiBlockStatus, TuiHeader, TuiNavigation, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
 import { TableinventarioComponent } from "../../components/Tables/tableinventario/tableinventario.component";
 interface QuerySearchInventario {
@@ -23,6 +25,7 @@ interface QuerySearchInventario {
   imports: [
     CommonModule,
     FormsModule,
+    TableproveedorComponent,
     ReactiveFormsModule,
     TuiDataListWrapper,
     TuiDataList,
@@ -44,7 +47,16 @@ interface QuerySearchInventario {
     TuiSegmented,
     TuiSwitch,
     TuiTextfield, TuiLoader, TuiPagination, TuiBlockStatus,
-    TableinventarioComponent
+    TableinventarioComponent,
+    TuiGroup,
+    TuiHeader,
+    TuiIcon,
+    TuiLink,
+    TuiNavigation,
+    TuiRepeatTimes,
+    TuiTabs,
+    TuiTextfield,
+    TuiTitle, TuiIcon, TuiAvatar
   ],
   providers: [tuiValidationErrorsProvider({
     required: 'Required field',
@@ -62,6 +74,11 @@ export class InventarioComponent {
     label: 'Crear Inventario',
     size: "l"
   });
+  activeTab: 'inventario' | 'proveedor' = 'inventario';
+
+  setTab(tab: 'inventario' | 'proveedor') {
+    this.activeTab = tab;
+  }
 
   protected showDialog(): void {
     this.dialog().subscribe({

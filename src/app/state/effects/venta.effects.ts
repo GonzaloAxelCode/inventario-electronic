@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
+import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
 import { VentaService } from '@/app/services/venta.service';
 import {
     anularVenta,
@@ -32,6 +33,9 @@ import {
     crearVenta,
     crearVentaError,
     crearVentaExito,
+    generarComprobanteVenta,
+    generarComprobanteVentaError,
+    generarComprobanteVentaExito,
     searchVenta,
     searchVentaFail,
     searchVentaSuccess
@@ -46,6 +50,7 @@ export class VentaEffects {
         private ventaService: VentaService,
         private store: Store<AppState>,
         private toastr: ToastrService,
+        private alertService: CustomAlertService,
         private dialogServiceVentaDetail: DialogVentaDetailService
     ) { }
     loadVentasPorRangoFechasTiendaEffect = createEffect(() =>
@@ -78,7 +83,7 @@ export class VentaEffects {
                     }),
                     catchError(error => {
                         // Si ocurre un error, se maneja con la acción de error
-                        this.toastr.error('Error al obtener el resumen de ventas');
+                        this.alertService.showError('Error al obtener el resumen de ventas', 'Error').subscribe();
                         return of(cargarResumenVentasByDateError({ error }));
                     })
                 )
@@ -145,12 +150,12 @@ export class VentaEffects {
 
                 return servicio.pipe(
                     map(createdVenta => {
-                        this.toastr.success('Venta creada exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Venta creada exitosamente', 'Éxito').subscribe();
                         this.dialogServiceVentaDetail.open(createdVenta).subscribe();
                         return crearVentaExito({ venta: createdVenta });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al crear la venta', 'Error');
+                        this.alertService.showError('Error al crear la venta', 'Error').subscribe();
                         return of(crearVentaError({ error }));
                     })
                 );
@@ -163,11 +168,11 @@ export class VentaEffects {
             exhaustMap(({ ventaId }) =>
                 this.ventaService.cancelarVenta(ventaId).pipe(
                     map(() => {
-                        this.toastr.success('Venta cancelada exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Venta cancelada exitosamente', 'Éxito').subscribe();
                         return cancelarVentaExito({ ventaId });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al cancelar la venta', 'Error');
+                        this.alertService.showError('Error al cancelar la venta', 'Error').subscribe();
                         return of(cancelarVentaError({ error }));
                     })
                 )
@@ -219,7 +224,7 @@ export class VentaEffects {
                         });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al buscar las ventas', 'Error');
+                        this.alertService.showError('Error al buscar las ventas', 'Error').subscribe();
                         return of(searchVentaFail({ error }));
                     })
                 )
@@ -235,12 +240,12 @@ export class VentaEffects {
                 // Llamamos al servicio que emite la nota de crédito (anula la venta)
                 this.ventaService.anularVenta(ventaId, motivo, tipo_motivo).pipe(
                     map((response) => {
-                        this.toastr.success('La venta fue anulada correctamente', 'Nota de Crédito emitida');
+                        this.alertService.showSuccess('La venta fue anulada correctamente', 'Nota de Crédito emitida').subscribe();
                         console.log(response)
                         return anularVentaExito({ ventaId });
                     }),
                     catchError((error) => {
-                        this.toastr.error('No se pudo anular la venta', 'Error');
+                        this.alertService.showError('No se pudo anular la venta', 'Error').subscribe();
                         console.error('Error al anular venta:', error);
                         return of(anularVentaError({ error }));
                     })
@@ -248,5 +253,26 @@ export class VentaEffects {
             )
         )
     );
+
+
+
+    generarComprobanteVentaEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(generarComprobanteVenta),
+            exhaustMap(({ ventaId }) =>
+                this.ventaService.generarComprobanteVenta(ventaId).pipe(
+                    map((venta) => {
+                        this.alertService.showSuccess('Comprobante generado exitosamente', 'Éxito').subscribe();
+                        return generarComprobanteVentaExito({ venta });
+                    }),
+                    catchError(error => {
+                        this.alertService.showError('Error al generar el comprobante', 'Error').subscribe();
+                        return of(generarComprobanteVentaError({ error }));
+                    })
+                )
+            )
+        )
+    );
+
 
 }

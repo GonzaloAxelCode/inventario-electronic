@@ -1,7 +1,9 @@
 import { Producto } from '@/app/models/producto.models';
 import { Injectable } from '@angular/core';
 import { QuerySearchProduct } from '../utils/querys';
-
+export const normalizeSku = (sku: any) => {
+    return sku.replace(/['-]/g, "-")
+}
 @Injectable({
     providedIn: 'root'
 })
@@ -17,7 +19,9 @@ export class ProductoSearchService {
             if (query.categoria && item.categoria !== query.categoria) {
                 return false;
             }
-            if (query.sku && !item.sku.toLowerCase().includes(query.sku.toLowerCase())) return false;
+            if (query.sku && !normalizeSku(item.sku).includes(normalizeSku(query.sku))) return false;
+
+
 
             return true;
         });

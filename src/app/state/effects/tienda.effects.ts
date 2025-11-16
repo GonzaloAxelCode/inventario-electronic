@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { TiendaService } from '@/app/services/tienda.service';
+import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
 import { createTiendaAction, createTiendaFail, createTiendaSuccess, desactivateTiendaAction, desactivateTiendaFail, desactivateTiendaSuccess, eliminarTiendaPermanently, eliminarTiendaPermanentlyFail, eliminarTiendaPermanentlySuccess, loadTiendasAction, loadTiendasFail, loadTiendasSuccess } from '../actions/tienda.actions';
 
 @Injectable()
@@ -12,7 +13,7 @@ export class TiendaEffects {
     constructor(
         private actions$: Actions,
         private tiendaService: TiendaService,
-
+        private alertService: CustomAlertService,
         private toastr: ToastrService
     ) { }
 
@@ -42,11 +43,11 @@ export class TiendaEffects {
             exhaustMap(({ tienda }) =>
                 this.tiendaService.createTienda(tienda).pipe(
                     map(createdTienda => {
-                        this.toastr.success('Tienda creada exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Tienda creada exitosamente', 'Éxito').subscribe();
                         return createTiendaSuccess({ tienda: createdTienda });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al crear la tienda', 'Error');
+                        this.alertService.showError('Error al crear la tienda', 'Error').subscribe();
                         return of(createTiendaFail({ error }));
                     })
                 )
@@ -62,15 +63,15 @@ export class TiendaEffects {
                     map(() => {
 
                         if (activo) {
-                            this.toastr.success('Tienda habilitada exitosamente', 'Éxito');
+                            this.alertService.showSuccess('Tienda habilitada exitosamente', 'Éxito').subscribe();
                         } else {
-                            this.toastr.info('Tienda deshabilitada exitosamente', 'Éxito');
+                            this.alertService.showInfo('Tienda deshabilitada exitosamente', 'Éxito').subscribe();
                         }
                         return desactivateTiendaSuccess({ id });
                     }),
                     catchError(error => {
 
-                        this.toastr.error('Error al cambiar el estado de la tienda', 'Error');
+                        this.alertService.showError('Error al cambiar el estado de la tienda', 'Error').subscribe();
 
                         return of(desactivateTiendaFail({ error }));
                     })
@@ -84,11 +85,11 @@ export class TiendaEffects {
             exhaustMap(({ id }) =>
                 this.tiendaService.eliminarTiendaPermanently(id).pipe(
                     map(() => {
-                        this.toastr.success('Tienda eliminada permanentemente', 'Éxito');
+                        this.alertService.showSuccess('Tienda eliminada permanentemente', 'Éxito').subscribe();
                         return eliminarTiendaPermanentlySuccess({ id });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al eliminar la tienda', 'Error');
+                        this.alertService.showError('Error al eliminar la tienda', 'Error').subscribe();
                         return of(eliminarTiendaPermanentlyFail({ error }));
                     })
                 )

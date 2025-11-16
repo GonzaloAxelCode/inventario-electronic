@@ -13,6 +13,7 @@ import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
 import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { loadCaja } from '../actions/caja.actions';
+import { loadClientes } from '../actions/cliente.actions';
 import { cargarResumenVentas, cargarTopProductosVentas, cargarVentasRangoFechasTienda, cargarVentasTienda } from '../actions/venta.actions';
 
 @Injectable()
@@ -40,6 +41,7 @@ export class AppEffects {
                     this.store.dispatch(loadCategorias());
                     this.store.dispatch(loadProductosAction());
                     this.store.dispatch(loadProveedores());
+                    this.store.dispatch(loadClientes());
 
                     this.store.dispatch(loadTiendasAction());
                     this.store.dispatch(loadInventarios());

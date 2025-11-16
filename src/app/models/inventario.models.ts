@@ -12,16 +12,18 @@ export interface Inventario {
     lote?: string;
     fecha_vencimiento?: Date | null;
     estado: string;
-    proveedor: number | any
+    //proveedor: number | any
     responsable: number | any
     descripcion: string
     producto_nombre: string,
     tienda_nombre: string,
     date_created?: any
-    proveedor_nombre: string,
+    //proveedor_nombre: string,
     responsable_nombre: string
     categoria_nombre: string
     categoria_id: number
+    producto_sku: string,
+    imagen_producto: string
 }
 
 export type InventarioCreate = Omit<Inventario, 'id' |

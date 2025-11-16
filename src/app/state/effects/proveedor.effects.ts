@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { ProveedorService } from '@/app/services/proveedor.service';
+import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
 import {
     createProveedorAction,
     createProveedorFail,
@@ -28,7 +29,8 @@ export class ProveedorEffects {
         private actions$: Actions,
         private proveedorService: ProveedorService,
         private store: Store<AppState>,
-        private toastr: ToastrService
+        private toastr: ToastrService,
+        private alertService: CustomAlertService
     ) { }
 
 
@@ -51,11 +53,11 @@ export class ProveedorEffects {
             exhaustMap(({ proveedor }) =>
                 this.proveedorService.createProveedor(proveedor).pipe(
                     map(createdProveedor => {
-                        this.toastr.success('Proveedor creado exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Proveedor creado exitosamente', 'Éxito').subscribe();
                         return createProveedorSuccess({ proveedor: createdProveedor });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al crear el proveedor', 'Error');
+                        this.alertService.showError('Error al crear el proveedor', 'Error').subscribe();
                         return of(createProveedorFail({ error }));
                     })
                 )
@@ -70,11 +72,11 @@ export class ProveedorEffects {
             exhaustMap(({ proveedor }) =>
                 this.proveedorService.updateProveedor(proveedor).pipe(
                     map(updatedProveedor => {
-                        this.toastr.success('Proveedor actualizado exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Proveedor actualizado exitosamente', 'Éxito').subscribe();
                         return updateProveedorSuccess({ proveedor: updatedProveedor });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al actualizar el proveedor', 'Error');
+                        this.alertService.showError('Error al actualizar el proveedor', 'Error').subscribe();
                         return of(updateProveedorFail({ error }));
                     })
                 )
@@ -89,11 +91,11 @@ export class ProveedorEffects {
             exhaustMap(({ proveedor, activo }) =>
                 this.proveedorService.activateOrDesactivateProveedor(proveedor, activo).pipe(
                     map(() => {
-                        this.toastr.success('Proveedor activado/desactivado exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Proveedor activado/desactivado exitosamente', 'Éxito').subscribe();
                         return onActiveToggleProveedorSuccess({ proveedor, activo });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al activar/desactivar el proveedor', 'Error');
+                        this.alertService.showError('Error al activar/desactivar el proveedor', 'Error').subscribe();
                         return of(onActiveToggleProveedorFail({ error }));
                     })
                 )

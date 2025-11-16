@@ -5,6 +5,7 @@ import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { InventarioService } from '@/app/services/inventario.service';
 import { InventarioSearchService } from '@/app/services/search-services/inventario-search.service';
+import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
 import {
     actualizarInventario,
 
@@ -61,7 +62,8 @@ export class InventarioEffects {
         private actions$: Actions,
         private inventarioService: InventarioService,
         private inventarioSearchService: InventarioSearchService,
-        private toastr: ToastrService
+        private toastr: ToastrService,
+        private alertService: CustomAlertService
     ) { }
 
     loadInventariosEffect = createEffect(() =>
@@ -94,15 +96,15 @@ export class InventarioEffects {
             exhaustMap(({ inventario }) =>
                 this.inventarioService.createInventario(inventario).pipe(
                     map((res: any) => {
-                        this.toastr.success('Inventario creado exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Inventario creado exitosamente').subscribe();
                         return createInventarioSuccess({ inventario: res });
                     }),
                     catchError(error => {
 
                         if (error.error.string_err === ERRORS_INVENTARIO.INVENTARIO_EXIXTENTE) {
-                            this.toastr.info('Ya existe un inventario con ese producto', 'Información');
+                            this.alertService.showInfo('Ya existe un inventario con ese producto').subscribe();
                         } else {
-                            this.toastr.error('Error al crear el inventario', 'Error');
+                            this.alertService.showError('Error al crear el inventario').subscribe();
                         }
 
                         return of(createInventarioFail({ error }));
@@ -118,11 +120,11 @@ export class InventarioEffects {
             exhaustMap(({ inventarioId, cantidad }) =>
                 this.inventarioService.updateStock(inventarioId, cantidad).pipe(
                     map((res) => {
-                        this.toastr.success('Stock actualizado exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Stock actualizado exitosamente').subscribe();
                         return updateStockSuccess({ inventario: res.inventario });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al actualizar el stock', 'Error');
+                        this.alertService.showError('Error al actualizar el stock').subscribe();
                         return of(updateStockFail({ error }));
                     })
                 )
@@ -136,11 +138,11 @@ export class InventarioEffects {
             exhaustMap(({ newInventario }) =>
                 this.inventarioService.actualizarInventario(newInventario).pipe(
                     map(() => {
-                        this.toastr.success('Inventario actualizado exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Inventario actualizado exitosamente').subscribe();
                         return actualizarInventarioSuccess({ newInventario });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al actualizar el inventario', 'Error');
+                        this.alertService.showError('Error al actualizar el inventario').subscribe();
                         return of(actualizarInventarioFail({ error }));
                     })
                 )
@@ -154,11 +156,11 @@ export class InventarioEffects {
             exhaustMap(({ inventarioId }) =>
                 this.inventarioService.eliminarInventario(inventarioId).pipe(
                     map(() => {
-                        this.toastr.success('Inventario eliminado', 'Éxito');
+                        this.alertService.showSuccess('Inventario eliminado').subscribe();
                         return eliminarInventarioSuccess({ inventarioId });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al eliminar el inventario', 'Error');
+                        this.alertService.showError('Error al eliminar el inventario', 'Error').subscribe();
                         return of(eliminarInventarioFail({ error }));
                     })
                 )

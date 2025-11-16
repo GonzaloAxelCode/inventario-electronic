@@ -7,6 +7,7 @@ import { TiendaState } from '../models/tienda.models';
 import { authReducer } from './reducers/auth.reducer';
 import { cajaReducer, CajaState } from './reducers/caja.reducer';
 import { categoriaReducer, CategoriaState } from './reducers/categoria.reducer';
+import { clienteReducer, ClienteState } from './reducers/cliente.reducer';
 import { inventarioReducer, InventarioState } from './reducers/inventario.reducer';
 import { productoReducer } from './reducers/producto.reducer';
 import { proveedorReducer, ProveedorState } from './reducers/proveedor.reducer';
@@ -24,6 +25,7 @@ export interface AppState {
     Proveedor: ProveedorState,
     Venta: VentaState,
     Caja: CajaState
+    Cliente: ClienteState
 }
 
 export const ROOT_REDUCER: ActionReducerMap<AppState> = {
@@ -35,5 +37,6 @@ export const ROOT_REDUCER: ActionReducerMap<AppState> = {
     Producto: productoReducer,
     Inventario: inventarioReducer,
     Proveedor: proveedorReducer,
-    Venta: ventaReducer
+    Venta: ventaReducer,
+    Cliente: clienteReducer
 };

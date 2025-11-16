@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiButton, TuiDialogService, TuiDropdown, TuiExpand } from '@taiga-ui/core';
-import { TuiConfirmService, TuiItemsWithMore, TuiRadio } from '@taiga-ui/kit';
+import { TuiAppearance, TuiButton, TuiDialogService, TuiDropdown, TuiExpand, TuiGroup, TuiIcon, TuiLink, TuiTextfield, TuiTitle } from '@taiga-ui/core';
+import { TuiAvatar, TuiBlock, TuiConfirmService, TuiFade, TuiItemsWithMore, TuiRadio, TuiTab, TuiTabs, TuiTabsWithMore } from '@taiga-ui/kit';
 
 import {
   TuiInputModule
@@ -12,6 +12,9 @@ import {
 import { TableproductComponent } from '@/app/components/Tables/tableproduct/tableproduct.component';
 import { DialogCreateCategoriaService } from '@/app/services/dialogs-services/dialog-create-categoria.service';
 import { DialogCreateProductService } from '@/app/services/dialogs-services/dialog-create-product.service';
+import { CommonModule } from '@angular/common';
+import { TuiRepeatTimes } from '@taiga-ui/cdk';
+import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
 import { TablecategoriesComponent } from "../../components/Tables/tablecategories/tablecategories.component";
 
 
@@ -19,16 +22,25 @@ import { TablecategoriesComponent } from "../../components/Tables/tablecategorie
   selector: 'app-productos',
   standalone: true,
   imports: [ReactiveFormsModule,
-    TuiRadio,
-    TuiButton,
-    TuiDropdown,
+    TuiRadio, CommonModule,
+    TuiButton, TuiHeader, TuiTitle, TuiNavigation, TuiTab,
+    TuiDropdown, TuiFade,
     TuiItemsWithMore,
     FormsModule,
-    TuiDropdown,
+    TuiDropdown, TuiAppearance, TuiBlock,
     TuiItemsWithMore,
-    TuiTable,
+    TuiTable, TuiIcon, TuiTabsWithMore,
     TuiInputModule,
-    TuiExpand, TableproductComponent, TablecategoriesComponent],
+    TuiExpand, TableproductComponent, TablecategoriesComponent,
+    TuiGroup,
+    TuiHeader,
+    TuiIcon,
+    TuiLink,
+    TuiNavigation,
+    TuiRepeatTimes,
+    TuiTabs,
+    TuiTextfield,
+    TuiTitle, TuiIcon, TuiAvatar],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,6 +52,11 @@ import { TablecategoriesComponent } from "../../components/Tables/tablecategorie
 export class ProductosComponent {
   private readonly confirm = inject(TuiConfirmService);
   private readonly dialogs = inject(TuiDialogService);
+  activeTab: 'productos' | 'categorias' = 'productos';
+
+  setTab(tab: 'productos' | 'categorias') {
+    this.activeTab = tab;
+  }
 
   protected value = '';
 

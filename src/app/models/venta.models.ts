@@ -26,7 +26,11 @@ export interface Venta {
     correo_cliente: string,
     direccion_cliente: string,
     telefono_cliente: string,
-    comprobante_nota_credito: NotaCredito
+    comprobante_nota_credito: NotaCredito,
+
+    email_cliente: string
+
+
 }
 export interface NotaCredito {
     id: number;

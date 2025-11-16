@@ -1,15 +1,32 @@
 export interface Cliente {
-    nombre: string;
-    apellido: string;
-    dni?: string | null;
-    email: string;
-    telefono: string;
-    direccion: string;
-    pais: string;
-    codigoPostal: string;
-    fechaRegistro: Date;
-    fechaNacimiento?: Date | null;
-    genero: 'M' | 'F';
-    activo: boolean;
+    id?: number;
+    document?: string;
+    fullname?: string;
+    firstname?: string;
+    lastname?: string;
+    department?: string;
+    province?: string;
+    district?: string;
+    address?: string;
+    phone?: string;
+    email?: string;
+    tienda?: number;
+    activo?: boolean;
+}
 
+export interface ClienteCreate {
+    document?: string;
+    fullname?: string;
+    firstname?: string;
+    lastname?: string;
+    department?: string;
+    province?: string;
+    district?: string;
+    address?: string;
+    phone?: string;
+    email?: string;
+}
+
+export interface ClienteUpdate extends ClienteCreate {
+    id: number;
 }

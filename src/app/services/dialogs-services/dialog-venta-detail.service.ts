@@ -21,7 +21,8 @@ export class DialogVentaDetailService {
         const options: Partial<VentaDialogOptions> = {
             dismissible: false,
             size: "auto",
-            data
+            data,
+
         };
 
         return this.dialogService.open(component, options);

@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, exhaustMap, map, of } from 'rxjs';
 
+import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
 import { UserService } from '@/app/services/user.service';
 import {
     createUserAction, createUserFail, createUserSuccess,
@@ -24,7 +25,8 @@ export class UserEffects {
         private actions$: Actions,
         private userService: UserService,
         private store: Store<AppState>,
-        private toastr: ToastrService
+        private toastr: ToastrService,
+        private alertService: CustomAlertService
     ) { }
     loadUserEffect = createEffect(() =>
         this.actions$.pipe(
@@ -65,13 +67,13 @@ export class UserEffects {
                 this.userService.createUser(user, tienda_id).pipe(
                     map((data: any) => {
                         console.log("DATA", data)
-                        this.toastr.success('Usuario creado exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Usuario creado exitosamente', 'Éxito').subscribe();
 
 
                         return createUserSuccess({ user: data.usuario });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al crear el usuario', 'Error');
+                        this.alertService.showError('Error al crear el usuario', 'Error').subscribe();
                         return of(createUserFail({ error }));
                     })
                 )
@@ -87,13 +89,13 @@ export class UserEffects {
             exhaustMap(({ user }) =>
                 this.userService.updateUser(user).pipe(
                     map((res: any) => {
-                        this.toastr.success('Usuario actualizado exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Usuario actualizado exitosamente', 'Éxito').subscribe();
 
 
                         return updateUserSuccess({ user: res.user });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al actualizar el usuario', 'Error');
+                        this.alertService.showError('Error al actualizar el usuario', 'Error').subscribe();
                         return of(updateUserFail({ error }));
                     })
                 )
@@ -106,11 +108,11 @@ export class UserEffects {
             exhaustMap(({ id, permiso, valor }) =>
                 this.userService.updateUserPermissions(id, permiso, valor).pipe(
                     map(() => {
-                        this.toastr.success('Permisos actualizados exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Permisos actualizados exitosamente', 'Éxito').subscribe();
                         return updateUserPermissionsSuccess({ id, permiso, valor });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al actualizar los permisos', 'Error');
+                        this.alertService.showError('Error al actualizar los permisos', 'Error').subscribe();
                         return of(updateUserPermissionsFail({ error }));
                     })
                 )
@@ -124,12 +126,12 @@ export class UserEffects {
             exhaustMap(({ id, is_active }) =>
                 this.userService.desactivateUser(id, is_active).pipe(
                     map(() => {
-                        this.toastr.success('Usuario actualizado', 'Éxito');
+                        this.alertService.showSuccess('Usuario actualizado', 'Éxito').subscribe();
 
                         return desactivateUserSuccess({ id, is_active });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al actualizar el usuario', 'Error');
+                        this.alertService.showError('Error al actualizar el usuario', 'Error').subscribe();
                         return of(desactivateUserFail({ error }));
                     })
                 )
@@ -144,11 +146,11 @@ export class UserEffects {
             exhaustMap(({ id }) =>
                 this.userService.deleteUser(id).pipe(
                     map(() => {
-                        this.toastr.success('Usuario eliminado exitosamente', 'Éxito');
+                        this.alertService.showSuccess('Usuario eliminado exitosamente', 'Éxito').subscribe();
                         return deleteUserSuccess({ id });
                     }),
                     catchError(error => {
-                        this.toastr.error('Error al eliminar el usuario', 'Error');
+                        this.alertService.showError('Error al eliminar el usuario', 'Error').subscribe();
                         return of(deleteUserFail({ error }));
                     })
                 )

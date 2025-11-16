@@ -55,10 +55,10 @@
                 Actualizar
               </button>
               <button [appearance]="(userPermissions$ | async)?.can_delete_category ? 'error':'secondary-grayscale'" (click)="onDeleteCategoria(categoria.id)" 
-                disabled="!(userPermissions$ | async)?.can_delete_category"
+                [disabled]="!(userPermissions$ | async)?.can_delete_category"
               iconStart="@tui.x" tuiButton
                 type="button">
-                Desactivar
+                Eliminar
               </button>
 
             </div>

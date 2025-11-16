@@ -24,7 +24,7 @@ import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { tuiCountFilledControls } from '@taiga-ui/cdk';
 import { TuiAppearance, TuiButton, TuiDataList, TuiExpand, TuiLink, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiConfirmData, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiSegmented, TuiSkeleton, TuiStatus, TuiSwitch, tuiValidationErrorsProvider } from '@taiga-ui/kit';
+import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiConfirmData, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiSegmented, TuiSkeleton, TuiStatus, TuiSwitch, tuiValidationErrorsProvider } from '@taiga-ui/kit';
 import { TuiBlockDetails, TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputModule, TuiInputRangeModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
 import { map, Observable } from 'rxjs';
@@ -45,7 +45,7 @@ import { map, Observable } from 'rxjs';
     TuiBlockDetails, TuiSelectModule,
     TuiBadge, TuiButton, TuiAppearance, TuiStatus, TuiSegmented, NgForOf,
     ReactiveFormsModule,
-    TuiButton,
+    TuiButton, TuiStatus,
     TuiChevron, TuiInputRangeModule,
     TuiDataListWrapper,
     TuiFilter,
@@ -53,7 +53,8 @@ import { map, Observable } from 'rxjs';
     TuiSearch,
     TuiSegmented, TuiSkeleton,
     TuiSwitch, TuiExpand,
-    TuiTextfield, TuiLoader, TuiPagination, TuiBlockStatus, TuiSkeleton
+    TuiTextfield, TuiLoader, TuiPagination, TuiBlockStatus, TuiSkeleton,
+    TuiPreview, TuiPreviewTitle, TuiPreviewDialogDirective,
   ],
   templateUrl: './tableinventario.component.html',
   providers: [tuiValidationErrorsProvider({
@@ -79,20 +80,25 @@ export class TableinventarioComponent {
 
   private readonly dialogEditInventarioService = inject(DialogEditInventarioDetailService);
   allColumns = this.mode === "normal" ? [
-    { key: 'id', label: 'ID' },
+    { key: 'producto_sku', label: 'Codigo Sku' },
     { key: 'producto_nombre', label: 'Producto' },
-    { key: 'proveedor_nombre', label: 'Proveedor' },
+
     { key: 'stock_minimo', label: 'Stock Mínimo' },
     { key: 'stock_maximo', label: 'Stock Máximo' },
   ] : [
-    { key: 'id', label: 'ID' },
+
+    { key: 'producto_sku', label: 'Codigo Sku' },
     { key: 'producto_nombre', label: 'Producto' },
 
   ];
+  allColumnKeys = this.allColumns.map(c => c.key);
   protected expanded = false;
-
+  protected open = false;
+  protected index = 0;
+  protected length = 1;
   protected readonly form = new FormGroup({
     nombre: new FormControl(),
+    producto_sku: new FormControl(),
     categoria: new FormControl<any>(null),
     proveedor: new FormControl<any>(null),
     activo: new FormControl(), // Rango de stock (array [min, max])
@@ -101,7 +107,7 @@ export class TableinventarioComponent {
     precioVentaRange: new FormControl<[number, number] | null>(null)
   });
   filteredData: any = []
-  allColumnKeys = this.allColumns.map(c => c.key);
+
   displayedColumns = [...this.allColumnKeys];
   selectCategorias$?: Observable<Categoria[]>;
   selectProveedores$?: Observable<Proveedor[]>;
@@ -128,6 +134,7 @@ export class TableinventarioComponent {
 
     const searchQuery: Partial<QuerySearchInventario> = {
       nombre: (this.form.value.nombre || "").trim(),
+      producto_sku: (this.form.value.producto_sku || "").trim(),
       categoria: this.form.value?.categoria?.id || 0,
       stock_min: values.stockRange?.[0] ?? null,
       stock_max: values.stockRange?.[1] ?? null,
@@ -229,6 +236,17 @@ export class TableinventarioComponent {
     this.dialogEditInventarioService.open(currentInventario).subscribe((result: any) => {
     });
   }
+  protected titles = ["Producto Sin Imagen"]
+  protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
+  onSetImageProduct(inventario: Inventario) {
 
+    this.titles = [inventario.producto_nombre || "Producto Sin Nombre"]
+    this.content = ["http://localhost:8000/" + inventario.imagen_producto]
+  }
+  mostrarAdvertencia(name: any) {
+    return name?.includes("(Delete)")
+      ? "⚠️ Producto Eliminado"
+      : "";
+  }
 
 }

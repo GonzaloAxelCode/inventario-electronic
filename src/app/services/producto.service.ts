@@ -1,4 +1,4 @@
-import { Producto, ProductoCreate } from '@/app/models/producto.models';
+import { Producto } from '@/app/models/producto.models';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -37,9 +37,11 @@ export class ProductoService {
             catchError(error => throwError(error))
         );
     }
-
-    createProducto(producto: ProductoCreate): Observable<Producto> {
-        return this.http.post<Producto>(`${this.siteURL}/productos/create/`, { ...producto }).pipe(
+    createProducto(producto: FormData): Observable<Producto> {
+        return this.http.post<Producto>(
+            `${this.siteURL}/productos/create/`,
+            producto
+        ).pipe(
             catchError(error => {
                 printError(error);
                 return throwError(error);
@@ -47,8 +49,9 @@ export class ProductoService {
         );
     }
 
-    updateProducto(producto: Producto): Observable<Producto> {
-        return this.http.put<Producto>(`${this.siteURL}/productos/update/${producto.id}/`, producto).pipe(
+
+    updateProducto(producto: FormData): Observable<Producto> {
+        return this.http.put<Producto>(`${this.siteURL}/productos/update/${producto.get('id')}/`, producto).pipe(
             catchError(error => {
                 printError(error);
                 return throwError(error);

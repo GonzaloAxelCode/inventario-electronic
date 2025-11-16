@@ -78,12 +78,12 @@ export class ProductoEffects {
             ofType(updateProductoAction),
             exhaustMap(({ producto }) =>
                 this.productoService.updateProducto(producto).pipe(
-                    map(res => {
+                    map((res: any) => {
 
                         this.alertService
                             .showSuccess('Producto actualizado exitosamente. Actualiza la tabla de productos.')
                             .subscribe();
-                        return updateProductoSuccess({ producto });
+                        return updateProductoSuccess({ producto: res.producto });
                     }),
                     catchError(error => {
                         this.alertService

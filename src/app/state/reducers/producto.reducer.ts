@@ -104,7 +104,7 @@ export const productoReducer = createReducer(
     })),
     on(deactivateProductoSuccess, (state, { id }) => ({
         ...state,
-        productos: state.productos.map(p => p.id === id ? { ...p, activo: !p.activo } : p),
+        productos: state.productos.filter(p => p.id !== id),
         loadingDeactivate: false
     })),
     on(deactivateProductoFail, (state, { error }) => ({
@@ -120,7 +120,7 @@ export const productoReducer = createReducer(
     })),
     on(deleteProductoSuccess, (state, { id }) => ({
         ...state,
-
+        productos: state.productos.filter(p => p.id !== id),
         loadingDelete: false
     })),
     on(deleteProductoFail, (state, { error }) => ({

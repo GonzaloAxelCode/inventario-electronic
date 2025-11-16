@@ -1,0 +1,18 @@
+@media print {
+  #print-area {
+    width: 58mm;
+  }
+
+  .ticket {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  button {
+    display: none;
+  }
+}

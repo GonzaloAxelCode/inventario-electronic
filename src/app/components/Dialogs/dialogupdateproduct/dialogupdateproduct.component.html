@@ -27,7 +27,11 @@
           Debe seleccionar una categoría
         </tui-error>
       </div>
-
+  <div class="flex flex-col col-span-2">
+        <label class="mb-2">Imagen del producto</label>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+        <img *ngIf="previewImage" [src]="previewImage" class="mt-2 w-32 h-32 object-cover rounded" />
+      </div>
       <div class="flex flex-col">
         
         

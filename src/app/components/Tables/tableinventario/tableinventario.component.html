@@ -1,15 +1,12 @@
 <section class="py-6 rounded-lg" [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario">
 
   <!-- Caso 1: no hay inventarios y no se ha hecho búsqueda -->
-  <tui-block-status
-    *ngIf="!isTheSearchWasDone 
+  <tui-block-status *ngIf="!isTheSearchWasDone 
            && (inventariosState$ | async)?.inventarios?.length === 0 
-           && !(inventariosState$ | async)?.loadingProductosInventario; else tabla"
-    size="m"
-    class="m-auto">
+           && !(inventariosState$ | async)?.loadingProductosInventario; else tabla" size="m" class="m-auto">
     <img alt="no data"
-         src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-         tuiSlot="top" />
+      src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+      tuiSlot="top" />
     <h4>Aún no tienes ningún inventario</h4>
     <span>Empieza a crear un inventario</span>
   </tui-block-status>
@@ -36,9 +33,11 @@
         </fieldset>
 
         <fieldset>
-          Resultados: {{ ( isTheSearchWasDone ? (inventariosState$ | async)?.inventarios_search?.length : (inventariosState$ | async)?.inventarios?.length)}}
+          Resultados: {{ ( isTheSearchWasDone ? (inventariosState$ | async)?.inventarios_search?.length :
+          (inventariosState$ | async)?.inventarios?.length)}}
           <hr />
-          <button iconEnd="@tui.list-filter-plus" tuiButton type="button" size="xs"  appearance="flat-grayscale"  (click)="expanded = !expanded">
+          <button iconEnd="@tui.list-filter-plus" tuiButton type="button" size="xs" appearance="flat-grayscale"
+            (click)="expanded = !expanded">
             Filtros
           </button>
           <hr />
@@ -47,7 +46,7 @@
             Limpiar {{ count() ? '(' + count() + ')' : '' }}
           </button>
         </fieldset>
-       
+
         <tui-expand [expanded]="expanded">
           <div class="flex gap-3 items-center ">
             <fieldset>
@@ -75,26 +74,48 @@
     <div class="rounded-lg" [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario">
 
       <!-- Caso 2: mostrar tabla si hay inventarios o inventarios_search -->
-      <div *ngIf="(isTheSearchWasDone ? ((inventariosState$ | async)?.inventarios_search?.length || 0) : ((inventariosState$ | async)?.inventarios?.length || 0)) > 0">
+      <div
+        *ngIf="(isTheSearchWasDone ? ((inventariosState$ | async)?.inventarios_search?.length || 0) : ((inventariosState$ | async)?.inventarios?.length || 0)) > 0">
         <table tuiTable [columns]="allColumnKeys" size="s">
           <thead>
             <tr>
-              <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
+              <th tuiTh>Imagen</th>
+              <th tuiTh>Nombre</th>
               <th tuiTh>Activo</th>
               <th tuiTh>Costo Compra</th>
               <th tuiTh>Costo Venta</th>
               <th tuiTh>Stock</th>
-              <th tuiTh>Proveedor</th>
               <th tuiTh>Categoria</th>
               <th tuiTh>Acciones</th>
             </tr>
           </thead>
           <tbody tuiTbody>
-            <tr
-              *ngFor="let inventario of (isTheSearchWasDone 
+            <tr *ngFor="let inventario of (isTheSearchWasDone 
                                          ? (inventariosState$ | async)?.inventarios_search 
                                          : (inventariosState$ | async)?.inventarios)">
-              <td *ngFor="let column of allColumns"   tuiTd>{{ getInventarioValue(inventario, column.key) }}</td>
+              <td tuiTd class="text-left">
+                <div class="flex justify-left items-center py-2">
+                  <div (click)="onSetImageProduct(inventario); open = true;"
+                    class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
+                    <img [src]="'http://localhost:8000' + inventario.imagen_producto"
+                      [alt]="inventario.imagen_producto || 'Imagen del producto'"
+                      class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200" />
+
+                  </div>
+                </div>
+              </td>
+              
+              <td tuiTd>
+                <div tuiBlockDetails>
+                  <span class=" text-sm">{{ inventario.producto_nombre }}
+                    <p *ngIf="mostrarAdvertencia(inventario.producto_nombre)">
+                      ⚠️ Producto eliminado
+                    </p>
+
+                  </span>
+                </div>
+              </td>
+
               <td tuiTd>
                 <tui-badge [appearance]="inventario.activo ? 'positive' : 'negative'">
                   {{ inventario.activo ? 'Activo' : 'No activo' }}
@@ -117,27 +138,28 @@
                   </span>
                 </div>
               </td>
+
               <td tuiTd>
                 <div>
-                  <span>{{ inventario.proveedor_nombre }}</span>
-                </div>
-              </td>
-              <td tuiTd>
-                <div >
-                  <span > {{ inventario.categoria_nombre }}</span>
+                  	<tui-badge
+    appearance="neutral"
+    size="xl"
+    tuiStatus
+>
+     {{ inventario.categoria_nombre }}
+</tui-badge>
+
                 </div>
               </td>
               <td tuiTd>
                 <div class="flex gap-2 " *ngIf="mode === 'normal'">
-                  <button [disabled]="!!!(userPermissions$ | async)?.can_delete_inventory" 
-                  [appearance]="!!(userPermissions$ | async)?.can_delete_inventory ? 'error':'secondary-grayscale'"
-                  (click)="eliminarInventario(inventario.id)" 
-                  iconStart="@tui.trash"
-
-                    tuiButton type="button">
+                  <button [disabled]="!!!(userPermissions$ | async)?.can_delete_inventory"
+                    [appearance]="!!(userPermissions$ | async)?.can_delete_inventory ? 'error':'secondary-grayscale'"
+                    (click)="eliminarInventario(inventario.id)" iconStart="@tui.trash" tuiButtonVertical tuiButton
+                    type="button">
                     Eliminar
                   </button>
-                  <button appearance="info" [disabled]="!inventario.activo"
+                  <button appearance="info" [disabled]="!inventario.activo" tuiButtonVertical
                     (click)="showDialogEditInventario(inventario)" iconStart="@tui.pencil" tuiButton type="button">
                     Actualizar
                   </button>
@@ -157,14 +179,11 @@
       </div>
 
       <!-- Caso 3: búsqueda hecha pero sin resultados -->
-      <tui-block-status
-        *ngIf="isTheSearchWasDone 
-               && (inventariosState$ | async)?.inventarios_search?.length === 0"
-        size="m"
-        class="m-auto">
+      <tui-block-status *ngIf="isTheSearchWasDone 
+               && (inventariosState$ | async)?.inventarios_search?.length === 0" size="m" class="m-auto">
         <img alt="no matches"
-             src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-             tuiSlot="top" />
+          src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+          tuiSlot="top" />
         <h4>Productos no encontrados en el inventario</h4>
         <span>No coincidimos con ningún producto</span>
       </tui-block-status>
@@ -173,3 +192,15 @@
   </ng-template>
 
 </section>
+<ng-template [(tuiPreviewDialog)]="open">
+  <tui-preview>
+    <tui-preview-title>{{ titles[index] }}</tui-preview-title>
+    <tui-preview-pagination [length]="length" [(index)]="index" />
+
+    <button iconStart="@tui.x" tuiIconButton tuiPreviewAction type="button" (click)="open = false">
+      Close
+    </button>
+
+    <img *polymorpheusOutlet="content[index] as src" alt="preview" [src]="src" />
+  </tui-preview>
+</ng-template>

@@ -1,4 +1,4 @@
-import { Producto, ProductoCreate } from '@/app/models/producto.models';
+import { Producto } from '@/app/models/producto.models';
 import { QuerySearchProduct } from '@/app/services/utils/querys';
 import { createAction, props } from '@ngrx/store';
 
@@ -42,7 +42,7 @@ export const loadProductosFail = createAction(
 
 export const createProductoAction = createAction(
     ActionTypes.CREATE_PRODUCTO,
-    props<{ producto: ProductoCreate }>()
+    props<{ producto: FormData }>()
 );
 
 export const createProductoSuccess = createAction(
@@ -57,7 +57,7 @@ export const createProductoFail = createAction(
 
 export const updateProductoAction = createAction(
     ActionTypes.UPDATE_PRODUCTO,
-    props<{ producto: Producto }>()
+    props<{ producto: FormData }>()
 );
 
 export const updateProductoSuccess = createAction(

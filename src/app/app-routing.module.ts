@@ -20,7 +20,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { ProductosComponent } from './pages/productos/productos.component';
-import { ProveedoresComponent } from './pages/proveedores/proveedores.component';
+
 import { ReportesComponent } from './pages/reportes/reportes.component';
 import { SettiingsComponent } from './pages/settiings/settiings.component';
 import { TiendasComponent } from './pages/tiendas/tiendas.component';
@@ -52,7 +52,7 @@ const routes: Routes = [
 			{ path: 'ventas', component: VentasComponent },
 			{ path: 'ventas/crear', component: HacerventaComponent },
 			{ path: 'productos', component: ProductosComponent },
-			{ path: 'proveedores', component: ProveedoresComponent },
+
 			{ path: 'perfil', component: PerfilComponent },
 			{ path: 'tiendas', component: TiendasComponent },
 			{ path: 'reportes', component: ReportesComponent },

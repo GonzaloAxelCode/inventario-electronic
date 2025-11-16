@@ -55,8 +55,29 @@ export class DialogcreateproductComponent {
       marca: ['Genérico', Validators.required],
       modelo: ['Genérico', Validators.required],
       categoria: [null, Validators.required],
+      imagen: [null],
     });
   }
+  previewImage: string | ArrayBuffer | null = null;
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      // Guardar el archivo en el FormGroup
+      this.productoForm.patchValue({ imagen: file });
+      this.productoForm.get('imagen')?.updateValueAndValidity();
+
+      // Previsualización
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewImage = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+
+
 
   ngOnInit() {
     this.store.select(selectCategoriaState).subscribe((state) => {
@@ -85,17 +106,29 @@ export class DialogcreateproductComponent {
 
   onSubmit() {
     if (this.productoForm.valid) {
+      const formData = new FormData();
       const nuevoProducto = this.productoForm.value;
-      this.store.dispatch(createProductoAction({
-        producto: {
-          ...nuevoProducto,
-          categoria_nombre: this.getCategoriaNombre(nuevoProducto.categoria),
-        },
 
-      }));
+      // Agregar todos los campos al FormData
+      Object.entries(nuevoProducto).forEach(([key, value]: any) => {
+        if (value !== null) {
+          // Si es un objeto (como categoria o caracteristica), convertir a JSON
+          if (typeof value === 'object' && !(value instanceof File)) {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, value);
+          }
+        }
+      });
 
+      // Agregar el nombre de la categoría
+      formData.append('categoria_nombre', this.getCategoriaNombre(nuevoProducto.categoria));
+
+      // Dispatch usando FormData directamente
+      this.store.dispatch(createProductoAction({ producto: formData }));
     }
   }
+
 
   getCategoriaNombre = (id: number): string => {
     const categoria = this.categorias.find((c) => c.id === id);
