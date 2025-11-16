@@ -155,7 +155,7 @@ export class DialogupdateproductComponent implements OnInit {
   }
 
 
-  previewImage: string | ArrayBuffer | null = URL_BASE + this.producto.imagen || null;
+  previewImage: string | ArrayBuffer | null = URL_BASE + "/" + this.producto.imagen || null;
 
   onFileSelected(event: any) {
     const file = event.target.files[0];

@@ -69,7 +69,7 @@ export class TableinventarioComponent {
   @Input() mode?: string
   @Input() cerrarDialogo!: (valor: Inventario) => void;
   value = [0, 0];
-  URL_BASE = URL_BASE
+  URL_BASE = URL_BASE + "/"
   userPermissions$ = this.store.select(selectPermissions);
   inventariosState$?: Observable<InventarioState>;
   tiendasState$?: Observable<TiendaState>

@@ -62,7 +62,7 @@ import { map, Observable, Subject } from 'rxjs';
 export class DialogcreateinventarioComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private readonly context = inject<TuiDialogContext<any>>(POLYMORPHEUS_CONTEXT);
-  URL_BASE = URL_BASE
+  URL_BASE = URL_BASE + "/"
   productSelected: Producto = {} as Producto
   tiendasState$?: Observable<TiendaState>
   userPermissions$ = this.store.select(selectPermissions);

@@ -315,7 +315,7 @@ export class HacerventaComponent implements OnInit {
           productoId: [result.producto.id,],
           stock_actual: [result.cantidad],
           producto_sku: [result.producto_sku],
-          imagen_producto: [URL_BASE + result.imagen_producto],
+          imagen_producto: [URL_BASE + "/" + result.imagen_producto],
         });
         productosArray.push(nuevoProducto);
         this.calcularTotales();
