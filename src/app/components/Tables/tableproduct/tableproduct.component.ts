@@ -110,7 +110,7 @@ export class TableproductComponent implements OnInit {
     { key: 'fechaCreacion', label: 'Fecha Creación' },
     { key: 'activo', label: 'Activo' },
   ];
-  URL_BASE = URL_BASE + "/"
+  URL_BASE = URL_BASE
   isTheSearchWasDone: boolean = false
   filteredData: any = []
   allColumnKeys = this.allColumns.map(c => c.key);
