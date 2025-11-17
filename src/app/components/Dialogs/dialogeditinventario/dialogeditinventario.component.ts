@@ -9,16 +9,18 @@ import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from
 
 
 import { Inventario } from '@/app/models/inventario.models';
-import { actualizarInventario } from '@/app/state/actions/inventario.actions';
+import { actualizarInventario, actualizarInventarioFail, actualizarInventarioSuccess } from '@/app/state/actions/inventario.actions';
 import { loadProductosAction } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAppearance } from '@taiga-ui/core';
 import { TuiDataListWrapperComponent, TuiInputNumber } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-dialogeditinventario',
@@ -66,7 +68,7 @@ export class DialogeditinventarioComponent {
   public inventario: Partial<Inventario> = this.context.data ?? {};
 
 
-  constructor(private fb: FormBuilder, private store: Store<AppState>,) {
+  constructor(private fb: FormBuilder, private store: Store<AppState>, private actions$: Actions) {
     this.inventarioFormEdit = this.fb.group({
       cantidad: [this.inventario.cantidad, [Validators.required, Validators.min(1)]],
 
@@ -77,11 +79,18 @@ export class DialogeditinventarioComponent {
 
 
   }
-
+  private destroy$ = new Subject<void>();
 
   ngOnInit() {
 
+    this.actions$.pipe(
+      ofType(actualizarInventarioSuccess, actualizarInventarioFail),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
 
+      this.store.dispatch(loadProductosAction());
+      this.context.completeWith(true);
+    });
 
   }
   async onSubmit(): Promise<void> {
@@ -94,9 +103,8 @@ export class DialogeditinventarioComponent {
         costo_venta: this.inventarioFormEdit.value.costo_venta,
       }
 
-      await this.store.dispatch(actualizarInventario({ newInventario: preparedData }));
-      await this.store.dispatch(loadProductosAction());
-      this.context.completeWith(true);
+      this.store.dispatch(actualizarInventario({ newInventario: preparedData }));
+
 
 
     }
