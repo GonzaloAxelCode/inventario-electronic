@@ -1,5 +1,5 @@
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -44,6 +44,7 @@ import { ProveedorEffects } from './state/effects/proveedor.effects';
 import { TiendaEffects } from './state/effects/tienda.effects';
 import { UserEffects } from './state/effects/user.effects';
 import { VentaEffects } from './state/effects/venta.effects';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 
 @NgModule({
@@ -77,7 +78,13 @@ import { VentaEffects } from './state/effects/venta.effects';
 			defaultLanguage: 'en',
 		}),
 		SidenavComponent,
-		TuiLoader
+		TuiLoader,
+  ServiceWorkerModule.register('ngsw-worker.js', {
+    enabled: !isDevMode(),
+    // Register the ServiceWorker as soon as the application is stable
+    // or after 30 seconds (whichever comes first).
+    registrationStrategy: 'registerWhenStable:30000'
+  })
 	],
 	providers: [
 		AuthService,
