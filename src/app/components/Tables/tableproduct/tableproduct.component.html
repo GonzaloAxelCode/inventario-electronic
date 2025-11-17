@@ -50,7 +50,7 @@
                 </form>
             </search>
 
-            <div class="rounded-lg overflow-hidden" [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos">
+            <div class="rounded-lg overflow-hidden" [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos || !!(productosState$ | async)?.loadingDelete">
                 <div
                     *ngIf="(isTheSearchWasDone ? ((productosState$ | async)?.productos_search?.length || 0) : ((productosState$ | async)?.productos?.length || 0)) > 0">
                     <div class="overflow-x-auto">
@@ -80,7 +80,9 @@
                                             <div     (click)="onSetImageProduct(producto); open = true;"
  class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
                                                 <img 
-                                                    [src]="URL_BASE + producto.imagen" 
+                                                
+                                                      [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" 
+
                                                     [alt]="producto.nombre"
                                                     class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200"
                                                     />

@@ -73,7 +73,7 @@ export class TablecategoriesComponent implements OnInit {
         if (confirm) {
 
           this.store.dispatch(deleteCategoriaAction({ id }))
-          this.alerts.open(' eliminado exitosamente.').subscribe();
+
         } else {
 
           this.alerts.open('Eliminación cancelada.').subscribe();

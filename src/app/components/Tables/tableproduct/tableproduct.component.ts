@@ -120,9 +120,16 @@ export class TableproductComponent implements OnInit {
   constructor(private store: Store<AppState>) { }
   onSetImageProduct(producto: Producto) {
 
-    this.titles = [producto.nombre || "Producto Sin Nombre"]
-    this.content = [URL_BASE + producto.imagen]
+    const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
+
+    const imagenFinal = producto?.imagen
+      ? URL_BASE + producto.imagen
+      : placeholder;
+
+    this.titles = [producto.nombre || "Producto Sin Nombre"];
+    this.content = [imagenFinal];
   }
+
   ngOnInit(): void {
 
     this.productosState$ = this.store.select(selectProductoState);
@@ -173,7 +180,7 @@ export class TableproductComponent implements OnInit {
       .subscribe((confirm) => {
         if (confirm) {
           this.store.dispatch(deleteProductoAction({ id }));
-          this.alerts.open('Producto eliminado exitosamente.').subscribe();
+
         } else {
 
           this.alerts.open('Eliminación cancelada.').subscribe();
