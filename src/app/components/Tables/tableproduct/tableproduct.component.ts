@@ -3,16 +3,18 @@ import { clearSearchProductos, deleteProductoAction, searchProductosAction } fro
 import { AppState } from '@/app/state/app.state';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { CommonModule, NgForOf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Inject, inject, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAlertService, TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiChip, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiRadio, TuiSegmented, TuiSkeleton, TuiSwitch } from '@taiga-ui/kit';
+import { TuiAlertService, TuiButton, TuiDialogService, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiChip, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiPin, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiRadio, TuiSegmented, TuiSkeleton, TuiSwitch } from '@taiga-ui/kit';
 import { map, Observable } from 'rxjs';
 
 import { Categoria } from '@/app/models/categoria.models';
+import { DialogCreateInventarioService } from '@/app/services/dialogs-services/dialog-create-inventario.service';
+import { DialogEditInventarioDetailService } from '@/app/services/dialogs-services/dialog-edit-inventario.service';
 import { DialogUpdateProductService } from '@/app/services/dialogs-services/dialog-updateproduct.service';
 import { URL_BASE } from '@/app/services/utils/endpoints';
 import { QuerySearchProduct } from '@/app/services/utils/querys';
@@ -23,7 +25,7 @@ import { generarBarcode } from '@/app/utils/barcode';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { tuiCountFilledControls } from '@taiga-ui/cdk';
 import type { TuiConfirmData } from '@taiga-ui/kit';
-import { TuiBlockStatus, TuiCardLarge, TuiSearch } from '@taiga-ui/layout';
+import { TuiBlockDetails, TuiBlockStatus, TuiCardLarge, TuiSearch } from '@taiga-ui/layout';
 import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 
 @Component({
@@ -32,12 +34,12 @@ import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy'
   imports: [
     CommonModule, ReactiveFormsModule,
     TuiBadge, TuiPreview, TuiPreviewTitle, TuiPreviewDialogDirective,
-    TuiRadio, TuiChip,
-    FormsModule,
+    TuiRadio, TuiChip, TuiButton,
+    FormsModule, TuiPin,
     TuiTable,
     TuiBlockStatus, TuiButton, TuiSkeleton, TuiCardLarge, TuiChevron,
     TuiDataListWrapper,
-    TuiFilter, TuiButton,
+    TuiFilter, TuiButton, TuiBlockStatus, TuiBlockDetails,
     TuiSegmented,
     TuiSwitch, TuiTextfield, TuiSearch, FormsModule, TuiDataListWrapper, NgForOf, TuiLoader,
     TuiSelectModule, TuiTextfieldControllerModule, TuiPagination
@@ -101,13 +103,14 @@ export class TableproductComponent implements OnInit {
   allColumns = [
     { key: 'id', label: 'ID' },
     { key: 'nombre', label: 'Nombre' },
-    { key: 'descripcion', label: 'Descripción' },
+
     { key: 'precio', label: 'Precio' },
     { key: 'categoria', label: 'Categoría' },
     { key: 'sku', label: 'SKU' },
-    { key: 'marca', label: 'Marca' },
-    { key: 'modelo', label: 'Modelo' },
+
     { key: 'fechaCreacion', label: 'Fecha Creación' },
+    { key: 'inventario', label: 'STOCK' },
+    { key: 'inventario', label: 'VENTA' },
     { key: 'activo', label: 'Activo' },
   ];
   URL_BASE = URL_BASE
@@ -117,7 +120,7 @@ export class TableproductComponent implements OnInit {
   displayedColumns = [...this.allColumnKeys];
   private readonly dialogs = inject(TuiResponsiveDialogService);
   private readonly alerts = inject(TuiAlertService);
-  constructor(private store: Store<AppState>) { }
+  constructor(private store: Store<AppState>, @Inject(TuiDialogService) private readonly dialogs2: TuiDialogService) { }
   onSetImageProduct(producto: Producto) {
 
     const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
@@ -129,7 +132,15 @@ export class TableproductComponent implements OnInit {
     this.titles = [producto.nombre || "Producto Sin Nombre"];
     this.content = [imagenFinal];
   }
-
+  getColorClass(cantidad: number): string {
+    if (cantidad >= 0 && cantidad <= 3) {
+      return 'text-red-500';
+    } else if (cantidad >= 4 && cantidad <= 10) {
+      return 'text-yellow-400';
+    } else {
+      return 'text-green-400';
+    }
+  }
   ngOnInit(): void {
 
     this.productosState$ = this.store.select(selectProductoState);
@@ -144,8 +155,11 @@ export class TableproductComponent implements OnInit {
       this.onSubmitSearch()
     });
   }
-
-
+  private readonly dialogEditInventarioService = inject(DialogEditInventarioDetailService);
+  protected showDialogEditInventario(currentInventario: any): void {
+    this.dialogEditInventarioService.open(currentInventario).subscribe((result: any) => {
+    });
+  }
   clearSearch() {
     this.store.dispatch(clearSearchProductos())
     this.isTheSearchWasDone = false
@@ -192,6 +206,22 @@ export class TableproductComponent implements OnInit {
     this.dialogService.open(producto).subscribe((result: any) => {
 
     });
+  }
+
+  private readonly dialogService2 = inject(DialogCreateInventarioService);
+  protected crearInventario(producto: Producto): void {
+    this.dialogService2.open(producto).subscribe((result: any) => {
+
+    });
+  }
+
+
+
+
+
+  verInventario(producto: Producto) {
+    console.log("Ver inventario:", producto.inventario);
+    // ir a detalle de inventario
   }
 
 

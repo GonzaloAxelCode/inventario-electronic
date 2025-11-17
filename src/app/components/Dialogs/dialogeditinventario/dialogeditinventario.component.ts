@@ -10,6 +10,7 @@ import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from
 
 import { Inventario } from '@/app/models/inventario.models';
 import { actualizarInventario } from '@/app/state/actions/inventario.actions';
+import { loadProductosAction } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -83,7 +84,7 @@ export class DialogeditinventarioComponent {
 
 
   }
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.inventarioFormEdit.valid) {
 
       const preparedData = {
@@ -93,9 +94,10 @@ export class DialogeditinventarioComponent {
         costo_venta: this.inventarioFormEdit.value.costo_venta,
       }
 
-      this.store.dispatch(actualizarInventario({ newInventario: preparedData }));
+      await this.store.dispatch(actualizarInventario({ newInventario: preparedData }));
+      await this.store.dispatch(loadProductosAction());
       this.context.completeWith(true);
-    } else {
+
 
     }
   }

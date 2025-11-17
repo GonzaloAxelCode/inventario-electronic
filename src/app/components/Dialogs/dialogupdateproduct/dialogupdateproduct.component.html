@@ -7,7 +7,7 @@
 
       <!-- Nombre -->
       <div class="flex flex-col">
-        <tui-input formControlName="nombre"  class="w-full" placeholder="Ingrese el nombre del producto">
+        <tui-input formControlName="nombre"   class="w-full" placeholder="Ingrese el nombre del producto">
           Nombre del Producto
         </tui-input>
         <tui-error *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched">
@@ -30,7 +30,8 @@
   <div class="flex flex-col col-span-2">
         <label class="mb-2">Imagen del producto</label>
         <input type="file" (change)="onFileSelected($event)" accept="image/*" />
-        <img *ngIf="previewImage" [src]="previewImage" class="mt-2 w-32 h-32 object-cover rounded" />
+        <img *ngIf="previewImage" [src]="previewImage"                    
+           [src]="this.producto?.imagen ? URL_BASE + this.producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"  class="mt-2 w-32 h-32 object-cover rounded" />
       </div>
       <div class="flex flex-col">
         
@@ -83,13 +84,26 @@
 
       <!-- Botón de envío -->
       <div class="grid w-full col-span-2">
-        <button  *ngIf="(userPermissions$ | async)?.can_update_product"  iconStart="@tui.pencil" tuiButton appearance="positive" type="submit" size="l" [disabled]="productoForm.invalid"
+        <button 
+         *ngIf="(userPermissions$ | async)?.can_update_product"
+           iconStart="@tui.pencil" tuiButton appearance="positive" 
+           type="submit" size="l" [disabled]="productoForm.invalid || loadingUpdateProducto"
           class="px-6 py-2 transition"> 
+          <span *ngIf="loadingUpdateProducto">
+        <tui-loader [showLoader]="true" />
+
+      </span>
+      <span>
           Actualizar
+      </span>
+      
         </button>
       </div>
 
     </form>
   </div>
+  
+
+
   
 </div>

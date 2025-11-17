@@ -1,35 +1,31 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiLoader, tuiLoaderOptionsProvider, TuiNumberFormat, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
-import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 
-import { TuiBadge, TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
+import { TuiBadge, TuiChip, TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
 import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 
 
-import { Producto, ProductoState } from '@/app/models/producto.models';
+import { Producto } from '@/app/models/producto.models';
 import { TiendaState } from '@/app/models/tienda.models';
 import { normalizeSku } from '@/app/services/search-services/producto-search.service';
 import { URL_BASE } from '@/app/services/utils/endpoints';
-import { createInventario } from '@/app/state/actions/inventario.actions';
+import { createInventario, createInventarioFail, createInventarioSuccess } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
 import { InventarioState } from '@/app/state/reducers/inventario.reducer';
-import { ProveedorState } from '@/app/state/reducers/proveedor.reducer';
 import { selectInventarioState } from '@/app/state/selectors/inventario.selectors';
-import { selectProductoState } from '@/app/state/selectors/producto.selectors';
-import { selectProveedorState } from '@/app/state/selectors/proveedor.selectors';
-import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
 import { selectPermissions, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { type TuiStringMatcher } from '@taiga-ui/cdk';
 import { TuiAppearance } from '@taiga-ui/core';
 import { TuiDataListWrapperComponent, TuiFilterByInputPipe, TuiInputNumber, TuiStringifyContentPipe } from '@taiga-ui/kit';
-import { map, Observable, Subject } from 'rxjs';
-
+import { injectContext } from '@taiga-ui/polymorpheus';
+import { map, Observable, Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-dialogcreateinventario',
   standalone: true,
@@ -49,7 +45,7 @@ import { map, Observable, Subject } from 'rxjs';
     TuiInputModule, TuiAppearance, TuiTable, TuiNumberFormat, TuiLoader,
 
     ReactiveFormsModule, TuiBadge,
-    TuiComboBoxModule,
+    TuiComboBoxModule, TuiChip,
     TuiDataListWrapper,
     TuiFilterByInputPipe,
     TuiStringifyContentPipe,],
@@ -61,7 +57,8 @@ import { map, Observable, Subject } from 'rxjs';
 })
 export class DialogcreateinventarioComponent implements OnInit {
   private destroy$ = new Subject<void>();
-  private readonly context = inject<TuiDialogContext<any>>(POLYMORPHEUS_CONTEXT);
+  protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Producto>>>();
+  public producto: Partial<Producto> = this.context.data ?? {};
   URL_BASE = URL_BASE + "/"
   productSelected: Producto = {} as Producto
   tiendasState$?: Observable<TiendaState>
@@ -74,32 +71,19 @@ export class DialogcreateinventarioComponent implements OnInit {
   loadingCreateInventario: boolean = false;
   tiendaUser!: number
 
-  constructor(private fb: FormBuilder, private store: Store<AppState>) {
+  constructor(private fb: FormBuilder, private store: Store<AppState>, private actions$: Actions) {
 
   }
 
   ngOnInit() {
 
 
-    this.store.select(selectProductoState).subscribe((state: ProductoState) => {
-
-      this.productos = state.productos;
-
-    });
-    this.store.select(selectProveedorState).subscribe((state: ProveedorState) => {
-      // Filtra solo proveedores activos
-      this.proveedores = state.proveedores.filter(proveedor => proveedor.activo);
-    });
-
-    this.store.select(selectTiendaState).subscribe((state: TiendaState) => {
-      this.tiendas = state.tiendas;
-    });
     this.store.select(selectInventarioState).subscribe((state: InventarioState) => {
       this.loadingCreateInventario = state.loadingCreate;
     });
     this.inventarioForm2 = this.fb.group({
-      producto: [null, Validators.required],
-      tienda: [1, Validators.required],
+      producto: [this.producto.id, Validators.required],
+
       //proveedor: [null, Validators.required],
       cantidad: [50, [Validators.required, Validators.min(1)]],
       stock_minimo: [1, [Validators.required, Validators.min(1)]],
@@ -135,22 +119,46 @@ export class DialogcreateinventarioComponent implements OnInit {
         this.productSelected = { nombre: " " } as Producto
       }
     });
+
+
+
+    this.actions$.pipe(
+      ofType(createInventarioSuccess, createInventarioFail),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+
+      this.context.completeWith(true);
+    });
   }
 
 
 
 
+  protected titles = ["Producto Sin Imagen"]
+  protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
+  onSetImageProduct(producto: Producto) {
 
+    const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
+
+    const imagenFinal = producto?.imagen
+      ? URL_BASE + producto.imagen
+      : placeholder;
+
+    this.titles = [producto.nombre || "Producto Sin Nombre"];
+    this.content = [imagenFinal];
+  }
   onSubmit(): void {
     if (this.inventarioForm2.valid) {
       const preparedData = {
         ...this.inventarioForm2.value,
-        producto: this.inventarioForm2.value.producto.id,
+        producto: this.producto.id,
         tienda: this.tiendaUser,
+
         //proveedor: this.inventarioForm2.value.proveedor.id,
       }
+      console.log(preparedData)
       this.store.dispatch(createInventario({ inventario: preparedData }));
-      this.context.completeWith(null); // o algún dato
+
 
     }
   }

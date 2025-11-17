@@ -2,21 +2,23 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiExpand, TuiGroup, TuiHintUnstyledComponent, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiExpand, TuiGroup, TuiHintUnstyledComponent, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
 
 import { Categoria } from '@/app/models/categoria.models';
-import { Producto } from '@/app/models/producto.models';
+import { Producto, ProductoState } from '@/app/models/producto.models';
 import { URL_BASE } from '@/app/services/utils/endpoints';
 import { updateProductoAction, updateProductoFail, updateProductoSuccess } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectCategoriaState } from '@/app/state/selectors/categoria.selectors';
+import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { Actions, ofType } from '@ngrx/effects';
 import { TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
 import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
 import { Subject, takeUntil } from 'rxjs';
+import { DialogeditinventarioComponent } from '../dialogeditinventario/dialogeditinventario.component';
 
 
 @Component({
@@ -29,8 +31,8 @@ import { Subject, takeUntil } from 'rxjs';
     TuiError,
     TuiButton,
     TuiDataListWrapper,
-    TuiDataList,
-    TuiTextfield,
+    TuiDataList, TuiLoader,
+    TuiTextfield, DialogeditinventarioComponent,
     FormsModule, TuiComboBoxModule,
     TuiSelectModule, TuiTabs, TuiTextfieldControllerModule, TuiExpand, TuiGroup, TuiHintUnstyledComponent
   ],
@@ -46,12 +48,12 @@ export class DialogupdateproductComponent implements OnInit {
   selectedCategory: any;
   userPermissions$ = this.store.select(selectPermissions);
   protected expanded = false;
-
+  loadingUpdateProducto: boolean = false;
   productoForm: FormGroup;
   categorias: Categoria[] = [];
   marcas = ['Genérico', 'Samsung', 'Apple', 'Xiaomi', 'Huawei'];
   modelos = ['Genérico', 'Modelo A', 'Modelo B', 'Modelo C'];
-
+  URL_BASE = URL_BASE
   private destroy$ = new Subject<void>();
   constructor(private fb: FormBuilder, private store: Store<AppState>, private actions$: Actions) {
     this.productoForm = this.fb.group({
@@ -61,11 +63,16 @@ export class DialogupdateproductComponent implements OnInit {
       marca: [this.producto.marca || 'Genérico', Validators.required], // Valor por defecto
       modelo: [this.producto.modelo || 'Genérico', Validators.required], // Valor por defecto categoria: [this.producto.categoria, Validators.required],
       categoria: [this.producto.categoria, Validators.required],
-      imagen: [this.producto.imagen],
+      imagen: [this.producto?.imagen
+        ? URL_BASE + this.producto.imagen
+        : "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png"],
     });
   }
 
   ngOnInit() {
+    this.store.select(selectProductoState).subscribe((state: ProductoState) => {
+      this.loadingUpdateProducto = state.loadingUpdate;
+    });
     this.store.select(selectCategoriaState).subscribe((state) => {
       this.categorias = state.categorias;
     });
@@ -85,7 +92,11 @@ export class DialogupdateproductComponent implements OnInit {
   onSubmit() {
     if (this.productoForm.valid) {
       const formData = new FormData();
-      const productoActualizado = this.productoForm.value;
+
+      const productoActualizado = {
+        ...this.productoForm.value,
+        nombre: this.productoForm.value.nombre?.trim()
+      };
 
       Object.entries(productoActualizado).forEach(([key, value]: any) => {
 

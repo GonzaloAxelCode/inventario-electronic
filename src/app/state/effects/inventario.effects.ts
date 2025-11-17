@@ -150,6 +150,24 @@ export class InventarioEffects {
         )
     );
 
+    actualizarInventarioWithProductsEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(actualizarInventario),
+            exhaustMap(({ newInventario }) =>
+                this.inventarioService.actualizarInventario(newInventario).pipe(
+                    map(() => {
+
+                        return actualizarInventarioSuccess({ newInventario });
+                    }),
+                    catchError(error => {
+                        this.alertService.showError('Error al actualizar el inventario').subscribe();
+                        return of(actualizarInventarioFail({ error }));
+                    })
+                )
+            )
+        )
+    );
+
     eliminarInventarioEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(eliminarInventarioAction),

@@ -71,7 +71,7 @@
       </form>
     </search>
 
-    <div class="rounded-lg" [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario">
+    <div class="rounded-lg" [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario || !!(inventariosState$ | async)?.loadingDelete">
 
       <!-- Caso 2: mostrar tabla si hay inventarios o inventarios_search -->
       <div
@@ -97,7 +97,8 @@
                 <div class="flex justify-left items-center py-2">
                   <div (click)="onSetImageProduct(inventario); open = true;"
                     class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
-                    <img [src]="URL_BASE + inventario.imagen_producto"
+                    <img
+                      [src]="inventario?.imagen_producto ? URL_BASE + inventario.imagen_producto : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
                       [alt]="inventario.imagen_producto || 'Imagen del producto'"
                       class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200" />
 

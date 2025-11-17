@@ -95,8 +95,6 @@ export const actualizarInventarioFail = createAction(
 
 
 
-
-
 export const searchInventarios = createAction(
     InventarioActionTypes.SEARCH_INVENTARIOS,
     props<{ inventarios: Inventario[], query: Partial<QuerySearchInventario> }>()

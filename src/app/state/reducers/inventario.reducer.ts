@@ -164,17 +164,17 @@ export const inventarioReducer = createReducer(
 
     on(eliminarInventarioAction, state => ({
         ...state,
-        loading: true
+        loadingDelete: true
     })),
     on(eliminarInventarioSuccess, (state, { inventarioId }) => ({
         ...state,
         inventarios: state.inventarios.filter(i => inventarioId !== i.id),
-        loading: false
+        loadingDelete: false
     })),
     on(eliminarInventarioFail, (state, { error }) => ({
         ...state,
         errors: error,
-        loading: false
+        loadingDelete: false
     })),
     //search
     on(searchInventarios, state => ({

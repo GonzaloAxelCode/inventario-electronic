@@ -242,8 +242,14 @@ export class TableinventarioComponent {
   protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
   onSetImageProduct(inventario: Inventario) {
 
-    this.titles = [inventario.producto_nombre || "Producto Sin Nombre"]
-    this.content = [URL_BASE + inventario.imagen_producto]
+    const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
+
+    const imagenFinal = inventario?.imagen_producto
+      ? URL_BASE + inventario.imagen_producto
+      : placeholder;
+
+    this.titles = [inventario.producto_nombre || "Producto Sin Nombre"];
+    this.content = [imagenFinal];
   }
   mostrarAdvertencia(name: any) {
     return name?.includes("(Delete)")

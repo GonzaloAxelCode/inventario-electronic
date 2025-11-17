@@ -3,26 +3,37 @@
     <div class="flex flex-wrap w-full flex-1 gap-3">
       <div class="col-span-2 flex w-full justify-start gap-3">
 
-  <div class="flex ">
+  <div class="flex  gap-3">
         <div class="text-center">
           <div class="flex justify-center items-center">
             <div
-              class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
+              class="w-36 h-36 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
 
 
-              <img [src]="URL_BASE + productSelected.imagen"
+              <img                       [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
                 class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200" />
 
             </div>
           </div>
         </div>
-        </div>
-        <tui-combo-box formControlName="producto" class="w-full" [stringify]="stringify">
-          CODIGO DE PRODUCTO <tui-data-list-wrapper *tuiDataList [itemContent]="stringify | tuiStringifyContent"
-            [items]="productos | tuiFilterByInput: matcherProduct" />
 
-        </tui-combo-box>
-      
+
+        <div>
+          <p><b>Nombre:  </b> {{ producto.nombre }}</p>
+          <p><b>Categoria:  </b> {{ producto.categoria_nombre }}</p>
+
+          <p> <b>Codigo:  </b>
+<tui-chip iconStart="@tui.scan-barcode" size="s">
+
+                                                {{ producto.sku }}
+
+                                            </tui-chip>
+          </p> 
+        </div>
+
+        </div>
+
+
 
         
       </div>

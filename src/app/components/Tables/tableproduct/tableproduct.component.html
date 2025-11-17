@@ -19,8 +19,8 @@
                 <form [formGroup]="form" (submit)="onSubmitSearch()">
                     <fieldset tuiTextfieldSize="s">
                         <tui-textfield iconStart="@tui.search">
-                            <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre o descripción"
-                                tuiTextfield />
+                            <input tuiTheme="ligth" formControlName="nombre"
+                                placeholder="Buscar por nombre o descripción" tuiTextfield />
                         </tui-textfield>
                         <tui-textfield iconStart="@tui.search">
                             <input tuiTheme="ligth" formControlName="sku" placeholder="Buscar por Código"
@@ -31,8 +31,7 @@
                             Categoria
                             <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
                         </tui-select>
-                        <button size="s" appearance="textfield" tuiButton type="submit"
-                            (click)="onSubmitSearch()"
+                        <button size="s" appearance="textfield" tuiButton type="submit" (click)="onSubmitSearch()"
                             [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null && !form.value.sku">
                             Buscar
                         </button>
@@ -50,7 +49,8 @@
                 </form>
             </search>
 
-            <div class="rounded-lg overflow-hidden" [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos || !!(productosState$ | async)?.loadingDelete">
+            <div class="rounded-lg overflow-hidden"
+                [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos || !!(productosState$ | async)?.loadingDelete">
                 <div
                     *ngIf="(isTheSearchWasDone ? ((productosState$ | async)?.productos_search?.length || 0) : ((productosState$ | async)?.productos?.length || 0)) > 0">
                     <div class="overflow-x-auto">
@@ -60,103 +60,150 @@
                                     <th tuiTh class="text-center">Imagen</th>
                                     <th tuiTh *ngIf="displayedColumns.includes('sku')">SKU</th>
                                     <th tuiTh *ngIf="displayedColumns.includes('nombre')">Nombre</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('descripcion')">Descripción</th>
+
                                     <th tuiTh *ngIf="displayedColumns.includes('categoria')">Categoría</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('marca')">Marca</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('modelo')">Modelo</th>
+
                                     <th tuiTh *ngIf="displayedColumns.includes('fechaCreacion')">Fecha Creación</th>
-                                    
+                                    <th tuiTh *ngIf="displayedColumns.includes('inventario')">STOCK</th>
+                                    <th tuiTh *ngIf="displayedColumns.includes('inventario')">VENTA</th>
+
                                     <th tuiTh class="text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr
-                                    *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)"
+                                <tr *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)"
                                     class="transition-colors">
-                                    
+
                                     <!-- Columna de imagen mejorada -->
                                     <td tuiTd class="text-center">
                                         <div class="flex justify-center items-center py-2">
-                                            <div     (click)="onSetImageProduct(producto); open = true;"
- class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
-                                                <img 
-                                                
-                                                      [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" 
-
+                                            <div (click)="onSetImageProduct(producto); open = true;"
+                                                class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
+                                                <img [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
                                                     [alt]="producto.nombre"
-                                                    class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200"
-                                                    />
-                                                    
+                                                    class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200" />
+
                                             </div>
                                         </div>
                                     </td>
 
                                     <td tuiTd *ngIf="displayedColumns.includes('sku')">
                                         <span class="font-mono text-sm">
-                                        
- <tui-chip
- 
-        iconStart="@tui.scan-barcode"
-        size="s"
-    >
-    
-                                            {{ producto.sku }}
-                                            
-    </tui-chip>
-    
-      
-    
+
+                                            <tui-chip iconStart="@tui.scan-barcode" size="s">
+
+                                                {{ producto.sku }}
+
+                                            </tui-chip>
+
+
+
 
                                         </span>
-                                        
+
                                     </td>
                                     <td tuiTd *ngIf="displayedColumns.includes('nombre')">
                                         <span class="font-semibold">{{ producto.nombre }}</span>
                                     </td>
-                                    <td tuiTd *ngIf="displayedColumns.includes('descripcion')">
-                                        <span class="text-sm line-clamp-2">{{ producto.descripcion }}</span>
-                                    </td>
+
                                     <td tuiTd *ngIf="displayedColumns.includes('categoria')">
-                                        <p  *ngIf="!mostrarAdvertencia(producto.categoria_nombre)">{{ producto.categoria_nombre }}</p>
+                                        <p *ngIf="!mostrarAdvertencia(producto.categoria_nombre)">{{
+                                            producto.categoria_nombre }}</p>
                                         <p *ngIf="mostrarAdvertencia(producto.categoria_nombre)">
-  ⚠️ Urgente: Asignar una nueva categoría
-                                    </p>
+                                            ⚠️ Urgente: Asignar una nueva categoría
+                                        </p>
 
                                     </td>
 
 
-                                    <td tuiTd *ngIf="displayedColumns.includes('marca')">{{ producto.marca }}</td>
-                                    <td tuiTd *ngIf="displayedColumns.includes('modelo')">{{ producto.modelo }}</td>
+
                                     <td tuiTd *ngIf="displayedColumns.includes('fechaCreacion')">
                                         {{ producto.fecha_creacion | date:'dd/MM/yyyy' }}
                                     </td>
-                                    
+
+                                    <td tuiTd *ngIf="displayedColumns.includes('inventario')" class="">
+
+                                        <!-- Si NO tiene inventario -->
+                                        <ng-container *ngIf="!producto.is_inventario">
+                                            <div tuiBlockDetails>
+                                                <span class="-translate-y-1" [ngClass]="'text-black dark:text-white'">
+                                                    0
+                                                </span>
+                                            </div>
+                                        </ng-container>
+
+                                        <!-- Si SI tiene inventario -->
+                                        <ng-container *ngIf="producto.is_inventario">
+                                            <div tuiBlockDetails class="text-center flex">
+                                                <span class="-translate-y-1"
+                                                    [ngClass]="getColorClass(producto.inventario?.cantidad || 0)">
+                                                    {{ producto.inventario?.cantidad }}
+                                                </span>
+
+                                            </div>
+                                        </ng-container>
+
+                                    </td>
+
+                                    <td tuiTd *ngIf="displayedColumns.includes('inventario')" class="text-center">
+                                        <div class="flex gap-2 justify-center">
+
+
+                                            <ng-container *ngIf="!producto.is_inventario" class="text-center">
+
+
+                                                <button appearance="primary-grayscale" iconStart="@tui.plus" tuiButton
+                                                    tuiButtonVertical type="button" class=""
+                                                    (click)="crearInventario(producto)">
+                                                    Crear Inventario
+                                                </button>
+
+
+
+                                            </ng-container>
+                                            <ng-container *ngIf="producto.is_inventario">
+
+                                                <div tuiBlockDetails>
+
+                                                    {{ producto.inventario?.costo_venta | currency:'PEN':'S/ ': '1.2-2'
+                                                    }}
+
+                                                </div>
+
+                                            </ng-container>
+                                        </div>
+
+
+                                    </td>
+
                                     <td tuiTd>
                                         <div class="flex gap-2 justify-center">
-                                            <button 
-                                                appearance="positive" 
-                                                iconStart="@tui.pencil" 
-                                                tuiButton 
-                                                    tuiButtonVertical
 
-                                                type="button" 
-                                                (click)="showDialogUpdate(producto)" 
+                                            <!-- BOTÓN EDITAR -->
+                                            <button appearance="positive" iconStart="@tui.pencil" tuiButton
+                                                tuiButtonVertical type="button" (click)="showDialogUpdate(producto)"
                                                 [disabled]="!(userPermissions$ | async)?.can_update_product">
                                                 Editar
                                             </button>
-                                            <button 
-                                                [disabled]="!(userPermissions$ | async)?.can_delete_product" 
-                                                [appearance]="(userPermissions$ | async)?.can_delete_product ? 'error':'secondary-grayscale'"
-                                                iconStart="@tui.trash" 
-                                                tuiButton 
-                                                    tuiButtonVertical
 
-                                                type="button"
+                                            <!-- BOTÓN ELIMINAR -->
+                                            <button [disabled]="!(userPermissions$ | async)?.can_delete_product"
+                                                [appearance]="(userPermissions$ | async)?.can_delete_product ? 'error' : 'secondary-grayscale'"
+                                                iconStart="@tui.trash" tuiButton tuiButtonVertical type="button"
                                                 (click)="onDeleteProducto(producto.id)">
                                                 Eliminar
                                             </button>
+                                            <button *ngIf="!!(userPermissions$ | async)?.can_update_inventory || !!(userPermissions$ | async)?.can_modify_inventory" 
+                                                iconStart="@tui.pencil" tuiButton appearance="textfield" type="submit"
+                                                size="s" tuiButtonVertical class="px-6 py-2 transition"
+                                                (click)="showDialogEditInventario(producto.inventario)">
+                                                Actualizar Inventario
+                                            </button>
+
+
                                         </div>
                                     </td>
+
                                 </tr>
                             </tbody>
                         </table>
@@ -179,25 +226,12 @@
 <ng-template [(tuiPreviewDialog)]="open">
     <tui-preview>
         <tui-preview-title>{{ titles[index] }}</tui-preview-title>
-        <tui-preview-pagination
-            [length]="length"
-            [(index)]="index"
-        />
- 
-        <button
-            iconStart="@tui.x"
-            tuiIconButton
-            tuiPreviewAction
-            type="button"
-            (click)="open = false"
-        >
+        <tui-preview-pagination [length]="length" [(index)]="index" />
+
+        <button iconStart="@tui.x" tuiIconButton tuiPreviewAction type="button" (click)="open = false">
             Close
         </button>
- 
-        <img
-            *polymorpheusOutlet="content[index] as src"
-            alt="preview"
-            [src]="src"
-        />
+
+        <img *polymorpheusOutlet="content[index] as src" alt="preview" [src]="src" />
     </tui-preview>
 </ng-template>

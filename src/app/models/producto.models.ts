@@ -1,3 +1,5 @@
+import { Inventario } from "./inventario.models";
+
 export interface Producto {
     id: number,
     nombre: string;
@@ -13,6 +15,8 @@ export interface Producto {
     categoria_nombre?: string
     date_created?: any
     imagen: string;
+    is_inventario?: boolean
+    inventario?: Inventario | null
 }
 
 export type ProductoCreate = Omit<Producto,
