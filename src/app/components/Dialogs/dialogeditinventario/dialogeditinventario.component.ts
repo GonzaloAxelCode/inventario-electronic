@@ -89,6 +89,7 @@ export class DialogeditinventarioComponent {
     ).subscribe(() => {
 
       this.store.dispatch(loadProductosAction());
+
       this.context.completeWith(true);
     });
 

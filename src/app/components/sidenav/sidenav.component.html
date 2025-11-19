@@ -18,9 +18,13 @@
           <tui-icon icon="home" class="text-blue-500"></tui-icon> <span>Dashboard</span>
         </a>
            <!-- Ventas -->
-        <a (click)="onClose()" routerLink="/app/ventas" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
+        <a (click)="onClose()" routerLink="/app/ventas" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
           class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
           <tui-icon icon="shopping-cart" class="text-yellow-500"></tui-icon> <span>Ventas</span>
+        </a>
+          <a (click)="onClose()" routerLink="/app/ventas/crear" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
+          class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+          <tui-icon icon="badge-dollar-sign" class="text-yellow-500"></tui-icon> <span>Hacer Venta</span>
         </a>
         <!-- Productos -->
         <a (click)="onClose()" routerLink="/app/productos" routerLinkActive="bg-gray-300  dark:bg-neutral-700"

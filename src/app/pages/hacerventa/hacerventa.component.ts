@@ -4,8 +4,8 @@
 import { BarcodeScannerComponent } from "@/app/components/bardcode-scanner/bardcode-scanner.component";
 import { Cliente } from "@/app/models/cliente.models";
 import { Inventario } from '@/app/models/inventario.models';
+import { Producto } from "@/app/models/producto.models";
 import { ConsultaService } from '@/app/services/consultas.service';
-import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { normalizeSku } from "@/app/services/search-services/producto-search.service";
 import { URL_BASE } from "@/app/services/utils/endpoints";
@@ -23,7 +23,7 @@ import { Store } from '@ngrx/store';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiExpand, TuiIcon, TuiLoader, TuiTextfield, TuiTitle } from '@taiga-ui/core';
-import { TuiCheckbox, TuiCopy, TuiDataListWrapper, TuiItemsWithMore, TuiRadio, TuiStepper } from '@taiga-ui/kit';
+import { TuiCheckbox, TuiCopy, TuiDataListWrapper, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiStepper } from '@taiga-ui/kit';
 import { TuiAppBar, TuiCardLarge, TuiCell, TuiHeader } from '@taiga-ui/layout';
 import { TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { catchError, finalize, map, Observable, of, timeout } from 'rxjs';
@@ -41,7 +41,7 @@ import { CajaComponent } from "../caja/caja.component";
     FormsModule,
     TuiAppBar, CajaComponent,
     TuiTextfield,
-    TuiInputModule,
+    TuiInputModule, TuiInputNumber,
     TuiButton, BarcodeScannerComponent,
     TuiAppearance, TuiIcon,
     TuiDataList, AsyncPipe, NgForOf,
@@ -104,6 +104,7 @@ export class HacerventaComponent implements OnInit {
   userId!: number;
   inventarios!: Inventario[]
   clientes!: Cliente[]
+  URL_BASE = URL_BASE
   is_client_exists: boolean = false
   clienteSelected!: Cliente
   // Esta función se ejecuta cuando el escáner detecta un código
@@ -437,8 +438,20 @@ export class HacerventaComponent implements OnInit {
     this.productosFormArray.removeAt(index);
     this.calcularTotales();
   }
-  private readonly dialogServiceVentaDetail = inject(DialogVentaDetailService);
 
+  protected titles = ["Producto Sin Imagen"]
+  protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
+  onSetImageProduct(producto: Producto) {
+
+    const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
+
+    const imagenFinal = producto?.imagen
+      ? URL_BASE + producto.imagen
+      : placeholder;
+
+    this.titles = [producto.nombre || "Producto Sin Nombre"];
+    this.content = [imagenFinal];
+  }
 }
 
 
@@ -467,4 +480,7 @@ export function documentoValidator(tipoControl: string): ValidatorFn {
 
     return null; // ✅ válido
   };
+
+
+
 }

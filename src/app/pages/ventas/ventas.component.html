@@ -1,93 +1,91 @@
 <div class="m-6">
 
 
-<div class="flex gap-2" >
-    <a routerLink="/app/ventas/crear"> <button  iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical
-        type="button" class="my-5 pr-3 tui-shadow-popup">
+  <div class="flex gap-2">
 
-        Crear una venta
-
-
-      </button> </a>
 
   </div>
 
 
-<section [tuiSkeleton]="!!(ventasState$ | async)?.loadingLoadVentas" >
-  
-  <tui-block-status *ngIf="(ventasState$ | async)?.ventas?.length === 0 && !(ventasState$ | async)?.loadingLoadVentas else tabla"
-     size="m" class="m-auto">
-        <img alt="survived"
-            src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-            tuiSlot="top" />
+  <section [tuiSkeleton]="!!(ventasState$ | async)?.loadingLoadVentas">
 
-        <h4>Aun no cuentas con ventas</h4>
+    <tui-block-status
+      *ngIf="(ventasState$ | async)?.ventas?.length === 0 && !(ventasState$ | async)?.loadingLoadVentas else tabla"
+      size="m" class="m-auto">
+      <img alt="survived"
+        src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+        tuiSlot="top" />
 
-        <span>Empieza hacer tu primera venta</span>
-        
-      
+      <h4>Aun no cuentas con ventas</h4>
+
+      <span>Empieza hacer tu primera venta</span>
+
+
     </tui-block-status>
 
 
 
 
-  <ng-template #tabla>
+    <ng-template #tabla>
 
-    <search tuiSearch class="pb-4">
-      <div class="mb-4">
-        <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range">
-          Range
-        </tui-input-date-range>
-      </div>
-      <form [formGroup]="form" (submit)="onSubmitSearch()">
-        <fieldset tuiTextfieldSize="s">
-          <tui-textfield iconStart="@tui.search">
-            <input tuiTheme="ligth" formControlName="nombre_cliente" placeholder="Buscar nombre cliente" tuiTextfield />
-          </tui-textfield>
-         
-        
-
-          <tui-select class="w-44" formControlName="metodo_pago">
-            Metodo de Pago
-            <select placeholder="Metodo pago" tuiSelect [items]="metodos_pago"></select>
-          </tui-select>
-
-          <tui-select class="w-44" formControlName="tipo_comprobante">
-            Tipo Comprobante
-            <select placeholder="Comprobante" tuiSelect [items]="tipoComprobantes"></select>
-          </tui-select>
+      <search tuiSearch class="pb-4">
+        <div class="mb-4">
+          <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range">
+            Range
+          </tui-input-date-range>
+        </div>
+        <form [formGroup]="form" (submit)="onSubmitSearch()">
+          <fieldset tuiTextfieldSize="s">
+            <tui-textfield iconStart="@tui.search">
+              <input tuiTheme="ligth" formControlName="nombre_cliente" placeholder="Buscar nombre cliente"
+                tuiTextfield />
+            </tui-textfield>
 
 
-          <tui-textfield iconStart="@tui.search">
-            <input tuiTheme="ligth" formControlName="numero_comprobante" placeholder=" Numero Comprobante "
-              tuiTextfield />
-          </tui-textfield>
-     
-          <tui-textfield iconStart="@tui.search">
-            <input tuiTheme="ligth" formControlName="numero_documento_cliente" placeholder="Dni o Ruc" tuiTextfield />
-          </tui-textfield>
-          <button size="s" appearance="textfield" tuiButton type="submit" (click)="onSubmitSearch()">
-            Buscar
-          </button>
-        </fieldset>
-        <fieldset>
+
+            <tui-select class="w-44" formControlName="metodo_pago">
+              Metodo de Pago
+              <select placeholder="Metodo pago" tuiSelect [items]="metodos_pago"></select>
+            </tui-select>
+
+            <tui-select class="w-44" formControlName="tipo_comprobante">
+              Tipo Comprobante
+              <select placeholder="Comprobante" tuiSelect [items]="tipoComprobantes"></select>
+            </tui-select>
 
 
-          Resultados: {{((ventasState$ | async)?.count )}}
-          <hr />
+            <tui-textfield iconStart="@tui.search">
+              <input tuiTheme="ligth" formControlName="numero_comprobante" placeholder=" Numero Comprobante "
+                tuiTextfield />
+            </tui-textfield>
+
+            <tui-textfield iconStart="@tui.search">
+              <input tuiTheme="ligth" formControlName="numero_documento_cliente" placeholder="Dni o Ruc" tuiTextfield />
+            </tui-textfield>
+            <button size="s" appearance="textfield" tuiButton type="submit" (click)="onSubmitSearch()">
+              Buscar
+            </button>
+          </fieldset>
+          <fieldset>
 
 
-          <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
-            (click)="clearSearch()">
-            Limpiar {{ count() ? '(' + count() + ')' : '' }}
-          </button>
+            Resultados: {{((ventasState$ | async)?.count )}}
+            <hr />
 
-        </fieldset>
-      </form>
-    </search>
-    <tui-loader [overlay]="true" [showLoader]="!!(ventasState$ | async)?.loadingSearch ">
-    
-        <table   *ngIf="((ventasState$ | async)?.search_ventas_found) === '' || ((ventasState$ | async)?.search_ventas_found === 'ventas_found') " tuiTable size="s" class=" w-full pt-3" [columns]="allColumnKeys">
+
+            <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
+              (click)="clearSearch()">
+              Limpiar {{ count() ? '(' + count() + ')' : '' }}
+            </button>
+
+          </fieldset>
+        </form>
+      </search>
+      <tui-loader [overlay]="true" [showLoader]="!!(ventasState$ | async)?.loadingSearch ">
+
+        <table
+          *ngIf="((ventasState$ | async)?.search_ventas_found) === '' || ((ventasState$ | async)?.search_ventas_found === 'ventas_found') "
+          tuiTable size="s" class=" w-full pt-3" [columns]="allColumnKeys">
           <thead>
             <tr>
               <th tuiTh>ID</th>
@@ -99,9 +97,10 @@
               <th tuiTh>Acciones</th>
             </tr>
           </thead>
-          <tbody >
-            <tr   *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas)">
-              
+          <tbody>
+            <tr
+              *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas)">
+
               <td tuiTd>{{venta.id}}</td>
               <td tuiTd>
                 <div *ngFor="let productos of venta.productos">
@@ -160,9 +159,10 @@
           <tui-pagination [index]="(ventasState$ | async)?.index_page" [length]="(ventasState$ | async)?.length_pages"
             (indexChange)="goToPage($event)" />
         </div>
-        
-    </tui-loader>
 
-  </ng-template>
+      </tui-loader>
 
-</section></div>
+    </ng-template>
+
+  </section>
+</div>

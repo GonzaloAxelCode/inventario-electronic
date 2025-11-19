@@ -9,3 +9,21 @@ div[tuiCell] {
         padding-right: 0;
         box-shadow: none;
 }
+.input-select-cantidad {
+
+
+// En tu archivo .scss del componente
+::ng-deep tui-select {
+  .t-input {
+    font-size: 18px !important;
+    
+    padding-top: 4px !important;
+    padding-bottom: 8px !important;
+    line-height: 1 !important;
+    
+  
+  }
+}
+
+
+}

@@ -36,7 +36,8 @@
 
     <!-- Botón -->
     <div *ngIf="(userPermissions$ | async)?.can_modify_inventory" class="md:col-span-2 flex justify-end">
-      <button tuiButton size="m" type="submit" appearance="positive" [disabled]="inventarioFormEdit.invalid">
+      <button tuiButton size="m" type="submit"
+       appearance="positive" [disabled]="inventarioFormEdit.invalid">
         Actualizar Inventario
       </button>
     </div>
