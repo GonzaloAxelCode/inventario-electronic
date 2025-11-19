@@ -4,7 +4,6 @@
 import { BarcodeScannerComponent } from "@/app/components/bardcode-scanner/bardcode-scanner.component";
 import { Cliente } from "@/app/models/cliente.models";
 import { Inventario } from '@/app/models/inventario.models';
-import { Producto } from "@/app/models/producto.models";
 import { ConsultaService } from '@/app/services/consultas.service';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { normalizeSku } from "@/app/services/search-services/producto-search.service";
@@ -316,7 +315,7 @@ export class HacerventaComponent implements OnInit {
           productoId: [result.producto.id,],
           stock_actual: [result.cantidad],
           producto_sku: [result.producto_sku],
-          imagen_producto: [URL_BASE + "/" + result.imagen_producto],
+          imagen_producto: [result.imagen_producto ? URL_BASE + result.imagen_producto : "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png"],
         });
         productosArray.push(nuevoProducto);
         this.calcularTotales();
@@ -439,18 +438,16 @@ export class HacerventaComponent implements OnInit {
     this.calcularTotales();
   }
 
-  protected titles = ["Producto Sin Imagen"]
-  protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
-  onSetImageProduct(producto: Producto) {
+
+  onSetImageProduct(img: any) {
 
     const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
 
-    const imagenFinal = producto?.imagen
-      ? URL_BASE + producto.imagen
+    const imagenFinal = img == null
+      ? URL_BASE + img
       : placeholder;
-
-    this.titles = [producto.nombre || "Producto Sin Nombre"];
-    this.content = [imagenFinal];
+    console.log("Img", img)
+    return imagenFinal;
   }
 }
 

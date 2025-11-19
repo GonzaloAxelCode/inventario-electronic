@@ -48,8 +48,8 @@
                     </div>
                 </div>
             </div>
-            <app-barcode-scanner (barcodeScanned)="onBarcodeScanned($event)">
-            </app-barcode-scanner>
+            <!-- <app-barcode-scanner (barcodeScanned)="onBarcodeScanned($event)">
+            </app-barcode-scanner>-->
             <!-- Contenido principal -->
             <div class="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-0 h-[calc(100vh-180px)]">
 
@@ -76,34 +76,31 @@
                             class="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 flex items-center justify-between  transition-colors">
 
                             <div class="flex items-center gap-4 flex-1">
-                                <!-- Cantidad -->
-                                <img alt="">
-                                <div class="text-left">
-                                    <div class="flex justify-left items-left py-2">
-                                        <div
-                                            class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
-                                            <img src="{{  'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'}}"
-                                                class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200" />
-
-                                        </div>
+                                <!-- imagen -->
+                                <div class="flex justify-left items-left py-2">
+                                    <div
+                                        class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
+                                        <img [src]="item.get('imagen_producto')?.value" alt="Imagen del producto"
+                                            class="w-full h-full object-cover" />
                                     </div>
                                 </div>
-<div class="flex flex-col input-select-cantidad  ">
-    
 
-                                  <tui-select formControlName="cantidad_final" class="w-24" tuiTextfieldSize="l">
-                                    
-  <tui-data-list *tuiDataList>
-    <button *ngFor="let cantidad of arrayCantidades" class="text-md" tuiOption type="button" 
-      [value]="cantidad">
-      {{ cantidad }}
-    </button>
-  </tui-data-list>
-</tui-select>
+                                <div class="flex flex-col input-select-cantidad  ">
 
-                         
-</div>
-       
+
+                                    <tui-select formControlName="cantidad_final" class="w-24" tuiTextfieldSize="l">
+
+                                        <tui-data-list *tuiDataList>
+                                            <button *ngFor="let cantidad of arrayCantidades" class="text-md" tuiOption
+                                                type="button" [value]="cantidad">
+                                                {{ cantidad }}
+                                            </button>
+                                        </tui-data-list>
+                                    </tui-select>
+
+
+                                </div>
+
 
                                 <!-- Info producto -->
                                 <div class="flex-1">
@@ -121,8 +118,9 @@
                                 <!-- Precio -->
                                 <div class="text-right">
                                     <p class="text-2xl font-bold text-black dark:text-white">
-                                        {{ ((+item.get('costo_venta')?.value || 0) * (+item.get('cantidad_final')?.value || 0)) | tuiAmount: 'S/.' : 'left' | async }} 
-                                        
+                                        {{ ((+item.get('costo_venta')?.value || 0) * (+item.get('cantidad_final')?.value
+                                        || 0)) | tuiAmount: 'S/.' : 'left' | async }}
+
                                     </p>
                                 </div>
 
