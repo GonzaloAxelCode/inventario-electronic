@@ -137,6 +137,7 @@ export const inventarioReducer = createReducer(
             .sort((a, b) => Date.parse(b.date_created) - Date.parse(a.date_created)),
         loading: false,
     })),
+
     on(actualizarInventarioFail, (state, { error }) => {
         console.log(error)
         return {

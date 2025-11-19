@@ -23,6 +23,8 @@ export enum ActionTypes {
     SEARCH_PRODUCTOS_SUCCESS = 'SEARCH_PRODUCTOS_SUCCESS',
     SEARCH_PRODUCTOS_FAIL = 'SEARCH_PRODUCTOS_FAIL',
     CLEAR_SEARCH_PRODUCTOS = 'CLEAR_SEARCH_PRODUCTOS',
+
+    UPDATE_INVENTARIO_WITHPRODUCTS = 'UPDATE_INVENTARIO_WITHPRODUCTS'
 }
 
 export const loadProductosAction = createAction(
@@ -118,4 +120,9 @@ export const clearSearchProductos = createAction(
     ActionTypes.CLEAR_SEARCH_PRODUCTOS
 );
 
+
+export const actualizarInventarioWithProductsSuccess = createAction(
+    ActionTypes.UPDATE_INVENTARIO_WITHPRODUCTS,
+    props<{ newInventario: any, idProduct: any }>()
+);
 

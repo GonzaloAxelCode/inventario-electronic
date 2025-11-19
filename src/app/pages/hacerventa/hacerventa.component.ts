@@ -32,9 +32,9 @@ import { CajaComponent } from "../caja/caja.component";
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule,
     TuiCheckbox,
-    TuiStepper,
+    TuiStepper, TuiInputModule,
     TuiTable,
-    TuiItemsWithMore,
+    TuiItemsWithMore, TuiCheckbox,
     TuiRadio,
     TuiDropdown,
     FormsModule,
@@ -325,6 +325,7 @@ export class HacerventaComponent implements OnInit {
   }
 
   buscarCliente() {
+    this.errorClientNotFound = false
     let clienteSearh = this.clientes.find((el: Cliente) => {
       return el.document === this.ventaForm.get('documento_cliente')!.value;
     })
@@ -411,6 +412,7 @@ export class HacerventaComponent implements OnInit {
   }
 
   borrarCliente() {
+    this.expanded = false
     this.ventaForm.patchValue({
       documento_cliente: '',
       nombre_cliente: '',

@@ -1,6 +1,6 @@
 import { ComprobanteElectronico, Venta } from '@/app/models/venta.models';
 
-import { anularVenta, generarComprobanteVenta } from '@/app/state/actions/venta.actions';
+import { anularVenta, generarComprobanteVenta, generarComprobanteVentaExito } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
@@ -13,6 +13,8 @@ import { TuiBadge, TuiChip, TuiCopy } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Actions, ofType } from '@ngrx/effects';
+import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-dialogventadetail',
   standalone: true,
@@ -27,7 +29,8 @@ export class DialogventadetailComponent {
   pdfUrl!: SafeResourceUrl;
 
   public comprobante: ComprobanteElectronico = this.venta?.comprobante ?? {} as ComprobanteElectronico;
-  constructor(private store: Store<AppState>, private sanitizer: DomSanitizer) {
+  constructor(private store: Store<AppState>, private sanitizer: DomSanitizer, private actions$: Actions
+  ) {
 
 
   }
@@ -36,11 +39,13 @@ export class DialogventadetailComponent {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url + "#toolbar=1&navpanes=0&scrollbar=0&view=FitH");
   }
   loadingAnularVenta: boolean = false
+  loadingGenerarComprobante: boolean = false
   public productos_json = JSON.parse(this.venta.productos_json ?? '[]');
   ngOnInit(): void {
     console.log(this.venta);
     this.store.select(selectVenta).subscribe((state: VentaState) => {
       this.loadingAnularVenta = state.loadingNotaCredito;
+      this.loadingGenerarComprobante = state.loadingGenerarComprobante
     });
   }
 
@@ -72,32 +77,21 @@ export class DialogventadetailComponent {
   anularVenta(id: number) {
     this.store.dispatch(anularVenta({ ventaId: id, motivo: "Anulación de la operación", tipo_motivo: "01" }))
   }
-  realizarComprobante() {
-    // Lógica para realizar el comprobante
-    const preparedData: any = {
-      usuarioId: this.venta.usuario,
-      metodoPago: this.venta.metodo_pago,
-      formaPago: "Contado",
-      tipoComprobante: this.venta.tipo_comprobante,
-      cliente: {
-        nombre_o_razon_social: this.venta.nombre_cliente,
-        nombre_completo: this.venta.nombre_cliente,
-        ruc: this.venta.numero_documento_cliente,
-        numero: this.venta.numero_documento_cliente
-      },
-      documento_cliente: this.venta.numero_documento_cliente,
-      nombre_cliente: this.venta.nombre_cliente,
-      correo_cliente: this.venta.correo_cliente,
-      direccion_cliente: this.venta.direccion_cliente,
-      telefono_cliente: this.venta.telefono_cliente,
-      productos: this.venta.productos,
-      is_send_sunat: true,
-      is_save_user: true,
-      estado: true
-    }
+  private destroy$ = new Subject<void>();
 
+  realizarComprobante() {
 
     this.store.dispatch(generarComprobanteVenta({ ventaId: this.venta.id }));
-
+    this.actions$.pipe(
+      ofType(generarComprobanteVentaExito),
+      takeUntil(this.destroy$)
+    ).subscribe(({ ventad }: any) => {
+      this.context.completeWith(true)
+    });
   }
+
+
+
+  // Uso:
+
 }

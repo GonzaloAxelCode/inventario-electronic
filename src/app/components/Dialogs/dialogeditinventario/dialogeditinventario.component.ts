@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiNumberFormat, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiLoader, TuiNumberFormat, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
 
 import { TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
@@ -10,7 +10,7 @@ import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from
 
 import { Inventario } from '@/app/models/inventario.models';
 import { actualizarInventario, actualizarInventarioFail, actualizarInventarioSuccess } from '@/app/state/actions/inventario.actions';
-import { loadProductosAction } from '@/app/state/actions/producto.actions';
+import { actualizarInventarioWithProductsSuccess } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -36,23 +36,18 @@ import { Subject, takeUntil } from 'rxjs';
     TuiTextfield,
     FormsModule, TuiComboBoxModule,
     TuiSelectModule, TuiTabs, TuiTextfieldControllerModule, TuiDropdown, CommonModule,
-
     FormsModule,
     ReactiveFormsModule,
-
     TuiDataListWrapper,
     TuiDataList,
     TuiDataListWrapperComponent,
-
     TuiSelectModule,
-
     TuiInputNumber,
     TuiTextareaModule,
-    TuiButton,
-
+    TuiButton, TuiLoader,
     TuiTextfield,
     TuiTextfieldControllerModule,
-    TuiInputModule, TuiAppearance, TuiAppearance, TuiTable, TuiNumberFormat],
+    TuiInputModule, TuiAppearance, TuiAppearance, TuiTable, TuiNumberFormat, TuiLoader],
   templateUrl: './dialogeditinventario.component.html',
   styleUrl: './dialogeditinventario.component.scss'
 })
@@ -71,7 +66,7 @@ export class DialogeditinventarioComponent {
   constructor(private fb: FormBuilder, private store: Store<AppState>, private actions$: Actions) {
     this.inventarioFormEdit = this.fb.group({
       cantidad: [this.inventario.cantidad, [Validators.required, Validators.min(1)]],
-
+      producto_id: [this.inventario.producto],
       costo_compra: [this.inventario.costo_compra, [Validators.required,]],
       costo_venta: [this.inventario.costo_venta, [Validators.required,]],
 
@@ -80,23 +75,29 @@ export class DialogeditinventarioComponent {
 
   }
   private destroy$ = new Subject<void>();
-
+  loadingInventarioUpdate = false;
   ngOnInit() {
 
     this.actions$.pipe(
       ofType(actualizarInventarioSuccess, actualizarInventarioFail),
       takeUntil(this.destroy$)
-    ).subscribe(() => {
+    ).subscribe(({ newInventario }: any) => {
 
-      this.store.dispatch(loadProductosAction());
-
+      console.log("NUEVO INVENTAIRO ENVIADO", newInventario)
+      this.loadingInventarioUpdate = false;
+      this.store.dispatch(actualizarInventarioWithProductsSuccess({
+        newInventario: {
+          ...newInventario
+        },
+        idProduct: this.inventario.producto
+      }))
       this.context.completeWith(true);
     });
 
   }
   async onSubmit(): Promise<void> {
     if (this.inventarioFormEdit.valid) {
-
+      this.loadingInventarioUpdate = true;
       const preparedData = {
         id: this.inventario.id,
         cantidad: this.inventarioFormEdit.value.cantidad,

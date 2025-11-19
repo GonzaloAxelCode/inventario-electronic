@@ -147,7 +147,7 @@
                     class="bg-neutral-100 dark:bg-neutral-800 p-6 flex flex-col border-l border-neutral-200 dark:border-neutral-700">
 
                     <!-- Información del cliente -->
-                    <div class="bg-white dark:bg-neutral-800 rounded-lg p-4 mb-4">
+                    <div class="bg-white dark:bg-neutral-800 rounded-lg p-4 ">
                         <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">
                             INFORMACIÓN DEL CLIENTE
                         </h3>
@@ -190,7 +190,7 @@
                                     <span
                                         class="text-xs text-blue-600 dark:text-blue-400 cursor-pointer hover:underline"
                                         (click)="expanded = !expanded">
-                                        {{ expanded ? '− Ocultar detalles' : '+ Cliente nuevo, agregar informacion' }}
+                                        {{ expanded ? '− Ocultar detalles' : 'Actualizar informacion adicional' }}
                                     </span>
                                 </div>
                             </div>
@@ -217,19 +217,20 @@
                                 ⚠ Cliente no encontrado. Intente más tarde.
                             </span>
 
-                            <label class="flex items-center gap-2 text-sm">
-                                <input [disabled]="!(userPermissions$ | async)?.can_make_sale" tuiCheckbox
-                                    type="checkbox" formControlName="is_send_sunat" [size]="'s'" />
-                                Enviar a SUNAT
-                            </label>
+                            
 
                         </div>
-
-                        <div *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'"
+                         <div *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'"
                             class="text-center py-4 text-neutral-500 dark:text-neutral-400">
                             <p class="text-sm">Venta anónima - Sin datos de cliente</p>
                         </div>
                     </div>
+
+  <label class="flex items-center gap-2 text-sm pl-4">
+                                <input [disabled]="!(userPermissions$ | async)?.can_make_sale" tuiCheckbox
+                                    type="checkbox" formControlName="is_send_sunat" [size]="'m'" />
+                                Enviar a SUNAT
+                            </label>
 
 
                     <!-- Resumen de totales -->

@@ -1,6 +1,7 @@
-import { ProductoState } from '@/app/models/producto.models';
+import { Producto, ProductoState } from '@/app/models/producto.models';
 import { createReducer, on } from '@ngrx/store';
 import {
+    actualizarInventarioWithProductsSuccess,
     clearSearchProductos,
     createProductoAction,
     createProductoFail,
@@ -150,6 +151,10 @@ export const productoReducer = createReducer(
         loadingSearch: false,
         productos_search: [],
         search_found: false
+    })),
+    on(actualizarInventarioWithProductsSuccess, (state, { idProduct, newInventario }) => ({
+        ...state,
+        productos: state.productos.map((p: Producto) => p.id === idProduct ? { ...p, inventario: { ...p.inventario, ...newInventario } } : p)
     }))
 );
 
