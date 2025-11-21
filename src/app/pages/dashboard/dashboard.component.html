@@ -26,3 +26,243 @@
     </div>
 
 </div>
+
+ <div class="min-h-screen p-6">
+        <!-- Header -->
+        <div class="flex justify-between items-start mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Good Morning, Jonathan!</h1>
+                <p class="text-gray-500 mt-1">Here's what's happening with your store today</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="p-2 hover:bg-gray-100 rounded-lg">
+                    <i class="far fa-calendar"></i>
+                </button>
+                <div class="text-sm font-medium">14 Aug 2023</div>
+                <button class="p-2 hover:bg-gray-100 rounded-lg relative">
+                    <i class="far fa-bell"></i>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+                <button class="p-2 hover:bg-gray-100 rounded-lg bg-gray-900 text-white">
+                    <i class="far fa-user"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Products -->
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="p-2 bg-gray-100 rounded-lg">
+                        <i class="fas fa-box text-xl"></i>
+                    </div>
+                    <span class="text-sm text-gray-600">Total products</span>
+                </div>
+                <div class="flex items-end gap-2">
+                    <span class="text-3xl font-bold">250</span>
+                    <span class="text-green-500 text-sm mb-1">+2.5%</span>
+                </div>
+            </div>
+
+            <!-- Completed Orders -->
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="p-2 bg-gray-100 rounded-lg">
+                        <i class="fas fa-shopping-bag text-xl"></i>
+                    </div>
+                    <span class="text-sm text-gray-600">Completed order</span>
+                </div>
+                <div class="flex items-end gap-2">
+                    <span class="text-3xl font-bold">124</span>
+                    <span class="text-green-500 text-sm mb-1">+2.5%</span>
+                </div>
+            </div>
+
+            <!-- Canceled Orders -->
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="p-2 bg-gray-100 rounded-lg">
+                        <i class="fas fa-times-circle text-xl"></i>
+                    </div>
+                    <span class="text-sm text-gray-600">Canceled order</span>
+                </div>
+                <div class="flex items-end gap-2">
+                    <span class="text-3xl font-bold">14</span>
+                    <span class="text-red-500 text-sm mb-1">-1.5%</span>
+                </div>
+            </div>
+
+            <!-- Top Products -->
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="p-2 bg-gray-100 rounded-lg">
+                        <i class="fas fa-chart-line text-xl"></i>
+                    </div>
+                    <span class="text-sm text-gray-600">Top products</span>
+                </div>
+                <div class="flex items-end gap-2">
+                    <span class="text-3xl font-bold">119</span>
+                    <span class="text-green-500 text-sm mb-1">+2.5%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Report -->
+        <div class="bg-white rounded-xl p-6 shadow-sm mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-xl font-bold mb-1">Your sales report</h2>
+                    <p class="text-sm text-gray-500">Look at your sale</p>
+                </div>
+                <select class="px-4 py-2 border rounded-lg text-sm">
+                    <option>Total Sales</option>
+                </select>
+            </div>
+
+            <div class="mb-6">
+                <div class="text-4xl font-bold mb-2">$4,435.70</div>
+                <div class="text-green-500 text-sm">$2,330.00 (+2.5%)</div>
+            </div>
+
+            <!-- Chart Area - Placeholder -->
+            <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                <p class="text-gray-400 text-lg">Chart Area</p>
+            </div>
+
+            <div class="flex gap-2 mt-6">
+                <button class="px-4 py-2 text-sm rounded-lg hover:bg-gray-100">1d</button>
+                <button class="px-4 py-2 text-sm rounded-lg bg-gray-900 text-white">7d</button>
+                <button class="px-4 py-2 text-sm rounded-lg hover:bg-gray-100">30d</button>
+                <button class="px-4 py-2 text-sm rounded-lg hover:bg-gray-100">16m</button>
+                <button class="px-4 py-2 text-sm rounded-lg hover:bg-gray-100">Max</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Last Transaction -->
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <h2 class="text-xl font-bold mb-4">Last transaction</h2>
+                
+                <div class="flex gap-2 mb-4">
+                    <div class="flex-1 relative">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm"
+                        />
+                    </div>
+                    <button class="p-2 border rounded-lg hover:bg-gray-50">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                </div>
+
+                <!-- Table Header -->
+                <div class="grid grid-cols-5 gap-4 text-xs text-gray-500 font-medium mb-3 px-2">
+                    <span></span>
+                    <span>Order ID</span>
+                    <span>Item</span>
+                    <span>Date</span>
+                    <span>Price</span>
+                </div>
+
+                <!-- Transaction Rows -->
+                <div class="space-y-2">
+                    <div class="flex items-center gap-4 py-3 border-b hover:bg-gray-50 px-2 rounded">
+                        <input type="checkbox" class="w-4 h-4">
+                        <div class="flex-1 grid grid-cols-4 gap-4 text-sm">
+                            <span class="text-gray-900">CTG0291</span>
+                            <span class="text-gray-600">Crop top pants</span>
+                            <span class="text-gray-500">12/02/2022</span>
+                            <span class="font-medium">$599</span>
+                        </div>
+                        <span class="px-3 py-1 bg-red-50 text-red-600 rounded text-xs">Shopee</span>
+                    </div>
+
+                    <div class="flex items-center gap-4 py-3 border-b bg-blue-50 px-2 rounded">
+                        <input type="checkbox" checked class="w-4 h-4">
+                        <div class="flex-1 grid grid-cols-4 gap-4 text-sm">
+                            <span class="text-gray-900">CTG0291</span>
+                            <span class="text-gray-600">T-shirt rainbow...</span>
+                            <span class="text-gray-500">12/02/2022</span>
+                            <span class="font-medium">$49</span>
+                        </div>
+                        <span class="px-3 py-1 bg-green-50 text-green-600 rounded text-xs">Tokopedia</span>
+                    </div>
+
+                    <div class="flex items-center gap-4 py-3 border-b hover:bg-gray-50 px-2 rounded">
+                        <input type="checkbox" class="w-4 h-4">
+                        <div class="flex-1 grid grid-cols-4 gap-4 text-sm">
+                            <span class="text-gray-900">CTG0291</span>
+                            <span class="text-gray-600">Huzzle black cap</span>
+                            <span class="text-gray-500">12/02/2022</span>
+                            <span class="font-medium">$109</span>
+                        </div>
+                        <span class="px-3 py-1 bg-green-50 text-green-600 rounded text-xs">Tokopedia</span>
+                    </div>
+
+                    <div class="flex items-center gap-4 py-3 border-b hover:bg-gray-50 px-2 rounded">
+                        <input type="checkbox" class="w-4 h-4">
+                        <div class="flex-1 grid grid-cols-4 gap-4 text-sm">
+                            <span class="text-gray-900">CTG0291</span>
+                            <span class="text-gray-600">Crop top pants</span>
+                            <span class="text-gray-500">12/02/2022</span>
+                            <span class="font-medium">$666</span>
+                        </div>
+                        <span class="px-3 py-1 bg-red-50 text-red-600 rounded text-xs">Shopee</span>
+                    </div>
+
+                    <div class="flex items-center gap-4 py-3 hover:bg-gray-50 px-2 rounded">
+                        <input type="checkbox" class="w-4 h-4">
+                        <div class="flex-1 grid grid-cols-4 gap-4 text-sm">
+                            <span class="text-gray-900">CTG0291</span>
+                            <span class="text-gray-600">Crop top pants</span>
+                            <span class="text-gray-500">12/02/2022</span>
+                            <span class="font-medium">$239</span>
+                        </div>
+                        <span class="px-3 py-1 bg-gray-900 text-white rounded text-xs">Tiktok</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Congratulations Card -->
+            <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 shadow-sm">
+                <h2 class="text-xl font-bold mb-2">Congratulations! 🎉</h2>
+                <p class="text-sm text-gray-600 mb-6">Some of your products already have the highest buyers</p>
+                
+                <div class="bg-white rounded-lg p-4">
+                    <div class="flex gap-4 items-center mb-4">
+                        <button class="p-2 hover:bg-gray-100 rounded-lg text-gray-600">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="flex-1 flex gap-4 overflow-hidden">
+                            <div class="flex-shrink-0 w-32">
+                                <div class="bg-gray-900 h-40 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-tshirt text-white text-3xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0 w-32">
+                                <div class="bg-gray-100 h-40 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-tshirt text-gray-400 text-3xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0 w-32">
+                                <div class="bg-yellow-400 h-40 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-tshirt text-white text-3xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="p-2 hover:bg-gray-100 rounded-lg text-gray-600">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="font-medium">T-shirt Rainbow White</p>
+                        <p class="text-sm text-gray-500">271 sold</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -16,7 +16,7 @@ import { selectCurrenttUser, selectPermissions, selectUsersState } from '@/app/s
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AsyncPipe, CommonModule, NgForOf } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
@@ -106,6 +106,23 @@ export class HacerventaComponent implements OnInit {
   URL_BASE = URL_BASE
   is_client_exists: boolean = false
   clienteSelected!: Cliente
+  @ViewChild('containerAreaProducts') container!: ElementRef<HTMLDivElement>;
+
+
+  // Detectar click dentro del div
+  clickedInside() {
+    this.container.nativeElement.style.borderColor = '#86efac'; // verde
+  }
+
+  // Detectar click fuera del div
+  @HostListener('document:click', ['$event'])
+  clickedOutside(event: MouseEvent) {
+    const clickedInside = this.container.nativeElement.contains(event.target as Node);
+
+    if (!clickedInside) {
+      this.container.nativeElement.style.borderColor = '#9ca3af'; // gris
+    }
+  }
   // Esta función se ejecuta cuando el escáner detecta un código
   onBarcodeScanned(barcode_raw: string) {
     let barcode = normalizeSku(barcode_raw)

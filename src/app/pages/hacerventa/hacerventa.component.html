@@ -52,9 +52,10 @@
             </app-barcode-scanner>-->
             <!-- Contenido principal -->
             <div class="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-0 h-[calc(100vh-180px)]">
+<div class="p-4">
+ <!-- Área de productos (izquierda) -->
+                <div class="p-6 overflow-y-auto border-2 border-dashed rounded-xl"   #containerAreaProducts tabindex="0" (click)="clickedInside()">
 
-                <!-- Área de productos (izquierda) -->
-                <div class="p-6 overflow-y-auto">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">
                             Productos en agregados ({{ productosFormArray.length }})
@@ -66,11 +67,13 @@
                     </div>
 
                     <!-- Lista de productos -->
-                    <div class="space-y-2">
+                    <div class="space-y-2  rounded-lg p-4   focus:outline-none transition-colors cursor-pointer"
+                      >
                         <!-- Contenedor del input oculto para detector de código de barras -->
-
-
-
+                        <app-barcode-scanner [container]="container" [showStatus]="true" [autoFocus]="true"
+                            (barcodeScanned)="onBarcodeScanned($event)">
+                        </app-barcode-scanner>
+                        
 
                         <div *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item"
                             class="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 flex items-center justify-between  transition-colors">
@@ -133,7 +136,7 @@
 
                         <!-- Estado vacío -->
                         <div *ngIf="productosFormArray.length === 0"
-                            class="text-center py-16 text-neutral-400  dark:text-neutral-300 border border-dotted border-neutral-300 dark:border-neutral-600 rounded-lg">
+                            class="text-center py-16 text-neutral-400  dark:text-neutral-300  rounded-lg">
                             <img class="pb-8 w-36 h-36 object-contain text-center mx-auto"
                                 src="https://cdn-icons-png.flaticon.com/512/10951/10951882.png" alt="">
                             <p class="text-2xl font-bold">No hay productos en el carrito</p>
@@ -141,6 +144,8 @@
                         </div>
                     </div>
                 </div>
+</div>
+               
 
                 <!-- Panel lateral derecho (Resumen y cliente) -->
                 <div
@@ -217,20 +222,20 @@
                                 ⚠ Cliente no encontrado. Intente más tarde.
                             </span>
 
-                            
+
 
                         </div>
-                         <div *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'"
+                        <div *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'"
                             class="text-center py-4 text-neutral-500 dark:text-neutral-400">
                             <p class="text-sm">Venta anónima - Sin datos de cliente</p>
                         </div>
                     </div>
 
-  <label class="flex items-center gap-2 text-sm pl-4">
-                                <input [disabled]="!(userPermissions$ | async)?.can_make_sale" tuiCheckbox
-                                    type="checkbox" formControlName="is_send_sunat" [size]="'m'" />
-                                Enviar a SUNAT
-                            </label>
+                    <label class="flex items-center gap-2 text-sm pl-4">
+                        <input [disabled]="!(userPermissions$ | async)?.can_make_sale" tuiCheckbox type="checkbox"
+                            formControlName="is_send_sunat" [size]="'m'" />
+                        Enviar a SUNAT
+                    </label>
 
 
                     <!-- Resumen de totales -->
