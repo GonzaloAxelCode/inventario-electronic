@@ -10,15 +10,6 @@ import { TuiAvatar, TuiBadge, TuiChevron, TuiConfirmService, TuiDataListWrapper,
 import { TuiBlockDetails, TuiBlockStatus, TuiHeader, TuiNavigation, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
 import { TableinventarioComponent } from "../../components/Tables/tableinventario/tableinventario.component";
-interface QuerySearchInventario {
-  nombre?: string;
-  categoria?: string;
-  sku?: string;
-  marca?: string;
-  modelo?: string;
-  activo?: any;
-}
-
 @Component({
   selector: 'app-inventario',
   standalone: true,

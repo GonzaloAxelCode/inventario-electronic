@@ -70,8 +70,6 @@
                     <div class="space-y-2  rounded-lg p-4   focus:outline-none transition-colors cursor-pointer"
                       >
                         <!-- Contenedor del input oculto para detector de código de barras -->
-                      
-
 
                         <div *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item"
                             class="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 flex items-center justify-between  transition-colors">
@@ -115,6 +113,18 @@
 
 
                                 </div>
+  <!-- Descuento -->
+                                <div class="text-right">
+                                   	<tui-textfield>
+    <label tuiLabel>Coloca el descuento</label>
+ 
+    <input
+        tuiInputNumber
+        formControlName="descuento"
+        />
+</tui-textfield> 
+                                </div>
+
 
                                 <!-- Precio -->
                                 <div class="text-right">
@@ -157,7 +167,7 @@
 
                         <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'" class="space-y-3">
                             <!-- Búsqueda de cliente -->
-                            <div *ngIf="!ventaForm.get('cliente')?.value" class="flex gap-2">
+                            <div *ngIf="!ventaForm.get('cliente')?.value" class="flex gap-2 flex-col">
                                 <tui-input [disabled]="!(userPermissions$ | async)?.can_make_sale" class="flex-1"
                                     formControlName="documento_cliente">
                                     {{ ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'DNI' : 'RUC' }}
@@ -165,6 +175,21 @@
                                         [placeholder]="ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'DNI' : 'RUC'"
                                         tuiTextfieldLegacy size="s" type="text" />
                                 </tui-input>
+                                <!-- 
+    <tui-textfield tuiChevron>
+    <input
+        tuiComboBox
+       formControlName="documento_cliente_test"
+    />
+
+    <tui-data-list-wrapper
+        *tuiTextfieldDropdown
+        new
+        [items]="documents | tuiFilterByInput"
+    />
+</tui-textfield>
+--> 
+                                
                                 <button tuiIconButton iconStart="@tui.search" type="button"
                                     appearance="primary-grayscale" (click)="buscarCliente()"
                                     [disabled]="ventaForm.get('documento_cliente')?.invalid || !(userPermissions$ | async)?.can_make_sale">

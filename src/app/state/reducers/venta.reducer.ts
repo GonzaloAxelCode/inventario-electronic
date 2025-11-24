@@ -137,6 +137,7 @@ export const ventaReducer = createReducer(
     on(crearVentaExito, (state, { venta }) => ({
         ...state,
         ventas: [...state.ventas, venta],
+
         temporaryVenta: venta,
         showVentaDetailTemporary: true,
         loadingCreateVenta: false

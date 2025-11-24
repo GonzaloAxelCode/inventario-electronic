@@ -8,7 +8,8 @@ import { ConsultaService } from '@/app/services/consultas.service';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { normalizeSku } from "@/app/services/search-services/producto-search.service";
 import { URL_BASE } from "@/app/services/utils/endpoints";
-import { crearVenta } from "@/app/state/actions/venta.actions";
+import { updateStockMultiple } from "@/app/state/actions/inventario.actions";
+import { crearVenta, crearVentaExito } from "@/app/state/actions/venta.actions";
 import { AppState } from '@/app/state/app.state';
 import { selectClienteState } from "@/app/state/selectors/cliente.selectors";
 import { selectInventario } from '@/app/state/selectors/inventario.selectors';
@@ -18,35 +19,57 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { AsyncPipe, CommonModule, NgForOf } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Actions, ofType } from "@ngrx/effects";
 import { Store } from '@ngrx/store';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiExpand, TuiIcon, TuiLoader, TuiTextfield, TuiTitle } from '@taiga-ui/core';
-import { TuiCheckbox, TuiCopy, TuiDataListWrapper, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiStepper } from '@taiga-ui/kit';
-import { TuiAppBar, TuiCardLarge, TuiCell, TuiHeader } from '@taiga-ui/layout';
-import { TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
-import { catchError, finalize, map, Observable, of, timeout } from 'rxjs';
-import { CajaComponent } from "../caja/caja.component";
+import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiExpand, TuiIcon, TuiLabel, TuiLoader, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
+import { TuiCheckbox, TuiComboBox, TuiDataListWrapper, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiStepper, TuiTooltip } from '@taiga-ui/kit';
+import { TuiAppBar } from '@taiga-ui/layout';
+import { TuiComboBoxModule, TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
+import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout } from 'rxjs';
+
 @Component({
   selector: 'app-hacerventa',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
     TuiCheckbox,
-    TuiStepper, TuiInputModule,
+    TuiStepper,
+    TuiInputModule,
     TuiTable,
-    TuiItemsWithMore, TuiCheckbox,
+    TuiItemsWithMore,
     TuiRadio,
     TuiDropdown,
     FormsModule,
-    TuiAppBar, CajaComponent,
+    TuiAppBar,
+    FormsModule,
     TuiTextfield,
-    TuiInputModule, TuiInputNumber,
-    TuiButton, BarcodeScannerComponent,
-    TuiAppearance, TuiIcon,
-    TuiDataList, AsyncPipe, NgForOf,
-    TuiCardLarge, TuiHeader, TuiCell, TuiTitle, TuiAmountPipe,
-    TuiDataListWrapper, TuiSelectModule,
-    TuiTextfieldControllerModule, TuiLoader, TuiExpand, CajaComponent, BarcodeScannerComponent, TuiCopy],
+    TuiInputNumber,
+    TuiButton,
+    BarcodeScannerComponent,
+    TuiAppearance,
+    TuiIcon,
+    TuiDataList,
+    AsyncPipe,
+    NgForOf,
+    TuiComboBoxModule,
+    TuiAmountPipe,
+    TuiDataListWrapper,
+    TuiSelectModule,
+    TuiTextfieldControllerModule,
+    TuiLoader,
+    TuiExpand,
+    TuiComboBox,
+    TuiTextfieldDropdownDirective,
+    TuiTooltip,
+    TuiLabel,
+    FormsModule,
+    TuiDataListWrapper,
+    TuiFilterByInputPipe, TuiFilter,
+    TuiTextfield, TuiTextfieldControllerModule
+  ],
   providers: [
     { provide: 'Pythons', useValue: ['Python One', 'Python Two', 'Python Three'] },
   ],
@@ -64,7 +87,7 @@ import { CajaComponent } from "../caja/caja.component";
 })
 export class HacerventaComponent implements OnInit {
   protected expanded = false;
-
+  private destroy$ = new Subject<void>();
   errorClientNotFound = false;
   selectCurrentStep = signal("Start Up");
   protected readonly units = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
@@ -102,7 +125,7 @@ export class HacerventaComponent implements OnInit {
   tiendaUser!: number
   userId!: number;
   inventarios!: Inventario[]
-  clientes!: Cliente[]
+  clientes: Cliente[] = []
   URL_BASE = URL_BASE
   is_client_exists: boolean = false
   clienteSelected!: Cliente
@@ -157,6 +180,7 @@ export class HacerventaComponent implements OnInit {
 
       if (productoControl) {
         const cantidadActual = parseInt(productoControl.get('cantidad_final')?.value || '0');
+        const costo_venta = parseInt(productoControl.get('costo_venta')?.value || '0');
         const stockDisponible = productoEncontrado.cantidad;
 
         if (cantidadActual + 1 > stockDisponible) {
@@ -184,9 +208,26 @@ export class HacerventaComponent implements OnInit {
         nombre_categoria: [productoEncontrado.categoria_nombre],
         costo_venta: [productoEncontrado.costo_venta],
         productoId: [productoEncontrado.producto],
-        stock_actual: [productoEncontrado.cantidad]
+        stock_actual: [productoEncontrado.cantidad],
+        descuento: [0]
       });
+      const costo_venta = productoEncontrado.costo_venta || 0
+      if (costo_venta <= 0) {
+        this.alerts.open('Producto no tiene costo', {
+          label: `El producto no tiene costo.Actualiza el costo del producto.`,
+          appearance: "error"
+        }).subscribe();
+        return;
+      }
+      const stockDisponible = productoEncontrado.cantidad;
 
+      if (stockDisponible <= 0) {
+        this.alerts.open('Stock insuficiente', {
+          label: `No hay suficiente stock disponible. Stock actual: ${stockDisponible}`,
+          appearance: "error"
+        }).subscribe();
+        return;
+      }
       productosArray.push(nuevoProducto);
       console.log('Producto enconrado', productoEncontrado);
       this.alerts.open('Producto agregado', {
@@ -199,7 +240,7 @@ export class HacerventaComponent implements OnInit {
     this.calcularTotales();
     this.cdr.markForCheck();
   }
-  constructor(private fb: FormBuilder, private consultaService: ConsultaService, private cdr: ChangeDetectorRef) {
+  constructor(private fb: FormBuilder, private consultaService: ConsultaService, private cdr: ChangeDetectorRef, private actions$: Actions) {
     this.loadingCreateVenta$ = this.store.select(selectVenta);
     this.showVentaDetailTemporary$ = this.store.select(selectVenta)
     this.store.select(selectUsersState).pipe(
@@ -220,21 +261,23 @@ export class HacerventaComponent implements OnInit {
       documento_cliente: [
         "",
         [
-          (control: any) => documentoValidator(this.ventaForm?.get('tipoComprobante')?.value)(control)
+          (control: any) => this.documentoValidator(this.ventaForm?.get('tipoComprobante')?.value)(control)
         ]
       ],
+
       nombre_cliente: [""],
       correo_cliente: [""],
       direccion_cliente: [""],
       telefono_cliente: [""],
       productos: this.fb.array([], [Validators.required, Validators.minLength(1)]),
       is_send_sunat: [true],
-      is_save_user: [true]
+      is_save_user: [true],
+
     });
 
     this.productosFormArray.valueChanges.subscribe((tipo: any) => {
       const documentoCtrl = this.ventaForm.get('documento_cliente');
-      documentoCtrl?.setValidators([documentoValidator(tipo)]);
+      documentoCtrl?.setValidators([this.documentoValidator(tipo)]);
       documentoCtrl?.updateValueAndValidity();
       this.validarStock();
 
@@ -242,8 +285,11 @@ export class HacerventaComponent implements OnInit {
     });
 
 
+
   }
+  documents: string[] = []
   ngOnInit() {
+    console.log(this.documents)
     this.ventaForm.get('is_send_sunat')?.valueChanges
       .subscribe(value => {
         this.onChangeEnviarSunat(value);
@@ -257,7 +303,9 @@ export class HacerventaComponent implements OnInit {
     this.store.select(selectClienteState).subscribe((state) => {
 
       this.clientes = state.clientes
-      console.log("Clientes", state.clientes)
+
+      this.documents = state.clientes.map((cliente: Cliente) => cliente.document);
+      console.log("Documentos", state.clientes.map((cliente: Cliente) => cliente.document))
     })
     this.ventaForm.get('tipoComprobante')?.valueChanges.subscribe((nuevoValor) => {
       console.log('Tipo comprobante cambió a:', nuevoValor);
@@ -267,6 +315,10 @@ export class HacerventaComponent implements OnInit {
       this.ventaForm.get('documento_cliente')?.reset('');
       this.ventaForm.get('cliente')?.reset(null);
     });
+
+
+
+
   }
 
 
@@ -316,7 +368,7 @@ export class HacerventaComponent implements OnInit {
     this.dialogService.open().subscribe((result: any) => {
 
       if (result) {
-        console.log(result)
+
         const productosArray = this.ventaForm.get('productos') as FormArray;
         const productoExiste = productosArray.controls.some(control => control.get('inventarioId')?.value === result.id);
         if (productoExiste) {
@@ -333,6 +385,7 @@ export class HacerventaComponent implements OnInit {
           stock_actual: [result.cantidad],
           producto_sku: [result.producto_sku],
           imagen_producto: [result.imagen_producto ? URL_BASE + result.imagen_producto : "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png"],
+          descuento: [0]
         });
         productosArray.push(nuevoProducto);
         this.calcularTotales();
@@ -444,8 +497,20 @@ export class HacerventaComponent implements OnInit {
       is_save_user: this.ventaForm.get("is_save_user")?.value
     }
 
-    console.log(preparedData)
+    console.log(preparedData.productos)
     this.store.dispatch(crearVenta({ venta: preparedData }));
+
+    this.actions$.pipe(
+      ofType(crearVentaExito),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.store.dispatch(updateStockMultiple({ productos: preparedData.productos }));
+      this.borrarCliente()
+
+      this.productosFormArray.clear();
+      this.calcularTotales();
+
+    });
   }
   get productosFormArray(): FormArray<FormGroup> {
     return this.ventaForm.get('productos') as FormArray<FormGroup>;
@@ -468,35 +533,86 @@ export class HacerventaComponent implements OnInit {
     console.log("Img", img)
     return imagenFinal;
   }
+
+
+
+  documentoValidator(tipoControl: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value?.toString() ?? '';
+      if (!value) return { required: true };
+
+      const isNumeric = /^[0-9]+$/.test(value);
+      if (!isNumeric) return { numeric: true };
+
+      if (tipoControl === 'Boleta' && value.length !== 8) {
+        return { length: true };
+      }
+
+      if (tipoControl === 'Factura' && value.length !== 11) {
+        return { length: true };
+      }
+
+      return null; // ✅ válido
+    };
+
+  }
+  // cod barras
+
+  private barcodeBuffer: string = '';
+  private barcodeTimeout: any;
+  private readonly BARCODE_TIMEOUT = 100; // milisegundos
+  private readonly MIN_BARCODE_LENGTH = 3; // ajusta según tus códigos
+
+  @HostListener('window:keypress', ['$event'])
+  handleKeypress(event: KeyboardEvent) {
+    // Ignorar si el usuario está escribiendo en un input, textarea o select
+    const target = event.target as HTMLElement;
+    const tagName = target.tagName.toLowerCase();
+
+    if (tagName === 'input' || tagName === 'textarea' || tagName === 'select') {
+      return; // Dejar que el input normal funcione
+    }
+
+    // Si es Enter, procesar el código
+    if (event.key === 'Enter') {
+      if (this.barcodeBuffer.length >= this.MIN_BARCODE_LENGTH) {
+        this.procesarCodigoBarras(this.barcodeBuffer);
+      }
+      this.barcodeBuffer = '';
+      clearTimeout(this.barcodeTimeout);
+      return;
+    }
+
+    // Acumular caracteres
+    this.barcodeBuffer += event.key;
+
+    // Resetear buffer si pasa mucho tiempo (es escritura humana)
+    clearTimeout(this.barcodeTimeout);
+    this.barcodeTimeout = setTimeout(() => {
+      this.barcodeBuffer = '';
+    }, this.BARCODE_TIMEOUT);
+  }
+
+  procesarCodigoBarras(codigo: string) {
+    console.log('Código de barras detectado:', codigo);
+    // Aquí ejecutas tu función
+    this.onBarcodeScanned(codigo);
+  }
+
+  tuFuncion(codigo: string) {
+    // Tu lógica aquí
+    alert(`Código escaneado: ${codigo}`);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+    clearTimeout(this.barcodeTimeout);
+  }
+
+
+
 }
 
 
 
-
-
-
-
-
-
-export function documentoValidator(tipoControl: string): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value?.toString() ?? '';
-    if (!value) return { required: true };
-
-    const isNumeric = /^[0-9]+$/.test(value);
-    if (!isNumeric) return { numeric: true };
-
-    if (tipoControl === 'Boleta' && value.length !== 8) {
-      return { length: true };
-    }
-
-    if (tipoControl === 'Factura' && value.length !== 11) {
-      return { length: true };
-    }
-
-    return null; // ✅ válido
-  };
-
-
-
-}

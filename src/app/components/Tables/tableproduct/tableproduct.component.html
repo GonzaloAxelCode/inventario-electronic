@@ -64,8 +64,8 @@
                                     <th tuiTh *ngIf="displayedColumns.includes('categoria')">Categoría</th>
 
                                     <th tuiTh *ngIf="displayedColumns.includes('fechaCreacion')">Fecha Creación</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('inventario')">STOCK</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('inventario')">VENTA</th>
+                                    <th tuiTh *ngIf="displayedColumns.includes('inventario')">Stock</th>
+                                    <th tuiTh *ngIf="displayedColumns.includes('inventario')">Venta</th>
 
                                     <th tuiTh class="text-center">Acciones</th>
                                 </tr>
@@ -139,6 +139,7 @@
                                                     [ngClass]="getColorClass(producto.inventario?.cantidad || 0)">
                                                     {{ producto.inventario?.cantidad }}
                                                 </span>
+                                                <p class="text-red-400 text-sm">{{ (producto.inventario?.cantidad || 0) <= 0 ? '* Agotado' : '' }}</p>
 
                                             </div>
                                         </ng-container>
@@ -163,11 +164,11 @@
                                             </ng-container>
                                             <ng-container *ngIf="producto.is_inventario">
 
-                                                <div tuiBlockDetails>
+                                                <div class="text-2xl font-bold">
 
                                                     {{ producto.inventario?.costo_venta | currency:'PEN':'S/ ': '1.2-2'
                                                     }}
-
+                                  <p class="text-red-400 text-sm">{{ producto.inventario?.costo_venta == 0 ? '* Sin costo' : '' }}</p>
                                                 </div>
 
                                             </ng-container>

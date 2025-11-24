@@ -1,6 +1,6 @@
 export interface Cliente {
     id?: number;
-    document?: string;
+    document: string;
     fullname?: string;
     firstname?: string;
     lastname?: string;

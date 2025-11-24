@@ -23,6 +23,7 @@ import {
     searchInventarioSuccess,
     updateStock,
     updateStockFail,
+    updateStockMultiple,
     updateStockSuccess,
     verificarStock,
     verificarStockFail,
@@ -125,6 +126,22 @@ export const inventarioReducer = createReducer(
         loading: false
     })),
 
+    on(updateStockMultiple, (state, { productos = [] }) => ({
+
+        ...state,
+        inventarios: state.inventarios.map(inventario => {
+            const productoToUpdate = productos.find(p => p.inventarioId === inventario.id);
+
+            if (!productoToUpdate) return inventario;
+
+            const cantidadRestar = parseInt(productoToUpdate.cantidad_final) || 0;
+
+            return {
+                ...inventario,
+                cantidad: inventario.cantidad - cantidadRestar
+            };
+        })
+    })),
 
     on(actualizarInventario, state => ({
         ...state,
@@ -218,6 +235,7 @@ export const inventarioReducer = createReducer(
         loadingLowStock: false,
     })),
 
+    //externos
 
 );
 

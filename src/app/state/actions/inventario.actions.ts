@@ -15,7 +15,7 @@ export enum InventarioActionTypes {
     UPDATE_STOCK = '[Inventario] Update Stock',
     UPDATE_STOCK_SUCCESS = '[Inventario] Update Stock Success',
     UPDATE_STOCK_FAIL = '[Inventario] Update Stock Fail',
-
+    UPDATE_STOCK_MULTIPLE = '[Inventario] Update Stock Multiple',
     ACTUALIZAR_INVENTARIO = '[Inventario] Actualizacion',
     ACTUALIZAR_INVENTARIO_SUCCESS = '[Inventario] Actualizacion Success',
     ACTUALIZAR_INVENTARIO_FAIL = '[Inventario] Actualizacion Fail',
@@ -79,7 +79,10 @@ export const updateStockFail = createAction(
     props<{ error: any }>()
 );
 
-
+export const updateStockMultiple = createAction(
+    InventarioActionTypes.UPDATE_STOCK_MULTIPLE,
+    props<{ productos: { inventarioId: number; cantidad_final: string }[] }>()
+);
 export const actualizarInventario = createAction(
     InventarioActionTypes.ACTUALIZAR_INVENTARIO,
     props<{ newInventario: Partial<Inventario> }>()

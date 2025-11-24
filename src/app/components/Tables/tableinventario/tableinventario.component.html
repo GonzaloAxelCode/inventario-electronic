@@ -80,6 +80,8 @@
         <table tuiTable [columns]="allColumnKeys" size="s">
           <thead>
             <tr>
+
+              <th tuiTh>Codigo SKU</th>
               <th tuiTh>Imagen</th>
               <th tuiTh>Nombre</th>
               <th tuiTh>Categoria</th>
@@ -91,9 +93,17 @@
             </tr>
           </thead>
           <tbody tuiTbody>
+            
             <tr *ngFor="let inventario of (isTheSearchWasDone 
                                          ? (inventariosState$ | async)?.inventarios_search 
                                          : (inventariosState$ | async)?.inventarios)">
+
+                                          <td tuiTd>
+                <div>
+                  <span class=" text-lg text-left">{{ inventario.producto_sku }}
+                  </span>
+                </div>
+              </td> 
               <td tuiTd class="text-left">
                 <div class="flex justify-left items-center py-2">
                   <div (click)="onSetImageProduct(inventario); open = true;"
@@ -135,8 +145,10 @@
               </td>
               <td tuiTd>
                 <div tuiBlockDetails>
-                  <span class=" text-2xl">S/. {{ inventario.costo_venta }}</span>
+                  <p class=" text-2xl">S/. {{ inventario.costo_venta }}</p>
+                  
                 </div>
+                                  <p class="text-red-400">{{ inventario.costo_venta == 0 ? '* Sin costo' : '' }}</p>
               </td>
 
 
@@ -155,11 +167,11 @@
                   </button>
                 </div>
                 <div class="flex gap-2 " *ngIf="mode === 'select_product_sale_mode'">
-                  <button [disabled]="inventario.cantidad <= 0  || !inventario.activo"
+                  <button [disabled]="inventario.cantidad <= 0  || !inventario.activo || inventario.costo_venta <= 0"
                     [appearance]="inventario.cantidad <= 0 ? 'secondary-grayscale': 'primary-grayscale'" class="w-full"
                     (click)="cerrarDialogo(inventario)" tuiButtonVertical
-                    [iconStart]="inventario.cantidad <= 0 ? '@tui.lock': '@tui.plus'" tuiButton type="button">
-                    Agregar 
+                    [iconStart]="inventario.cantidad <= 0 || inventario.costo_venta <= 0 ? '@tui.lock': '@tui.plus'" tuiButton type="button">
+                    Agregar
                   </button>
                 </div>
               </td>
