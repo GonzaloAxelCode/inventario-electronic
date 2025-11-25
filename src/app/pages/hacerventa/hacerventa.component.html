@@ -52,108 +52,113 @@
             </app-barcode-scanner>-->
             <!-- Contenido principal -->
             <div class="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-0 h-[calc(100vh-180px)]">
-<div class="p-4">
- <!-- Área de productos (izquierda) -->
-                <div class="p-6 overflow-y-auto border-2 border-dashed rounded-xl"   #containerAreaProducts tabindex="0" (click)="clickedInside()">
+                <div class="p-4">
+                    <!-- Área de productos (izquierda) -->
+                    <div class="p-6 overflow-y-auto border-2 border-dashed rounded-xl" #containerAreaProducts
+                        tabindex="0" (click)="clickedInside()">
 
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">
-                            Productos en agregados ({{ productosFormArray.length }})
-                        </h2>
-                        <button iconStart="@tui.plus" tuiButtonVertical tuiButton appearance="primary-grayscale"
-                            type="button" (click)="showDialog()">
-                            Agregar
-                        </button>
-                    </div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">
+                                Productos en agregados ({{ productosFormArray.length }})
+                            </h2>
+                            <button iconStart="@tui.plus" tuiButtonVertical tuiButton appearance="primary-grayscale"
+                                type="button" (click)="showDialog()">
+                                Agregar
+                            </button>
+                        </div>
 
-                    <!-- Lista de productos -->
-                    <div class="space-y-2  rounded-lg p-4   focus:outline-none transition-colors cursor-pointer"
-                      >
-                        <!-- Contenedor del input oculto para detector de código de barras -->
+                        <!-- Lista de productos -->
+                        <div class="space-y-2  rounded-lg p-4   focus:outline-none transition-colors cursor-pointer">
+                            <!-- Contenedor del input oculto para detector de código de barras -->
 
-                        <div *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item"
-                            class="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 flex items-center justify-between  transition-colors">
+                            <div *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item"
+                                class="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 flex items-center justify-between  transition-colors">
 
-                            <div class="flex items-center gap-4 flex-1">
-                                <!-- imagen -->
-                                <div class="flex justify-left items-left py-2">
-                                    <div
-                                        class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
-                                        <img [src]="item.get('imagen_producto')?.value" alt="Imagen del producto"
-                                            class="w-full h-full object-cover" />
+                                <div class="flex items-center gap-4 flex-1">
+                                    <!-- imagen -->
+                                    <div class="flex justify-left items-left py-2">
+                                        <div
+                                            class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
+                                            <img [src]="item.get('imagen_producto')?.value" alt="Imagen del producto"
+                                                class="w-full h-full object-cover" />
+                                        </div>
                                     </div>
+
+                                    <div class="flex flex-col input-select-cantidad  ">
+
+
+                                        <tui-select formControlName="cantidad_final" class="w-24" tuiTextfieldSize="l">
+
+                                            <tui-data-list *tuiDataList>
+                                                <button *ngFor="let cantidad of arrayCantidades" class="text-md"
+                                                    tuiOption type="button" [value]="cantidad">
+                                                    {{ cantidad }}
+                                                </button>
+                                            </tui-data-list>
+                                        </tui-select>
+
+
+                                    </div>
+
+
+                                    <!-- Info producto -->
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-xl text-neutral-900 dark:text-white">
+                                            {{ item.get('producto_sku')?.value }} -
+                                            {{ item.get('producto_nombre')?.value }}
+                                        </p>
+                                        <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                                            {{ item.get('nombre_categoria')?.value }}
+                                        </p>
+
+
+                                    </div>
+                                    <!-- Descuento -->
+                                    <div class="text-right">
+                                        <tui-textfield>
+                                            <label tuiLabel>Coloca el descuento</label>
+
+                                            <input tuiInputNumber formControlName="descuento" />
+                                        </tui-textfield>
+                                        
+                                    </div>
+
+
+                                    <!-- Precio -->
+                                    <div class="text-right">
+                                        <p class="text-2xl font-bold text-black dark:text-white">
+                                            {{ ((+item.get('costo_venta')?.value || 0) *
+                                            (+item.get('cantidad_final')?.value
+                                            || 0)) | tuiAmount: 'S/.' : 'left' | async }}
+
+                                        </p>
+                                    </div>
+
+                                    <!-- Eliminar -->
+                                    <button tuiIconButton appearance="negative" iconStart="@tui.trash" type="button"
+                                        (click)="eliminarProductoForm(i)" size="xl">
+                                    </button>
                                 </div>
 
-                                <div class="flex flex-col input-select-cantidad  ">
+                            </div>
 
-
-                                    <tui-select formControlName="cantidad_final" class="w-24" tuiTextfieldSize="l">
-
-                                        <tui-data-list *tuiDataList>
-                                            <button *ngFor="let cantidad of arrayCantidades" class="text-md" tuiOption
-                                                type="button" [value]="cantidad">
-                                                {{ cantidad }}
-                                            </button>
-                                        </tui-data-list>
-                                    </tui-select>
-
-
-                                </div>
-
-
-                                <!-- Info producto -->
-                                <div class="flex-1">
-                                    <p class="font-semibold text-xl text-neutral-900 dark:text-white">
-                                        {{ item.get('producto_sku')?.value }} -
-                                        {{ item.get('producto_nombre')?.value }}
-                                    </p>
-                                    <p class="text-sm text-neutral-500 dark:text-neutral-400">
-                                        {{ item.get('nombre_categoria')?.value }}
-                                    </p>
-
-
-                                </div>
-  <!-- Descuento -->
-                                <div class="text-right">
-                                   	<tui-textfield>
-    <label tuiLabel>Coloca el descuento</label>
- 
-    <input
-        tuiInputNumber
-        formControlName="descuento"
-        />
-</tui-textfield> 
-                                </div>
-
-
-                                <!-- Precio -->
-                                <div class="text-right">
-                                    <p class="text-2xl font-bold text-black dark:text-white">
-                                        {{ ((+item.get('costo_venta')?.value || 0) * (+item.get('cantidad_final')?.value
-                                        || 0)) | tuiAmount: 'S/.' : 'left' | async }}
-
-                                    </p>
-                                </div>
-
-                                <!-- Eliminar -->
-                                <button tuiIconButton appearance="negative" iconStart="@tui.trash" type="button"
-                                    (click)="eliminarProductoForm(i)" size="xl">
-                                </button>
+                            <!-- Estado vacío -->
+                            <div *ngIf="productosFormArray.length === 0"
+                                class="text-center py-16 text-neutral-400  dark:text-neutral-300  rounded-lg">
+                                <img class="pb-8 w-36 h-36 object-contain text-center mx-auto"
+                                    src="https://cdn-icons-png.flaticon.com/512/10951/10951882.png" alt="">
+                                <p class="text-2xl font-bold">No hay productos en el carrito</p>
+                                <p class="text-md">Presiona "Agregar Producto" o Escanea con el código de barras.</p>
                             </div>
                         </div>
-
-                        <!-- Estado vacío -->
-                        <div *ngIf="productosFormArray.length === 0"
-                            class="text-center py-16 text-neutral-400  dark:text-neutral-300  rounded-lg">
-                            <img class="pb-8 w-36 h-36 object-contain text-center mx-auto"
-                                src="https://cdn-icons-png.flaticon.com/512/10951/10951882.png" alt="">
-                            <p class="text-2xl font-bold">No hay productos en el carrito</p>
-                            <p class="text-md">Presiona "Agregar Producto" o Escanea con el código de barras.</p>
-                        </div>
+                        <p class="text-xs ">
+  <strong>Nota:</strong> Cada producto agregado a la lista tiene su propio descuento independiente. 
+  Si necesitas aplicar descuentos diferentes al mismo artículo, agrégalo varias veces.
+</p>
+                                                                           
                     </div>
                 </div>
-</div>
-               
+
 
                 <!-- Panel lateral derecho (Resumen y cliente) -->
                 <div
@@ -188,8 +193,8 @@
         [items]="documents | tuiFilterByInput"
     />
 </tui-textfield>
---> 
-                                
+-->
+
                                 <button tuiIconButton iconStart="@tui.search" type="button"
                                     appearance="primary-grayscale" (click)="buscarCliente()"
                                     [disabled]="ventaForm.get('documento_cliente')?.invalid || !(userPermissions$ | async)?.can_make_sale">

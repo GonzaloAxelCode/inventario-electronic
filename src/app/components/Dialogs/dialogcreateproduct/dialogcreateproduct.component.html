@@ -1,65 +1,123 @@
 <div>
+  <div class="max-w-6xl mx-auto pt-6 rounded-lg">
+    <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-  <div class="max-w-4xl mx-l pt-6  rounded-lg ">
+      <!-- Columna izquierda: Nombre y Categoría -->
+      <div class="lg:col-span-2 col-span-1 space-y-6">
+        <!-- Nombre -->
+        <div class="flex flex-col">
+          <tui-input formControlName="nombre" class="w-full" placeholder="Ingrese el nombre del producto">
+            Nombre del Producto
+          </tui-input>
+          <tui-error *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched">
+            Este campo es obligatorio
+          </tui-error>
+        </div>
 
-    <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
- 
-      <!-- Nombre -->
-      <div class="flex flex-col">
-        <tui-input formControlName="nombre" class="w-full" placeholder="Ingrese el nombre del producto">
-          Nombre del Producto
-        </tui-input>
-        <tui-error *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched">
-          Este campo es obligatorio
-        </tui-error>
-      </div>
-      <div class="flex flex-col">
-        <tui-select formControlName="categoria" class="w-full" [stringify]="getCategoriaNombre">
-          Categoría
-          <tui-data-list *tuiDataList>
-            <button *ngFor="let categoria of categorias" tuiOption [value]="categoria.id">
-              {{ categoria.nombre }}
-            </button>
-          </tui-data-list>
-        </tui-select>
-        <tui-error *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched">
-          Debe seleccionar una categoría
-        </tui-error>
-      </div>
-      <div class="flex flex-col col-span-2">
-        <label class="mb-2">Imagen del producto</label>
-        <input type="file" (change)="onFileSelected($event)" accept="image/*" />
-        <img *ngIf="previewImage" [src]="previewImage" class="mt-2 w-32 h-32 object-cover rounded" />
-      </div>
-      <!-- Marca -->
-      <div class="flex flex-col">
-        <tui-select formControlName="marca" class="w-full">
-          Marca
-          <tui-data-list *tuiDataList>
-            <button *ngFor="let marca of marcas" tuiOption [value]="marca">{{ marca }}</button>
-          </tui-data-list>
-        </tui-select>
-        <tui-error *ngIf="productoForm.get('marca')?.invalid && productoForm.get('marca')?.touched">
-          Este campo es obligatorio
-        </tui-error>
-      </div>
+        <!-- Categoría -->
+        <div class="flex flex-col">
+          <tui-select formControlName="categoria" class="w-full" [stringify]="getCategoriaNombre">
+            Categoría
+            <tui-data-list *tuiDataList>
+              <button *ngFor="let categoria of categorias" tuiOption [value]="categoria.id">
+                {{ categoria.nombre }}
+              </button>
+            </tui-data-list>
+          </tui-select>
+          <tui-error *ngIf="productoForm.get('categoria')?.invalid || productoForm.get('categoria')?.touched">
+            Debe seleccionar una categoría
+          </tui-error>
+        </div>
+        <div class="flex flex-col border-dashed border-1 border border-neutral-500 px-5 py-2 rounded-xl">
+            <p class="cursor-pointer py-1"     (click)="expandedCaracteristicas = !expandedCaracteristicas"
+>Características <tui-icon      [style.font-size.rem]="1" icon="@tui.chevron-down" />
+ </p>
+  <p *ngIf="emptyCaracteristicas" class="py-4 text-center w-full text-neutral-700 dark:text-neutral-400">Esta categoria no tiene caracteristicas</p>
 
-      <!-- Modelo -->
-      <div class="flex flex-col">
-        <tui-select formControlName="modelo" class="w-full">
-          Modelo
-          <tui-data-list *tuiDataList>
-            <button *ngFor="let modelo of modelos" tuiOption [value]="modelo">{{ modelo }}</button>
-          </tui-data-list>
-        </tui-select>
-        <tui-error *ngIf="productoForm.get('modelo')?.invalid && productoForm.get('modelo')?.touched">
-          Este campo es obligatorio
-        </tui-error>
-      </div>
+           	<tui-expand *ngIf="!emptyCaracteristicas"  [expanded]="expandedCaracteristicas">
 
 
-      <!-- Descripción (Ocupará ambas columnas) -->
-      <div class="col-span-2">
+          <div formGroupName="caracteristicas" class="grid gap-4 mt-4">
+
+            <ng-container *ngFor="let key of getCaracteristicasKeys()">
+
+              <tui-textfield iconStart="@tui.circle-plus" [tuiTextfieldSize]="'m'">
+                <label tuiLabel>{{ key + "(Opcional)" | titlecase }}</label>
+
+                <input tuiTextfield [formControlName]="key" [placeholder]="'Ingresa ' + (key | titlecase)" />
+
+
+              </tui-textfield>
+
+            </ng-container>
+          </div>             </tui-expand>
+        </div>
+
+
+      </div>
+
+
+      <!-- Columna derecha: Imagen -->
+      <div class="col-span-1">
+        <div class="flex flex-col h-full">
+          <label class="mb-2 font-medium">Imagen del producto</label>
+
+          <!-- Input oculto -->
+          <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
+
+          <!-- Preview de imagen con hover para eliminar -->
+          <div *ngIf="previewImage" class="relative  w-[200px] h-[200px] group cursor-pointer" (click)="removeImage()">
+            <img [src]="previewImage" class="w-full h-full object-contain rounded-lg shadow-md" />
+
+            <!-- Overlay con X en hover -->
+            <div
+              class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
+              <span class="text-white text-6xl font-bold">×</span>
+            </div>
+          </div>
+
+          <!-- Área clickeable cuando no hay imagen -->
+          <div *ngIf="!previewImage" (click)="fileInput.click()"
+            class=" w-[200px] h-[200px] border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-all duration-200">
+            <svg class="w-12 h-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span class="text-gray-400 text-sm">Seleccionar imagen</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fila completa debajo: Marca y Modelo -->
+      <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Marca -->
+        <div class="flex flex-col">
+          <tui-select formControlName="marca" class="w-full">
+            Marca
+            <tui-data-list *tuiDataList>
+              <button *ngFor="let marca of marcas" tuiOption [value]="marca">{{ marca }}</button>
+            </tui-data-list>
+          </tui-select>
+          <tui-error *ngIf="productoForm.get('marca')?.invalid && productoForm.get('marca')?.touched">
+            Este campo es obligatorio
+          </tui-error>
+        </div>
+
+        <!-- Modelo -->
+        <div class="flex flex-col">
+          <tui-select formControlName="modelo" class="w-full">
+            Modelo
+            <tui-data-list *tuiDataList>
+              <button *ngFor="let modelo of modelos" tuiOption [value]="modelo">{{ modelo }}</button>
+            </tui-data-list>
+          </tui-select>
+          <tui-error *ngIf="productoForm.get('modelo')?.invalid && productoForm.get('modelo')?.touched">
+            Este campo es obligatorio
+          </tui-error>
+        </div>
+      </div>
+
+      <!-- Descripción (Fila completa) -->
+      <div class="lg:col-span-3">
         <tui-textarea formControlName="descripcion" class="w-full" placeholder="Ingrese la descripción">
           Descripción
         </tui-textarea>
@@ -68,18 +126,17 @@
         </tui-error>
       </div>
 
-  <div *ngIf="!(userPermissions$ | async)?.can_create_product" class="w-full col-span-2">
-      
-       <span class="text-yellow-400">* Permisos insuficientes para crear un producto</span>
-
-    </div>
-
+      <!-- Mensaje de permisos -->
+      <div *ngIf="!(userPermissions$ | async)?.can_create_product" class="lg:col-span-3">
+        <span class="text-yellow-400">* Permisos insuficientes para crear un producto</span>
+      </div>
 
       <!-- Botón de envío -->
-      <div *ngIf="(userPermissions$ | async)?.can_create_product" class="grid w-full col-span-2">
-        <button  tuiButton type="submit"   iconStart="@tui.plus" appearance="textfield" [disabled]="productoForm.invalid || !!(loadingCreateProduct$ | async)"
-          class="px-6 py-2 transition">
-          Agregar Producto         <tui-loader [showLoader]="!!(loadingCreateProduct$ | async)"></tui-loader>
+      <div *ngIf="(userPermissions$ | async)?.can_create_product" class="lg:col-span-3">
+        <button tuiButton type="submit" iconStart="@tui.plus" appearance="textfield"
+          [disabled]="productoForm.invalid || !!(loadingCreateProduct$ | async)" class="w-full px-6 py-2 transition">
+          Agregar Producto
+          <tui-loader [showLoader]="!!(loadingCreateProduct$ | async)"></tui-loader>
         </button>
       </div>
 

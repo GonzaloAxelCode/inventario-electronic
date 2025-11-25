@@ -33,7 +33,20 @@
        <span class="text-yellow-400">* Permisos insuficientes para crear una categoria </span>
 
     </div>
-
+	<tui-textfield
+  class="w-full flex flex-1 col-span-2"
+    multi
+    tuiTextfieldSize="l"
+>
+    <input
+        placeholder="Coloca los nombres de las caracteristicas para esta categoria."
+        tuiInputChip
+        [unique]="false"
+        formControlName="caracteristicas_template"
+    />
+ 
+    <tui-input-chip *tuiItem />
+</tui-textfield>
 
     <!-- Botón de envío -->
     <div  *ngIf="(userPermissions$ | async)?.can_create_category" class="grid w-full col-span-2">

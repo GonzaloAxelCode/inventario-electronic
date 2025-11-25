@@ -10,8 +10,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { TuiButton, TuiDialogContext, TuiError, TuiLoader, } from '@taiga-ui/core';
-import { TuiFieldErrorPipe } from '@taiga-ui/kit';
+import { TuiButton, TuiDialogContext, TuiError, TuiLoader, TuiTextfield, } from '@taiga-ui/core';
+import { TuiFieldErrorPipe, TuiInputChip } from '@taiga-ui/kit';
 import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
@@ -22,7 +22,7 @@ import urlSlug from 'url-slug';
   imports: [CommonModule,
     ReactiveFormsModule, TuiLoader,
     FormsModule,
-    TuiButton, TuiError, TuiTextareaModule, TuiInputModule, TuiFieldErrorPipe,
+    TuiButton, TuiError, TuiTextareaModule, TuiTextfield, TuiInputModule, TuiFieldErrorPipe, TuiInputChip
   ],
   templateUrl: './dialogcreatecategoria.component.html',
   styleUrl: './dialogcreatecategoria.component.scss'
@@ -41,7 +41,11 @@ export class DialogcreatecategoriaComponent {
       siglas_nombre_categoria: ['', [
         Validators.required,
         Validators.pattern(/^[A-Z]{4}$/)
-      ]]
+      ]],
+      caracteristicas_template: this.fb.control<string[]>([], {
+        validators: [Validators.required],
+      }),
+
     });
   }
 

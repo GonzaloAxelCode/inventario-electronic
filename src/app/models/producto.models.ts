@@ -8,7 +8,7 @@ export interface Producto {
     sku: string;
     marca?: string | null;
     modelo?: string | null;
-    caracteristica?: Record<string, any>;
+    caracteristicas?: any;
     fecha_creacion?: Date;
     fecha_actualizacion?: Date;
     activo?: boolean;

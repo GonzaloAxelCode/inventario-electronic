@@ -161,5 +161,7 @@ export interface ProductSale {
     valor_total?: number;
     igv_total?: number;
     total?: number;
+    costo_original?: number
+    descuento?: number
 
 }

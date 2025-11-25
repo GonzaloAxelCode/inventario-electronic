@@ -1,6 +1,6 @@
 <div class="max-w-4xl mx-auto pt-6 rounded-lg flex gap-5">
   <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="grid gap-3">
-    
+
     <!-- Nombre -->
     <div class="flex flex-col">
       <tui-input formControlName="nombre" class="w-full" placeholder="Ingrese el nombre de la categoría">
@@ -11,13 +11,14 @@
       </tui-error>
     </div>
 
-     <div class="flex flex-col">
-      <tui-input formControlName="siglas_nombre_categoria" class="w-full" placeholder="Ingrese un abreviado de la categoría">
-        Siglas Categoria 
+    <div class="flex flex-col">
+      <tui-input formControlName="siglas_nombre_categoria" class="w-full"
+        placeholder="Ingrese un abreviado de la categoría">
+        Siglas Categoria
       </tui-input>
 
     </div>
-    
+
 
     <!-- Descripción (Ocupará ambas columnas) -->
     <div class="col-span-2">
@@ -28,17 +29,36 @@
         La descripción es obligatoria
       </tui-error>
     </div>
- <div *ngIf="!(userPermissions$ | async)?.can_modify_category" class="w-full col-span-2">
-      
-       <span class="text-yellow-400">* Permisos insuficientes para editar una categoria </span>
+    <div class="col-span-2">
+
+<tui-textfield
+  class="w-full flex flex-1 col-span-2"
+    multi
+    tuiTextfieldSize="l"
+>
+    <input
+        placeholder="Coloca los nombres de las caracteristicas para esta categoria."
+        tuiInputChip
+        [unique]="false"
+        formControlName="caracteristicas_template"
+    />
+ 
+    <tui-input-chip *tuiItem />
+    
+</tui-textfield>      
+    <p class="text-xs py-2 text-green-600">* Si eliminas una caracteristica entonces se eliminara su informacion de todos tus productos con esta categoria.</p>
+    </div>
+    <div *ngIf="!(userPermissions$ | async)?.can_modify_category" class="w-full col-span-2">
+
+      <span class="text-yellow-400">* Permisos insuficientes para editar una categoria </span>
 
     </div>
     <!-- Botón de envío -->
-    <div  *ngIf="(userPermissions$ | async)?.can_modify_category"   class="flex-1 w-full col-span-2 flex justify-end">
-      <button tuiButton type="submit" [disabled]="categoryForm.invalid || !(userPermissions$ | async)?.can_modify_category"
-      appearance="outline-grayscale"
-      class="px-6 py-2 w-full  text-white rounded-full transition">
-        Actualizar  <tui-loader [showLoader]="!!(loadingUpdateCategoria$ | async)?.loadingUpdateCategoria"></tui-loader>
+    <div *ngIf="(userPermissions$ | async)?.can_modify_category" class="flex-1 w-full col-span-2 flex justify-end">
+      <button tuiButton type="submit"
+        [disabled]="categoryForm.invalid || !(userPermissions$ | async)?.can_modify_category"
+        appearance="outline-grayscale" class="px-6 py-2 w-full  text-white rounded-full transition">
+        Actualizar <tui-loader [showLoader]="!!(loadingUpdateCategoria$ | async)?.loadingUpdateCategoria"></tui-loader>
       </button>
     </div>
   </form>

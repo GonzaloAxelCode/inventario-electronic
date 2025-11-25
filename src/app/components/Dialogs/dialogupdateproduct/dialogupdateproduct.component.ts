@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiExpand, TuiGroup, TuiHintUnstyledComponent, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiExpand, TuiGroup, TuiHintUnstyledComponent, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
 
 import { Categoria } from '@/app/models/categoria.models';
@@ -27,7 +27,7 @@ import { DialogeditinventarioComponent } from '../dialogeditinventario/dialogedi
   imports: [CommonModule, TuiDropdown,
     ReactiveFormsModule,
     TuiInputModule,
-    TuiTextareaModule,
+    TuiTextareaModule, TuiIcon,
     TuiError,
     TuiButton,
     TuiDataListWrapper,
@@ -46,6 +46,8 @@ export class DialogupdateproductComponent implements OnInit {
   protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Producto>>>();
   public producto: Partial<Producto> = this.context.data ?? {};
   selectedCategory: any;
+  protected expandedCaracteristicas = false;
+  emptyCaracteristicas = false
   userPermissions$ = this.store.select(selectPermissions);
   protected expanded = false;
   loadingUpdateProducto: boolean = false;
@@ -66,10 +68,28 @@ export class DialogupdateproductComponent implements OnInit {
       imagen: [this.producto?.imagen
         ? URL_BASE + this.producto.imagen
         : "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png"],
+      caracteristicas: this.buildCaracteristicasGroup()
+
     });
   }
+  removeImage(): void {
+    this.previewImage = null;
 
+    // Si usas un input file, también resetéalo
+  }
+  buildCaracteristicasGroup(): FormGroup {
+    const caracteristicas = this.producto?.caracteristicas || {};
+    const group: any = {};
+
+    // Construir controles dinámicamente desde el objeto
+    Object.keys(caracteristicas).forEach(key => {
+      group[key] = [caracteristicas[key]];
+    });
+
+    return this.fb.group(group);
+  }
   ngOnInit() {
+
     this.store.select(selectProductoState).subscribe((state: ProductoState) => {
       this.loadingUpdateProducto = state.loadingUpdate;
     });
@@ -84,6 +104,47 @@ export class DialogupdateproductComponent implements OnInit {
 
       this.context.completeWith(true);
     });
+    //
+    this.productoForm.patchValue({
+      caracteristicas: this.buildCaracteristicasGroup()
+    });
+    if (Object.keys(this.producto.caracteristicas).length === 0) {
+      this.emptyCaracteristicas = true
+    } else {
+
+      this.emptyCaracteristicas = false
+    }
+
+    this.productoForm.get('categoria')!.valueChanges.subscribe(catId => {
+      this.expandedCaracteristicas = true;
+      if (!catId) {
+        console.log("Sin categoría seleccionada");
+
+        return;
+      }
+
+      // Buscar la categoría por ID
+      const categoriaSeleccionada: any = this.categorias.find(c => c.id === catId);
+
+      if (categoriaSeleccionada) {
+        if (categoriaSeleccionada.caracteristicas_template.length === 0) {
+          this.emptyCaracteristicas = true
+        } else {
+
+          this.emptyCaracteristicas = false
+        }
+
+        console.log("Categoria seleccionard", categoriaSeleccionada, "ID categroria actual", this.producto.categoria)
+        if (categoriaSeleccionada.id === this.producto.categoria) {
+
+          this.cargarCaracteristicasDinamicas(categoriaSeleccionada.caracteristicas_template, this.producto.caracteristicas);
+        } else {
+
+          this.cargarCaracteristicasDinamicas(categoriaSeleccionada.caracteristicas_template);
+        }
+      }
+    });
+
   }
   onCloseDialog() {
     this.context.completeWith(true)
@@ -107,7 +168,10 @@ export class DialogupdateproductComponent implements OnInit {
           if (typeof value === 'string') {
             return; // 🛑 No se agrega al FormData
           }
-
+          if (key === "caracteristicas") {
+            formData.append("caracteristicas", JSON.stringify(value));
+            return;
+          }
           // Si el usuario cambió la imagen → enviar archivo
           if (value instanceof File) {
             formData.append(key, value);
@@ -182,6 +246,22 @@ export class DialogupdateproductComponent implements OnInit {
       };
       reader.readAsDataURL(file);
     }
+  }
+  getCaracteristicasKeys(): string[] {
+    const group = this.productoForm.get('caracteristicas') as FormGroup;
+    return group ? Object.keys(group.controls) : [];
+  }
+  cargarCaracteristicasDinamicas(campos: string[], valores: any = {}) {
+    const caracteristicasGroup = this.fb.group({});
+
+    campos.forEach(campo => {
+      caracteristicasGroup.addControl(
+        campo,
+        this.fb.control(valores[campo] ?? '')
+      );
+    });
+
+    this.productoForm.setControl('caracteristicas', caracteristicasGroup);
   }
 
 }

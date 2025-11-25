@@ -14,6 +14,7 @@ export interface Categoria {
     color?: string;
     siglas_nombre_categoria?: string,
     date_created?: any
+    caracteristicas_template: string[]
 }
 
 export type CategoriaCreate = Omit<Categoria, 'id' | 'fechaCreacion' | 'fechaActualizacion' | 'parent' | 'destacado' | 'color'>;

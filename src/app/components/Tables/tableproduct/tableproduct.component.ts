@@ -16,6 +16,7 @@ import { Categoria } from '@/app/models/categoria.models';
 import { DialogCreateInventarioService } from '@/app/services/dialogs-services/dialog-create-inventario.service';
 import { DialogEditInventarioDetailService } from '@/app/services/dialogs-services/dialog-edit-inventario.service';
 import { DialogUpdateProductService } from '@/app/services/dialogs-services/dialog-updateproduct.service';
+import { capitalize } from '@/app/services/utils/capitalize';
 import { URL_BASE } from '@/app/services/utils/endpoints';
 import { QuerySearchProduct } from '@/app/services/utils/querys';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
@@ -155,6 +156,7 @@ export class TableproductComponent implements OnInit {
       this.onSubmitSearch()
     });
   }
+  capitalize = capitalize
   private readonly dialogEditInventarioService = inject(DialogEditInventarioDetailService);
   protected showDialogEditInventario(currentInventario: any): void {
     this.dialogEditInventarioService.open(currentInventario).subscribe((result: any) => {

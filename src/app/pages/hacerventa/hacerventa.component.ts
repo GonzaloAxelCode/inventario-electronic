@@ -209,8 +209,11 @@ export class HacerventaComponent implements OnInit {
         costo_venta: [productoEncontrado.costo_venta],
         productoId: [productoEncontrado.producto],
         stock_actual: [productoEncontrado.cantidad],
-        descuento: [0]
+        descuento: [0],
+        costo_original: [productoEncontrado.costo_venta],
       });
+
+
       const costo_venta = productoEncontrado.costo_venta || 0
       if (costo_venta <= 0) {
         this.alerts.open('Producto no tiene costo', {
@@ -229,6 +232,9 @@ export class HacerventaComponent implements OnInit {
         return;
       }
       productosArray.push(nuevoProducto);
+      nuevoProducto.get('descuento')!.valueChanges.subscribe((desc: any) => {
+        this.actualizarCostoFinalRestando(nuevoProducto, desc);
+      });
       console.log('Producto enconrado', productoEncontrado);
       this.alerts.open('Producto agregado', {
         label: `${productoEncontrado.producto_nombre} agregado correctamente`,
@@ -385,9 +391,15 @@ export class HacerventaComponent implements OnInit {
           stock_actual: [result.cantidad],
           producto_sku: [result.producto_sku],
           imagen_producto: [result.imagen_producto ? URL_BASE + result.imagen_producto : "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png"],
-          descuento: [0]
+          descuento: [0],
+          costo_original: [result.costo_venta],
         });
+
+
         productosArray.push(nuevoProducto);
+        nuevoProducto.get('descuento')!.valueChanges.subscribe((desc: any) => {
+          this.actualizarCostoFinalRestando(nuevoProducto, desc);
+        });
         this.calcularTotales();
         this.cdr.markForCheck();
       }
@@ -488,6 +500,23 @@ export class HacerventaComponent implements OnInit {
       nombre_cliente: '',
       cliente: null
     });
+  }
+
+
+  actualizarCostoFinalRestando(productoForm: FormGroup, descuento: number) {
+    const costoBase = Number(productoForm.get('costo_original')?.value || 0);
+    let d = Number(descuento) || 0;
+
+    // ❌ Si el descuento es mayor o igual al costo original
+    if (d >= costoBase) {
+      d = 0; // 👉 Se resetea automáticamente
+      productoForm.get('descuento')?.setValue(0, { emitEvent: false });
+    }
+
+    // Calcular nuevo costo_venta
+    const nuevoValor = costoBase - d;
+
+    productoForm.get('costo_venta')?.setValue(nuevoValor, { emitEvent: false });
   }
 
   hacerVenta() {

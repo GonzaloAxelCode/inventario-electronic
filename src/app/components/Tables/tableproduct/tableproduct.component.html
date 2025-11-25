@@ -57,9 +57,9 @@
                         <table tuiTable size="s" class="w-full">
                             <thead>
                                 <tr>
-                                    <th tuiTh class="text-center">Imagen</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('sku')">SKU</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('nombre')">Nombre</th>
+                                    <th tuiTh class="text-center">Codigo</th>
+                                    
+                                    <th tuiTh *ngIf="displayedColumns.includes('nombre')">Nombre/Detalles</th>
 
                                     <th tuiTh *ngIf="displayedColumns.includes('categoria')">Categoría</th>
 
@@ -76,7 +76,12 @@
 
                                     <!-- Columna de imagen mejorada -->
                                     <td tuiTd class="text-center">
-                                        <div class="flex justify-center items-center py-2">
+                                        <div class="flex flex-col justify-center items-center py-2">
+                                            <tui-chip iconStart="@tui.scan-barcode" size="s" class="mb-3">
+
+                                                {{ producto.sku }}
+
+                                            </tui-chip>
                                             <div (click)="onSetImageProduct(producto); open = true;"
                                                 class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
                                                 <img [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
@@ -87,24 +92,19 @@
                                         </div>
                                     </td>
 
-                                    <td tuiTd *ngIf="displayedColumns.includes('sku')">
-                                        <span class="font-mono text-sm">
-
-                                            <tui-chip iconStart="@tui.scan-barcode" size="s">
-
-                                                {{ producto.sku }}
-
-                                            </tui-chip>
-
-
-
-
-                                        </span>
-
-                                    </td>
+                                  
                                     <td tuiTd *ngIf="displayedColumns.includes('nombre')">
-                                        <span class="font-semibold">{{ producto.nombre }}</span>
-                                    </td>
+                                        <span class="font-semibold text-lg">{{ producto.nombre }}</span>
+                                        
+  <div class="space-y-1">
+    <div *ngFor="let item of producto.caracteristicas | keyvalue" 
+         class="flex items-center text-sm">
+      <span class="w-2 h-2 rounded-full bg-gray-400 dark:bg-white mr-2 flex-shrink-0"></span>
+      <span class="text-gray-600 dark:text-neutral-400 font-medium">{{ capitalize(item.key || '')  }}:</span>
+      <span class="ml-1 text-gray-800 dark:text-neutral-200">{{ item.value }}</span>
+    </div>
+  </div>
+  
 
                                     <td tuiTd *ngIf="displayedColumns.includes('categoria')">
                                         <p *ngIf="!mostrarAdvertencia(producto.categoria_nombre)">{{
@@ -198,7 +198,7 @@
                                                 iconStart="@tui.pencil" tuiButton appearance="textfield" type="submit"
                                                 size="s" tuiButtonVertical class="px-6 py-2 transition"
                                                 (click)="showDialogEditInventario(producto.inventario)">
-                                                Actualizar Inventario
+                                                 Inventario
                                             </button>
 
 

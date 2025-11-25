@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiExpand, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
+import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiExpand, TuiIcon, TuiLabel, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TuiInputModule, TuiTextareaModule } from '@taiga-ui/legacy';
 
 import { Categoria } from '@/app/models/categoria.models';
 import { ProductoState } from '@/app/models/producto.models';
@@ -29,8 +29,8 @@ import { map, Observable, Subject, takeUntil } from 'rxjs';
     TuiError,
     TuiButton,
     TuiDataListWrapper,
-    TuiDataList,
-    TuiTextfield,
+    TuiDataList, TuiIcon,
+    TuiTextfield, TuiLabel,
     FormsModule, TuiComboBoxModule,
     TuiSelectModule, TuiTabs, TuiTextfieldControllerModule, TuiDropdown, TuiExpand
   ],
@@ -43,6 +43,8 @@ export class DialogcreateproductComponent {
   protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Categoria>>>();
   productoForm: FormGroup;
   categorias: Categoria[] = [];
+  protected expandedCaracteristicas = false;
+  emptyCaracteristicas = false
   marcas = ['Genérico', 'Samsung', 'Apple', 'Xiaomi', 'Huawei'];
   modelos = ['Genérico', 'Modelo A', 'Modelo B', 'Modelo C'];
   tiendaUser!: number
@@ -56,6 +58,7 @@ export class DialogcreateproductComponent {
       modelo: ['Genérico', Validators.required],
       categoria: [null, Validators.required],
       imagen: [null],
+      caracteristicas: this.fb.group({})
     });
   }
   previewImage: string | ArrayBuffer | null = null;
@@ -102,32 +105,81 @@ export class DialogcreateproductComponent {
 
       this.context.completeWith(true);
     });
+
+
+    this.productoForm.get('categoria')!.valueChanges.subscribe(catId => {
+      this.expandedCaracteristicas = true;
+
+
+      if (!catId) {
+        console.log("Sin categoría seleccionada");
+
+        return;
+      }
+
+      // Buscar la categoría por ID
+      const categoriaSeleccionada = this.categorias.find(c => c.id === catId);
+
+      if (categoriaSeleccionada) {
+        if (categoriaSeleccionada.caracteristicas_template.length === 0) {
+          this.emptyCaracteristicas = true
+        } else {
+
+          this.emptyCaracteristicas = false
+        }
+
+        console.log("Características:", categoriaSeleccionada.caracteristicas_template);
+        this.cargarCaracteristicasDinamicas(categoriaSeleccionada.caracteristicas_template);
+
+      }
+    });
+
+  }
+  getCaracteristicasKeys(): string[] {
+    const group = this.productoForm.get('caracteristicas') as FormGroup;
+    return group ? Object.keys(group.controls) : [];
   }
 
+  cargarCaracteristicasDinamicas(campos: string[]) {
+    const caracteristicasGroup = this.fb.group({});
+
+    campos.forEach(campo => {
+      caracteristicasGroup.addControl(
+        campo,
+        this.fb.control('')
+      );
+    });
+
+    this.productoForm.setControl('caracteristicas', caracteristicasGroup);
+  }
   onSubmit() {
     if (this.productoForm.valid) {
       const formData = new FormData();
       const nuevoProducto = this.productoForm.value;
 
-      // Agregar todos los campos al FormData
       Object.entries(nuevoProducto).forEach(([key, value]: any) => {
-        if (value !== null) {
-          // Si es un objeto (como categoria o caracteristica), convertir a JSON
-          if (typeof value === 'object' && !(value instanceof File)) {
-            formData.append(key, JSON.stringify(value));
-          } else {
-            formData.append(key, value);
-          }
+
+        if (value === null || value === undefined) return;
+
+        if (key === "caracteristicas") {
+          formData.append("caracteristicas", JSON.stringify(value));
+          return;
         }
+
+        if (typeof value === "object" && !(value instanceof File)) {
+          formData.append(key, JSON.stringify(value));
+          return;
+        }
+
+        formData.append(key, value);
       });
 
-      // Agregar el nombre de la categoría
       formData.append('categoria_nombre', this.getCategoriaNombre(nuevoProducto.categoria));
 
-      // Dispatch usando FormData directamente
       this.store.dispatch(createProductoAction({ producto: formData }));
     }
   }
+
 
 
   getCategoriaNombre = (id: number): string => {
@@ -148,5 +200,9 @@ export class DialogcreateproductComponent {
     this.destroy$.next();
     this.destroy$.complete();
   }
+  removeImage(): void {
+    this.previewImage = null;
 
+    // Si usas un input file, también resetéalo
+  }
 }

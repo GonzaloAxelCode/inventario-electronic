@@ -1,6 +1,6 @@
 import { Categoria } from '@/app/models/categoria.models';
 import { Component, inject } from '@angular/core';
-import { TuiDialogContext, TuiLoader } from '@taiga-ui/core';
+import { TuiDialogContext, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { injectContext } from '@taiga-ui/polymorpheus';
 
 import { updateCategoriaAction, updateCategoriaFail, updateCategoriaSuccess } from '@/app/state/actions/categoria.actions';
@@ -15,7 +15,7 @@ import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Actions, ofType } from '@ngrx/effects';
-import { TuiFieldErrorPipe } from '@taiga-ui/kit';
+import { TuiFieldErrorPipe, TuiInputChip } from '@taiga-ui/kit';
 import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
 @Component({
   selector: 'app-dialogupdatecategoria',
@@ -23,7 +23,7 @@ import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
   imports: [CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    TuiButton, TuiError, TuiTextareaModule, TuiInputModule, TuiFieldErrorPipe, TuiLoader],
+    TuiButton, TuiError, TuiTextareaModule, TuiInputChip, TuiTextfield, TuiInputModule, TuiFieldErrorPipe, TuiLoader],
   templateUrl: './dialogupdatecategoria.component.html',
   styleUrl: './dialogupdatecategoria.component.scss'
 })
@@ -42,7 +42,10 @@ export class DialogupdatecategoriaComponent {
       siglas_nombre_categoria: [this.categoria.siglas_nombre_categoria, [
         Validators.required,
         Validators.pattern(/^[A-Z]{4}$/)
-      ]]
+      ]],
+      caracteristicas_template: this.fb.control<string[]>(this.categoria.caracteristicas_template || [], {
+        validators: [Validators.required],
+      }),
     });
     console.log(this.categoria)
     this.actions$
