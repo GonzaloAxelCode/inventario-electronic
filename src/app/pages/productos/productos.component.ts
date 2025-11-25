@@ -52,9 +52,17 @@ import { TablecategoriesComponent } from "../../components/Tables/tablecategorie
 export class ProductosComponent {
   private readonly confirm = inject(TuiConfirmService);
   private readonly dialogs = inject(TuiDialogService);
-  activeTab: 'productos' | 'categorias' = 'productos';
+  activeTab:
+    | 'productos'
+    | 'categorias'
+    | 'graficos'
+    | 'calculo-ganancias'
+    | 'reportes'
+    | 'proyeccion'
+    | 'alertas'
+    = 'productos';
 
-  setTab(tab: 'productos' | 'categorias') {
+  setTab(tab: typeof this.activeTab) {
     this.activeTab = tab;
   }
 

@@ -16,18 +16,53 @@
             </h2>
         </div>
 
-        <!-- PESTAÑAS SIN ROUTER -->
-        <nav tuiTabs class="flex flex-wrap gap-2">
-            <button tuiTab (click)="setTab('productos')" 
-                [class.active-link]="activeTab === 'productos'">
-                Productos
-            </button>
+      <!-- PESTAÑAS SIN ROUTER -->
+<nav tuiTabs class="flex flex-wrap gap-2">
 
-            <button tuiTab (click)="setTab('categorias')" 
-                [class.active-link]="activeTab === 'categorias'">
-                Categorías
-            </button>
-        </nav>
+    <button tuiTab 
+        (click)="setTab('productos')" 
+        [class.active-link]="activeTab === 'productos'">
+        Productos
+    </button>
+
+    <button tuiTab 
+        (click)="setTab('categorias')" 
+        [class.active-link]="activeTab === 'categorias'">
+        Categorías
+    </button>
+
+    <button tuiTab 
+        (click)="setTab('graficos')" 
+        [class.active-link]="activeTab === 'graficos'">
+        Gráficos
+    </button>
+
+    <button tuiTab 
+        (click)="setTab('calculo-ganancias')" 
+        [class.active-link]="activeTab === 'calculo-ganancias'">
+        Cálculo de ganancias
+    </button>
+
+    <button tuiTab 
+        (click)="setTab('reportes')" 
+        [class.active-link]="activeTab === 'reportes'">
+        Reportes de Inventario (PDF)
+    </button>
+
+    <button tuiTab 
+        (click)="setTab('proyeccion')" 
+        [class.active-link]="activeTab === 'proyeccion'">
+        Proyección de ganancias
+    </button>
+
+    <button tuiTab 
+        (click)="setTab('alertas')" 
+        [class.active-link]="activeTab === 'alertas'">
+        Alertas de Stock
+    </button>
+
+</nav>
+
     </header>
 
 
