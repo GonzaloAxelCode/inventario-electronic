@@ -360,7 +360,7 @@ export class HacerventaComponent implements OnInit {
 
     this.productosFormArray.controls.forEach(control => {
       const cantidad = parseInt(control.get('cantidad_final')?.value || '0');
-      const costoVenta = parseFloat(control.get('costo_venta')?.value || '0');
+      const costoVenta = parseFloat(control.get('costo_original')?.value || '0');
       const descuentoTotal = parseFloat(control.get("descuento")?.value || "0")
 
       const valorVenta = cantidad * costoVenta;
@@ -514,12 +514,6 @@ export class HacerventaComponent implements OnInit {
   actualizarCostoTotal(productoForm: FormGroup, descuento: number) {
     const costoBase = Number(productoForm.get('costo_original')?.value || 0);
     let d = Number(descuento) || 0;
-
-    // ❌ Si el descuento es mayor o igual al costo original
-    if (d >= costoBase) {
-      d = 0; // 👉 Se resetea automáticamente
-      productoForm.get('descuento')?.setValue(0, { emitEvent: false });
-    }
 
     // Calcular nuevo costo_venta
     const nuevoValor = costoBase - d;
