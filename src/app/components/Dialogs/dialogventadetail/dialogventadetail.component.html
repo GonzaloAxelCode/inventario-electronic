@@ -175,9 +175,13 @@
                     class="pb-3 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                     Precio Original
                   </th>
+                   <th
+                    class="pb-3 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                   Descuento 
+                  </th>
                     <th
                     class="pb-3 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                    Costo Venta 
+                    Costo Vendido
                   </th>
                  
                   <th
@@ -189,28 +193,33 @@
               <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
                 <tr *ngFor="let item of comprobante.items" class="group">
                   <td class="py-4">
-                    <p class="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                    <p class="text-md font-medium text-neutral-900 dark:text-neutral-100">
                       {{ item.descripcion }}
                     </p>
-                    <p class="text-xs text-neutral-500 dark:text-neutral-400 font-mono mt-0.5">
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400 font-mono mt-0.5">
                       {{ item.codigo }}
                     </p>
                   </td>
-                    <td class="py-4 text-center text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                    <td class="py-4 text-center text-md font-medium text-neutral-900 dark:text-neutral-100">
                     {{ item.cantidad }}
                   </td>
-                  <td class="py-4 text-right text-sm text-neutral-700 dark:text-neutral-300">
+                  <td class="py-4 text-right text-md text-neutral-700 dark:text-neutral-300">
                    S/ {{ getValorVentaRedondeado(item.costo_original) }}
                     
 
                   </td>
-                  <td class="py-4 text-right text-sm text-neutral-700 dark:text-neutral-300">
+                   <td class="py-4 text-right text-md text-neutral-700 dark:text-neutral-300">
+                    <!--  S/ {{ getValorVentaRedondeado(item.valorUnitario) }}-->
+                    S/ {{ getValorVentaRedondeado(item.descuento) }}
+
+                  </td>
+                  <td class="py-4 text-right text-md text-neutral-700 dark:text-neutral-300">
                     <!--  S/ {{ getValorVentaRedondeado(item.valorUnitario) }}-->
                     S/ {{ getValorVentaRedondeado(item.valorVenta  + item.igv) }}
 
                   </td>
                 
-                  <td class="py-4 text-right text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  <td class="py-4 text-right text-md font-semibold text-neutral-900 dark:text-neutral-100">
                     S/ {{ getValorVentaRedondeado(item.valorVenta  + item.igv) }}
                   </td>
                 </tr>
@@ -228,7 +237,13 @@
             <div class="flex justify-between text-sm">
               <span class="text-neutral-600 dark:text-neutral-400">Subtotal</span>
               <span class="text-neutral-900 dark:text-neutral-100 font-medium text-lg">
-                S/ {{ getValorVentaRedondeado(comprobante.sub_total) }}
+                S/ {{ getValorVentaRedondeado(comprobante.sub_total) + getValorVentaRedondeado(comprobante.descuento_total) }}
+              </span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-neutral-600 dark:text-neutral-400">Descuento Total</span>
+              <span class="text-red-500 dark:text-neutral-100 font-medium text-lg">
+                - S/ {{  getValorVentaRedondeado(comprobante.descuento_total) }}
               </span>
             </div>
             <div class="flex justify-between text-sm">
@@ -238,7 +253,7 @@
               </span>
             </div>
             <div class="flex justify-between pt-2 border-t border-neutral-300 dark:border-neutral-700">
-              <span class="font-semibold text-neutral-900 dark:text-neutral-100">Total</span>
+              <span class="font-semibold text-neutral-900 dark:text-neutral-100">Total </span>
               <span class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
                 S/ {{ getValorVentaRedondeado(comprobante.total) }}
               </span>

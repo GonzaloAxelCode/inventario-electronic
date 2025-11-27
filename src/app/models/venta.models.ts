@@ -74,6 +74,7 @@ export interface ComprobanteElectronico {
     cdr_url: string;
     ticket_url: string;
     items: ItemComprobante[];
+    descuento_total: number
 }
 export interface ItemComprobante {
     igv: number;
