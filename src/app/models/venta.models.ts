@@ -88,6 +88,8 @@ export interface ItemComprobante {
     precioUnitario: number;
     totalImpuestos: number;
     tipoAfectacionIgv: string;
+    descuento: number
+    costo_original: number
 }
 
 export interface VentaProducto {
@@ -104,6 +106,8 @@ export interface VentaProducto {
     total_impuestos: number;
     precio_unitario: number;
     date_created?: any
+    descuento: number
+    costo_original: number
 }
 
 export interface CreateVenta {
