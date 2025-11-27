@@ -512,13 +512,7 @@ export class HacerventaComponent implements OnInit {
 
 
   actualizarCostoTotal(productoForm: FormGroup, descuento: number) {
-    const costoBase = Number(productoForm.get('costo_original')?.value || 0);
-    let d = Number(descuento) || 0;
 
-    // Calcular nuevo costo_venta
-    const nuevoValor = costoBase - d;
-
-    productoForm.get('costo_venta')?.setValue(nuevoValor, { emitEvent: false });
   }
 
   hacerVenta() {
