@@ -54,8 +54,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-0 h-[calc(100vh-180px)]">
                 <div class="p-4">
                     <!-- Área de productos (izquierda) -->
-                    <div class="p-6 overflow-y-auto border-2 border-dashed rounded-xl" #containerAreaProducts
-                        tabindex="0" (click)="clickedInside()">
+                    <div class="p-4 overflow-y-auto" #containerAreaProducts tabindex="0" (click)="clickedInside()">
 
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">
@@ -68,94 +67,122 @@
                         </div>
 
                         <!-- Lista de productos -->
-                        <div class="space-y-2  rounded-lg p-4   focus:outline-none transition-colors cursor-pointer">
+                        <!-- Lista de productos -->
+                        <div class="space-y-3 rounded-lg p-4 focus:outline-none transition-colors">
                             <!-- Contenedor del input oculto para detector de código de barras -->
 
                             <div *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item"
-                                class="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 flex items-center justify-between  transition-colors">
+                                class="bg-neutral-50 dark:bg-neutral-800 relative rounded-2xl p-5 transition-all hover:shadow-lg border border-neutral-200 dark:border-neutral-700">
 
-                                <div class="flex items-center gap-4 flex-1">
-                                    <!-- imagen -->
-                                    <div class="flex justify-left items-left py-2">
+                                <div class="flex items-stretch gap-5">
+                                    <!-- Imagen y SKU -->
+                                    <div class="flex flex-col items-center gap-3 shrink-0">
                                         <div
-                                            class="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-300 dark:border-gray-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
+                                            class="w-28 h-28 rounded-2xl overflow-hidden border-2 border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-105 hover:border-blue-500 dark:hover:border-blue-400">
                                             <img [src]="item.get('imagen_producto')?.value" alt="Imagen del producto"
                                                 class="w-full h-full object-cover" />
                                         </div>
+                                        <tui-chip iconStart="@tui.scan-barcode" size="s">
+                                            {{ item.get('producto_sku')?.value }}
+                                        </tui-chip>
+                                    </div>
+                                    <div class="flex flex-col flex-1">
+
+                                        <!-- Info producto -->
+                                        <div class="flex flex-col">
+                                            <p class="font-bold text-xl text-neutral-900 dark:text-white mb-1 truncate">
+                                                {{ item.get('producto_nombre')?.value }}
+                                            </p>
+                                            <p
+                                                class="text-sm font-medium text-neutral-500 dark:text-neutral-400 truncate">
+                                                {{ item.get('nombre_categoria')?.value }}
+                                            </p>
+                                            <p
+                                                class="text-sm font-medium text-neutral-500 dark:text-neutral-400 truncate">
+                                                <strong>Costo Unitario:</strong> <span
+                                                    class="text-black dark:text-white">
+                                                    S/. {{ item.get('costo_original')?.value }}
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <!-- Contenido principal -->
+                                        <div class="flex items-center gap-6 col-span-2 justify-end flex-1 w-full">
+
+
+                                            <!-- Cantidad -->
+                                            <div class="flex flex-col input-select-cantidad  ">
+                                                <tui-select formControlName="cantidad_final" class="w-24"
+                                                    tuiTextfieldSize="l">
+
+                                                    <tui-data-list *tuiDataList>
+                                                        <button *ngFor="let cantidad of arrayCantidades" class="text-md"
+                                                            tuiOption type="button" [value]="cantidad">
+                                                            {{ cantidad }}
+                                                        </button>
+                                                    </tui-data-list>
+                                                </tui-select>
+
+
+                                            </div>
+
+                                            <div class="flex justify-end w-full flex-1  gap-3">
+
+                                                <!-- Descuento -->
+                                                <div class="-0">
+                                                    <tui-textfield>
+                                                        <label tuiLabel>Descuento</label>
+
+                                                        <input size="s" formControlName="descuento" prefix="S/. "
+                                                            tuiInputNumber [max]="((+item.get('costo_original')?.value || 0) *
+                                                    (+item.get('cantidad_final')?.value || 0)) -1" [min]="0"
+                                                            [step]="1" />
+
+                                                    </tui-textfield>
+
+                                                </div>
+                                                <!-- Precio -->
+                                                <div class="text-right ">
+                                                    <p
+                                                        class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-1">
+                                                        Total</p>
+                                                    <p class="text-3xl font-black text-neutral-900 dark:text-white">
+                                                        {{ ((+item.get('costo_original')?.value || 0) *
+                                                        (+item.get('cantidad_final')?.value || 0)) -
+                                                        item.get("descuento")?.value | tuiAmount: 'S/.' :
+                                                        'left' |
+                                                        async }}
+                                                    </p>
+                                                </div>
+                                                <!-- Eliminar -->
+                                                <div class="absolute right-2 top-2 ">
+
+
+                                                    <button tuiIconButton appearance="negative" iconStart="@tui.x"
+                                                        type="button" (click)="eliminarProductoForm(i)" size="s"
+                                                        class=" shrink-0 hover:scale-110 transition-transform">
+                                                    </button>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
                                     </div>
 
-                                    <div class="flex flex-col input-select-cantidad  ">
-
-
-                                        <tui-select formControlName="cantidad_final" class="w-24" tuiTextfieldSize="l">
-
-                                            <tui-data-list *tuiDataList>
-                                                <button *ngFor="let cantidad of arrayCantidades" class="text-md"
-                                                    tuiOption type="button" [value]="cantidad">
-                                                    {{ cantidad }}
-                                                </button>
-                                            </tui-data-list>
-                                        </tui-select>
-
-
-                                    </div>
-
-
-                                    <!-- Info producto -->
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-xl text-neutral-900 dark:text-white">
-                                            {{ item.get('producto_sku')?.value }} -
-                                            {{ item.get('producto_nombre')?.value }}
-                                        </p>
-                                        <p class="text-sm text-neutral-500 dark:text-neutral-400">
-                                            {{ item.get('nombre_categoria')?.value }}
-                                        </p>
-
-
-                                    </div>
-                                    <!-- Descuento -->
-                                    <div class="text-right">
-                                        <tui-textfield>
-                                            <label tuiLabel>Coloca el descuento</label>
-
-                                            <input tuiInputNumber formControlName="descuento" />
-                                        </tui-textfield>
-                                        
-                                    </div>
-
-
-                                    <!-- Precio -->
-                                    <div class="text-right">
-                                        <p class="text-2xl font-bold text-black dark:text-white">
-                                            {{ ((+item.get('costo_venta')?.value || 0) *
-                                            (+item.get('cantidad_final')?.value
-                                            || 0)) | tuiAmount: 'S/.' : 'left' | async }}
-
-                                        </p>
-                                    </div>
-
-                                    <!-- Eliminar -->
-                                    <button tuiIconButton appearance="negative" iconStart="@tui.trash" type="button"
-                                        (click)="eliminarProductoForm(i)" size="xl">
-                                    </button>
                                 </div>
-
                             </div>
 
                             <!-- Estado vacío -->
                             <div *ngIf="productosFormArray.length === 0"
-                                class="text-center py-16 text-neutral-400  dark:text-neutral-300  rounded-lg">
-                                <img class="pb-8 w-36 h-36 object-contain text-center mx-auto"
-                                    src="https://cdn-icons-png.flaticon.com/512/10951/10951882.png" alt="">
-                                <p class="text-2xl font-bold">No hay productos en el carrito</p>
-                                <p class="text-md">Presiona "Agregar Producto" o Escanea con el código de barras.</p>
+                                class="text-center py-20 text-neutral-400 dark:text-neutral-300 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 border-dashed border-neutral-300 dark:border-neutral-700">
+                                <img class="pb-6 w-32 h-32 object-contain mx-auto opacity-60"
+                                    src="https://cdn-icons-png.flaticon.com/512/10951/10951882.png" alt="Carrito vacío">
+                                <p class="text-2xl font-bold mb-2">No hay productos en el carrito</p>
+                                <p class="text-base text-neutral-500 dark:text-neutral-400">Escanea con el código de
+                                    barras para agregar productos</p>
                             </div>
                         </div>
-                        <p class="text-xs ">
-  <strong>Nota:</strong> Cada producto agregado a la lista tiene su propio descuento independiente. 
-  Si necesitas aplicar descuentos diferentes al mismo artículo, agrégalo varias veces.
-</p>
-                                                                           
+
+
                     </div>
                 </div>
 
@@ -165,14 +192,14 @@
                     class="bg-neutral-100 dark:bg-neutral-800 p-6 flex flex-col border-l border-neutral-200 dark:border-neutral-700">
 
                     <!-- Información del cliente -->
-                    <div class="bg-white dark:bg-neutral-800 rounded-lg p-4 ">
+                    <div class="bg-white dark:bg-neutral-800 rounded-lg px-4">
                         <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">
                             INFORMACIÓN DEL CLIENTE
                         </h3>
 
                         <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'" class="space-y-3">
                             <!-- Búsqueda de cliente -->
-                            <div *ngIf="!ventaForm.get('cliente')?.value" class="flex gap-2 flex-col">
+                            <div *ngIf="!ventaForm.get('cliente')?.value" class="flex gap-2">
                                 <tui-input [disabled]="!(userPermissions$ | async)?.can_make_sale" class="flex-1"
                                     formControlName="documento_cliente">
                                     {{ ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'DNI' : 'RUC' }}
@@ -268,24 +295,38 @@
 
                     <!-- Resumen de totales -->
                     <div class="bg-white dark:bg-neutral-800 rounded-lg p-4 mb-4 flex-1">
-                        <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">
-                            RESUMEN
-                        </h3>
+
                         <div class="space-y-3">
-                            <div class="flex justify-between text-neutral-600 dark:text-neutral-400">
-                                <span>Subtotal</span>
-                                <span>{{ salesTotals.subtotal | currency:'S/' }}</span>
-                            </div>
-                            <div class="flex justify-between text-neutral-600 dark:text-neutral-400">
-                                <span>IGV (18%)</span>
-                                <span>{{ salesTotals.igv | currency:'S/' }}</span>
-                            </div>
-                            <div class="border-t border-neutral-200 dark:border-neutral-700 pt-3">
+
+                            <div class=" pt-3">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-lg font-semibold text-neutral-900 dark:text-white">Total</span>
-                                    <span class="text-4xl font-bold text-black dark:text-white">
-                                        {{ salesTotals.total | currency:'S/' }}
+                                    <span class="text-lg font-semibold text-neutral-900 dark:text-white">Subtotal <span
+                                            class="text-sm"></span></span>
+                                    <span class="text-2xl font-bold text-black dark:text-white">
+                                        {{ salesTotals.subtotal| currency:'S/' }}
                                     </span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span
+                                        class="text-lg font-semibold text-neutral-900 dark:text-white pb-4">Descuentos</span>
+                                    <span class="text-2xl font-bold text-red-500 ">
+                                        - {{ salesTotals.descuentoTotales | currency:'S/' }}
+                                    </span>
+                                </div>
+
+
+                                <div
+                                    class="flex justify-between  border-t py-5 border-neutral-200 dark:border-neutral-700">
+                                    
+                                    <span class="text-2xl font-semibold text-neutral-900 dark:text-white">Total</span>
+                                    <span class="text-4xl font-bold text-black dark:text-white text-right">
+                                        <span class="text-right">
+ {{ salesTotals.total | currency:'S/' }}
+                                        </span>
+                                           <p class="text-sm text-green-400 text-right"> <span>* Incluye igv 18% </span>( {{
+                                            salesTotals.igv | currency:'S/' }})</p>
+                                    </span>
+
                                 </div>
                             </div>
                         </div>

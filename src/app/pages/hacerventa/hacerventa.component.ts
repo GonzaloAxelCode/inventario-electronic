@@ -24,7 +24,7 @@ import { Store } from '@ngrx/store';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiExpand, TuiIcon, TuiLabel, TuiLoader, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
-import { TuiCheckbox, TuiComboBox, TuiDataListWrapper, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiStepper, TuiTooltip } from '@taiga-ui/kit';
+import { TuiCheckbox, TuiChip, TuiComboBox, TuiDataListWrapper, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiStepper, TuiTooltip } from '@taiga-ui/kit';
 import { TuiAppBar } from '@taiga-ui/layout';
 import { TuiComboBoxModule, TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout } from 'rxjs';
@@ -51,7 +51,7 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
     BarcodeScannerComponent,
     TuiAppearance,
     TuiIcon,
-    TuiDataList,
+    TuiDataList, TuiChip,
     AsyncPipe,
     NgForOf,
     TuiComboBoxModule,
@@ -95,7 +95,8 @@ export class HacerventaComponent implements OnInit {
   salesTotals = {
     subtotal: 0,
     igv: 0,
-    total: 0
+    total: 0,
+    descuentoTotales: 0
   };
   ventaForm: FormGroup;
   listMetodosPago = [" YAPE", "PLIN", "Transferencia(No disponible)", "Efectivo"]
@@ -207,6 +208,7 @@ export class HacerventaComponent implements OnInit {
         imagen_producto: [productoEncontrado.imagen_producto],
         nombre_categoria: [productoEncontrado.categoria_nombre],
         costo_venta: [productoEncontrado.costo_venta],
+
         productoId: [productoEncontrado.producto],
         stock_actual: [productoEncontrado.cantidad],
         descuento: [0],
@@ -233,7 +235,7 @@ export class HacerventaComponent implements OnInit {
       }
       productosArray.push(nuevoProducto);
       nuevoProducto.get('descuento')!.valueChanges.subscribe((desc: any) => {
-        this.actualizarCostoFinalRestando(nuevoProducto, desc);
+        this.actualizarCostoTotal(nuevoProducto, desc);
       });
       console.log('Producto enconrado', productoEncontrado);
       this.alerts.open('Producto agregado', {
@@ -353,20 +355,23 @@ export class HacerventaComponent implements OnInit {
     let subtotal = 0;
     let igv = 0;
     let total = 0;
+    let descuentosTotales = 0;
     const IGV_RATE = 0.18;
 
     this.productosFormArray.controls.forEach(control => {
       const cantidad = parseInt(control.get('cantidad_final')?.value || '0');
       const costoVenta = parseFloat(control.get('costo_venta')?.value || '0');
+      const descuentoTotal = parseFloat(control.get("descuento")?.value || "0")
 
       const valorVenta = cantidad * costoVenta;
       subtotal += valorVenta;
+      descuentosTotales += descuentoTotal
     });
 
-    igv = subtotal * IGV_RATE;
+    igv = (subtotal - descuentosTotales) * IGV_RATE;
     total = subtotal;
 
-    this.salesTotals = { subtotal: total - igv, igv, total };
+    this.salesTotals = { subtotal: total, igv, total: total - descuentosTotales, descuentoTotales: descuentosTotales };
   }
 
 
@@ -387,6 +392,7 @@ export class HacerventaComponent implements OnInit {
           producto_nombre: [result.producto_nombre,],
           nombre_categoria: [result.categoria_nombre],
           costo_venta: [result.costo_venta,],
+
           productoId: [result.producto.id,],
           stock_actual: [result.cantidad],
           producto_sku: [result.producto_sku],
@@ -398,13 +404,15 @@ export class HacerventaComponent implements OnInit {
 
         productosArray.push(nuevoProducto);
         nuevoProducto.get('descuento')!.valueChanges.subscribe((desc: any) => {
-          this.actualizarCostoFinalRestando(nuevoProducto, desc);
+          this.actualizarCostoTotal(nuevoProducto, desc);
         });
         this.calcularTotales();
         this.cdr.markForCheck();
       }
     });
   }
+
+
 
   buscarCliente() {
     this.errorClientNotFound = false
@@ -503,7 +511,7 @@ export class HacerventaComponent implements OnInit {
   }
 
 
-  actualizarCostoFinalRestando(productoForm: FormGroup, descuento: number) {
+  actualizarCostoTotal(productoForm: FormGroup, descuento: number) {
     const costoBase = Number(productoForm.get('costo_original')?.value || 0);
     let d = Number(descuento) || 0;
 
@@ -526,7 +534,7 @@ export class HacerventaComponent implements OnInit {
       is_save_user: this.ventaForm.get("is_save_user")?.value
     }
 
-    console.log(preparedData.productos)
+    console.log(preparedData)
     this.store.dispatch(crearVenta({ venta: preparedData }));
 
     this.actions$.pipe(
