@@ -3,7 +3,7 @@ import { clearSearchProductos, deleteProductoAction, searchProductosAction } fro
 import { AppState } from '@/app/state/app.state';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { CommonModule, NgForOf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, Inject, inject, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, inject, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
@@ -50,7 +50,7 @@ import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy'
   providers: [TuiConfirmService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TableproductComponent implements OnInit {
+export class TableproductComponent implements OnInit, AfterViewInit {
   @ViewChild('barcodeInput') barcodeInput!: ElementRef<HTMLInputElement>;
   private buffer: string = '';
   protected open = false;
@@ -176,7 +176,7 @@ export class TableproductComponent implements OnInit {
       sku: (this.form.value.sku || "").trim(),
     }
     this.store.dispatch(searchProductosAction({ products: this.productos, query: searchQuery }))
-    console.log(searchQuery)
+
     this.isTheSearchWasDone = true
   }
 
@@ -222,7 +222,7 @@ export class TableproductComponent implements OnInit {
 
 
   verInventario(producto: Producto) {
-    console.log("Ver inventario:", producto.inventario);
+
     // ir a detalle de inventario
   }
 

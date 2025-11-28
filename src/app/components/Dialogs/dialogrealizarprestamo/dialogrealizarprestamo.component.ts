@@ -1,7 +1,7 @@
 import { realizarPrestamo } from '@/app/state/actions/caja.actions';
 import { AppState } from '@/app/state/app.state';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiError, TuiIcon, TuiNumberFormat, TuiTextfield } from '@taiga-ui/core';
@@ -53,7 +53,7 @@ import { map } from 'rxjs';
   templateUrl: './dialogrealizarprestamo.component.html',
   styleUrl: './dialogrealizarprestamo.component.scss'
 })
-export class DialogrealizarprestamoComponent {
+export class DialogrealizarprestamoComponent implements OnInit {
   userId!: number
   protected testForm = new FormGroup({
 
@@ -78,7 +78,7 @@ export class DialogrealizarprestamoComponent {
   onSubmit() {
 
     if (this.testForm.valid) {
-      console.log(this.testForm.value)
+
       this.store.dispatch(realizarPrestamo({
 
 

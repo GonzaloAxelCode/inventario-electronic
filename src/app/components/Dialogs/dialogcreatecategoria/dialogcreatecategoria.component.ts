@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Categoria } from '@/app/models/categoria.models';
 import { createCategoriaAction, createCategoriaFail, createCategoriaSuccess } from '@/app/state/actions/categoria.actions';
@@ -27,7 +27,7 @@ import urlSlug from 'url-slug';
   templateUrl: './dialogcreatecategoria.component.html',
   styleUrl: './dialogcreatecategoria.component.scss'
 })
-export class DialogcreatecategoriaComponent {
+export class DialogcreatecategoriaComponent implements OnInit, OnDestroy {
   categoryForm: FormGroup;
   private destroy$ = new Subject<void>();
   loadingCreateCategoria$!: Observable<boolean>

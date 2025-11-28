@@ -1,4 +1,4 @@
-declare var require: any;
+declare let require: any;
 const JsBarcode = require('jsbarcode');
 
 export function generarBarcode(

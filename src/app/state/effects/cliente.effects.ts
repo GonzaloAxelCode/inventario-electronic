@@ -36,7 +36,7 @@ export class ClienteEffects {
             mergeMap(() =>
                 this.clienteService.fetchClientes().pipe(
                     map((clientes: Cliente[]) => {
-                        console.log(clientes)
+
                         return loadClientesSuccess({ clientes })
                     }),
                     catchError(error => of(loadClientesFail({ error })))

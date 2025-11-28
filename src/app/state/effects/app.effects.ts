@@ -47,7 +47,7 @@ export class AppEffects {
                     this.store.dispatch(loadInventarios());
 
                     this.store.dispatch(cargarProductosMenorStock());
-                    let initialRange = this.range;
+                    const initialRange = this.range;
                     const fromDate = new Date(2025, 0, 1); // Enero 1, 2025
                     const toDate = new Date(2025, 11, 31); //  Diciembre 31, 2025
 

@@ -17,13 +17,13 @@ import { selectCurrenttUser, selectPermissions, selectUsersState } from '@/app/s
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AsyncPipe, CommonModule, NgForOf } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Actions, ofType } from "@ngrx/effects";
 import { Store } from '@ngrx/store';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiExpand, TuiIcon, TuiLabel, TuiLoader, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
+import { TuiAlertService, TuiAppearance, TuiButton, TuiDropdown, TuiExpand, TuiIcon, TuiLabel, TuiLoader, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
 import { TuiCheckbox, TuiChip, TuiComboBox, TuiDataListWrapper, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiStepper, TuiTooltip } from '@taiga-ui/kit';
 import { TuiAppBar } from '@taiga-ui/layout';
 import { TuiComboBoxModule, TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
@@ -33,42 +33,52 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
   selector: 'app-hacerventa',
   standalone: true,
   imports: [
+    /* Angular */
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
-    TuiCheckbox,
-    TuiStepper,
-    TuiInputModule,
-    TuiTable,
-    TuiItemsWithMore,
-    TuiRadio,
-    TuiDropdown,
-    FormsModule,
-    TuiAppBar,
-    FormsModule,
-    TuiTextfield,
-    TuiInputNumber,
-    TuiButton,
-    BarcodeScannerComponent,
-    TuiAppearance,
-    TuiIcon,
-    TuiDataList, TuiChip,
     AsyncPipe,
     NgForOf,
-    TuiComboBoxModule,
-    TuiAmountPipe,
+
+    /* Taiga UI - Core */
+    TuiButton,
+    TuiCheckbox,
+    TuiDropdown,
+    TuiIcon,
+    TuiLabel,
+    TuiLoader,
+    TuiTextfield,
+    TuiTextfieldDropdownDirective,
+    TuiAppearance,
+    TuiTooltip,
+
+    /* Taiga UI - Kit */
+    TuiChip,
+    TuiComboBox,
     TuiDataListWrapper,
+    TuiFilter,
+    TuiFilterByInputPipe,
+    TuiInputNumber,
+    TuiItemsWithMore,
+    TuiRadio,
+    TuiStepper,
+    TuiExpand,
+
+    /* Taiga UI - Addon */
+    TuiAmountPipe,
+    TuiTable,
+
+    /* Taiga UI - Legacy */
+    TuiComboBoxModule,
+    TuiInputModule,
     TuiSelectModule,
     TuiTextfieldControllerModule,
-    TuiLoader,
-    TuiExpand,
-    TuiComboBox,
-    TuiTextfieldDropdownDirective,
-    TuiTooltip,
-    TuiLabel,
-    FormsModule,
-    TuiDataListWrapper,
-    TuiFilterByInputPipe, TuiFilter,
-    TuiTextfield, TuiTextfieldControllerModule
+
+    /* Layout */
+    TuiAppBar,
+
+    /* Componentes propios */
+    BarcodeScannerComponent,
   ],
   providers: [
     { provide: 'Pythons', useValue: ['Python One', 'Python Two', 'Python Three'] },
@@ -85,7 +95,7 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
 
 
 })
-export class HacerventaComponent implements OnInit {
+export class HacerventaComponent implements OnInit, OnDestroy {
   protected expanded = false;
   private destroy$ = new Subject<void>();
   errorClientNotFound = false;
@@ -149,8 +159,8 @@ export class HacerventaComponent implements OnInit {
   }
   // Esta función se ejecuta cuando el escáner detecta un código
   onBarcodeScanned(barcode_raw: string) {
-    let barcode = normalizeSku(barcode_raw)
-    console.log('Código escaneado:', barcode);
+    const barcode = normalizeSku(barcode_raw)
+
 
     // Buscar el producto en inventarios activos por SKU
     const productoEncontrado = this.inventarios
@@ -237,7 +247,7 @@ export class HacerventaComponent implements OnInit {
       nuevoProducto.get('descuento')!.valueChanges.subscribe((desc: any) => {
         this.actualizarCostoTotal(nuevoProducto, desc);
       });
-      console.log('Producto enconrado', productoEncontrado);
+
       this.alerts.open('Producto agregado', {
         label: `${productoEncontrado.producto_nombre} agregado correctamente`,
         appearance: "success"
@@ -297,7 +307,7 @@ export class HacerventaComponent implements OnInit {
   }
   documents: string[] = []
   ngOnInit() {
-    console.log(this.documents)
+
     this.ventaForm.get('is_send_sunat')?.valueChanges
       .subscribe(value => {
         this.onChangeEnviarSunat(value);
@@ -313,10 +323,10 @@ export class HacerventaComponent implements OnInit {
       this.clientes = state.clientes
 
       this.documents = state.clientes.map((cliente: Cliente) => cliente.document);
-      console.log("Documentos", state.clientes.map((cliente: Cliente) => cliente.document))
+
     })
     this.ventaForm.get('tipoComprobante')?.valueChanges.subscribe((nuevoValor) => {
-      console.log('Tipo comprobante cambió a:', nuevoValor);
+
 
       // Resetea el documento del cliente
       this.borrarCliente()
@@ -340,9 +350,9 @@ export class HacerventaComponent implements OnInit {
       const stock = parseInt(control.get('stock_actual')?.value || '0');
 
 
-      console.log({ stock_despues: stock - cantidad })
+
       if (stock - cantidad < 0) {
-        console.log("Stock incifuciente")
+
         control.get('cantidad_final')?.setValue(1);
         this.alerts.open('No hay stock suficiente para agregar mas para este producto.', { label: 'Mensaje informacion', appearance: "warning" }).subscribe();
         // aca tienes que resetear el valor de cantidad final a 1
@@ -416,7 +426,7 @@ export class HacerventaComponent implements OnInit {
 
   buscarCliente() {
     this.errorClientNotFound = false
-    let clienteSearh = this.clientes.find((el: Cliente) => {
+    const clienteSearh = this.clientes.find((el: Cliente) => {
       return el.document === this.ventaForm.get('documento_cliente')!.value;
     })
     if (clienteSearh) {
@@ -443,7 +453,7 @@ export class HacerventaComponent implements OnInit {
       return;
     }
 
-    let consultaObservable =
+    const consultaObservable =
       documento.length === 8
         ? this.consultaService.consultarDNI(documento)
         : documento.length === 11
@@ -469,7 +479,7 @@ export class HacerventaComponent implements OnInit {
         this.cdr.detectChanges();
       })
     ).subscribe(response => {
-      console.log(response)
+
       if (response.nombre_completo || response.nombre_o_razon_social) {
         const data = response;
 
@@ -522,7 +532,7 @@ export class HacerventaComponent implements OnInit {
       is_save_user: this.ventaForm.get("is_save_user")?.value
     }
 
-    console.log(preparedData)
+
     this.store.dispatch(crearVenta({ venta: preparedData }));
 
     this.actions$.pipe(
@@ -555,7 +565,7 @@ export class HacerventaComponent implements OnInit {
     const imagenFinal = img == null
       ? URL_BASE + img
       : placeholder;
-    console.log("Img", img)
+
     return imagenFinal;
   }
 
@@ -619,7 +629,7 @@ export class HacerventaComponent implements OnInit {
   }
 
   procesarCodigoBarras(codigo: string) {
-    console.log('Código de barras detectado:', codigo);
+
     // Aquí ejecutas tu función
     this.onBarcodeScanned(codigo);
   }

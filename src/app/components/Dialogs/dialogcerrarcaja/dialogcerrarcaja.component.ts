@@ -5,7 +5,7 @@ import { CajaState } from '@/app/state/reducers/caja.reducer';
 import { selectCaja } from '@/app/state/selectors/caja.selectors';
 import { selectCurrenttUser } from '@/app/state/selectors/user.selectors';
 import { AsyncPipe, CommonModule, NgForOf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
@@ -20,7 +20,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
   templateUrl: './dialogcerrarcaja.component.html',
   styleUrl: './dialogcerrarcaja.component.scss'
 })
-export class DialogcerrarcajaComponent {
+export class DialogcerrarcajaComponent implements OnInit {
   caja!: Caja
   userId!: number
   protected readonly context = injectContext<TuiDialogContext<any, any>>();

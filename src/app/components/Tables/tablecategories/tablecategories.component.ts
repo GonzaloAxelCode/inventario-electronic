@@ -14,7 +14,7 @@ import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiBadge, TuiConfirmData, TuiRadio, TuiSkeleton } from '@taiga-ui/kit';
 import { TuiBlockStatus } from '@taiga-ui/layout';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-tablecategories',
   standalone: true,
@@ -47,9 +47,6 @@ export class TablecategoriesComponent implements OnInit {
   ngOnInit() {
     this.selectCategorias$ = this.store.select(selectCategoria);
 
-    this.selectCategorias$ = this.store.select(selectCategoria).pipe(
-      tap(categorias => console.log('Categorias desde store:', categorias))
-    );
   }
   getCategoriaValue(proveedor: Categoria, key: string): any {
     return proveedor[key as keyof Categoria];

@@ -198,7 +198,7 @@
                     #{{ operacion.id }}
                 </span>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold"
-                    [class]="operacion.tipo == 'gasto' 
+                    [class]="operacion.tipo === 'gasto' 
                         ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' 
                         : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'">
                     {{ operacion.tipo | titlecase }}
@@ -218,7 +218,7 @@
                     {{ operacion.fecha }}
                 </span>
                 <span class="text-lg sm:text-xl font-bold"
-                    [class]="operacion.tipo == 'gasto' 
+                    [class]="operacion.tipo === 'gasto' 
                         ? 'text-red-600 dark:text-red-400' 
                         : 'text-green-600 dark:text-green-400'">
                     {{ operacion.tipo === "gasto" ? "-" : "+" }} S/. {{ operacion.monto | number:'1.2-2' }}

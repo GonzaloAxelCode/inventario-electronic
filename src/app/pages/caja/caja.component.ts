@@ -120,7 +120,7 @@ export class CajaComponent implements OnInit {
       this.userId = state.id
     })
     this.store.select(selectCaja).subscribe((state) => {
-      console.log(state)
+
       this.operaciones = state.operaciones
     });
 
@@ -176,21 +176,21 @@ export class CajaComponent implements OnInit {
   openRealizarPrestamo() {
     this.dialogRealizarPrestamo.open().subscribe(data => {
       if (data) {
-        console.log('Caja abierta');
+
       }
     });
   }
   openReabriCaja() {
     this.dialogReinicializarCaja.open().subscribe(data => {
       if (data) {
-        console.log('Caja abierta');
+
       }
     });
   }
   openAperturaCaja() {
     this.dialogApertura.open().subscribe(data => {
       if (data) {
-        console.log('Caja abierta');
+
       }
     });
   }
@@ -198,7 +198,7 @@ export class CajaComponent implements OnInit {
   openCerrarCaja() {
     this.dialogCierre.open().subscribe(data => {
       if (data) {
-        console.log('Comentario al cerrar:');
+
       }
     });
   }
@@ -206,7 +206,7 @@ export class CajaComponent implements OnInit {
   openRegistrarGasto() {
     this.dialogGasto.open().subscribe(data => {
       if (data) {
-        console.log('Gasto registrado:');
+
       }
     });
   }
@@ -214,7 +214,7 @@ export class CajaComponent implements OnInit {
   openRegistrarIngreso() {
     this.dialogIngreso.open().subscribe(data => {
       if (data) {
-        console.log('Ingreso registrado:',);
+
       }
     });
   }

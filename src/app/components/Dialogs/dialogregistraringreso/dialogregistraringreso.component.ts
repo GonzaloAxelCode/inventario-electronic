@@ -4,7 +4,7 @@ import { CajaState } from '@/app/state/reducers/caja.reducer';
 import { selectCaja } from '@/app/state/selectors/caja.selectors';
 import { selectCurrenttUser } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -22,7 +22,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
   templateUrl: './dialogregistraringreso.component.html',
   styleUrl: './dialogregistraringreso.component.scss'
 })
-export class DialogregistraringresoComponent {
+export class DialogregistraringresoComponent implements OnInit {
   protected testForm = new FormGroup({
 
     monto: new FormControl("", Validators.required),
@@ -52,9 +52,9 @@ export class DialogregistraringresoComponent {
     });
   }
   onSubmit() {
-    console.log(this.id_caja,)
+
     if (this.testForm.valid) {
-      console.log(this.testForm.value)
+
       this.store.dispatch(realizarIngreso({
         cajaId: this.id_caja,
 

@@ -17,7 +17,7 @@ import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { selectProveedorState } from '@/app/state/selectors/proveedor.selectors';
 import { selectPermissions, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule, NgForOf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -65,7 +65,7 @@ import { map, Observable } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './tableinventario.component.scss'
 })
-export class TableinventarioComponent {
+export class TableinventarioComponent implements OnInit {
   @Input() mode?: string
   @Input() cerrarDialogo!: (valor: Inventario) => void;
   value = [0, 0];
@@ -146,7 +146,7 @@ export class TableinventarioComponent {
       precio_venta_min: values.precioVentaRange?.[0] ?? null,
       precio_venta_max: values.precioVentaRange?.[1] ?? null,
     }
-    console.log(searchQuery)
+
 
     this.store.dispatch(searchInventarios({ inventarios: this.inventarios, query: searchQuery }))
     this.isTheSearchWasDone = true

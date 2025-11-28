@@ -3,7 +3,7 @@ import { eliminarTiendaPermanently, eliminarTiendaPermanentlySuccess } from '@/a
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -20,7 +20,7 @@ import { TableUsersComponent } from '../../Tables/tableusers/tableusers.componen
   templateUrl: './dialogdetailtienda.component.html',
   styleUrl: './dialogdetailtienda.component.scss'
 })
-export class DialogdetailtiendaComponent {
+export class DialogdetailtiendaComponent implements OnInit {
   protected readonly context = injectContext<TuiDialogContext<boolean, Tienda>>();
   public tienda: Tienda = this.context.data ?? {};
 

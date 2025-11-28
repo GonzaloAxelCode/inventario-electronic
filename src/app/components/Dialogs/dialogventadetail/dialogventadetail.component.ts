@@ -5,7 +5,7 @@ import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAppearance, TuiButton, TuiDialogContext, TuiExpand, TuiIcon, TuiLoader } from '@taiga-ui/core';
@@ -22,7 +22,7 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './dialogventadetail.component.html',
   styleUrl: './dialogventadetail.component.scss'
 })
-export class DialogventadetailComponent {
+export class DialogventadetailComponent implements OnInit {
   protected readonly context = injectContext<TuiDialogContext<boolean, Venta>>();
   public venta: Venta = this.context.data ?? {} as Venta;
   protected expanded = false;
@@ -42,7 +42,7 @@ export class DialogventadetailComponent {
   loadingGenerarComprobante: boolean = false
   public productos_json = JSON.parse(this.venta.productos_json ?? '[]');
   ngOnInit(): void {
-    console.log(this.venta);
+
     this.store.select(selectVenta).subscribe((state: VentaState) => {
       this.loadingAnularVenta = state.loadingNotaCredito;
       this.loadingGenerarComprobante = state.loadingGenerarComprobante

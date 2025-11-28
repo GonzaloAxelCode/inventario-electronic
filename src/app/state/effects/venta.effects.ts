@@ -116,7 +116,7 @@ export class VentaEffects {
             exhaustMap(({ from_date, to_date, page, page_size }) =>
                 this.ventaService.getVentasPorTienda(from_date, to_date, page, page_size).pipe(
                     map(response => {
-                        console.log(response)
+
                         return cargarVentasTiendaExito({
                             ventas: response.results,
                             count: response.count,
@@ -212,7 +212,7 @@ export class VentaEffects {
             exhaustMap((action) =>
                 this.ventaService.fetchSearchVentas(action.query, action.page || 1, action.page_size || 30).pipe(
                     map(response => {
-                        console.log(response)
+
                         return searchVentaSuccess({
                             ventas: response.results,
                             search_ventas_found: response.search_ventas_found,
@@ -241,7 +241,7 @@ export class VentaEffects {
                 this.ventaService.anularVenta(ventaId, motivo, tipo_motivo).pipe(
                     map((response) => {
                         this.alertService.showSuccess('La venta fue anulada correctamente', 'Nota de Crédito emitida').subscribe();
-                        console.log(response)
+
                         return anularVentaExito({ ventaId });
                     }),
                     catchError((error) => {

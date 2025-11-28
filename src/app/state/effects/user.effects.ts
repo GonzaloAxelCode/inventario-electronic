@@ -34,7 +34,7 @@ export class UserEffects {
             exhaustMap(() =>
                 this.userService.fetchCurrentUser().pipe(
                     map((data: any) => {
-                        console.log("Current User Data:", data);
+
                         return loadUserSuccess({ user: data });
                     }),
                     catchError(error => of(loadUserFail({ error })))
@@ -50,7 +50,7 @@ export class UserEffects {
             exhaustMap(({ idTienda }) =>
                 this.userService.fetchUsers(idTienda).pipe(
                     map(users => {
-                        console.log(users)
+
                         return loadUsersSuccess({ users })
                     }),
                     catchError(error => of(loadUsersFail({ error })))
@@ -66,7 +66,7 @@ export class UserEffects {
             exhaustMap(({ user, tienda_id }) =>
                 this.userService.createUser(user, tienda_id).pipe(
                     map((data: any) => {
-                        console.log("DATA", data)
+
                         this.alertService.showSuccess('Usuario creado exitosamente', 'Éxito').subscribe();
 
 

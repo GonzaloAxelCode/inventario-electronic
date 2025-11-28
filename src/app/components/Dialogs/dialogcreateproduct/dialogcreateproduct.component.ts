@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiExpand, TuiIcon, TuiLabel, TuiLoader, TuiTextfield } from '@taiga-ui/core';
@@ -37,7 +37,7 @@ import { map, Observable, Subject, takeUntil } from 'rxjs';
   templateUrl: './dialogcreateproduct.component.html',
   styleUrl: './dialogcreateproduct.component.scss'
 })
-export class DialogcreateproductComponent {
+export class DialogcreateproductComponent implements OnInit, OnDestroy {
   protected expanded = false;
   userPermissions$ = this.store.select(selectPermissions);
   protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Categoria>>>();
@@ -112,7 +112,7 @@ export class DialogcreateproductComponent {
 
 
       if (!catId) {
-        console.log("Sin categoría seleccionada");
+
 
         return;
       }
@@ -128,7 +128,7 @@ export class DialogcreateproductComponent {
           this.emptyCaracteristicas = false
         }
 
-        console.log("Características:", categoriaSeleccionada.caracteristicas_template);
+
         this.cargarCaracteristicasDinamicas(categoriaSeleccionada.caracteristicas_template);
 
       }

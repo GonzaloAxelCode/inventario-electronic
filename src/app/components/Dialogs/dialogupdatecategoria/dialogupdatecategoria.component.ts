@@ -47,7 +47,7 @@ export class DialogupdatecategoriaComponent {
         validators: [Validators.required],
       }),
     });
-    console.log(this.categoria)
+
     this.actions$
       .pipe(
         ofType(updateCategoriaSuccess, updateCategoriaFail), // escucha la acción exitosa

@@ -55,9 +55,9 @@ export class DialogregistrargastoComponent implements OnInit {
 
   }
   onSubmit() {
-    console.log(this.id_caja,)
+
     if (this.testForm.valid) {
-      console.log(this.testForm.value)
+
       this.store.dispatch(realizarGasto({
         cajaId: this.id_caja,
 

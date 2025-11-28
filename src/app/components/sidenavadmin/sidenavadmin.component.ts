@@ -12,7 +12,7 @@ import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
 import { selectAuth } from '@/app/state/selectors/auth.selectors';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLinkActive, RouterLinkWithHref, RouterModule } from '@angular/router';
@@ -61,7 +61,7 @@ import { HeaderComponent } from "../header/header.component";
   styleUrl: './sidenavadmin.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidenavadminComponent {
+export class SidenavadminComponent implements OnInit {
   isAuthenticated$: Observable<any>;
   userState$!: Observable<UserState>;
   user: User = initialStateUser.user;

@@ -49,7 +49,7 @@ export class CajaEffects {
             exhaustMap(() =>
                 this.cajaService.getCajaAbierta().pipe(
                     map(({ caja, operaciones, caja_is_open }) => {
-                        console.log("effect", caja, operaciones, caja_is_open);
+
                         return loadCajaSuccess({ caja, operaciones, caja_is_open })
                     }),
                     catchError((error) => of(loadCajaFail({ error })))

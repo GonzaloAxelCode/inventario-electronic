@@ -103,13 +103,13 @@ export class DialogcreateinventarioComponent implements OnInit {
 
 
     this.inventarioForm2.get('producto')?.valueChanges.subscribe(producto => {
-      console.log("Producto seleccionado", producto);
+
       if (producto) {
         // Buscar el producto en el array usando el id
         const productoEncontrado = this.productos.find(p => p.id === producto.id);
 
         if (productoEncontrado) {
-          console.log('Producto seleccionado:', productoEncontrado.nombre);
+
           this.productSelected = productoEncontrado
         } else {
           this.productSelected = { nombre: " " } as Producto
@@ -156,7 +156,7 @@ export class DialogcreateinventarioComponent implements OnInit {
 
         //proveedor: this.inventarioForm2.value.proveedor.id,
       }
-      console.log(preparedData)
+
       this.store.dispatch(createInventario({ inventario: preparedData }));
 
 

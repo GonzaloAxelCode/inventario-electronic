@@ -3,7 +3,7 @@ import { AppState } from '@/app/state/app.state';
 import { ProveedorState } from '@/app/state/reducers/proveedor.reducer';
 import { selectProveedorState } from '@/app/state/selectors/proveedor.selectors';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -26,7 +26,7 @@ import { map, Observable, Subject, takeUntil } from 'rxjs';
   templateUrl: './formproveedor.component.html',
   styleUrl: './formproveedor.component.scss'
 })
-export class FormproveedorComponent {
+export class FormproveedorComponent implements OnInit, OnDestroy {
 
   @Output() closeDialogCreateProveedor = new EventEmitter<any>();
   private destroy$ = new Subject<void>();
@@ -45,7 +45,7 @@ export class FormproveedorComponent {
   ngOnInit() {
     this.loadingCreateProveedor$ = this.store.select(selectProveedorState).pipe(
       map((state: ProveedorState) => {
-        console.log(state)
+
         return state.loadingCreateProveedor
       })
     );

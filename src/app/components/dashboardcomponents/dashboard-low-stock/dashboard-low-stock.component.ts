@@ -37,7 +37,7 @@ export class DashboardLowStockComponent implements OnInit {
 
     this.selectInventario$ = this.store.select(selectInventarioState);
     this.store.select(selectInventarioState).subscribe((state) => {
-      console.log(state)
+
     })
 
   }

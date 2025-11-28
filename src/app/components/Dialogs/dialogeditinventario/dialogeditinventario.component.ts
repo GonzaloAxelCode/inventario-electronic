@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiLoader, TuiNumberFormat, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
@@ -51,7 +51,7 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './dialogeditinventario.component.html',
   styleUrl: './dialogeditinventario.component.scss'
 })
-export class DialogeditinventarioComponent {
+export class DialogeditinventarioComponent implements OnInit {
 
 
 
@@ -83,7 +83,7 @@ export class DialogeditinventarioComponent {
       takeUntil(this.destroy$)
     ).subscribe(({ newInventario }: any) => {
 
-      console.log("NUEVO INVENTAIRO ENVIADO", newInventario)
+
       this.loadingInventarioUpdate = false;
       this.store.dispatch(actualizarInventarioWithProductsSuccess({
         newInventario: {

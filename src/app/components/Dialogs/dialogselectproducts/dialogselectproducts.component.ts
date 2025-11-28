@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiTextfield } from '@taiga-ui/core';
@@ -41,7 +41,7 @@ import { TableinventarioComponent } from "../../Tables/tableinventario/tableinve
 
   styleUrl: './dialogselectproducts.component.scss'
 })
-export class DialogselectproductsComponent {
+export class DialogselectproductsComponent implements OnInit {
 
 
   inventariosState$?: Observable<InventarioState>;

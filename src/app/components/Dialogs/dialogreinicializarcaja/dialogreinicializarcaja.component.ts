@@ -4,7 +4,7 @@ import { CajaState } from '@/app/state/reducers/caja.reducer';
 import { selectCaja } from '@/app/state/selectors/caja.selectors';
 import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -20,7 +20,7 @@ import { map, Observable, Subject, takeUntil } from 'rxjs';
   templateUrl: './dialogreinicializarcaja.component.html',
   styleUrl: './dialogreinicializarcaja.component.scss'
 })
-export class DialogreinicializarcajaComponent {
+export class DialogreinicializarcajaComponent implements OnInit {
 
   protected readonly form = new FormGroup({
     saldo_inicial: new FormControl("", Validators.required),

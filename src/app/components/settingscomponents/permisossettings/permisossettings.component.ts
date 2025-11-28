@@ -3,7 +3,7 @@ import { AppState } from '@/app/state/app.state';
 import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { AsyncPipe, CommonModule, KeyValuePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
@@ -34,7 +34,7 @@ import { Observable } from 'rxjs';
     tuiSwitchOptionsProvider({ showIcons: true, appearance: () => 'neutral' }),
   ],
 })
-export class PermisossettingsComponent {
+export class PermisossettingsComponent implements OnInit {
   userState$?: Observable<UserState>;
   user: User = initialStateUser.user;
 
@@ -45,7 +45,7 @@ export class PermisossettingsComponent {
   ngOnInit() {
     this.userState$?.subscribe(userState => {
       this.user = userState.user;
-      console.log("Mis permisos", userState.user.permissions)
+
     });
   }
 }

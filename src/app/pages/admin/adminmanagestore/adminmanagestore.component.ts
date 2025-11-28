@@ -22,10 +22,10 @@ export class AdminmanagestoreComponent {
   protected showDialog(): void {
     this.dialog().subscribe({
       next: (data) => {
-        console.info(`Dialog emitted data = ${data}`);
+
       },
       complete: () => {
-        console.info('Dialog closed');
+
       },
     });
   }

@@ -34,7 +34,7 @@ export class CategoriaEffects {
                         return loadCategoriasSuccess({ categorias });
                     }),
                     catchError(error => {
-                        console.log("error categorias", error)
+
                         return of(loadCategoriasFail({ error }));
                     })
                 )

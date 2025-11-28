@@ -75,7 +75,7 @@ export class DashboardSalesCardsComponent implements OnInit, OnDestroy {
   onMonthChange(selectedMonth: string) {
     const selectedMonthObj: any = this.months.find((month) => month.name === selectedMonth);
 
-    console.log('Mes seleccionado:', selectedMonthObj.number,);
+
     // Aquí puedes hacer algo con el mes seleccionado, como actualizar otro campo o realizar alguna acción.
     this.store.dispatch(cargarResumenVentasByDate({
 

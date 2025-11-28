@@ -125,7 +125,7 @@ export class VentasComponent implements OnInit {
   onRangeChange(newRange: TuiDayRange): void {
     // Actualizar el BehaviorSubject
     this._range.next(newRange);
-    console.log(newRange)
+
 
 
   }
@@ -167,7 +167,7 @@ export class VentasComponent implements OnInit {
   }
 
   onSubmitSearch() {
-    let currentDate = this.range
+    const currentDate = this.range
     const searchQuery: Partial<QuerySearchVenta> = {
       metodo_pago: this.form.value.metodo_pago || "",
       tipo_comprobante: this.form.value.tipo_comprobante || "",
@@ -181,7 +181,7 @@ export class VentasComponent implements OnInit {
       numero_comprobante: this.form.value.numero_comprobante || "",
     }
 
-    console.log(searchQuery)
+
     this.store.dispatch(searchVenta({
       query: searchQuery,
     }))
@@ -213,7 +213,7 @@ export class VentasComponent implements OnInit {
 
         }))
       } else {
-        let currentDate = this.range
+        const currentDate = this.range
         const searchQuery: Partial<QuerySearchVenta> = {
           metodo_pago: this.form.value.metodo_pago || "",
           tipo_comprobante: this.form.value.tipo_comprobante || "",

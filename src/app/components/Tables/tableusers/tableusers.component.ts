@@ -59,7 +59,7 @@ export class TableUsersComponent implements OnInit {
 
   }
   ngOnInit() {
-    console.log(this.idtienda)
+
     this.store.dispatch(loadUsersAction({ idTienda: this.idtienda }))
     this.store.select(selectUsersState).pipe(
       tap((userState: UserState) => {

@@ -3,7 +3,7 @@ import { AppState } from '@/app/state/app.state';
 import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiRepeatTimes } from '@taiga-ui/cdk';
@@ -41,7 +41,7 @@ import { Observable } from 'rxjs';
   templateUrl: './settingslayout.component.html',
   styleUrl: './settingslayout.component.scss'
 })
-export class SettingslayoutComponent {
+export class SettingslayoutComponent implements OnInit {
 
   userState$!: Observable<UserState>;
   user: User = initialStateUser.user;

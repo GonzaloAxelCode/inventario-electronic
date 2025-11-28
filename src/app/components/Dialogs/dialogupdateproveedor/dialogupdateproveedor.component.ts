@@ -4,7 +4,7 @@ import { updateProveedorAction } from '@/app/state/actions/proveedor.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiButton, TuiDialogContext, TuiTextfield } from '@taiga-ui/core';
@@ -24,7 +24,7 @@ import { injectContext } from '@taiga-ui/polymorpheus';
   changeDetection: ChangeDetectionStrategy.OnPush
 
 })
-export class DialogupdateproveedorComponent {
+export class DialogupdateproveedorComponent implements OnInit {
   protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Proveedor>>>();
   public proveedor: Partial<Proveedor> = this.context.data ?? {};
 

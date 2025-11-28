@@ -3,7 +3,7 @@ import { updateUserPermissionsAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiAppearance, TuiDialogContext, TuiLoader } from '@taiga-ui/core';
@@ -17,7 +17,7 @@ import { injectContext } from '@taiga-ui/polymorpheus';
   styleUrl: './dialogedituserpersmissions.component.scss',
   providers: [tuiSwitchOptionsProvider({ showIcons: true, appearance: () => 'neutral' }),]
 })
-export class DialogedituserpersmissionsComponent {
+export class DialogedituserpersmissionsComponent implements OnInit {
   protected readonly context = injectContext<TuiDialogContext<boolean, User>>();
   public user: User = this.context.data
 
@@ -59,7 +59,7 @@ export class DialogedituserpersmissionsComponent {
 
     });
 
-    console.log(this.user)
+
   }
 
   ngOnInit() {
@@ -117,7 +117,7 @@ export class DialogedituserpersmissionsComponent {
     const input = event.target as HTMLInputElement;
     const value = input.checked;
 
-    console.log(`Actualizando ${permissionKey}:`, value);
+
 
     this.store.dispatch(
       updateUserPermissionsAction({

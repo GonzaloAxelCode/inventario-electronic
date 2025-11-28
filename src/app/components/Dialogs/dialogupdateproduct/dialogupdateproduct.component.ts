@@ -118,7 +118,7 @@ export class DialogupdateproductComponent implements OnInit {
     this.productoForm.get('categoria')!.valueChanges.subscribe(catId => {
       this.expandedCaracteristicas = true;
       if (!catId) {
-        console.log("Sin categoría seleccionada");
+
 
         return;
       }
@@ -134,7 +134,7 @@ export class DialogupdateproductComponent implements OnInit {
           this.emptyCaracteristicas = false
         }
 
-        console.log("Categoria seleccionard", categoriaSeleccionada, "ID categroria actual", this.producto.categoria)
+
         if (categoriaSeleccionada.id === this.producto.categoria) {
 
           this.cargarCaracteristicasDinamicas(categoriaSeleccionada.caracteristicas_template, this.producto.caracteristicas);
