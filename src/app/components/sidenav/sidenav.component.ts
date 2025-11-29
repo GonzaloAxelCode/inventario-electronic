@@ -6,9 +6,9 @@ import { AppState } from '@/app/state/app.state';
 import { UserState } from '@/app/state/reducers/user.reducer';
 import { selectAuth } from '@/app/state/selectors/auth.selectors';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
-import { CommonModule, NgIf } from '@angular/common';
+import { AsyncPipe, CommonModule, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLinkActive, RouterLinkWithHref, RouterModule } from '@angular/router';
 import { select, Store } from '@ngrx/store';
@@ -22,16 +22,22 @@ import {
   TuiFallbackSrcPipe,
   TuiIcon,
   TuiPopup,
-  TuiTextfield
+  TuiTextfield,
+  TuiTitle
 } from '@taiga-ui/core';
 import {
   TuiAvatar,
   TuiAvatarLabeled,
+  TuiBadge,
   TuiDrawer,
+  TuiPulse,
+  TuiStatus,
   TuiTabs
 } from '@taiga-ui/kit';
-import { TuiNavigation } from '@taiga-ui/layout';
+import { TuiCell, TuiNavigation } from '@taiga-ui/layout';
 import { map, Observable } from 'rxjs';
+import ChoosestoreComponent from '../choosestore/choosestore.component';
+import { DarkmodeComponent } from '../darkmode/darkmode.component';
 import { HeaderComponent } from "../header/header.component";
 
 @Component({
@@ -49,7 +55,17 @@ import { HeaderComponent } from "../header/header.component";
     TuiDropdownMobile,
     TuiDrawer, TuiButton, TuiAppearance,
     TuiAvatar,
-    TuiPopup,],
+    TuiPopup, AsyncPipe, CommonModule,
+    ReactiveFormsModule,
+    TuiAvatar, RouterModule,
+    TuiCell,
+    TuiAppearance,
+    TuiNavigation, TuiDropdown,
+    TuiButton,
+    TuiTextfield, TuiPulse,
+    TuiTitle, DarkmodeComponent, ChoosestoreComponent, TuiDrawer, TuiButton, TuiAppearance,
+    TuiAvatar, TuiDataList, TuiStatus, TuiBadge,
+    TuiPopup, TuiIcon],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,6 +86,7 @@ export class SidenavComponent implements OnInit {
       map(authState => authState.loadingCheckAuthenticated)
     );
     this.userState$ = this.store.select(selectUsersState);
+
 
   }
 
@@ -96,7 +113,12 @@ export class SidenavComponent implements OnInit {
 
   }
 
+  logout2() {
+    this.store.dispatch(clearTokensAction())
+    this.store.dispatch(clearUserAction())
 
+    this.router.navigate(['/login']);
+  }
 
   //user menu 
 
@@ -115,6 +137,10 @@ export class SidenavComponent implements OnInit {
 
     });
   }
+  isopenSidebar = this.sidebarService.open
+  openSidebar() {
 
+    this.open.set(true);
+  }
 
 }

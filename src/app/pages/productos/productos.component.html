@@ -8,15 +8,15 @@
                         <span tuiFade>Gestion de Productos</span>
                     </div>
 
-                    <div tuiSubtitle [style.display]="'flex'" [style.gap.rem]="1">
-                        <span>119 Productos activos</span>
-                        <span>. 19 Categorias habilitadas</span>
-                    </div>
+                  
                 </div>
             </h2>
         </div>
 
-      <!-- PESTAÑAS SIN ROUTER -->
+
+
+
+   <!-- PESTAÑAS SIN ROUTER -->
 <nav tuiTabs class="flex flex-wrap gap-2">
 
     <button tuiTab 
@@ -63,6 +63,7 @@
 
 </nav>
 
+
     </header>
 
 
@@ -72,11 +73,11 @@
             <!-- TAB: PRODUCTOS -->
             <ng-container *ngIf="activeTab === 'productos'">
                 <div class="flex gap-2">
-                    <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button" class="my-5 pr-3"
-                        (click)="showDialogCreateProduct()">
+                    <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button"
+                        class="my-5 pr-3" (click)="showDialogCreateProduct()">
                         Agregar nuevo producto
                     </button>
-                   
+
                 </div>
 
                 <app-tableproduct></app-tableproduct>

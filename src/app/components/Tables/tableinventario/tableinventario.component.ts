@@ -25,7 +25,7 @@ import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { tuiCountFilledControls } from '@taiga-ui/cdk';
 import { TuiAppearance, TuiButton, TuiDataList, TuiExpand, TuiLink, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiConfirmData, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiSegmented, TuiSkeleton, TuiStatus, TuiSwitch, tuiValidationErrorsProvider } from '@taiga-ui/kit';
+import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiChip, TuiConfirmData, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiSegmented, TuiSkeleton, TuiStatus, TuiSwitch, tuiValidationErrorsProvider } from '@taiga-ui/kit';
 import { TuiBlockDetails, TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputModule, TuiInputRangeModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
 import { map, Observable } from 'rxjs';
@@ -42,20 +42,30 @@ import { map, Observable } from 'rxjs';
     TuiButton,
     TuiTextfield,
     TuiTextfieldControllerModule,
-    TuiInputModule, TuiAppearance, TuiAppearance, TuiTable, TuiBadge,
-    TuiBlockDetails, TuiSelectModule,
-    TuiBadge, TuiButton, TuiAppearance, TuiStatus, TuiSegmented, NgForOf,
-    ReactiveFormsModule,
-    TuiButton, TuiStatus,
-    TuiChevron, TuiInputRangeModule,
-    TuiDataListWrapper,
+    TuiChip,
+    TuiInputModule,
+    TuiAppearance,
+    TuiTable,
+    TuiBadge,
+    TuiBlockDetails,
+    TuiStatus,
+    TuiSegmented,
+    NgForOf,
+    TuiChevron,
+    TuiInputRangeModule,
     TuiFilter,
     TuiLink,
     TuiSearch,
-    TuiSegmented, TuiSkeleton,
-    TuiSwitch, TuiExpand,
-    TuiTextfield, TuiLoader, TuiPagination, TuiBlockStatus, TuiSkeleton,
-    TuiPreview, TuiPreviewTitle, TuiPreviewDialogDirective,
+    TuiSkeleton,
+    TuiSwitch,
+    TuiExpand,
+    TuiLoader,
+    TuiPagination,
+    TuiBlockStatus,
+    TuiPreview,
+    TuiPreviewTitle,
+    TuiPreviewDialogDirective
+
   ],
   templateUrl: './tableinventario.component.html',
   providers: [tuiValidationErrorsProvider({

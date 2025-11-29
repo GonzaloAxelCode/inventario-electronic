@@ -2,6 +2,7 @@
 
 
 import { BarcodeScannerComponent } from "@/app/components/bardcode-scanner/bardcode-scanner.component";
+import { SelectclienteforsaleComponent } from "@/app/components/selectclienteforsale/selectclienteforsale.component";
 import { Cliente } from "@/app/models/cliente.models";
 import { Inventario } from '@/app/models/inventario.models';
 import { ConsultaService } from '@/app/services/consultas.service';
@@ -23,8 +24,9 @@ import { Actions, ofType } from "@ngrx/effects";
 import { Store } from '@ngrx/store';
 import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
+import { TuiPlatform } from "@taiga-ui/cdk";
 import { TuiAlertService, TuiAppearance, TuiButton, TuiDropdown, TuiExpand, TuiIcon, TuiLabel, TuiLoader, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
-import { TuiCheckbox, TuiChip, TuiComboBox, TuiDataListWrapper, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiStepper, TuiTooltip } from '@taiga-ui/kit';
+import { TuiCheckbox, TuiChip, TuiComboBox, TuiDataListWrapper, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiSegmented, TuiStepper, TuiSwitch, TuiTooltip } from '@taiga-ui/kit';
 import { TuiAppBar } from '@taiga-ui/layout';
 import { TuiComboBoxModule, TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout } from 'rxjs';
@@ -39,8 +41,9 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
     ReactiveFormsModule,
     AsyncPipe,
     NgForOf,
-
+    TuiSwitch,
     /* Taiga UI - Core */
+    TuiPlatform,
     TuiButton,
     TuiCheckbox,
     TuiDropdown,
@@ -63,7 +66,8 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
     TuiRadio,
     TuiStepper,
     TuiExpand,
-
+    TuiButton,
+    TuiAppearance,
     /* Taiga UI - Addon */
     TuiAmountPipe,
     TuiTable,
@@ -79,6 +83,9 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
 
     /* Componentes propios */
     BarcodeScannerComponent,
+    SelectclienteforsaleComponent,
+    TuiSegmented,
+
   ],
   providers: [
     { provide: 'Pythons', useValue: ['Python One', 'Python Two', 'Python Three'] },
@@ -96,6 +103,7 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
 
 })
 export class HacerventaComponent implements OnInit, OnDestroy {
+  vistaActiva: 'buscar' | 'nuevo' = 'buscar';
   protected expanded = false;
   private destroy$ = new Subject<void>();
   errorClientNotFound = false;
@@ -142,7 +150,37 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   clienteSelected!: Cliente
   @ViewChild('containerAreaProducts') container!: ElementRef<HTMLDivElement>;
 
+  changeModeClient(valor: any) {
+    this.vistaActiva = valor;
 
+    // Limpiar campos del cliente
+    this.ventaForm.patchValue({
+      cliente: null,
+      documento_cliente: '',
+      nombre_cliente: '',
+      correo_cliente: '',
+      direccion_cliente: '',
+      telefono_cliente: '',
+      documento_cliente_existente: ''
+    });
+
+    // Actualizar validadores
+    const docExistenteControl = this.ventaForm.get('documento_cliente_existente');
+    const docNuevoControl = this.ventaForm.get('documento_cliente');
+
+    if (this.vistaActiva === 'buscar') {
+      docExistenteControl?.setValidators([Validators.required]);
+      docNuevoControl?.clearValidators();
+    } else {
+      docExistenteControl?.clearValidators();
+      docNuevoControl?.setValidators([
+        (control: any) => this.documentoValidator(this.ventaForm?.get('tipoComprobante')?.value)(control)
+      ]);
+    }
+
+    docExistenteControl?.updateValueAndValidity();
+    docNuevoControl?.updateValueAndValidity();
+  }
   // Detectar click dentro del div
   clickedInside() {
     this.container.nativeElement.style.borderColor = '#86efac'; // verde
@@ -287,9 +325,11 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       correo_cliente: [""],
       direccion_cliente: [""],
       telefono_cliente: [""],
+      documento_cliente_existente: ["", this.vistaActiva === "buscar" && Validators.required],
       productos: this.fb.array([], [Validators.required, Validators.minLength(1)]),
       is_send_sunat: [true],
       is_save_user: [true],
+
 
     });
 
@@ -322,8 +362,9 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
       this.clientes = state.clientes
 
-      this.documents = state.clientes.map((cliente: Cliente) => cliente.document);
-
+      this.documents = state.clientes
+        .filter((cliente: Cliente) => cliente.document !== '00000000')
+        .map((cliente: Cliente) => cliente.document + "-" + cliente.fullname);
     })
     this.ventaForm.get('tipoComprobante')?.valueChanges.subscribe((nuevoValor) => {
 
@@ -334,7 +375,25 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       this.ventaForm.get('cliente')?.reset(null);
     });
 
+    this.ventaForm.get('documento_cliente_existente')?.valueChanges.subscribe((docraw) => {
+      if (!docraw) return;
 
+      let doc = docraw.split('-')[0].trim();
+      const clienteEncontrado = this.clientes.find((cliente: Cliente) => cliente.document === doc);
+
+
+
+      if (clienteEncontrado) {
+        this.ventaForm.patchValue({
+          cliente: clienteEncontrado.id,
+          documento_cliente: clienteEncontrado.document,
+          nombre_cliente: clienteEncontrado.fullname || '',
+          correo_cliente: clienteEncontrado.email || '',
+          direccion_cliente: clienteEncontrado.address || '',
+          telefono_cliente: clienteEncontrado.phone || ''
+        });
+      }
+    });
 
 
   }
@@ -532,7 +591,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       is_save_user: this.ventaForm.get("is_save_user")?.value
     }
 
-
+    console.log(preparedData)
     this.store.dispatch(crearVenta({ venta: preparedData }));
 
     this.actions$.pipe(

@@ -17,13 +17,21 @@ div[tuiCell] {
   .t-input {
     font-size: 18px !important;
     
-    padding-top: 8px !important;
+    padding-top: 4px !important;
     padding-bottom: 8px !important;
-    line-height: 1 !important;
+    line-height: 0 !important;
     
   
   }
 }
 
 
+}
+	.full {
+    inline-size: 100%;
+ 
+    & > * {
+        flex: 1;
+        min-inline-size: 0;
+    }
 }
