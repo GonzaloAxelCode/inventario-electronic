@@ -31,7 +31,7 @@ export class DialogventadetailComponent implements OnInit {
   public comprobante: ComprobanteElectronico = this.venta?.comprobante ?? {} as ComprobanteElectronico;
   constructor(private store: Store<AppState>, private sanitizer: DomSanitizer, private actions$: Actions
   ) {
-
+    console.log(this.venta)
 
   }
 

@@ -373,6 +373,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       this.borrarCliente()
       this.ventaForm.get('documento_cliente')?.reset('');
       this.ventaForm.get('cliente')?.reset(null);
+
     });
 
     this.ventaForm.get('documento_cliente_existente')?.valueChanges.subscribe((docraw) => {
@@ -385,12 +386,18 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
       if (clienteEncontrado) {
         this.ventaForm.patchValue({
-          cliente: clienteEncontrado.id,
+
           documento_cliente: clienteEncontrado.document,
           nombre_cliente: clienteEncontrado.fullname || '',
           correo_cliente: clienteEncontrado.email || '',
           direccion_cliente: clienteEncontrado.address || '',
-          telefono_cliente: clienteEncontrado.phone || ''
+          telefono_cliente: clienteEncontrado.phone || '',
+          cliente: {
+            nombre_o_razon_social: clienteEncontrado.fullname,
+            nombre_completo: clienteEncontrado.fullname,
+            ruc: clienteEncontrado.document,
+            numero: clienteEncontrado.document,
+          }
         });
       }
     });
@@ -563,7 +570,8 @@ export class HacerventaComponent implements OnInit, OnDestroy {
         this.errorClientNotFound = true;
         this.ventaForm.patchValue({
           nombre_cliente: '',
-          cliente: null
+          cliente: null, documento_cliente_existente: ""
+
         });
       }
     });
@@ -575,7 +583,9 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     this.ventaForm.patchValue({
       documento_cliente: '',
       nombre_cliente: '',
-      cliente: null
+      cliente: null,
+      documento_cliente_existente: ""
+
     });
   }
 

@@ -15,17 +15,20 @@ import { Store } from '@ngrx/store';
 import { TuiAxes, TuiLineDaysChart } from '@taiga-ui/addon-charts';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { tuiCountFilledControls, TuiDay, TuiDayLike, TuiDayRange } from '@taiga-ui/cdk';
-import { TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiBadge, TuiChip, TuiDataListWrapper, TuiPagination, TuiSkeleton, TuiStatus } from '@taiga-ui/kit';
-import { TuiAppBar, TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
+import { TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TuiBadge, TuiBlock, TuiChip, TuiDataListWrapper, TuiFade, TuiItemsWithMore, TuiPagination, TuiSkeleton, TuiStatus, TuiTab, TuiTabs, TuiTabsWithMore, TuiTile } from '@taiga-ui/kit';
+import { TuiAppBar, TuiBlockDetails, TuiBlockStatus, TuiHeader, TuiNavigation, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputDateModule, TuiInputDateRangeModule, TuiInputModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
 import { BehaviorSubject, map, Observable, take } from 'rxjs';
+
 @Component({
   selector: 'app-ventas',
   standalone: true,
   imports: [
-    AsyncPipe,
-    CommonModule,
+    AsyncPipe, TuiItemsWithMore, TuiAppearance,
+    CommonModule, TuiTabsWithMore,
+    TuiIcon,
+    TuiBlockStatus, TuiBlockDetails, TuiBlock, TuiTile,
     FormsModule,
     NgForOf,
     ReactiveFormsModule,
@@ -36,7 +39,7 @@ import { BehaviorSubject, map, Observable, take } from 'rxjs';
 
     TuiBlockStatus,
     TuiButton,
-
+    TuiTab,
     TuiChip, TuiSkeleton,
     TuiDataList,
     TuiDataListWrapper,
@@ -61,7 +64,8 @@ import { BehaviorSubject, map, Observable, take } from 'rxjs';
     TuiButton,
     TuiAppearance,
     TuiTable,
-
+    TuiFade,
+    TuiNavigation, TuiHeader, TuiTabs,
     AsyncPipe,
     FormsModule,
     NgIf,
@@ -229,4 +233,17 @@ export class VentasComponent implements OnInit {
       }
     });
   }
+
+  activeTab:
+    | 'historial'
+    | 'ventas-hoy'
+    | 'ultima-venta'
+    | 'anuladas-hoy'
+    | 'top-productos-hoy'
+    = 'historial';
+
+  setTab(tab: typeof this.activeTab) {
+    this.activeTab = tab;
+  }
+
 }

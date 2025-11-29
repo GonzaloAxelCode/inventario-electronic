@@ -139,7 +139,7 @@
                     class="p-5 flex flex-col border-t lg:border-t-0 lg:border-l border-neutral-200 dark:border-neutral-700 order-1 lg:order-2">
 
                     <!-- Información del cliente -->
-                    <div class="rounded-lg py-3">
+                    <div class="rounded-lg py-3" >
                         <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 my-3">
                             Cliente
                         </h3>
@@ -148,6 +148,9 @@
                             <button  (click)="changeModeClient('nuevo')"type="button">Nuevo cliente</button>
 
                         </tui-segmented>
+                        <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'">
+
+
  <div *ngIf="vistaActiva === 'buscar'">
  <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 my-3">
                             Selecionar cliente
@@ -239,7 +242,7 @@
                         </div>
  </div>
 
-                      
+                                              </div>
 
                         <div *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'"
                             class="pt-5">
