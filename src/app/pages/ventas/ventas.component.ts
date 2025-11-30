@@ -19,8 +19,17 @@ import { TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiIcon, TuiLoader,
 import { TuiBadge, TuiBlock, TuiChip, TuiDataListWrapper, TuiFade, TuiItemsWithMore, TuiPagination, TuiSkeleton, TuiStatus, TuiTab, TuiTabs, TuiTabsWithMore, TuiTile } from '@taiga-ui/kit';
 import { TuiAppBar, TuiBlockDetails, TuiBlockStatus, TuiHeader, TuiNavigation, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputDateModule, TuiInputDateRangeModule, TuiInputModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { BehaviorSubject, map, Observable, take } from 'rxjs';
 
+import * as dayjs from 'dayjs';
+import * as advancedFormat from 'dayjs/plugin/advancedFormat';
+import * as localizedFormat from 'dayjs/plugin/localizedFormat';
+
+dayjs.extend(advancedFormat);
+dayjs.extend(localizedFormat);
+dayjs.locale('es');
 @Component({
   selector: 'app-ventas',
   standalone: true,
@@ -80,6 +89,7 @@ import { BehaviorSubject, map, Observable, take } from 'rxjs';
 })
 
 export class VentasComponent implements OnInit {
+
   ventasState$!: Observable<Partial<VentaState>>;
   ventas: any = []
 
@@ -93,10 +103,40 @@ export class VentasComponent implements OnInit {
       new TuiDay(2025, 11, 31)
     )
   );
-
+  formatoCorto(fecha: string): string {
+    const txt = dayjs(fecha).format('D, MMM YYYY');
+    return txt.charAt(0).toUpperCase() + txt.slice(1);
+  }
   range$ = this._range.asObservable();
 
+  formatoHora12(fecha: string): string {
+    return dayjs(fecha).format('h:mm A'); // → 8:34 PM
+  }
+  periodoVenta(fecha: string): string {
+    const hora = dayjs(fecha).hour();
 
+    if (hora < 12) return "Venta hecha en la mañana";
+    if (hora < 18) return "Venta hecha en la tarde";
+    return "Venta hecha en la noche";
+  }
+  stripDomain(url?: string): string {
+    if (!url) return '';
+    try {
+      // Obtener solo la parte del path
+      const u = new URL(url);
+      let path = u.pathname + u.search + u.hash;
+
+      // Quitar el subdirectorio "axelmovilcomprobantes" si existe
+      path = path.replace(/^\/?axelmovilcomprobantes\/?/, '/');
+
+      return "https://pub-6b79c76579594222bdd6f486ae49157e.r2.dev" + path;
+    } catch {
+      // Si la URL no es válida, usar regex como respaldo
+      return url
+        .replace(/^https?:\/\/[^\/]+/i, '') // quitar dominio
+        .replace(/^\/?axelmovilcomprobantes\/?/, '/'); // quitar subcarpeta
+    }
+  }
   get range(): TuiDayRange {
     return this._range.value;
   }
@@ -133,7 +173,14 @@ export class VentasComponent implements OnInit {
 
 
   }
+  formatoRelativoCapitalizado(fecha: string): string {
+    const texto = formatDistanceToNow(new Date(fecha), {
+      addSuffix: true,
+      locale: es
+    });
 
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
   estados_sunat = ["Pendiente", "Aceptado", "Rechazado"]
   metodos_pago = ["YAPE", "Efectivo", "Deposito", "Plin"]
   tipoComprobantes = ["Factura", "Boleta", "Anonima"]
