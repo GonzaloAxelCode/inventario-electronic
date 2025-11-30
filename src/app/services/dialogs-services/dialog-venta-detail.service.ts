@@ -23,6 +23,9 @@ export class DialogVentaDetailService {
             size: "auto",
             data,
 
+            appearance: "primary"
+
+
         };
 
         return this.dialogService.open(component, options);

@@ -1,4 +1,4 @@
-<section class="py-3 sm:py-4 md:py-6 rounded-lg" [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario">
+<section class="" [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario">
 
   <!-- Caso 1: no hay inventarios y no se ha hecho búsqueda -->
   <tui-block-status *ngIf="!isTheSearchWasDone 

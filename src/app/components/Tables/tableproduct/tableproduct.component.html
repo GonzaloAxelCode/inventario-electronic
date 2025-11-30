@@ -1,4 +1,4 @@
-<div class="py-3 px-2 sm:py-4 md:py-6 sm:px-4 md:px-6 rounded-lg" [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos">
+<div class="py-3  sm:py-4 md:py-6  rounded-lg" [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos">
     <!-- Si no hay productos, mostramos el mensaje con el botón -->
     <tui-block-status *ngIf="!isTheSearchWasDone 
            && (productosState$ | async)?.productos?.length === 0 

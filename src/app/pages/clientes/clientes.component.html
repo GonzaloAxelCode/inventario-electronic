@@ -1,0 +1,63 @@
+<main tuiNavigationMain>
+    <header tuiSubheader>
+        <div class="flex gap-4 items-center">
+            <h2 tuiHeader>
+                <div tuiTitle>
+                    <div tuiNavigationLogo>
+                        <tui-icon icon="@tui.gitlab" />
+                        <span tuiFade>Gestion de Clientes</span>
+                    </div>
+
+                  
+                </div>
+            </h2>
+        </div>
+
+
+
+
+
+<nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
+
+    <button tuiTab 
+        (click)="setTab('mis-clientes')" 
+        [class.active-link]="activeTab === 'mis-clientes'">
+        Historial de clientes
+    </button>
+
+    <button tuiTab 
+        (click)="setTab('ultimos-agregados')" 
+        [class.active-link]="activeTab === 'ultimos-agregados'">
+        Ultimos Clientes Agregados
+    </button>
+  <button tuiTab 
+        (click)="setTab('ultimos-agregados')" 
+        [class.active-link]="activeTab === 'sorteos'">
+       Sorteos
+    </button>
+  
+
+</nav>
+
+
+    </header>
+
+
+    <div>
+        <div class="py-4">
+            
+            <ng-container *ngIf="activeTab === 'mis-clientes'">
+                               <app-tableclientes></app-tableclientes>
+            </ng-container>
+
+
+
+            <ng-container *ngIf="activeTab === 'ultimos-agregados'">
+                
+
+            </ng-container>
+
+        </div>
+    </div>
+
+</main>

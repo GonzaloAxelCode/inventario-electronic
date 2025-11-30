@@ -32,12 +32,15 @@ table {
 }
 
 
-th,
+
 td{
     border-inline-start: none !important;
     border-inline-end: none !important;  background-color: transparent !important;
 }
-
+th{
+    border-inline-start: none !important;
+    border-inline-end: none !important;  ;
+}
 table  {
     flex-direction: row;
     gap: 0.375rem;

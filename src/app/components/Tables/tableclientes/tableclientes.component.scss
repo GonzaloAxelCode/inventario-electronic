@@ -1,0 +1,17 @@
+table {
+  width: 100%;
+}
+.editable-input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #3f51b5; /* Azul de Angular Material */
+    box-shadow: 0 0 4px rgba(63, 81, 181, 0.5);
+  }
+}

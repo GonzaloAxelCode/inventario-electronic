@@ -103,7 +103,7 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
 
 })
 export class HacerventaComponent implements OnInit, OnDestroy {
-  vistaActiva: 'buscar' | 'nuevo' = 'buscar';
+  vistaActiva: 'buscar' | 'nuevo' | 'nuevo_dni_fisico' = 'buscar';
   protected expanded = false;
   private destroy$ = new Subject<void>();
   errorClientNotFound = false;
@@ -321,7 +321,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
         ]
       ],
 
-      nombre_cliente: [""],
+      nombre_cliente: ["", Validators.required],
       correo_cliente: [""],
       direccion_cliente: [""],
       telefono_cliente: [""],
@@ -379,7 +379,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     this.ventaForm.get('documento_cliente_existente')?.valueChanges.subscribe((docraw) => {
       if (!docraw) return;
 
-      let doc = docraw.split('-')[0].trim();
+      const doc = docraw.split('-')[0].trim();
       const clienteEncontrado = this.clientes.find((cliente: Cliente) => cliente.document === doc);
 
 

@@ -1,6 +1,6 @@
-<main tuiNavigationMain>
+<main tuiNavigationMain class="h-screen">
   <header tuiSubheader>
-    <div class="flex gap-4 items-center">
+    <div class="flex gap-4 pt-4 items-center">
       <h2 tuiHeader>
         <div tuiTitle>
           <div tuiNavigationLogo>
@@ -14,319 +14,318 @@
     </div>
 
     <!-- PESTAÑAS SIN ROUTER -->
-   <!-- PESTAÑAS SIN ROUTER -->
-<nav tuiTabs 
-     class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
+    <!-- PESTAÑAS SIN ROUTER -->
+    <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
 
-  <button tuiTab (click)="setTab('historial')"
-          [class.active-link]="activeTab === 'historial'">
-    Historial de Ventas
-  </button>
+      <button tuiTab (click)="setTab('historial')" [class.active-link]="activeTab === 'historial'">
+        Historial de Ventas
+      </button>
 
-  <button tuiTab (click)="setTab('ventas-hoy')"
-          [class.active-link]="activeTab === 'ventas-hoy'">
-    Ventas Hoy
-  </button>
+      <button tuiTab (click)="setTab('ventas-hoy')" [class.active-link]="activeTab === 'ventas-hoy'">
+        Ventas Hoy
+      </button>
 
-  <button tuiTab (click)="setTab('ultima-venta')"
-          [class.active-link]="activeTab === 'ultima-venta'">
-    Ver última venta realizada
-  </button>
+      <button tuiTab (click)="setTab('ultima-venta')" [class.active-link]="activeTab === 'ultima-venta'">
+        Ver última venta realizada
+      </button>
 
-  <button tuiTab (click)="setTab('anuladas-hoy')"
-          [class.active-link]="activeTab === 'anuladas-hoy'">
-    Ventas Anuladas Hoy
-  </button>
+      <button tuiTab (click)="setTab('anuladas-hoy')" [class.active-link]="activeTab === 'anuladas-hoy'">
+        Ventas Anuladas Hoy
+      </button>
 
-  <button tuiTab (click)="setTab('top-productos-hoy')"
-          [class.active-link]="activeTab === 'top-productos-hoy'">
-    Productos más vendidos Hoy
-  </button>
+      <button tuiTab (click)="setTab('top-productos-hoy')" [class.active-link]="activeTab === 'top-productos-hoy'">
+        Productos más vendidos Hoy
+      </button>
 
-</nav>
+    </nav>
 
- 
+
   </header>
 
 
-<div>
-  <div class="py-4">
+  <div>
+    <div class="py-4">
 
-    <!-- TAB: HISTORIAL DE VENTAS -->
-    <ng-container *ngIf="activeTab === 'historial'">
-      <!-- CONTENIDO: Historial de ventas -->
-   <div class="p-4 md:p-6">
-  <div class="flex gap-2">
-  </div>
+      <!-- TAB: HISTORIAL DE VENTAS -->
+      <ng-container *ngIf="activeTab === 'historial'">
+        <!-- CONTENIDO: Historial de ventas -->
+        <div class="p-4 md:p-6">
+          <div class="flex gap-2">
+          </div>
 
-  <section [tuiSkeleton]="!!(ventasState$ | async)?.loadingLoadVentas">
-    <tui-block-status
-      *ngIf="(ventasState$ | async)?.ventas?.length === 0 && !(ventasState$ | async)?.loadingLoadVentas else tabla"
-      size="m" class="m-auto">
-      <img alt="survived"
-        src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-        tuiSlot="top" />
-      <h4>Aun no cuentas con ventas</h4>
-      <span>Empieza hacer tu primera venta</span>
-    </tui-block-status>
-
-    <ng-template #tabla>
-      <search tuiSearch class="pb-4">
-        <!-- Rango de fechas responsive -->
-        <div class="mb-4 w-full">
-          <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range"
-            class="w-full">
-            Range
-          </tui-input-date-range>
-        </div>
-
-        <form [formGroup]="form" (submit)="onSubmitSearch()">
-          <!-- Fieldset con grid responsive -->
-          <fieldset tuiTextfieldSize="s"
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-4">
-
-            <tui-textfield iconStart="@tui.search" class="w-full">
-              <input tuiTheme="ligth" formControlName="nombre_cliente" placeholder="Buscar nombre cliente"
-                tuiTextfield />
-            </tui-textfield>
-
-            <tui-select class="w-full" formControlName="metodo_pago">
-              Metodo de Pago
-              <select placeholder="Metodo pago" tuiSelect [items]="metodos_pago"></select>
-            </tui-select>
-
-            <tui-select class="w-full" formControlName="tipo_comprobante">
-              Tipo Comprobante
-              <select placeholder="Comprobante" tuiSelect [items]="tipoComprobantes"></select>
-            </tui-select>
-
-            <tui-textfield iconStart="@tui.search" class="w-full">
-              <input tuiTheme="ligth" formControlName="numero_comprobante" placeholder="Numero Comprobante"
-                tuiTextfield />
-            </tui-textfield>
-
-            <tui-textfield iconStart="@tui.search" class="w-full">
-              <input tuiTheme="ligth" formControlName="numero_documento_cliente" placeholder="Dni o Ruc" tuiTextfield />
-            </tui-textfield>
-
-            <button size="s" appearance="textfield" tuiButton type="submit" (click)="onSubmitSearch()" class="w-full">
-              Buscar
-            </button>
-          </fieldset>
-
-          <!-- Fieldset de resultados -->
-          <fieldset class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-            <div class="text-sm sm:text-base">
-              Resultados: {{((ventasState$ | async)?.count )}}
+          <section [tuiSkeleton]="!!(ventasState$ | async)?.loadingLoadVentas">
+            <div
+              *ngIf="(ventasState$ | async)?.ventas?.length === 0 && !(ventasState$ | async)?.loadingLoadVentas else tabla"
+              class="h-[50vh] mx-auto flex flex-col items-center justify-center">
+              <img alt="survived" src="https://concepthousewares.co.uk/assets/images/empty_cart.png" tuiSlot="top"
+                class="object-contain w-56 h-56 text-center" />
+              <h2 class="text-xl text-center">Aun no cuentas con ventas</h2>
+              <p class="text-md text-center">Empieza hacer tu primera venta</p>
             </div>
 
-            <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
-              (click)="clearSearch()" class="w-full sm:w-auto">
-              Limpiar {{ count() ? '(' + count() + ')' : '' }}
-            </button>
-          </fieldset>
-        </form>
-      </search>
-      <tui-loader [overlay]="true" [showLoader]="!!(ventasState$ | async)?.loadingSearch">
-
-        <!-- Contenedor principal -->
-        <div
-          *ngIf="((ventasState$ | async)?.search_ventas_found) === '' || ((ventasState$ | async)?.search_ventas_found === 'ventas_found')">
-
-          <!-- Vista de CARDS para móviles -->
-          <div class="block lg:hidden space-y-3 px-2">
-            <div
-              *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas)"
-              class="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-3 border border-neutral-200 dark:border-neutral-700">
-
-              <!-- Header con ID y Estado -->
-              <div
-                class="flex items-center justify-between mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
-                <div class="flex items-center gap-2">
-                  <span class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Venta #</span>
-                  <span class="text-lg font-bold text-neutral-900 dark:text-white">{{venta.id}}</span>
+            <ng-template #tabla>
+              <search tuiSearch class="pb-4">
+                <!-- Rango de fechas responsive -->
+                <div class="mb-4 w-full">
+                  <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength"
+                    [ngModel]="range" class="w-full">
+                    Range
+                  </tui-input-date-range>
                 </div>
 
-                <tui-badge [appearance]="venta.estado === 'ANULADA' ? 'error' : 
+                <form [formGroup]="form" (submit)="onSubmitSearch()">
+                  <!-- Fieldset con grid responsive -->
+                  <fieldset tuiTextfieldSize="s"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-4">
+
+                    <tui-textfield iconStart="@tui.search" class="w-full">
+                      <input tuiTheme="ligth" formControlName="nombre_cliente" placeholder="Buscar nombre cliente"
+                        tuiTextfield />
+                    </tui-textfield>
+
+                    <tui-select class="w-full" formControlName="metodo_pago">
+                      Metodo de Pago
+                      <select placeholder="Metodo pago" tuiSelect [items]="metodos_pago"></select>
+                    </tui-select>
+
+                    <tui-select class="w-full" formControlName="tipo_comprobante">
+                      Tipo Comprobante
+                      <select placeholder="Comprobante" tuiSelect [items]="tipoComprobantes"></select>
+                    </tui-select>
+
+                    <tui-textfield iconStart="@tui.search" class="w-full">
+                      <input tuiTheme="ligth" formControlName="numero_comprobante" placeholder="Numero Comprobante"
+                        tuiTextfield />
+                    </tui-textfield>
+
+                    <tui-textfield iconStart="@tui.search" class="w-full">
+                      <input tuiTheme="ligth" formControlName="numero_documento_cliente" placeholder="Dni o Ruc"
+                        tuiTextfield />
+                    </tui-textfield>
+
+                    <button size="s" appearance="textfield" tuiButton type="submit" (click)="onSubmitSearch()"
+                      class="w-full">
+                      Buscar
+                    </button>
+                  </fieldset>
+
+                  <!-- Fieldset de resultados -->
+                  <fieldset class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                    <div class="text-sm sm:text-base">
+                      Resultados: {{((ventasState$ | async)?.count )}}
+                    </div>
+
+                    <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
+                      (click)="clearSearch()" class="w-full sm:w-auto">
+                      Limpiar {{ count() ? '(' + count() + ')' : '' }}
+                    </button>
+                  </fieldset>
+                </form>
+              </search>
+              <tui-loader [overlay]="true" [showLoader]="!!(ventasState$ | async)?.loadingSearch">
+
+                <!-- Contenedor principal -->
+                <div
+                  *ngIf="((ventasState$ | async)?.search_ventas_found) === '' || ((ventasState$ | async)?.search_ventas_found === 'ventas_found')">
+
+                  <!-- Vista de CARDS para móviles -->
+                  <div class="block lg:hidden space-y-3 px-2">
+                    <div
+                      *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas)"
+                      class="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-3 border border-neutral-200 dark:border-neutral-700">
+
+                      <!-- Header con ID y Estado -->
+                      <div
+                        class="flex items-center justify-between mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
+                        <div class="flex items-center gap-2">
+                          <span class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Venta #</span>
+                          <span class="text-lg font-bold text-neutral-900 dark:text-white">{{venta.id}}</span>
+                        </div>
+
+                        <tui-badge [appearance]="venta.estado === 'ANULADA' ? 'error' : 
               venta.estado === 'Completada' ? 'positive' : 
               venta.estado === 'En Espera Sunat' ? 'warning' : 'neutral'" tuiStatus size="s" class="text-xs">
-                  {{ venta.estado }}
-                </tui-badge>
-              </div>
+                          {{ venta.estado }}
+                        </tui-badge>
+                      </div>
 
-              <!-- Comprobante -->
-              <div class="mb-3">
-                <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Comprobante</div>
-                <tui-badge size="m" iconStart="@tui.ticket-check"
-                  [appearance]="venta.tipo_comprobante === 'Boleta' ? 'positive' : 'info'" class="inline-flex">
-                  {{ venta.tipo_comprobante }}
-                </tui-badge>
-              </div>
+                      <!-- Comprobante -->
+                      <div class="mb-3">
+                        <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Comprobante</div>
+                        <tui-badge size="m" iconStart="@tui.ticket-check"
+                          [appearance]="venta.tipo_comprobante === 'Boleta' ? 'positive' : 'info'" class="inline-flex">
+                          {{ venta.tipo_comprobante }}
+                        </tui-badge>
+                      </div>
 
-              <!-- Productos vendidos -->
-              <div class="mb-3">
-                <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Productos</div>
-                <div class="flex flex-wrap gap-1">
-                  <tui-chip *ngFor="let productos of venta.productos" size="xs" class="text-xs">
-                    {{ productos.producto_nombre }}
-                  </tui-chip>
-                </div>
-              </div>
+                      <!-- Productos vendidos -->
+                      <div class="mb-3">
+                        <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Productos</div>
+                        <div class="flex flex-wrap gap-1">
+                          <tui-chip *ngFor="let productos of venta.productos" size="xs" class="text-xs">
+                            {{ productos.producto_nombre }}
+                          </tui-chip>
+                        </div>
+                      </div>
 
-              <!-- Información adicional (columnas dinámicas) -->
-              <div class="grid grid-cols-2 gap-2 mb-3" *ngIf="allColumns.length > 0">
-                <div *ngFor="let column of allColumns" class="text-xs">
-                  <span class="text-neutral-500 dark:text-neutral-400 block">{{ column.label }}:</span>
-                  <span class="text-neutral-800 dark:text-neutral-200 font-medium">
-                    {{ getVentaValue(venta, column.key) }}
-                  </span>
-                </div>
-              </div>
+                      <!-- Información adicional (columnas dinámicas) -->
+                      <div class="grid grid-cols-2 gap-2 mb-3" *ngIf="allColumns.length > 0">
+                        <div *ngFor="let column of allColumns" class="text-xs">
+                          <span class="text-neutral-500 dark:text-neutral-400 block">{{ column.label }}:</span>
+                          <span class="text-neutral-800 dark:text-neutral-200 font-medium">
+                            {{ getVentaValue(venta, column.key) }}
+                          </span>
+                        </div>
+                      </div>
 
-              <!-- Total y acción -->
-              <div class="flex items-center justify-between pt-3 border-t border-neutral-200 dark:border-neutral-700">
-                <div>
-                  <div class="text-xs text-neutral-500 dark:text-neutral-400">Total</div>
-                  <p class="text-xl font-bold text-neutral-900 dark:text-white">
-                    S/. {{venta.total}}
-                  </p>
-                </div>
+                      <!-- Total y acción -->
+                      <div
+                        class="flex items-center justify-between pt-3 border-t border-neutral-200 dark:border-neutral-700">
+                        <div>
+                          <div class="text-xs text-neutral-500 dark:text-neutral-400">Total</div>
+                          <p class="text-xl font-bold text-neutral-900 dark:text-white">
+                            S/. {{venta.total}}
+                          </p>
+                        </div>
 
-                <button appearance="info" (click)="showDialogVentaDetail(venta)" iconStart="@tui.wallet-cards" tuiButton
-                  type="button" size="s" class="text-xs">
-                  Ver Detalles
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Vista de TABLA para desktop -->
-          <div class="hidden lg:block overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <table tuiTable size="s" class="w-full pt-3 min-w-[800px]" [columns]="allColumnKeys">
-              <thead>
-                <tr>
-                  <th tuiTh class="whitespace-nowrap">ID</th>
-                  <th tuiTh class="whitespace-nowrap">Productos Vendidos</th>
-                  <th tuiTh class="whitespace-nowrap">Comprobante</th>
-                  <th *ngFor="let column of allColumns" tuiTh class="whitespace-nowrap">{{ column.label }}</th>
-                  <th tuiTh class="whitespace-nowrap">Estado</th>
-                  <th tuiTh class="whitespace-nowrap">Total</th>
-                  <th tuiTh class="whitespace-nowrap">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas)">
-                  <td tuiTd class="whitespace-nowrap">{{venta.id}}</td>
-                  <td tuiTd>
-                    <div class="flex flex-wrap gap-1">
-                      <tui-chip *ngFor="let productos of venta.productos" class="text-sm">
-                        {{ productos.producto_nombre }}
-                      </tui-chip>
+                        <button appearance="info" (click)="showDialogVentaDetail(venta)" iconStart="@tui.wallet-cards"
+                          tuiButton type="button" size="s" class="text-xs">
+                          Ver Detalles
+                        </button>
+                      </div>
                     </div>
-                  </td>
-                  <td tuiTd>
-                    <tui-badge size="m" iconStart="@tui.ticket-check"
-                      [appearance]="venta.tipo_comprobante === 'Boleta' ? 'positive' : 'info'"
-                      class="whitespace-nowrap">
-                      {{ venta.tipo_comprobante }}
-                    </tui-badge>
-                  </td>
-                  <td *ngFor="let column of allColumns" tuiTd class="whitespace-nowrap">
-                    {{ getVentaValue(venta, column.key) }}
-                  </td>
-                  <td tuiTd>
-                    <tui-badge [appearance]="venta.estado === 'ANULADA' ? 'error' : 
+                  </div>
+
+                  <!-- Vista de TABLA para desktop -->
+                  <div class="hidden lg:block overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <table tuiTable size="s" class="w-full pt-3 min-w-[800px]" [columns]="allColumnKeys">
+                      <thead>
+                        <tr>
+                          <th tuiTh class="whitespace-nowrap">ID</th>
+                          <th tuiTh class="whitespace-nowrap">Productos Vendidos</th>
+                          <th tuiTh class="whitespace-nowrap">Comprobante</th>
+                          <th *ngFor="let column of allColumns" tuiTh class="whitespace-nowrap">{{ column.label }}</th>
+                          <th tuiTh class="whitespace-nowrap">Estado</th>
+                          <th tuiTh class="whitespace-nowrap">Total</th>
+                          <th tuiTh class="whitespace-nowrap">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas)">
+                          <td tuiTd class="whitespace-nowrap">{{venta.id}}</td>
+                          <td tuiTd>
+                            <div class="flex flex-wrap gap-1">
+                              <tui-chip *ngFor="let productos of venta.productos" class="text-sm">
+                                {{ productos.producto_nombre }}
+                              </tui-chip>
+                            </div>
+                          </td>
+                          <td tuiTd>
+                            <tui-badge size="m" iconStart="@tui.ticket-check"
+                              [appearance]="venta.tipo_comprobante === 'Boleta' ? 'positive' : 'info'"
+                              class="whitespace-nowrap">
+                              {{ venta.tipo_comprobante }}
+                            </tui-badge>
+                          </td>
+                          <td *ngFor="let column of allColumns" tuiTd class="whitespace-nowrap">
+                            {{ getVentaValue(venta, column.key) }}
+                          </td>
+                          <td tuiTd>
+                            <tui-badge [appearance]="venta.estado === 'ANULADA' ? 'error' : 
                   venta.estado === 'Completada' ? 'positive' : 
                   venta.estado === 'En Espera Sunat' ? 'warning' : 'neutral'" tuiStatus class="whitespace-nowrap">
-                      {{ venta.estado }}
-                    </tui-badge>
-                  </td>
-                  <td tuiTd>
-                    <p class="font-bold text-lg whitespace-nowrap">
-                      S/. {{venta.total}}
-                    </p>
-                  </td>
-                  <td tuiTd>
-                    <div class="flex gap-2">
-                      <button appearance="info" (click)="showDialogVentaDetail(venta)" iconStart="@tui.wallet-cards"
-                        tuiButton type="button" class="whitespace-nowrap">
-                        Detalles
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                              {{ venta.estado }}
+                            </tui-badge>
+                          </td>
+                          <td tuiTd>
+                            <p class="font-bold text-lg whitespace-nowrap">
+                              S/. {{venta.total}}
+                            </p>
+                          </td>
+                          <td tuiTd>
+                            <div class="flex gap-2">
+                              <button appearance="info" (click)="showDialogVentaDetail(venta)"
+                                iconStart="@tui.wallet-cards" tuiButton type="button" class="whitespace-nowrap">
+                                Detalles
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Estado de búsqueda vacía -->
+                <tui-block-status *ngIf="((ventasState$ | async)?.search_ventas_found) === 'ventas_not_found'" size="m"
+                  class="m-auto px-4">
+                  <img alt="survived"
+                    src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+                    tuiSlot="top" class="max-w-[200px] sm:max-w-full mx-auto" />
+                  <h4 class="text-center text-sm sm:text-base">Ventas no encontradas</h4>
+                  <span class="text-center text-xs sm:text-sm">No coincidimos con ninguna venta</span>
+                </tui-block-status>
+
+                <!-- Paginación responsive -->
+                <div class="pt-4 flex justify-center px-2"
+                  *ngIf="((ventasState$ | async)?.search_ventas_found) === 'ventas_found' || ((ventasState$ | async)?.search_ventas_found) === ''">
+                  <tui-pagination [index]="(ventasState$ | async)?.index_page"
+                    [length]="(ventasState$ | async)?.length_pages" (indexChange)="goToPage($event)"
+                    class="w-full overflow-x-auto" />
+                </div>
+              </tui-loader>
+            </ng-template>
+          </section>
         </div>
+      </ng-container>
 
-        <!-- Estado de búsqueda vacía -->
-        <tui-block-status *ngIf="((ventasState$ | async)?.search_ventas_found) === 'ventas_not_found'" size="m"
-          class="m-auto px-4">
-          <img alt="survived"
-            src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-            tuiSlot="top" class="max-w-[200px] sm:max-w-full mx-auto" />
-          <h4 class="text-center text-sm sm:text-base">Ventas no encontradas</h4>
-          <span class="text-center text-xs sm:text-sm">No coincidimos con ninguna venta</span>
-        </tui-block-status>
 
-        <!-- Paginación responsive -->
-        <div class="pt-4 flex justify-center px-2"
-          *ngIf="((ventasState$ | async)?.search_ventas_found) === 'ventas_found' || ((ventasState$ | async)?.search_ventas_found) === ''">
-          <tui-pagination [index]="(ventasState$ | async)?.index_page" [length]="(ventasState$ | async)?.length_pages"
-            (indexChange)="goToPage($event)" class="w-full overflow-x-auto" />
+      <!-- TAB: VENTAS HOY -->
+      <ng-container *ngIf="activeTab === 'ventas-hoy'">
+        <!-- CONTENIDO: Ventas del día -->
+        <div>
+          
+           <div
+            
+              class="h-[50vh] mx-auto flex flex-col items-center justify-center">
+              <img alt="survived" src="https://concepthousewares.co.uk/assets/images/empty_cart.png" tuiSlot="top"
+                class="object-contain w-56 h-56 text-center" />
+              <h2 class="text-xl text-center">Aun no cuentas con ventas</h2>
+              <p class="text-md text-center">Empieza hacer tu primera venta</p>
+            </div>
         </div>
-      </tui-loader>
-    </ng-template>
-  </section>
-</div> 
-    </ng-container>
+      </ng-container>
 
 
-    <!-- TAB: VENTAS HOY -->
-    <ng-container *ngIf="activeTab === 'ventas-hoy'">
-      <!-- CONTENIDO: Ventas del día -->
-      <div>
-        <h2 class="text-xl font-bold mb-3">Ventas Hoy</h2>
-      </div>
-    </ng-container>
+      <!-- TAB: VER ÚLTIMA VENTA -->
+      <ng-container *ngIf="activeTab === 'ultima-venta'">
+        <!-- CONTENIDO: Última venta realizada -->
+        <div>
+          <h2 class="text-xl font-bold mb-3">Última venta realizada</h2>
+        </div>
+      </ng-container>
 
 
-    <!-- TAB: VER ÚLTIMA VENTA -->
-    <ng-container *ngIf="activeTab === 'ultima-venta'">
-      <!-- CONTENIDO: Última venta realizada -->
-      <div>
-        <h2 class="text-xl font-bold mb-3">Última venta realizada</h2>
-      </div>
-    </ng-container>
+      <!-- TAB: VENTAS ANULADAS HOY -->
+      <ng-container *ngIf="activeTab === 'anuladas-hoy'">
+        <!-- CONTENIDO: Anuladas del día -->
+        <div>
+          <h2 class="text-xl font-bold mb-3">Ventas Anuladas Hoy</h2>
+        </div>
+      </ng-container>
 
 
-    <!-- TAB: VENTAS ANULADAS HOY -->
-    <ng-container *ngIf="activeTab === 'anuladas-hoy'">
-      <!-- CONTENIDO: Anuladas del día -->
-      <div>
-        <h2 class="text-xl font-bold mb-3">Ventas Anuladas Hoy</h2>
-      </div>
-    </ng-container>
+      <!-- TAB: PRODUCTOS MÁS VENDIDOS HOY -->
+      <ng-container *ngIf="activeTab === 'top-productos-hoy'">
+        <!-- CONTENIDO: Top productos del día -->
+        <div>
+          <h2 class="text-xl font-bold mb-3">Productos más vendidos Hoy</h2>
+        </div>
+      </ng-container>
 
-
-    <!-- TAB: PRODUCTOS MÁS VENDIDOS HOY -->
-    <ng-container *ngIf="activeTab === 'top-productos-hoy'">
-      <!-- CONTENIDO: Top productos del día -->
-      <div>
-        <h2 class="text-xl font-bold mb-3">Productos más vendidos Hoy</h2>
-      </div>
-    </ng-container>
-
+    </div>
   </div>
-</div>
 
 
 </main>
-
-
-
-
-
-

@@ -1,151 +1,150 @@
-<body class="flex relative  bg-neutral-50 dark:bg-neutral-900">
+
   <ng-template #sidebarTemplate>
-    <nav
-      class="flex bg-neutral-50 dark:bg-neutral-800 flex-col justify-between h-screen border-r border-neutral-200 dark:border-neutral-800  transition-colors duration-300">
+    <nav class="flex  flex-col justify-between h-[98vh] w-full sm:w-56 transition-colors duration-300">
 
       <div class="flex flex-col">
         <!-- Logo -->
-        <a routerLink="/app"
-          class="flex items-center gap-3 px-6 py-4 border-b border-neutral-200 dark:border-neutral-800">
+        <a routerLink="/app" class="flex items-center gap-2 px-2 py-2 border-b border-neutral-200 dark:border-neutral-800">
+          <div class="flex ml-8 flex-col items-center justify-center relative">
+            <img src="https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_500,h_210,g_auto/v1764500497/logofinal_pdsf0v.png"
+            class="h-20 w-24 object-contain filter dark:invert invert-0 transition duration-200"
+            alt="">
+            <p class="text-xs absolute bottom-1">Accesorios</p>
+          </div>
           
-          <span class="text-xl font-bold text-neutral-900 dark:text-white">Movil Axel</span>
         </a>
 
         <!-- Navigation Links -->
-        <div class="flex flex-col gap-1 p-4">
-          <!-- Dashboard -->
-          <a (click)="onClose()" [routerLinkActiveOptions]="{ exact: true }" routerLink="/app"
-            routerLinkActive="bg-neutral-100 dark:bg-neutral-800 text-blue-600 dark:text-blue-400"
-            class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200 group">
-            <tui-icon icon="home"
-              class="text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"></tui-icon>
-            <span class="font-medium">Dashboard</span>
+        <div class="flex flex-col p-3 overflow-y-auto flex-1">
+          <!-- Home -->
+          <a routerLink="/app"  [routerLinkActiveOptions]="{ exact: true }"
+                       routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+                       
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm">
+            <tui-icon icon="home" class="w-5 h-5"></tui-icon>
+            <span>Estadisticas</span>
           </a>
 
-          <!-- Ventas Section -->
-          <div class="mt-6">
-            <span
-              class="px-4 text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Ventas</span>
+          <!-- Workspace -->
+          <a routerLink="/app/productos"
+             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
+             
+             >
+            <tui-icon icon="briefcase" class="w-5 h-5"></tui-icon>
+            <span>Productos</span>
+          </a>
 
-            <a (click)="onClose()" routerLink="/app/ventas" [routerLinkActiveOptions]="{ exact: true }"
-              routerLinkActive="bg-neutral-100 dark:bg-neutral-800 text-blue-600 dark:text-blue-400"
-              class="flex items-center gap-3 px-4 py-3 mt-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200 group">
-              <tui-icon icon="shopping-cart"
-                class="text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"></tui-icon>
-              <span class="font-medium">Lista de Ventas</span>
-            </a>
+          <!-- Risk Management -->
+          <a routerLink="/app/ventas" [routerLinkActiveOptions]="{ exact: true }"
+             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
+             
+             >
 
-            <a (click)="onClose()" routerLink="/app/ventas/crear"
-              routerLinkActive="bg-neutral-100 dark:bg-neutral-800 text-blue-600 dark:text-blue-400"
-              class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200 group">
-              <tui-icon icon="badge-dollar-sign"
-                class="text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"></tui-icon>
-              <span class="font-medium">Hacer Venta</span>
-            </a>
-          </div>
+             
+          <div class="flex items-center gap-3">
+              <tui-icon icon="alert-circle" class="w-5 h-5"></tui-icon>
+              <span>Ventas</span>
+            </div>
+            
+          </a>
+ <!-- Risk Management -->
+          <a routerLink="/app/ventas/crear"
+            
+             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
+             
+             >
 
-          <!-- Inventario Section -->
-          <div class="mt-6">
-            <span
-              class="px-4 text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Inventario</span>
+             
+          <div class="flex items-center gap-3">
+              <tui-icon icon="alert-circle" class="w-5 h-5"></tui-icon>
+              <span>Vender</span>
+            </div>
+            
+          </a>
+          <!-- Compliance -->
+          <a routerLink="/app/clientes"
+             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
+             
+             >
+          <div class="flex items-center gap-3">
+              <tui-icon icon="check-circle" class="w-5 h-5"></tui-icon>
+              <span>Mis clientes</span>
+            </div>
+            
+          </a>
 
-            <a (click)="onClose()" routerLink="/app/productos"
-              routerLinkActive="bg-neutral-100 dark:bg-neutral-800 text-blue-600 dark:text-blue-400"
-              class="flex items-center gap-3 px-4 py-3 mt-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200 group">
-              <tui-icon icon="list"
-                class="text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"></tui-icon>
-              <span class="font-medium">Productos</span>
-            </a>
-          </div>
+      
 
-          <!-- Gestión Section -->
-          <div class="mt-6">
-            <span
-              class="px-4 text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Gestión</span>
+          <!-- Initiatives Management -->
+            <a routerLink="/app/caja"
+             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
+             
+             >
+          <div class="flex items-center gap-3">
+              <tui-icon icon="target" class="w-5 h-5"></tui-icon>
+              <span>Caja</span>
+            </div>
+            
+          </a>
 
-            <a (click)="onClose()" routerLink="/app/caja"
-              routerLinkActive="bg-neutral-100 dark:bg-neutral-800 text-blue-600 dark:text-blue-400"
-              class="flex items-center gap-3 px-4 py-3 mt-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200 group">
-              <tui-icon icon="store"
-                class="text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"></tui-icon>
-              <span class="font-medium">Caja</span>
-            </a>
+          <!-- Governance -->
+            <a routerLink="/app/settings"
+             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
+             
+             >
+          <div class="flex items-center gap-3">
+              <tui-icon icon="clipboard" class="w-5 h-5"></tui-icon>
+              <span>Configuracion</span>
+            </div>
+            
+          </a>
 
-            <a (click)="onClose()" routerLink="/app/settings"
-              routerLinkActive="bg-neutral-100 dark:bg-neutral-800 text-blue-600 dark:text-blue-400"
-              class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200 group">
-              <tui-icon icon="settings"
-                class="text-neutral-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"></tui-icon>
-              <span class="font-medium">Configuración</span>
-            </a>
-          </div>
+          <!-- Issues and Exceptions -->
+            <a routerLink="/app/store"
+            *ngIf="user.is_superuser"
+             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
+             
+             >
+          <div class="flex items-center gap-3">
+              <tui-icon icon="alert-triangle" class="w-5 h-5"></tui-icon>
+              <span>Tiendas</span>
+            </div>
+            
+          </a>
+
+        
         </div>
       </div>
 
-      <div class="p-4 hidden sm:block">
-
-
-      <button tuiButton tuiChevron tuiDropdownOpen size="l" type="button" appearance="flat"
-        tuiAppearanceMode="checked invalid" [tuiDropdown]="content"
-        class=" cursor-pointer  bg-neutral-50 dark:bg-neutral-800 w-full">
-
-
-        <div class="flex items-center gap-3  py-3 ">
-      
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-neutral-900 dark:text-white truncate">{{user.username}}</p>
-            <p class="text-xs text-neutral-500 dark:text-neutral-400 truncate">{{user.first_name}}</p>
-          </div>
-
-        </div>
-      </button>
+       <div class="p-3 ">
+        <div class="flex items-center justify-between gap-3">
+          <!-- User Info -->
+          <button class="flex items-center gap-3 flex-1 min-w-0 hrounded-lg px-2 py-2 transition-all duration-200">
+            <img src="https://i.pravatar.cc/150?img=12" alt="Mark Bennet" class="w-10 h-10 rounded-full">
+            <div class="flex flex-col items-start min-w-0">
+              <span class="text-sm font-medium text-neutral-900 dark:text-white truncate">{{user.username}}</span>
+              <span class="text-xs text-neutral-500 dark:text-neutral-400 truncate">{{user.first_name}}</span>
             </div>
+          </button>
+          
+          <!-- Dark Mode Toggle -->
+          <div class="flex items-center gap-2">
+                     <app-darkmode></app-darkmode>
+          </div>
+        </div>
+      </div>
     </nav>
   </ng-template>
 
-  <ng-template #content>
-    <tui-data-list role="menu" size="s">
-      <tui-opt-group class="flex flex-col gap-2">
-
-        <span class="text-black dark:text-white text-sm ml-2"> <span class="font-bold text-xs mr-1">Nombres: <br />
-          </span>
-
-          {{ user.first_name || "" }} {{ user.last_name }}
-
-        </span>
-        <span *ngIf="!user.is_superuser" class="text-black dark:text-white text-sm ml-2">
-          <span class="font-bold text-xs mr-1">Tienda: <br /></span>
-          {{ user.tienda_nombre }}
-        </span>
-        <span class="text-sm ml-2"
-          [tuiStatus]="user.is_active ? 'var(--tui-status-positive)' : 'var(--tui-status-negative)'">
-          {{ user.is_active ? 'Activo' : 'Inactivo' }}
-        </span>
-
-        <a #rla="routerLinkActive" role="menuitemradio" routerLinkActive tuiOption [attr.aria-checked]="rla.isActive"
-          class="w-[200px]">
-          <app-darkmode></app-darkmode>
-
-
-        </a>
-        <a [routerLink]="user.is_superuser ? '/admin/config' : '/app/settings'" #rla="routerLinkActive"
-          role="menuitemradio" routerLinkActive tuiOption [attr.aria-checked]="rla.isActive" class="w-[200px]">
-          <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
-          Configuracion
-        </a>
-        <a (click)="logout()" #rla="routerLinkActive" role="menuitemradio" routerLinkActive tuiOption
-          [attr.aria-checked]="rla.isActive" class="w-[200px]">
-          <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
-          Cerrar Session
-
-        </a>
-
-      </tui-opt-group>
-    </tui-data-list>
-  </ng-template>
-
   <!-- Mobile Drawer -->
-  <div class="flex md:hidden">
+  <div class="flex md:hidden ">
     <tui-drawer *tuiPopup="open()" direction="left" class="drawer" [overlay]="true" (click.self)="onClose()">
       <aside class="relative">
         <div class="absolute right-4 top-4 z-10">
@@ -167,10 +166,49 @@
       </aside>
 
       <!-- Main Content -->
-      <div class="flex-1 relative overflow-auto h-screen bg-neutral-50 dark:bg-neutral-900">
+      <div class="flex-1 relative overflow-auto h-screen bg-neutral-50 dark:bg-neutral-800">
         <app-header></app-header>
         <router-outlet></router-outlet>
       </div>
     </div>
   </div>
-</body>
+
+
+
+
+    <ng-template #content>
+    <tui-data-list role="menu" size="s">
+      <tui-opt-group class="flex flex-col gap-2">
+
+        <span class="text-black dark:text-white text-sm ml-2"> <span class="font-bold text-xs mr-1">Nombres: <br />
+          </span>
+
+          {{ user.first_name || "" }} {{ user.last_name }}
+
+        </span>
+        <span *ngIf="!user.is_superuser" class="text-black dark:text-white text-sm ml-2">
+          <span class="font-bold text-xs mr-1">Tienda: <br /></span>
+          {{ user.tienda_nombre }}
+        </span>
+        <span class="text-sm ml-2"
+          [tuiStatus]="user.is_active ? 'var(--tui-status-positive)' : 'var(--tui-status-negative)'">
+          {{ user.is_active ? 'Activo' : 'Inactivo' }}
+        </span>
+
+        <a [routerLink]="user.is_superuser ? '/admin/config' : '/app/settings'" #rla="routerLinkActive"
+          role="menuitemradio" routerLinkActive tuiOption [attr.aria-checked]="rla.isActive" class="w-[200px]">
+          <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
+          Configuracion
+        </a>
+        <a (click)="logout()" #rla="routerLinkActive" role="menuitemradio" routerLinkActive tuiOption
+          [attr.aria-checked]="rla.isActive" class="w-[200px]">
+          <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
+          Cerrar Session
+
+        </a>
+
+      </tui-opt-group>
+    </tui-data-list>
+  </ng-template>
+  
+

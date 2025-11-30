@@ -1,0 +1,74 @@
+<div class="rounded-lg h-[200px] h-min-[200px]" [tuiSkeleton]="!!(selectClientes$ | async)?.loadingClientes">
+
+  <tui-block-status
+    *ngIf="(selectClientes$ | async)?.clientes?.length === 0 && !(selectClientes$ | async)?.loadingClientes; else  tabla1"
+    size="m" class="m-auto">
+    <img alt="survived"
+      src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+      tuiSlot="top" />
+
+    <h4>Aun no tienes ningun cliente</h4>
+
+    <span>Empieza a crear clientes</span>
+
+
+  </tui-block-status>
+
+  <ng-template #tabla1>
+
+
+    <table tuiTable size="s" class="my-3">
+      <thead>
+        <tr>
+          <th tuiTh>ID</th>
+                    <th tuiTh>Imagen</th>
+          <th tuiTh>Nombres</th>
+          
+          <th tuiTh>Telefono</th>
+          <th tuiTh>Correo Email</th>
+          <th tuiTh>Direccion</th>
+          
+        </tr>
+      </thead>
+      <tbody tuiTbody *ngIf="(selectClientes$| async)?.clientes?.length">
+        <tr *ngFor="let cliente of (selectClientes$| async)?.clientes">
+          <td tuiTd>{{ cliente.id }}</td>
+<td tuiTd>
+<tui-avatar src="@tui.user" />
+
+           
+          </td>
+
+
+          <td tuiTd>
+
+            {{ cliente.fullname }}
+          </td>
+
+          <td tuiTd>
+<tui-chip         iconStart="@tui.phone"
+ size="s" *ngIf="cliente.phone" appearance="positive">{{ cliente.phone  }}</tui-chip>
+ <span *ngIf="!cliente.phone" class="text-sm">
+
+  {{ "Sin telefono"}}
+ </span>
+ 
+            
+          </td>
+
+          <td tuiTd>
+
+            {{ cliente.email || "Sin correo"}}
+          </td>
+          <td tuiTd>
+
+            {{ cliente.address  || "Sin Direccion"}}
+          </td>
+
+
+        
+        </tr>
+      </tbody>
+    </table>
+  </ng-template>
+</div>

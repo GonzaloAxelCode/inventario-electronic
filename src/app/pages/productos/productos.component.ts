@@ -9,6 +9,8 @@ import {
 } from '@taiga-ui/legacy';
 
 
+
+import { DashboardLowStockComponent } from '@/app/components/dashboardcomponents/dashboard-low-stock/dashboard-low-stock.component';
 import { TableproductComponent } from '@/app/components/Tables/tableproduct/tableproduct.component';
 import { DialogCreateCategoriaService } from '@/app/services/dialogs-services/dialog-create-categoria.service';
 import { DialogCreateProductService } from '@/app/services/dialogs-services/dialog-create-product.service';
@@ -37,7 +39,7 @@ import { TablecategoriesComponent } from "../../components/Tables/tablecategorie
     TuiIcon,
     TuiLink,
     TuiNavigation,
-    TuiRepeatTimes,
+    TuiRepeatTimes, DashboardLowStockComponent,
     TuiTabs,
     TuiTextfield,
     TuiTitle, TuiIcon, TuiAvatar],

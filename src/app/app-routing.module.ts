@@ -15,7 +15,6 @@ import { CajaComponent } from './pages/caja/caja.component';
 import { ComprasComponent } from './pages/compras/compras.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { HacerventaComponent } from './pages/hacerventa/hacerventa.component';
-import { InventarioComponent } from './pages/inventario/inventario.component';
 import { LoginComponent } from './pages/login/login.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
@@ -38,6 +37,7 @@ import { AdminhistoryComponent } from './pages/admin/adminhistory/adminhistory.c
 import { AdminhomeComponent } from './pages/admin/adminhome/adminhome.component';
 import { AdminmanagestoreComponent } from './pages/admin/adminmanagestore/adminmanagestore.component';
 import { AdminsettingsComponent } from './pages/admin/adminsettings/adminsettings.component';
+import { ClientesComponent } from './pages/clientes/clientes.component';
 
 const routes: Routes = [
 	// Rutas para USUARIOS NORMALES - Solo accesibles por usuarios no-superusuarios
@@ -48,12 +48,13 @@ const routes: Routes = [
 		canActivateChild: [authGuard],
 		children: [
 			{ path: '', component: DashboardComponent },
-			{ path: 'inventario', component: InventarioComponent },
+
 			{ path: 'ventas', component: VentasComponent },
 			{ path: 'ventas/crear', component: HacerventaComponent },
 			{ path: 'productos', component: ProductosComponent },
 
 			{ path: 'perfil', component: PerfilComponent },
+			{ path: 'clientes', component: ClientesComponent },
 			{ path: 'tiendas', component: TiendasComponent },
 			{ path: 'reportes', component: ReportesComponent },
 			{ path: 'caja', component: CajaComponent },
