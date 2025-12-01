@@ -14,7 +14,7 @@ import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { loadCaja } from '../actions/caja.actions';
 import { loadClientes } from '../actions/cliente.actions';
-import { cargarResumenVentas, cargarTopProductosVentas, cargarVentasRangoFechasTienda, cargarVentasTienda } from '../actions/venta.actions';
+import { cargarResumenVentas, cargarTopProductosVentas, cargarVentasRangoFechasTienda, cargarVentasTienda, cargarVentasTiendaToday } from '../actions/venta.actions';
 
 @Injectable()
 export class AppEffects {
@@ -42,15 +42,21 @@ export class AppEffects {
                     this.store.dispatch(loadProductosAction());
                     this.store.dispatch(loadProveedores());
                     this.store.dispatch(loadClientes());
-
+                    this.store.dispatch(cargarVentasTiendaToday())
                     this.store.dispatch(loadTiendasAction());
                     this.store.dispatch(loadInventarios());
 
                     this.store.dispatch(cargarProductosMenorStock());
                     const initialRange = this.range;
-                    const fromDate = new Date(2025, 0, 1); // Enero 1, 2025
-                    const toDate = new Date(2025, 11, 31); //  Diciembre 31, 2025
+                    const now = new Date();
 
+                    // Año y mes actuales
+                    const year = now.getFullYear();
+                    const month = now.getMonth(); // 0 = Enero, 10 = Noviembre, etc.
+
+                    // Rango del mes actual
+                    const fromDate = new Date(year, month, 1);      // 1er día del mes
+                    const toDate = new Date(year, month + 1, 0);  // Último día del mes
 
                     this.store.dispatch(cargarTopProductosVentas({ fromDate, toDate }));
                     this.store.dispatch(cargarResumenVentas());

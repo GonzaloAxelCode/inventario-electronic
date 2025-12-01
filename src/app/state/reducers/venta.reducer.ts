@@ -21,7 +21,10 @@ import {
     cargarVentasRangoFechasTiendaExito,
     cargarVentasTienda,
     cargarVentasTiendaError,
+    cargarVentasTiendaErrorToday,
     cargarVentasTiendaExito,
+    cargarVentasTiendaExitoToday,
+    cargarVentasTiendaToday,
     clearVentaSearch,
     clearVentaTemporal,
     crearVenta,
@@ -43,6 +46,7 @@ export interface ProductsSales {
 }
 export interface VentaState {
     ventas: Venta[];
+    ventasToday: Venta[]
     loading: boolean;
     error?: any;
     salesDateRangePerDay: Array<[string, number]>;
@@ -68,10 +72,12 @@ export interface VentaState {
     loadingMostSales: boolean
     loadingNotaCredito: boolean
     loadingGenerarComprobante: boolean
+    loadingVentasToday: boolean
 }
 
 export const initialState: VentaState = {
     ventas: [],
+    ventasToday: [],
     loading: false,
     loadingLoadVentas: false,
     error: null,
@@ -84,7 +90,6 @@ export const initialState: VentaState = {
     salesDateRangePerDay: [],
     topProductoMostSales: [],
     loadingMostSales: false,
-
     loadingResumenVentas: false,
     loadingNotaCredito: false,
     loadingGenerarComprobante: false,
@@ -95,7 +100,8 @@ export const initialState: VentaState = {
     index_page: null,
     length_pages: null,
     loadingSearch: false,
-    ventas_search: []
+    ventas_search: [],
+    loadingVentasToday: false
 };
 
 export const ventaReducer = createReducer(
@@ -130,6 +136,29 @@ export const ventaReducer = createReducer(
         error,
         loadingLoadVentas: false
     })),
+
+    //Ventas hoy
+
+    on(cargarVentasTiendaToday, state => ({
+        ...state,
+        loadingVentasToday: true
+    })),
+    on(cargarVentasTiendaExitoToday, (state, { ventasToday }) => ({
+        ...state,
+
+        loadingVentasToday: false,
+        ventasToday
+    })),
+    on(cargarVentasTiendaErrorToday, (state, { error }) => ({
+        ...state,
+        error,
+        loadingVentasToday: false
+    })),
+
+
+
+
+
     on(crearVenta, state => ({
         ...state,
         loadingCreateVenta: true

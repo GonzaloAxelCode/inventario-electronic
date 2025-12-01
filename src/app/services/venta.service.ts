@@ -21,6 +21,16 @@ export interface VentaResponse {
 export class VentaService {
     private siteURL = URL_BASE + "/api";
     private http = inject(HttpClient);
+    getVentasHoy(): Observable<{ results: any[] }> {
+        return this.http.get<{ results: any[] }>(
+            `${this.siteURL}/ventas/hoy/`
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener ventas de hoy', error);
+                return throwError(error);
+            })
+        );
+    }
     getVentasPorRangoFechasTienda(fromDate: Date, toDate: Date): Observable<{ salesDateRangePerDay: Array<[string, number]> }> {
         const rangeDates = {
             from_date: [fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate()],

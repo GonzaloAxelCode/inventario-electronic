@@ -9,6 +9,13 @@ export enum VentaActionTypes {
     CARGAR_VENTAS_TIENDA = '[Venta] Cargar Ventas por Tienda',
     CARGAR_VENTAS_TIENDA_EXITO = '[Venta] Cargar Ventas por Tienda Éxito',
     CARGAR_VENTAS_TIENDA_ERROR = '[Venta] Cargar Ventas por Tienda Error',
+
+    CARGAR_VENTAS_TIENDA_TODAY = '[Venta] Cargar Ventas por Tienda HOY',
+    CARGAR_VENTAS_TIENDA_EXITO_TODAY = '[Venta] Cargar Ventas por Tienda HOY  Éxito',
+    CARGAR_VENTAS_TIENDA_ERROR_TODAY = '[Venta] Cargar Ventas por Tienda HOY Error',
+
+
+
     ANULAR_VENTA = '[Venta] Anular Venta',
     ANULAR_VENTA_EXITO = '[Venta] Anular Venta Éxito',
     ANULAR_VENTA_ERROR = '[Venta] Anular Venta Error',
@@ -60,7 +67,24 @@ export const cargarResumenVentasByDateError = createAction(
     VentaActionTypes.CARGAR_RESUMEN_VENTAS_BY_DATE_ERROR,
     props<{ error: any }>()
 );
+//Hoy
 
+export const cargarVentasTiendaToday = createAction(
+    VentaActionTypes.CARGAR_VENTAS_TIENDA_TODAY,
+
+);
+
+export const cargarVentasTiendaExitoToday = createAction(
+    VentaActionTypes.CARGAR_VENTAS_TIENDA_EXITO_TODAY,
+    props<{
+        ventasToday: Venta[]
+    }>()
+);
+
+export const cargarVentasTiendaErrorToday = createAction(
+    VentaActionTypes.CARGAR_VENTAS_TIENDA_ERROR_TODAY,
+    props<{ error: any }>()
+);
 
 export const cargarTopProductosVentas = createAction(
     VentaActionTypes.CARGAR_TOP_PRODUCTOS_VENTAS,

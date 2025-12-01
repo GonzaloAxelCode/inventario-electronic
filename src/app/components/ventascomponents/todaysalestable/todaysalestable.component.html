@@ -1,0 +1,114 @@
+<div *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? 
+                        (ventasState$ | async)?.ventas_search : 
+                        (ventasState$ | async)?.ventas)" class="relative overflow-hidden rounded-2xl 
+         bg-white dark:bg-neutral-800
+         p-6 
+         
+         border border-neutral-200 dark:border-neutral-700 
+         transition-all duration-300 my-4 h">
+
+    <!-- DECORACIÓN -->
+
+
+    <!-- HEADER -->
+    <div class="flex items-start justify-between mb-4 relative z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-neutral-800 
+                  flex items-center justify-center shadow-sm">
+                <span class="text-base font-bold text-neutral-700 dark:text-neutral-300">#</span>
+            </div>
+
+            <div>
+                <p class="text-xs text-neutral-500 dark:text-neutral-400">Venta</p>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-lg font-extrabold text-neutral-900 dark:text-white">
+                        {{ venta.id }}
+                    </span>
+                    <span class="text-sm text-neutral-500 dark:text-neutral-400">
+                        · {{ venta.nombre_cliente || 'Cliente' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <tui-badge [appearance]="venta.estado === 'ANULADA' ? 'error' :
+                    venta.estado === 'Completada' ? 'positive' :
+                    venta.estado === 'En Espera Sunat' ? 'warning' : 'neutral'" tuiStatus size="s"
+            class="text-xs font-semibold px-3 py-1">
+            {{ venta.estado }}
+        </tui-badge>
+    </div>
+
+    <!-- COMPROBANTE -->
+    <div class="mb-4 p-3 gap-3 flex rounded-xl 
+              bg-neutral-50 dark:bg-neutral-800/60">
+        <div>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1 uppercase">Comprobante</p>
+
+            <ng-container *ngIf="venta.comprobante; else noComp">
+                <tui-badge size="l" iconStart="@tui.ticket-check"
+                    [appearance]="venta.tipo_comprobante === 'Boleta' ? 'positive' : 'info'"
+                    class="inline-flex font-semibold">
+                    {{ venta.tipo_comprobante }} {{ venta.comprobante.serie }} - {{ venta.comprobante.correlativo }}
+                </tui-badge>
+
+                <p *ngIf="venta.comprobante.estado_sunat" class="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
+                    Estado SUNAT: {{ venta.comprobante.estado_sunat }}
+                </p>
+            </ng-container>
+
+            <ng-template #noComp>
+                <p class="text-sm text-neutral-400 dark:text-neutral-500">SIN COMPROBANTE</p>
+            </ng-template>
+            <div class="py-3">
+                <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Total</p>
+                <p class="text-3xl font-extrabold text-neutral-900 dark:text-white">S/. {{ venta.total }}</p>
+            </div>
+
+
+        </div>
+        <div class="flex gap-3">
+            
+
+            <!-- COLUMNS -->
+            <div class="mb-4" *ngIf="allColumns.length > 0">
+                <div class="grid sm:grid-cols-2 gap-3">
+                    <div *ngFor="let col of allColumns" class="p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/70">
+                        <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">
+                            {{ col.label }}
+                        </p>
+                        <p class="text-sm font-semibold text-neutral-900 dark:text-neutral-200">
+                            {{ getVentaValue(venta, col.key) }}
+                        </p>
+                    </div>
+
+                    <div class="flex-1 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/70">
+                        <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Hora</p>
+                        <p class="text-sm font-semibold text-neutral-900 dark:text-neutral-200">
+                            {{ formatoHora12(venta.fecha_hora) }}
+                        </p>
+                    </div>
+
+                    <div class="flex-1 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/70">
+                        <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Fecha</p>
+                        <p class="text-sm font-semibold text-neutral-900 dark:text-neutral-200">
+                            {{ formatoCorto(venta.fecha_realizacion || venta.fecha_hora) }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER TOTAL -->
+    <div class="flex items-center justify-between pt-3 border-t border-neutral-200 dark:border-neutral-700">
+        <button tuiButton size="s" appearance="info" iconStart="@tui.wallet-cards"
+            (click)="showDialogVentaDetail(venta)" class="text-xs font-semibold shadow hover:shadow-md transition">
+            Ver Detalles
+        </button>
+    </div>
+
+</div>

@@ -29,7 +29,9 @@ import {
     cargarVentasRangoFechasTiendaExito,
     cargarVentasTienda,
     cargarVentasTiendaError,
+    cargarVentasTiendaErrorToday,
     cargarVentasTiendaExito,
+    cargarVentasTiendaExitoToday,
     crearVenta,
     crearVentaError,
     crearVentaExito,
@@ -53,6 +55,20 @@ export class VentaEffects {
         private alertService: CustomAlertService,
         private dialogServiceVentaDetail: DialogVentaDetailService
     ) { }
+    loadVentasTiendaHoyEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(cargarVentasRangoFechasTienda),
+            exhaustMap(() =>
+                this.ventaService.getVentasHoy().pipe(
+                    map(response => {
+
+                        return cargarVentasTiendaExitoToday({ ventasToday: response.results });
+                    }),
+                    catchError(error => of(cargarVentasTiendaErrorToday({ error })))
+                )
+            )
+        )
+    );
     loadVentasPorRangoFechasTiendaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cargarVentasRangoFechasTienda),
