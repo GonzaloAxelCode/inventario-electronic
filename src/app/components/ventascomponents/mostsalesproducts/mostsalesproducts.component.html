@@ -1,0 +1,64 @@
+<!-- Lista de Productos Vendidos -->
+<div class="space-y-2">
+  <div *ngFor="let producto of data" 
+       class="relative overflow-hidden rounded-2xl 
+              bg-white dark:bg-neutral-800
+              p-4 
+              border border-neutral-200 dark:border-neutral-700 
+              hover:shadow-md transition-all duration-300">
+    
+    <!-- LISTA COMPACTA -->
+    <div class="flex items-center justify-between gap-4">
+      
+      <!-- ICONO Y INFO PRINCIPAL -->
+      <div class="flex items-center gap-4 flex-1 min-w-0">
+        <div class="w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-800 
+                    flex items-center justify-center shadow-sm flex-shrink-0">
+          <svg class="w-6 h-6 text-neutral-700 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+          </svg>
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <!-- Nombre del producto -->
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-base font-extrabold text-neutral-900 dark:text-white truncate">
+              {{ producto.nombre }}
+            </span>
+          </div>
+          
+          <!-- Información secundaria -->
+          <div class="flex items-center gap-3 text-xs text-neutral-500 dark:text-neutral-400">
+            <span class="flex items-center gap-1">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+              </svg>
+              Unidades vendidas
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CANTIDAD -->
+      <div class="flex items-center gap-4 flex-shrink-0">
+        <div class="text-right min-w-[80px]">
+          <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Cantidad</p>
+          <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">
+            {{ producto.cantidad_total_vendida }}
+          </p>
+        </div>
+
+        <!-- Badge de estado -->
+        <tui-badge 
+          [appearance]="producto.cantidad_total_vendida >= 5 ? 'positive' : 
+                      producto.cantidad_total_vendida >= 2 ? 'warning' : 'neutral'" 
+          tuiStatus size="s" class="text-xs font-semibold whitespace-nowrap">
+          {{ producto.cantidad_total_vendida >= 5 ? 'Popular' : 
+             producto.cantidad_total_vendida >= 2 ? 'Medio' : 'Bajo' }}
+        </tui-badge>
+      </div>
+
+    </div>
+
+  </div>
+</div>

@@ -21,9 +21,12 @@ import {
     cargarResumenVentasByDateExito,
     cargarResumenVentasError,
     cargarResumenVentasExito,
-    cargarTopProductosVentas,
-    cargarTopProductosVentasError,
-    cargarTopProductosVentasExito,
+
+    cargarTopProductosVentasHoy,
+
+    cargarTopProductosVentasHoyError,
+
+    cargarTopProductosVentasHoyExito,
     cargarVentasRangoFechasTienda,
     cargarVentasRangoFechasTiendaError,
     cargarVentasRangoFechasTiendaExito,
@@ -109,16 +112,16 @@ export class VentaEffects {
 
 
 
-    loadTopProductosMasVendidosEffect = createEffect(() =>
+    loadTopProductosMasVendidosHoyEffect = createEffect(() =>
         this.actions$.pipe(
-            ofType(cargarTopProductosVentas),
-            exhaustMap(({ fromDate, toDate }) =>
-                this.ventaService.getTopProductosMasVendidos(fromDate, toDate).pipe(
+            ofType(cargarTopProductosVentasHoy),
+            exhaustMap(() =>
+                this.ventaService.getTopProductosMasVendidosHoy().pipe(
                     map((response: any) =>
-                        cargarTopProductosVentasExito({ topProductoMostSales: response.results })
+                        cargarTopProductosVentasHoyExito({ topProductoMostSales: response.results })
                     ),
                     catchError(error =>
-                        of(cargarTopProductosVentasError({ error }))
+                        of(cargarTopProductosVentasHoyError({ error }))
                     )
                 )
             )

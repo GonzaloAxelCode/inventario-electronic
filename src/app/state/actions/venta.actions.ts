@@ -34,9 +34,9 @@ export enum VentaActionTypes {
     CARGAR_VENTAS_RANGO_FECHAS_TIENDA = '[Venta] Cargar Ventas por Rango de Fechas y Tienda',
     CARGAR_VENTAS_RANGO_FECHAS_TIENDA_EXITO = '[Venta] Cargar Ventas por Rango de Fechas y Tienda Éxito',
     CARGAR_VENTAS_RANGO_FECHAS_TIENDA_ERROR = '[Venta] Cargar Ventas por Rango de Fechas y Tienda Error',
-    CARGAR_TOP_PRODUCTOS_VENTAS = '[Venta] Cargar Top Productos Más Vendidos',
-    CARGAR_TOP_PRODUCTOS_VENTAS_EXITO = '[Venta] Cargar Top Productos Más Vendidos Éxito',
-    CARGAR_TOP_PRODUCTOS_VENTAS_ERROR = '[Venta] Cargar Top Productos Más Vendidos Error',
+    CARGAR_TOP_PRODUCTOS_VENTAS_HOY = '[Venta] Cargar Top Productos Más Vendidos',
+    CARGAR_TOP_PRODUCTOS_VENTAS_HOY_EXITO = '[Venta] Cargar Top Productos Más Vendidos Éxito',
+    CARGAR_TOP_PRODUCTOS_VENTAS_HOY_ERROR = '[Venta] Cargar Top Productos Más Vendidos Error',
     CARGAR_RESUMEN_VENTAS_BY_DATE = '[Venta] Cargar Resumen Ventas por Mes o Día',
     CARGAR_RESUMEN_VENTAS_BY_DATE_EXITO = '[Venta] Cargar Resumen Ventas por Mes o Día Éxito',
     CARGAR_RESUMEN_VENTAS_BY_DATE_ERROR = '[Venta] Cargar Resumen Ventas por Mes o Día Error',
@@ -86,18 +86,18 @@ export const cargarVentasTiendaErrorToday = createAction(
     props<{ error: any }>()
 );
 
-export const cargarTopProductosVentas = createAction(
-    VentaActionTypes.CARGAR_TOP_PRODUCTOS_VENTAS,
-    props<{ fromDate: Date, toDate: Date }>()
+export const cargarTopProductosVentasHoy = createAction(
+    VentaActionTypes.CARGAR_TOP_PRODUCTOS_VENTAS_HOY,
+
 );
 
-export const cargarTopProductosVentasExito = createAction(
-    VentaActionTypes.CARGAR_TOP_PRODUCTOS_VENTAS_EXITO,
+export const cargarTopProductosVentasHoyExito = createAction(
+    VentaActionTypes.CARGAR_TOP_PRODUCTOS_VENTAS_HOY_EXITO,
     props<{ topProductoMostSales: ProductsSales[] }>()
 );
 
-export const cargarTopProductosVentasError = createAction(
-    VentaActionTypes.CARGAR_TOP_PRODUCTOS_VENTAS_ERROR,
+export const cargarTopProductosVentasHoyError = createAction(
+    VentaActionTypes.CARGAR_TOP_PRODUCTOS_VENTAS_HOY_ERROR,
     props<{ error: any }>()
 );
 

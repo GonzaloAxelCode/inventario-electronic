@@ -89,7 +89,7 @@ export class TodaysalestableComponent {
   ventas: any = []
 
   allColumns = [
-    { key: 'fecha_hora', label: 'Fecha de Venta' },
+
     { key: 'metodo_pago', label: 'Método de Pago' },
   ];
 
@@ -150,7 +150,7 @@ export class TodaysalestableComponent {
     this.ventasState$ = this.store.select(selectVentaState);
     this.ventasState$.subscribe(ventas => {
       this.ventas = ventas.ventasToday;
-      this.filteredData = this.ventas;
+      this.filteredData = ventas.ventasToday;
 
     })
   }

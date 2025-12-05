@@ -13,9 +13,13 @@ import {
     cargarResumenVentasByDateExito,
     cargarResumenVentasError,
     cargarResumenVentasExito,
-    cargarTopProductosVentas,
-    cargarTopProductosVentasError,
-    cargarTopProductosVentasExito,
+
+    cargarTopProductosVentasHoy,
+
+    cargarTopProductosVentasHoyError,
+
+    cargarTopProductosVentasHoyExito,
+
     cargarVentasRangoFechasTienda,
     cargarVentasRangoFechasTiendaError,
     cargarVentasRangoFechasTiendaExito,
@@ -237,19 +241,19 @@ export const ventaReducer = createReducer(
         error,
         loadingResumenVentas: false
     })),
-    on(cargarTopProductosVentas, (state) => ({
+    on(cargarTopProductosVentasHoy, (state) => ({
         ...state,
         loadingMostSales: true,
         error: null
     })),
 
-    on(cargarTopProductosVentasExito, (state, { topProductoMostSales }) => ({
+    on(cargarTopProductosVentasHoyExito, (state, { topProductoMostSales }) => ({
         ...state,
         loadingMostSales: false,
         topProductoMostSales
     })),
 
-    on(cargarTopProductosVentasError, (state, { error }) => ({
+    on(cargarTopProductosVentasHoyError, (state, { error }) => ({
         ...state,
         loadingMostSales: false,
         error

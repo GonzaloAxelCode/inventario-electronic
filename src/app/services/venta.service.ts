@@ -76,16 +76,10 @@ export class VentaService {
             })
         );
     }
-    getTopProductosMasVendidos(fromDate: Date, toDate: Date): Observable<{ topProductoMostSales: ProductsSales[] }> {
-        const body = {
-
-            from_date: [fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate()],
-            to_date: [toDate.getFullYear(), toDate.getMonth(), toDate.getDate()]
-        };
-
+    getTopProductosMasVendidosHoy(): Observable<{ topProductoMostSales: ProductsSales[] }> {
         return this.http.post<{ topProductoMostSales: ProductsSales[] }>(
-            `${this.siteURL}/top-productos-vendidos/`,
-            body
+            `${this.siteURL}/ventas/top-productos-vendidos-hoy/`,
+            {}
         ).pipe(
             catchError(error => {
                 console.error('Error al obtener los productos más vendidos', error);

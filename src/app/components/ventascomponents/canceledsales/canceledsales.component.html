@@ -62,7 +62,7 @@
             </tui-badge>
 
             <!-- Total y botón (derecha) -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 sm:gap-3">
                 <div class="text-right">
                     <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase hidden sm:block">Total</p>
                     <p class="text-base sm:text-lg font-extrabold text-neutral-900 dark:text-white whitespace-nowrap">
@@ -70,12 +70,10 @@
                     </p>
                 </div>
 
-                <button tuiButton size="s" appearance="primary-grayscale" 
-                    [iconStart]="'@tui.wallet-cards'"
+                <button tuiButton size="s" appearance="primary-grayscale" iconStart="@tui.wallet-cards"
                     (click)="showDialogVentaDetail(venta)" 
                     class="text-xs font-semibold shadow hover:shadow-md transition">
-                    <span class="sm:inline">Mostrar</span>
-                    
+                    Ver
                 </button>
             </div>
         </div>
