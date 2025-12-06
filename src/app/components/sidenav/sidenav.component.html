@@ -1,241 +1,215 @@
+<ng-template #sidebarTemplate>
+  <nav class="flex  flex-col justify-between h-[98vh] w-full sm:w-56 transition-colors duration-300">
 
-  <ng-template #sidebarTemplate>
-    <nav class="flex  flex-col justify-between h-[98vh] w-full sm:w-56 transition-colors duration-300">
+    <div class="flex flex-col">
+      <!-- Logo -->
+      <a routerLink="/app"  (click)="onClose()"
+        class="flex items-center gap-2 px-2 py-2 border-b border-neutral-200 dark:border-neutral-800">
+        <div class="flex ml-8 flex-col items-center justify-center relative">
+          <img
+            src="https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_500,h_210,g_auto/v1764500497/logofinal_pdsf0v.png"
+            class="h-20 w-24 object-contain filter dark:invert invert-0 transition duration-200" alt="">
+          <p class="text-xs absolute bottom-1">Accesorios</p>
 
-      <div class="flex flex-col">
-        <!-- Logo -->
-        <a routerLink="/app" class="flex items-center gap-2 px-2 py-2 border-b border-neutral-200 dark:border-neutral-800">
-          <div class="flex ml-8 flex-col items-center justify-center relative">
-            <img src="https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_500,h_210,g_auto/v1764500497/logofinal_pdsf0v.png"
-            class="h-20 w-24 object-contain filter dark:invert invert-0 transition duration-200"
-            alt="">
-            <p class="text-xs absolute bottom-1">Accesorios</p>
-            
-            <div class="inline-flex  absolute bottom-10 -right-10 items-center justify-center 
+          <div class="inline-flex  absolute bottom-10 -right-10 items-center justify-center 
             px-2 py-1 scale-75
             bg-gradient-to-br from-yellow-300 to-yellow-200
             dark:from-yellow-600 dark:to-yellow-500
             rounded-md 
             border border-yellow-400 dark:border-yellow-700
             shadow-sm">
-  <span class="text-xs font-extrabold tracking-wide text-yellow-900 dark:text-yellow-950">
-    PLUS
-  </span>
-</div>
-
-         
+            <span class="text-xs font-extrabold tracking-wide text-yellow-900 dark:text-yellow-950">
+              PLUS
+            </span>
           </div>
-          
+
+
+        </div>
+
+      </a>
+
+      <!-- Navigation Links -->
+      <div class="flex flex-col p-3 overflow-y-auto flex-1">
+        <!-- Home -->
+        <a routerLink="/app" (click)="onClose()" [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm">
+          <tui-icon icon="home" class="w-5 h-5"></tui-icon>
+          <span>Estadisticas</span>
         </a>
 
-        <!-- Navigation Links -->
-        <div class="flex flex-col p-3 overflow-y-auto flex-1">
-          <!-- Home -->
-          <a routerLink="/app"  [routerLinkActiveOptions]="{ exact: true }"
-                       routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
-                       
-             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm">
-            <tui-icon icon="home" class="w-5 h-5"></tui-icon>
-            <span>Estadisticas</span>
-          </a>
+        <!-- Workspace -->
+        <a routerLink="/app/productos" (click)="onClose()"
+          routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
+          <tui-icon icon="briefcase" class="w-5 h-5"></tui-icon>
+          <span>Productos</span>
+        </a>
 
-          <!-- Workspace -->
-          <a routerLink="/app/productos"
-             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
-             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
-             
-             >
-            <tui-icon icon="briefcase" class="w-5 h-5"></tui-icon>
-            <span>Productos</span>
-          </a>
+        <!-- Risk Management -->
+        <a routerLink="/app/ventas" (click)="onClose()" [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
 
-          <!-- Risk Management -->
-          <a routerLink="/app/ventas" [routerLinkActiveOptions]="{ exact: true }"
-             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
-             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
-             
-             >
 
-             
           <div class="flex items-center gap-3">
-              <tui-icon icon="alert-circle" class="w-5 h-5"></tui-icon>
-              <span>Ventas</span>
-            </div>
-            
-          </a>
- <!-- Risk Management -->
-          <a routerLink="/app/ventas/crear"
-            
-             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
-             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
-             
-             >
-
-             
-          <div class="flex items-center gap-3">
-              <tui-icon icon="alert-circle" class="w-5 h-5"></tui-icon>
-              <span>Vender</span>
-            </div>
-            
-          </a>
-          <!-- Compliance -->
-          <a routerLink="/app/clientes"
-             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
-             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
-             
-             >
-          <div class="flex items-center gap-3">
-              <tui-icon icon="check-circle" class="w-5 h-5"></tui-icon>
-              <span>Mis clientes</span>
-            </div>
-            
-          </a>
-
-      
-
-          <!-- Initiatives Management -->
-            <a routerLink="/app/caja"
-             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
-             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
-             
-             >
-          <div class="flex items-center gap-3">
-              <tui-icon icon="target" class="w-5 h-5"></tui-icon>
-              <span>Caja</span>
-            </div>
-            
-          </a>
-
-          <!-- Governance -->
-            <a routerLink="/app/settings"
-             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
-             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
-             
-             >
-          <div class="flex items-center gap-3">
-              <tui-icon icon="clipboard" class="w-5 h-5"></tui-icon>
-              <span>Configuracion</span>
-            </div>
-            
-          </a>
- <!-- Governance -->
-            <button 
-              (click)="logout2()"
-             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
-             
-             >
-          <div class="flex items-center gap-3">
-              <tui-icon icon="bookmark-x" class="w-5 h-5"></tui-icon>
-              <span>Cerrar Session</span>
-            </div>
-            
-          </button>
-
-
-          <!-- Issues and Exceptions -->
-            <a routerLink="/app/store"
-            *ngIf="user.is_superuser"
-             routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
-             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1"
-             
-             >
-          <div class="flex items-center gap-3">
-              <tui-icon icon="alert-triangle" class="w-5 h-5"></tui-icon>
-              <span>Tiendas</span>
-            </div>
-            
-          </a>
-
-        
-        </div>
-      </div>
-
-       <div class="p-3 ">
-        <div class="flex items-center justify-between gap-3">
-          <!-- User Info -->
-          <button class="flex items-center gap-3 flex-1 min-w-0 hrounded-lg px-2 py-2 transition-all duration-200">
-            <img src="https://i.pravatar.cc/150?img=12" alt="Mark Bennet" class="w-10 h-10 rounded-full">
-            <div class="flex flex-col items-start min-w-0">
-              <span class="text-sm font-medium text-neutral-900 dark:text-white truncate">{{user.username}}</span>
-              <span class="text-xs text-neutral-500 dark:text-neutral-400 truncate">{{user.first_name}}</span>
-            </div>
-          </button>
-          
-          <!-- Dark Mode Toggle -->
-          <div class="flex items-center gap-2">
-                     <app-darkmode></app-darkmode>
+            <tui-icon icon="alert-circle" class="w-5 h-5"></tui-icon>
+            <span>Ventas</span>
           </div>
-        </div>
-      </div>
-    </nav>
-  </ng-template>
 
-  <!-- Mobile Drawer -->
-  <div class="flex md:hidden ">
-    <tui-drawer *tuiPopup="open()" direction="left" class="drawer" [overlay]="true" (click.self)="onClose()">
-      <aside class="relative">
-        <div class="absolute right-4 top-4 z-10">
-          <button class="bg-white dark:bg-neutral-900 shadow-lg" tuiButton type="button" iconStart="@tui.x" size="s"
-            appearance="floating" (click)="onClose()">
-          </button>
-        </div>
-        <ng-container *ngTemplateOutlet="sidebarTemplate"></ng-container>
-      </aside>
-    </tui-drawer>
-  </div>
+        </a>
+        <!-- Risk Management -->
+        <a routerLink="/app/ventas/crear"  (click)="onClose()" routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
 
-  <!-- Main Layout -->
-  <div class="relative flex h-screen w-full">
-    <div class="flex w-full mx-auto">
-      <!-- Desktop Sidebar -->
-      <aside class="hidden md:block">
-        <ng-container *ngTemplateOutlet="sidebarTemplate"></ng-container>
-      </aside>
 
-      <!-- Main Content -->
-      <div class="flex-1 relative overflow-auto h-screen bg-neutral-50 dark:bg-neutral-800">
-        <app-header></app-header>
-        <router-outlet></router-outlet>
+          <div class="flex items-center gap-3">
+            <tui-icon icon="alert-circle" class="w-5 h-5"></tui-icon>
+            <span>Vender</span>
+          </div>
+
+        </a>
+        <!-- Compliance -->
+        <a routerLink="/app/clientes" (click)="onClose()"  routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
+          <div class="flex items-center gap-3">
+            <tui-icon icon="check-circle" class="w-5 h-5"></tui-icon>
+            <span>Mis clientes</span>
+          </div>
+
+        </a>
+
+
+
+        <!-- Initiatives Management -->
+        <a routerLink="/app/caja" (click)="onClose()" routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
+          <div class="flex items-center gap-3">
+            <tui-icon icon="target" class="w-5 h-5"></tui-icon>
+            <span>Caja</span>
+          </div>
+
+        </a>
+
+        <!-- Governance -->
+        <a routerLink="/app/settings" (click)="onClose()" routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
+          <div class="flex items-center gap-3">
+            <tui-icon icon="clipboard" class="w-5 h-5"></tui-icon>
+            <span>Configuracion</span>
+          </div>
+
+        </a>
+        <!-- Governance -->
+        <button (click)="logout2()"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
+          <div class="flex items-center gap-3">
+            <tui-icon icon="bookmark-x" class="w-5 h-5"></tui-icon>
+            <span>Cerrar Session</span>
+          </div>
+
+        </button>
+
+
+        <!-- Issues and Exceptions -->
+        <a routerLink="/app/store"  (click)="onClose()" *ngIf="user.is_superuser"
+          routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
+          <div class="flex items-center gap-3">
+            <tui-icon icon="alert-triangle" class="w-5 h-5"></tui-icon>
+            <span>Tiendas</span>
+          </div>
+
+        </a>
+
+
       </div>
     </div>
+
+    <div class="p-3 ">
+      <div class="flex items-center justify-between gap-3">
+        <!-- User Info -->
+        <button class="flex items-center gap-3 flex-1 min-w-0 hrounded-lg px-2 py-2 transition-all duration-200">
+          <img src="https://i.pravatar.cc/150?img=12" alt="Mark Bennet" class="w-10 h-10 rounded-full">
+          <div class="flex flex-col items-start min-w-0">
+            <span class="text-sm font-medium text-neutral-900 dark:text-white truncate">{{user.username}}</span>
+            <span class="text-xs text-neutral-500 dark:text-neutral-400 truncate">{{user.first_name}}</span>
+          </div>
+        </button>
+
+        <!-- Dark Mode Toggle -->
+        <div class="flex items-center gap-2">
+          <app-darkmode></app-darkmode>
+        </div>
+      </div>
+    </div>
+  </nav>
+</ng-template>
+
+<!-- Mobile Drawer -->
+<div class="flex md:hidden ">
+  <tui-drawer *tuiPopup="open()" direction="left" class="drawer" [overlay]="true" (click.self)="onClose()">
+    <aside class="relative">
+      <div class="absolute right-4 top-4 z-10">
+        <button class="bg-white dark:bg-neutral-900 shadow-lg" tuiButton type="button" iconStart="@tui.x" size="s"
+          appearance="floating" (click)="onClose()">
+        </button>
+      </div>
+      <ng-container *ngTemplateOutlet="sidebarTemplate"></ng-container>
+    </aside>
+  </tui-drawer>
+</div>
+
+<!-- Main Layout -->
+<div class="relative flex h-screen w-full">
+  <div class="flex w-full mx-auto">
+    <!-- Desktop Sidebar -->
+    <aside class="hidden md:block">
+      <ng-container *ngTemplateOutlet="sidebarTemplate"></ng-container>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 relative overflow-auto h-screen bg-neutral-50 dark:bg-neutral-800">
+      <app-header></app-header>
+      <router-outlet></router-outlet>
+    </div>
   </div>
+</div>
 
 
 
 
-    <ng-template #content>
-    <tui-data-list role="menu" size="s">
-      <tui-opt-group class="flex flex-col gap-2">
+<ng-template #content>
+  <tui-data-list role="menu" size="s">
+    <tui-opt-group class="flex flex-col gap-2">
 
-        <span class="text-black dark:text-white text-sm ml-2"> <span class="font-bold text-xs mr-1">Nombres: <br />
-          </span>
-
-          {{ user.first_name || "" }} {{ user.last_name }}
-
-        </span>
-        <span *ngIf="!user.is_superuser" class="text-black dark:text-white text-sm ml-2">
-          <span class="font-bold text-xs mr-1">Tienda: <br /></span>
-          {{ user.tienda_nombre }}
-        </span>
-        <span class="text-sm ml-2"
-          [tuiStatus]="user.is_active ? 'var(--tui-status-positive)' : 'var(--tui-status-negative)'">
-          {{ user.is_active ? 'Activo' : 'Inactivo' }}
+      <span class="text-black dark:text-white text-sm ml-2"> <span class="font-bold text-xs mr-1">Nombres: <br />
         </span>
 
-        <a [routerLink]="user.is_superuser ? '/admin/config' : '/app/settings'" #rla="routerLinkActive"
-          role="menuitemradio" routerLinkActive tuiOption [attr.aria-checked]="rla.isActive" class="w-[200px]">
-          <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
-          Configuracion
-        </a>
-        <a (click)="logout()" #rla="routerLinkActive" role="menuitemradio" routerLinkActive tuiOption
-          [attr.aria-checked]="rla.isActive" class="w-[200px]">
-          <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
-          Cerrar Session
+        {{ user.first_name || "" }} {{ user.last_name }}
 
-        </a>
+      </span>
+      <span *ngIf="!user.is_superuser" class="text-black dark:text-white text-sm ml-2">
+        <span class="font-bold text-xs mr-1">Tienda: <br /></span>
+        {{ user.tienda_nombre }}
+      </span>
+      <span class="text-sm ml-2"
+        [tuiStatus]="user.is_active ? 'var(--tui-status-positive)' : 'var(--tui-status-negative)'">
+        {{ user.is_active ? 'Activo' : 'Inactivo' }}
+      </span>
 
-      </tui-opt-group>
-    </tui-data-list>
-  </ng-template>
-  
+      <a [routerLink]="user.is_superuser ? '/admin/config' : '/app/settings'" #rla="routerLinkActive"
+        role="menuitemradio" routerLinkActive tuiOption [attr.aria-checked]="rla.isActive" class="w-[200px]">
+        <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
+        Configuracion
+      </a>
+      <a (click)="logout()" #rla="routerLinkActive" role="menuitemradio" routerLinkActive tuiOption
+        [attr.aria-checked]="rla.isActive" class="w-[200px]">
+        <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
+        Cerrar Session
 
+      </a>
+
+    </tui-opt-group>
+  </tui-data-list>
+</ng-template>

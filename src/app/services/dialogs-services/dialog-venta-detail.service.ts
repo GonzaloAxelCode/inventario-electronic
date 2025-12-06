@@ -22,8 +22,8 @@ export class DialogVentaDetailService {
             dismissible: false,
             size: "auto",
             data,
+            appearance: 'lorem-ipsum',
 
-            appearance: "primary"
 
 
         };

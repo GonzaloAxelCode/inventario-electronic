@@ -116,7 +116,7 @@ export class SidenavComponent implements OnInit {
   logout2() {
     this.store.dispatch(clearTokensAction())
     this.store.dispatch(clearUserAction())
-
+    this.onClose()
     this.router.navigate(['/login']);
   }
 

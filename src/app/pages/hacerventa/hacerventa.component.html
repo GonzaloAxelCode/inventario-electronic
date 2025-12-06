@@ -145,7 +145,7 @@
                         <tui-segmented class="full" *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'">
                             <button (click)="changeModeClient('buscar')" type="button">Buscar cliente</button>
                             <button (click)="changeModeClient('nuevo')" type="button">Nuevo cliente</button>
-                            <button (click)="changeModeClient('nuevo_dni_fisico')" type="button">Fisico</button>
+                            
 
                         </tui-segmented>
                         <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'">
@@ -164,7 +164,10 @@
                                 </tui-textfield>
                             </div>
                             <div *ngIf="vistaActiva === 'nuevo'">
-                                <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'" class="pt-5">
+                                 <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mt-3">
+                                    Consultar cliente activo 
+                                </h3>
+                                <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'" class="pt-3">
                                     <!-- Búsqueda de cliente -->
                                     <div *ngIf="!ventaForm.get('cliente')?.value" class="flex gap-2">
                                         <tui-input [disabled]="!(userPermissions$ | async)?.can_make_sale"
