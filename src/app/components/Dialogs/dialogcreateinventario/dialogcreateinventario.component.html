@@ -67,17 +67,17 @@
     <div class="flex gap-3 col-span-1 md:col-span-2 w-full flex-wrap">
       <tui-textfield class="flex-1">
         <label tuiLabel>Cantidad</label>
-        <input [max]="500" [min]="1" [step]="1" tuiInputNumber formControlName="cantidad" />
+        <input [max]="15000" [min]="0" [step]="1" tuiInputNumber formControlName="cantidad" />
       </tui-textfield>
 
       <tui-textfield class="flex-1">
         <label tuiLabel>Stock Minimo</label>
-        <input [max]="500" [min]="1" [step]="1" tuiInputNumber formControlName="stock_minimo" />
+        <input [max]="15000" [min]="0" [step]="1" tuiInputNumber formControlName="stock_minimo" />
       </tui-textfield>
 
       <tui-textfield class="flex-1">
         <label tuiLabel>Stock Maximo</label>
-        <input [max]="500" [min]="1" [step]="1" tuiInputNumber formControlName="stock_maximo" />
+        <input [max]="15000" [min]="1" [step]="1" tuiInputNumber formControlName="stock_maximo" />
       </tui-textfield>
 
     </div>
