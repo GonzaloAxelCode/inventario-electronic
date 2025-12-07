@@ -61,7 +61,7 @@
 
           <!-- Preview de imagen con hover para eliminar -->
           <div *ngIf="previewImage" class="relative w-[200px] h-[200px] group cursor-pointer" (click)="removeImage()">
-            <img [src]="previewImage" class="w-full h-full object-contain rounded-lg shadow-md" />
+            <img  [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" class="w-full h-full object-contain rounded-lg shadow-md" />
 
             <!-- Overlay con X en hover -->
             <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
