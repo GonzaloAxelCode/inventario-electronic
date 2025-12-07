@@ -11,6 +11,7 @@ import {
 
 
 import { DashboardLowStockComponent } from '@/app/components/dashboardcomponents/dashboard-low-stock/dashboard-low-stock.component';
+import { PruebastextComponent } from '@/app/components/pruebastext/pruebastext.component';
 import { TableproductComponent } from '@/app/components/Tables/tableproduct/tableproduct.component';
 import { DialogCreateCategoriaService } from '@/app/services/dialogs-services/dialog-create-categoria.service';
 import { DialogCreateProductService } from '@/app/services/dialogs-services/dialog-create-product.service';
@@ -36,7 +37,7 @@ import { TablecategoriesComponent } from "../../components/Tables/tablecategorie
     TuiExpand, TableproductComponent, TablecategoriesComponent,
     TuiGroup,
     TuiHeader,
-    TuiIcon,
+    TuiIcon, PruebastextComponent,
     TuiLink,
     TuiNavigation,
     TuiRepeatTimes, DashboardLowStockComponent,

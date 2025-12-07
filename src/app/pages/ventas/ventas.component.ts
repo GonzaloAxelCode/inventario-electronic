@@ -23,6 +23,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { BehaviorSubject, map, Observable, take } from 'rxjs';
 
+import { PruebastextComponent } from "@/app/components/pruebastext/pruebastext.component";
 import { CanceledsalesComponent } from '@/app/components/ventascomponents/canceledsales/canceledsales.component';
 import { MostsalesproductsComponent } from '@/app/components/ventascomponents/mostsalesproducts/mostsalesproducts.component';
 import { TodaysaleComponent } from '@/app/components/ventascomponents/todaysale/todaysale.component';
@@ -43,13 +44,12 @@ dayjs.locale('es');
     TuiIcon,
     TuiBlockStatus, TuiBlockDetails, TuiBlock, TuiTile,
     FormsModule,
-    NgForOf,
+    NgForOf, PruebastextComponent,
     ReactiveFormsModule,
     RouterLink,
     TuiAppBar,
     TuiAppearance,
     TuiBadge,
-
     TuiBlockStatus,
     TuiButton,
     TuiTab,
@@ -57,23 +57,18 @@ dayjs.locale('es');
     TuiDataList,
     TuiDataListWrapper,
     TuiDropdown,
-
     TuiInputDateModule,
     TuiInputDateRangeModule,
     TuiInputModule,
-
     TuiLoader,
-
     TuiSearch,
     TodaysalestableComponent,
     TuiSelectModule,
     TuiStatus,
-
     TuiTable,
     TuiTextareaModule,
     TuiTextfield,
     TuiTextfieldControllerModule,
-
     TuiButton,
     TuiAppearance,
     TuiTable,
@@ -85,7 +80,8 @@ dayjs.locale('es');
     TuiAxes,
     TuiInputDateRangeModule,
     TuiLineDaysChart, TuiPagination,
-    TodaysaleComponent, CanceledsalesComponent, MostsalesproductsComponent
+    TodaysaleComponent, CanceledsalesComponent, MostsalesproductsComponent,
+    PruebastextComponent
   ],
 
   templateUrl: './ventas.component.html',

@@ -205,8 +205,8 @@
                           </p>
                         </div>
 
-                        <button appearance="primary-grayscale" (click)="showDialogVentaDetail(venta)" iconStart="@tui.wallet-cards"
-                          tuiButton type="button" size="s" class="text-xs">
+                        <button appearance="primary-grayscale" (click)="showDialogVentaDetail(venta)"
+                          iconStart="@tui.wallet-cards" tuiButton type="button" size="s" class="text-xs">
                           Ver Detalles
                         </button>
                       </div>
@@ -269,7 +269,7 @@
                               </span>
 
                               <!-- TIPO COMPROBANTE -->
-                              <tui-badge size="m" tuiStatus iconStart="@tui.ticket-check" 
+                              <tui-badge size="m" tuiStatus iconStart="@tui.ticket-check"
                                 [appearance]="venta.tipo_comprobante === 'Boleta' ? 'positive' : 'info'"
                                 class="whitespace-nowrap">
                                 {{ venta.tipo_comprobante }}
@@ -361,76 +361,90 @@
       <ng-container *ngIf="activeTab === 'ventas-hoy'">
         <!-- CONTENIDO: Ventas del día -->
         <div>
-                    <h2 class="text-xl font-bold mb-3">Todas las ventas realizadas hoy</h2>
-<p class="text-xs italic pb-3"> * Todavia en pruebas,valores inventados</p>
-                    <div>
-                      <div class="flex gap-4 flex-wrap">
-  
-  <!-- FACTURACIÓN TOTAL DE HOY -->
-  <div class="flex-1 min-w-[250px] rounded-2xl bg-gradient-to-br from-green-400 to-green-500 p-5 shadow-lg">
-    <div class="flex items-start justify-between mb-3">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-full bg-black/20 flex items-center justify-center">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-        </div>
-      </div>
-      <div class="px-2 py-1 rounded-full bg-black/20 flex items-center gap-1">
-        <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"></path>
-        </svg>
-        <span class="text-xs font-bold text-white">8.0%</span>
-      </div>
-    </div>
-    <div>
-      <p class="text-sm font-medium text-white/80 mb-1">Facturación Total de Hoy </p>
-      <p class="text-3xl font-extrabold text-white">S/. 14,823.20</p>
-    </div>
-  </div>
+          <h2 class="text-xl font-bold mb-3">Todas las ventas realizadas hoy</h2>
+          
 
-  <!-- TOTAL DE DESCUENTOS -->
-  <div class="flex-1 min-w-[250px] rounded-2xl bg-gradient-to-br from-purple-400 to-purple-500 p-5 shadow-lg">
-    <div class="flex items-start justify-between mb-3">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-full bg-black/20 flex items-center justify-center">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-          </svg>
-        </div>
-      </div>
-      <div class="px-2 py-1 rounded-full bg-black/20 flex items-center gap-1">
-        <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-        </svg>
-        <span class="text-xs font-bold text-white">2.0%</span>
-      </div>
-    </div>
-    <div>
-      <p class="text-sm font-medium text-white/80 mb-1">Total de Descuentos</p>
-      <p class="text-3xl font-extrabold text-white">S/. 2,498.80</p>
-    </div>
-  </div>
+           <app-pruebastext></app-pruebastext>
+          <div>
+            <div class="flex gap-4 flex-wrap">
 
-  <!-- ESTIMACIÓN DE GANANCIA -->
-  <div class="flex-1 min-w-[250px] rounded-2xl bg-gradient-to-br from-neutral-700 to-neutral-800 p-5 shadow-lg">
-    <div class="flex items-start justify-between mb-3">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-          </svg>
-        </div>
-      </div>
-    </div>
-    <div>
-      <p class="text-sm font-medium text-white/60 mb-1">Estimación de Ganancia de Hoy</p>
-      <p class="text-3xl font-extrabold text-white">S/. 1,482.50</p>
-    </div>
-  </div>
-
-</div>
+              <!-- FACTURACIÓN TOTAL DE HOY -->
+              <div class="flex-1 min-w-[250px] rounded-2xl bg-gradient-to-br from-green-400 to-green-500 p-5 shadow-lg">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-black/20 flex items-center justify-center">
+                      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                      </svg>
                     </div>
+                  </div>
+                  <div class="px-2 py-1 rounded-full bg-black/20 flex items-center gap-1">
+                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd"
+                        d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
+                        clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-xs font-bold text-white">8.0%</span>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-white/80 mb-1">Facturación Total de Hoy </p>
+                  <p class="text-3xl font-extrabold text-white">S/. 14,823.20</p>
+                </div>
+              </div>
+
+              <!-- TOTAL DE DESCUENTOS -->
+              <div
+                class="flex-1 min-w-[250px] rounded-2xl bg-gradient-to-br from-purple-400 to-purple-500 p-5 shadow-lg">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-black/20 flex items-center justify-center">
+                      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z">
+                        </path>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="px-2 py-1 rounded-full bg-black/20 flex items-center gap-1">
+                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                        clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-xs font-bold text-white">2.0%</span>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-white/80 mb-1">Total de Descuentos</p>
+                  <p class="text-3xl font-extrabold text-white">S/. 2,498.80</p>
+                </div>
+              </div>
+
+              <!-- ESTIMACIÓN DE GANANCIA -->
+              <div
+                class="flex-1 min-w-[250px] rounded-2xl bg-gradient-to-br from-neutral-700 to-neutral-800 p-5 shadow-lg">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                        </path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-white/60 mb-1">Estimación de Ganancia de Hoy</p>
+                  <p class="text-3xl font-extrabold text-white">S/. 1,482.50</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
           <app-todaysalestable></app-todaysalestable>
         </div>
       </ng-container>
@@ -440,9 +454,10 @@
       <ng-container *ngIf="activeTab === 'ultima-venta'">
         <!-- CONTENIDO: Última venta realizada -->
         <div>
-          <h2 class="text-xl font-bold mb-3">Última venta realizada</h2> <div>
-          <app-todaysale></app-todaysale>
-        </div>
+          <h2 class="text-xl font-bold mb-3">Última venta realizada</h2>
+          <div>
+            <app-todaysale></app-todaysale>
+          </div>
         </div>
       </ng-container>
 
@@ -452,7 +467,7 @@
         <!-- CONTENIDO: Anuladas del día -->
         <div>
           <h2 class="text-xl font-bold mb-3">Ventas Anuladas Hoy</h2>
-                    <app-canceledsales></app-canceledsales>
+          <app-canceledsales></app-canceledsales>
         </div>
       </ng-container>
 

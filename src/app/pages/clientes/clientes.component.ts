@@ -13,6 +13,7 @@ import {
 
 
 
+import { PruebastextComponent } from '@/app/components/pruebastext/pruebastext.component';
 import { TuiRepeatTimes } from '@taiga-ui/cdk';
 import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
 
@@ -38,7 +39,7 @@ import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
     TuiIcon,
     TuiLink,
     TuiNavigation,
-    TuiRepeatTimes,
+    TuiRepeatTimes, PruebastextComponent,
     TuiTabs,
     TuiTextfield,
     TuiTitle, TuiIcon, TuiAvatar
