@@ -56,6 +56,10 @@ export class DialogupdateproductComponent implements OnInit {
   marcas = ['Genérico', 'Samsung', 'Apple', 'Xiaomi', 'Huawei'];
   modelos = ['Genérico', 'Modelo A', 'Modelo B', 'Modelo C'];
   URL_BASE = URL_BASE
+  previewImage: string | ArrayBuffer | null = null;
+
+
+
   private destroy$ = new Subject<void>();
   constructor(private fb: FormBuilder, private store: Store<AppState>, private actions$: Actions) {
     this.productoForm = this.fb.group({
@@ -65,15 +69,16 @@ export class DialogupdateproductComponent implements OnInit {
       marca: [this.producto.marca || 'Genérico', Validators.required], // Valor por defecto
       modelo: [this.producto.modelo || 'Genérico', Validators.required], // Valor por defecto categoria: [this.producto.categoria, Validators.required],
       categoria: [this.producto.categoria, Validators.required],
-      imagen: [this.producto?.imagen
-        ? URL_BASE + this.producto.imagen
-        : "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png"],
+      imagen: [null],
       caracteristicas: this.buildCaracteristicasGroup()
 
     });
   }
   removeImage(): void {
     this.previewImage = null;
+
+
+    this.productoForm.patchValue({ imagen: null });
 
     // Si usas un input file, también resetéalo
   }
@@ -89,7 +94,9 @@ export class DialogupdateproductComponent implements OnInit {
     return this.fb.group(group);
   }
   ngOnInit() {
-
+    this.previewImage = this.producto?.imagen
+      ? URL_BASE + this.producto.imagen
+      : "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
     this.store.select(selectProductoState).subscribe((state: ProductoState) => {
       this.loadingUpdateProducto = state.loadingUpdate;
     });
@@ -230,16 +237,12 @@ export class DialogupdateproductComponent implements OnInit {
   }
 
 
-  previewImage: string | ArrayBuffer | null = URL_BASE + this.producto.imagen || null;
-
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      // Guardar el archivo en el FormGroup
       this.productoForm.patchValue({ imagen: file });
       this.productoForm.get('imagen')?.updateValueAndValidity();
 
-      // Previsualización
       const reader = new FileReader();
       reader.onload = () => {
         this.previewImage = reader.result;
@@ -247,6 +250,7 @@ export class DialogupdateproductComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
+
   getCaracteristicasKeys(): string[] {
     const group = this.productoForm.get('caracteristicas') as FormGroup;
     return group ? Object.keys(group.controls) : [];
