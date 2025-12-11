@@ -57,7 +57,7 @@
                 </form>
             </search>
             <tui-loader [overlay]="true" 
-            [showLoader]="!!(productosState$ | async)?.loadingProductos || !!(productosState$ | async)?.loadingDelete || !!(productosState$ | async)?.loadingProductos"/>
+            [showLoader]="!!(productosState$ | async)?.loadingProductos || !!(productosState$ | async)?.loadingSearch">
             <div class="rounded-lg overflow-hidden">
                 <div
                     *ngIf="(isTheSearchWasDone ? ((productosState$ | async)?.productos_search?.length || 0) : ((productosState$ | async)?.productos?.length || 0)) > 0">
@@ -337,12 +337,13 @@
 
                 </tui-block-status>
                 <div class="pt-4 flex justify-center px-2"
-                    *ngIf="((productosState$ | async)?.search_products_found) === 'ventas_found' || ((productosState$ | async)?.search_products_found) === ''">
+                    *ngIf="((productosState$ | async)?.search_products_found) === 'products_found' || ((productosState$ | async)?.search_products_found) === ''">
                     <tui-pagination [index]="(productosState$ | async)?.index_page"
                         [length]="(productosState$ | async)?.length_pages" (indexChange)="goToPage($event)"
                         class="w-full overflow-x-auto" />
                 </div>
             </div>
+        </tui-loader>
         </ng-template>
     </div>
 </section>

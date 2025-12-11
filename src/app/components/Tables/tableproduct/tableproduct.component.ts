@@ -8,8 +8,8 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAlertService, TuiButton, TuiDialogService, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiChip, TuiConfirmService, TuiDataListWrapper, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiRadio, TuiSkeleton } from '@taiga-ui/kit';
+import { TuiAlertService, TuiAppearance, TuiButton, TuiDialogService, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TUI_CONFIRM, TuiChip, TuiConfirmService, TuiDataListWrapper, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiRadio } from '@taiga-ui/kit';
 import { map, Observable, take } from 'rxjs';
 
 import { Categoria } from '@/app/models/categoria.models';
@@ -36,16 +36,17 @@ import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy'
   imports: [
     CommonModule, ReactiveFormsModule,
     TuiPreview, TuiPreviewTitle, TuiPreviewDialogDirective,
-    TuiRadio, TuiChip, TuiButton,
-    FormsModule,
+    TuiRadio, TuiChip,
+    TuiButton,
     TuiTable,
-    TuiBlockStatus, TuiButton, TuiSkeleton,
-    TuiDataListWrapper,
-    TuiButton, TuiBlockStatus, TuiBlockDetails,
+    TuiBlockStatus,
+
+    TuiButton, TuiBlockDetails,
     TuiPagination,
     TuiTextfield, TuiSearch, FormsModule, TuiDataListWrapper, NgForOf,
     TuiSelectModule, TuiTextfieldControllerModule,
-    TuiLoader
+    TuiLoader,
+    TuiAppearance
   ],
   templateUrl: './tableproduct.component.html',
   styleUrl: './tableproduct.component.scss',
@@ -165,6 +166,7 @@ export class TableproductComponent implements OnInit, AfterViewInit {
   }
   clearSearch() {
     this.store.dispatch(clearSearchProductos())
+    this.store.dispatch(loadProductosAction({ page: 1, page_size: PAGE_SIZE_PRODUCTS }))
   }
 
   onSubmitSearch() {
