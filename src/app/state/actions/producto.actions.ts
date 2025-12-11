@@ -29,12 +29,12 @@ export enum ActionTypes {
 
 export const loadProductosAction = createAction(
     ActionTypes.LOAD_PRODUCTOS,
-
+    props<{ page?: any, page_size?: any }>()
 );
 
 export const loadProductosSuccess = createAction(
     ActionTypes.LOAD_PRODUCTOS_SUCCESS,
-    props<{ productos: Producto[] }>()
+    props<{ productos: Producto[], next: any, previous: any, index_page: any, length_pages: any, }>()
 );
 
 export const loadProductosFail = createAction(
@@ -104,12 +104,14 @@ export const deleteProductoFail = createAction(
 
 export const searchProductosAction = createAction(
     ActionTypes.SEARCH_PRODUCTOS,
-    props<{ query: Partial<QuerySearchProduct>, products: Producto[] }>()
+    props<{ query: Partial<QuerySearchProduct>, page?: number, page_size: number }>()
+
 );
 
 export const searchProductoSuccess = createAction(
     ActionTypes.SEARCH_PRODUCTOS_SUCCESS,
-    props<{ productos_search: Producto[], search_found: boolean }>()
+    props<{ productos: Producto[], search_products_found: string, count: number, next: any, previous: any, index_page: any, length_pages: any }>()
+
 );
 
 export const searchProductoFail = createAction(

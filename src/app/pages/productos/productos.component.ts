@@ -10,12 +10,17 @@ import {
 
 
 
+import { ButtonupdateComponent } from "@/app/components/buttonupdate/buttonupdate.component";
 import { DashboardLowStockComponent } from '@/app/components/dashboardcomponents/dashboard-low-stock/dashboard-low-stock.component';
 import { PruebastextComponent } from '@/app/components/pruebastext/pruebastext.component';
 import { TableproductComponent } from '@/app/components/Tables/tableproduct/tableproduct.component';
 import { DialogCreateCategoriaService } from '@/app/services/dialogs-services/dialog-create-categoria.service';
 import { DialogCreateProductService } from '@/app/services/dialogs-services/dialog-create-product.service';
+import { loadProductosAction } from '@/app/state/actions/producto.actions';
+import { AppState } from '@/app/state/app.state';
+import { selectProducto } from '@/app/state/selectors/producto.selectors';
 import { CommonModule } from '@angular/common';
+import { Store } from '@ngrx/store';
 import { TuiRepeatTimes } from '@taiga-ui/cdk';
 import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
 import { TablecategoriesComponent } from "../../components/Tables/tablecategories/tablecategories.component";
@@ -42,8 +47,8 @@ import { TablecategoriesComponent } from "../../components/Tables/tablecategorie
     TuiNavigation,
     TuiRepeatTimes, DashboardLowStockComponent,
     TuiTabs,
-    TuiTextfield,
-    TuiTitle, TuiIcon, TuiAvatar],
+    TuiTextfield, ButtonupdateComponent,
+    TuiTitle, TuiIcon, TuiAvatar, ButtonupdateComponent],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,6 +60,7 @@ import { TablecategoriesComponent } from "../../components/Tables/tablecategorie
 export class ProductosComponent {
   private readonly confirm = inject(TuiConfirmService);
   private readonly dialogs = inject(TuiDialogService);
+  loading: any = false
   activeTab:
     | 'productos'
     | 'categorias'
@@ -75,6 +81,7 @@ export class ProductosComponent {
     this.value = value;
     this.confirm.markAsDirty();
   }
+  constructor(private store: Store<AppState>) { }
 
   private readonly dialogservicecreatecategoria = inject(DialogCreateCategoriaService);
   protected showDialogCreateCategoria(): void {
@@ -88,7 +95,14 @@ export class ProductosComponent {
 
     });
   }
+  ngOnInit() {
+    this.store.select(selectProducto).subscribe((state) => {
+      this.loading = state.loadingProductos || false
+    })
 
-
+  }
+  clickRefreshProducts() {
+    this.store.dispatch(loadProductosAction({ page: 1, page_size: 10 }))
+  }
 
 }

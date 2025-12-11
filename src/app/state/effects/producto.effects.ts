@@ -9,6 +9,7 @@ import {
     createProductoAction, createProductoFail, createProductoSuccess,
     deleteProductoAction, deleteProductoFail, deleteProductoSuccess,
     loadProductosAction, loadProductosFail, loadProductosSuccess,
+    searchProductoFail,
     searchProductosAction,
     searchProductoSuccess,
     updateProductoAction, updateProductoFail, updateProductoSuccess
@@ -31,12 +32,18 @@ export class ProductoEffects {
         this.actions$.pipe(
             ofType(loadProductosAction),
             exhaustMap((action) =>
-                this.productoService.fetchLoadProductos().pipe(
-                    map((response) =>
-                        loadProductosSuccess({
+                this.productoService.fetchLoadProductos(action.page || 1, action.page_size).pipe(
+                    map((response) => {
+                        console.log(response)
+                        return loadProductosSuccess({
                             productos: response.results,
+                            next: response.next,
+                            previous: response.previous,
+                            index_page: response.index_page,
+                            length_pages: response.length_pages,
 
                         })
+                    }
                     ),
                     catchError((error) => {
                         console.error(error);
@@ -46,7 +53,6 @@ export class ProductoEffects {
             )
         )
     );
-
 
 
     createProductoEffect = createEffect(() =>
@@ -98,21 +104,34 @@ export class ProductoEffects {
     );
 
 
-    searchProductsEffect = createEffect(() =>
+    searchProductosEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(searchProductosAction),
-            map(action => {
+            exhaustMap((action: any) =>
+                this.productoService.searchProducts(action.query, action.page || 1, action.page_size || 5).pipe(
+                    map(response => {
+                        console.log(response)
+                        return searchProductoSuccess({
+                            productos: response.results,
+                            search_products_found: response.search_products_found,
+                            count: response.count, next: response.next,
+                            previous: response.previous,
+                            index_page: response.index_page,
+                            length_pages: response.length_pages
+                        });
+                    }),
+                    catchError(error => {
 
-                const resultados = this.productSearchService.filtrarProducto(action.products, action.query);
-
-
-                return searchProductoSuccess({
-                    productos_search: resultados.data,
-                    search_found: resultados.found
-                });
-            })
+                        this.alertService
+                            .showError('Error al buscar los productos.')
+                            .subscribe();
+                        return of(searchProductoFail({ error }));
+                    })
+                )
+            )
         )
     );
+
 
 
 

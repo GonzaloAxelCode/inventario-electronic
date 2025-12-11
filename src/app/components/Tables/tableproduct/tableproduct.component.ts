@@ -1,5 +1,5 @@
 import { Producto, ProductoState } from '@/app/models/producto.models';
-import { clearSearchProductos, deleteProductoAction, searchProductosAction } from '@/app/state/actions/producto.actions';
+import { clearSearchProductos, deleteProductoAction, loadProductosAction, searchProductosAction } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { CommonModule, NgForOf } from '@angular/common';
@@ -8,9 +8,9 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAlertService, TuiButton, TuiDialogService, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiChevron, TuiChip, TuiConfirmService, TuiDataListWrapper, TuiFilter, TuiPagination, TuiPin, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiRadio, TuiSegmented, TuiSkeleton, TuiSwitch } from '@taiga-ui/kit';
-import { map, Observable } from 'rxjs';
+import { TuiAlertService, TuiButton, TuiDialogService, TuiTextfield } from '@taiga-ui/core';
+import { TUI_CONFIRM, TuiChip, TuiConfirmService, TuiDataListWrapper, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiRadio, TuiSkeleton } from '@taiga-ui/kit';
+import { map, Observable, take } from 'rxjs';
 
 import { Categoria } from '@/app/models/categoria.models';
 import { DialogCreateInventarioService } from '@/app/services/dialogs-services/dialog-create-inventario.service';
@@ -26,7 +26,7 @@ import { generarBarcode } from '@/app/utils/barcode';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { tuiCountFilledControls } from '@taiga-ui/cdk';
 import type { TuiConfirmData } from '@taiga-ui/kit';
-import { TuiBlockDetails, TuiBlockStatus, TuiCardLarge, TuiSearch } from '@taiga-ui/layout';
+import { TuiBlockDetails, TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
 import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 
 @Component({
@@ -34,16 +34,16 @@ import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy'
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule,
-    TuiBadge, TuiPreview, TuiPreviewTitle, TuiPreviewDialogDirective,
+    TuiPreview, TuiPreviewTitle, TuiPreviewDialogDirective,
     TuiRadio, TuiChip, TuiButton,
-    FormsModule, TuiPin,
+    FormsModule,
     TuiTable,
-    TuiBlockStatus, TuiButton, TuiSkeleton, TuiCardLarge, TuiChevron,
+    TuiBlockStatus, TuiButton, TuiSkeleton,
     TuiDataListWrapper,
-    TuiFilter, TuiButton, TuiBlockStatus, TuiBlockDetails,
-    TuiSegmented,
-    TuiSwitch, TuiTextfield, TuiSearch, FormsModule, TuiDataListWrapper, NgForOf, TuiLoader,
-    TuiSelectModule, TuiTextfieldControllerModule, TuiPagination
+    TuiButton, TuiBlockStatus, TuiBlockDetails,
+    TuiPagination,
+    TuiTextfield, TuiSearch, FormsModule, TuiDataListWrapper, NgForOf,
+    TuiSelectModule, TuiTextfieldControllerModule,
   ],
   templateUrl: './tableproduct.component.html',
   styleUrl: './tableproduct.component.scss',
@@ -150,11 +150,10 @@ export class TableproductComponent implements OnInit, AfterViewInit {
     );
     this.store.select(selectProductoState).subscribe((state) => {
       this.productos = state.productos
+      console.log(state.productos)
     })
 
-    this.form.valueChanges.subscribe(values => {
-      this.onSubmitSearch()
-    });
+
   }
   capitalize = capitalize
   private readonly dialogEditInventarioService = inject(DialogEditInventarioDetailService);
@@ -166,18 +165,18 @@ export class TableproductComponent implements OnInit, AfterViewInit {
     this.store.dispatch(clearSearchProductos())
     this.isTheSearchWasDone = false
 
+    this.store.dispatch(searchProductosAction({ query: {}, page_size: 10 }))
   }
+
   onSubmitSearch() {
 
     const searchQuery: Partial<QuerySearchProduct> = {
       nombre: (this.form.value.nombre || "").trim(),
       categoria: this.form.value?.categoria?.id || 0,
-
       sku: (this.form.value.sku || "").trim(),
     }
-    this.store.dispatch(searchProductosAction({ products: this.productos, query: searchQuery }))
+    this.store.dispatch(searchProductosAction({ query: searchQuery, page_size: 10 }))
 
-    this.isTheSearchWasDone = true
   }
 
   protected onDeleteProducto(id: any): void {
@@ -219,13 +218,26 @@ export class TableproductComponent implements OnInit, AfterViewInit {
 
 
 
+  protected goToPage(index: number): void {
+
+    this.productosState$?.pipe(take(1)).subscribe(state => {
+      if (state?.search_products_found === '') {
+        this.store.dispatch(loadProductosAction({
+          page: index,
+          page_size: 10
+        }))
+      } else {
+        const searchQuery: Partial<QuerySearchProduct> = {
+          nombre: (this.form.value.nombre || "").trim(),
+          categoria: this.form.value?.categoria?.id || 0,
+          sku: (this.form.value.sku || "").trim(),
+        };
+        this.store.dispatch(searchProductosAction({ query: searchQuery, page: index + 1, page_size: 10 }));
+      }
 
 
-  verInventario(producto: Producto) {
-
-    // ir a detalle de inventario
+    });
   }
-
 
 
 }

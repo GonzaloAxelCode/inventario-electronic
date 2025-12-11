@@ -1,62 +1,58 @@
-<div class="py-3  sm:py-4 md:py-6  rounded-lg" [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos">
+<section class="py-3  sm:py-4 md:py-6  rounded-lg" [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos">
     <!-- Si no hay productos, mostramos el mensaje con el botón -->
-    <tui-block-status *ngIf="!isTheSearchWasDone 
-           && (productosState$ | async)?.productos?.length === 0 
-           && !(productosState$ | async)?.loadingProductos; else tabla" size="m" class="m-auto px-4">
+   <!-- Si no hay productos, mostramos el mensaje con el botón -->
+    <tui-block-status
+        *ngIf="(productosState$ | async)?.productos?.length === 0 && !(productosState$ | async)?.loadingProductos else tabla"
+        size="m" class="m-auto">
         <img alt="survived"
             src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-            tuiSlot="top" class="max-w-[200px] sm:max-w-full mx-auto" />
+            tuiSlot="top" />
 
-        <h4 class="text-center text-sm sm:text-base">Aun no tienes ningun producto</h4>
-        <span class="text-center text-xs sm:text-sm">Empieza a crear tus primeros productos</span>
-    </tui-block-status>
+        <h4>Aun no tienes ningun producto</h4>
+
+        <span>Empieza a crear tus primeros productos</span>
+
+      
+    </tui-block-status> 
 
     <div>
         <!-- Si hay productos, mostramos la tabla -->
         <ng-template #tabla>
-            <search tuiSearch class="pb-3 sm:pb-4">
-                <form [formGroup]="form" (submit)="onSubmitSearch()">
-                    <!-- Grid responsive para los campos de búsqueda -->
-                    <fieldset tuiTextfieldSize="s" class="grid grid-cols-1 gap-2 sm:gap-3 mb-3 sm:mb-4">
-                        <tui-textfield iconStart="@tui.search" class="w-full">
-                            <input tuiTheme="ligth" formControlName="nombre"
-                                placeholder="Nombre o descripción" tuiTextfield />
-                        </tui-textfield>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                            <tui-textfield iconStart="@tui.search" class="w-full">
-                                <input tuiTheme="ligth" formControlName="sku" placeholder="Código"
-                                    tuiTextfield />
-                            </tui-textfield>
+             <search tuiSearch class="pb-4">
+            <form [formGroup]="form" (submit)="onSubmitSearch()">
+                <fieldset tuiTextfieldSize="s">
+                     <tui-textfield iconStart="@tui.search">
+                        <input tuiTheme="ligth" formControlName="sku" placeholder="Buscar por Codigo" tuiTextfield />
+                    </tui-textfield>
+                    <tui-textfield iconStart="@tui.search">
+                        <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre" tuiTextfield />
+                    </tui-textfield>
 
-                            <tui-select class="w-full" formControlName="categoria" [stringify]="stringify">
-                                Categoria
-                                <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
-                            </tui-select>
-                        </div>
-                        
-                        <button size="s" appearance="textfield" tuiButton type="submit" (click)="onSubmitSearch()"
-                            [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null && !form.value.sku"
-                            class="w-full">
-                            Buscar
-                        </button>
-                    </fieldset>
-                    
-                    <!-- Fieldset de resultados -->
-                    <fieldset class="flex gap-2 flex-row sm:items-center sm:justify-between sm:gap-3 mb-3 sm:mb-4">
-                        <div class="text-xs sm:text-sm font-medium">
-                            Resultados: {{ ( isTheSearchWasDone ? (productosState$ | async)?.productos_search?.length :
-                            (productosState$ | async)?.productos?.length)}}
-                        </div>
+                    <tui-select class="w-44" formControlName="categoria" [stringify]="stringify">
+                        Categoria
+                        <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
+                    </tui-select>
+                    <button size="s" appearance="primary-grayscale" tuiButton type="submit" (click)="onSubmitSearch()"
+                        [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null && !form.value.sku">
+                        >
+                        Buscar
+                    </button>
+                </fieldset>
+                <fieldset>
+                  
 
-                        <button appearance="flat-neutralscale" iconStart="@tui.rotate-cw" size="m" tuiButton type="reset"
-                            (click)="clearSearch()"
-                            class="w-full sm:w-auto text-xs">
-                            Limpiar {{ count() ? '(' + count() + ')' : '' }}
-                        </button>
-                    </fieldset>
-                </form>
-            </search>
+                    Resultados: {{((productosState$ | async)?.count )}}
+                    <hr />
+
+
+                    <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
+                         (click)="clearSearch()">
+                        Limpiar {{ count() ? '(' + count() + ')' : '' }}
+                    </button>
+
+                </fieldset>
+            </form>
+        </search>
 
             <div class="rounded-lg overflow-hidden"
                 [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos || !!(productosState$ | async)?.loadingDelete">
@@ -72,7 +68,7 @@
                             <div class="flex gap-3 mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
                                 <div (click)="onSetImageProduct(producto); open = true;"
                                     class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-sm">
-                                    <img [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                                    <img loading="lazy" [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
                                         [alt]="producto.nombre"
                                         class="w-full h-full object-cover cursor-pointer active:scale-95 transition-transform" />
                                 </div>
@@ -178,7 +174,8 @@
 
                     <!-- Vista de TABLA para desktop -->
                     <div class="hidden lg:block overflow-x-auto">
-                        <table tuiTable size="s" class="w-full min-w-[900px]">
+                        <table tuiTable size="s" class="w-full min-w-[900px]"   *ngIf="((productosState$ | async)?.search_products_found ) === '' || ((productosState$ | async)?.search_products_found === 'products_found') "
+>
                             <thead>
                                 <tr>
                                     <th tuiTh class="text-center whitespace-nowrap">Codigo</th>
@@ -191,8 +188,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)"
-                                    class="transition-colors">
+                                <tr  
+                                    class="transition-colors"
+                        *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)"
+                                    
+                                    >
 
                                     <td tuiTd class="text-center">
                                         <div class="flex flex-col justify-center items-center py-2">
@@ -301,18 +301,27 @@
                     </div>
                 </div>
 
-                <tui-block-status *ngIf="isTheSearchWasDone 
-               && (productosState$ | async)?.productos_search?.length === 0" size="m" class="m-auto px-4">
-                    <img alt="no matches"
-                        src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-                        tuiSlot="top" class="max-w-[200px] sm:max-w-full mx-auto" />
-                    <h4 class="text-center text-sm sm:text-base">Productos no encontrados</h4>
-                    <span class="text-center text-xs sm:text-sm">No coincidimos con ningún producto</span>
-                </tui-block-status>
+                
+            <tui-block-status *ngIf="((productosState$ | async)?.search_products_found ) === 'products_not_found'"
+                size="m" class="m-auto">
+                <img alt="survived"
+                    src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+                    tuiSlot="top" />
+
+                <h4>Productos no encontrados</h4>
+
+                <span>No coicidimos con ningun producto</span>
+
+
+            </tui-block-status>
+                  <div class="pt-4" *ngIf="((productosState$ | async)?.search_products_found ) === 'products_found' || ((productosState$ | async)?.search_products_found ) === '' ">
+                <tui-pagination   [index]="(productosState$ | async)?.index_page"
+                    [length]="(productosState$ | async)?.length_pages" (indexChange)="goToPage($event)" />
+            </div>
             </div>
         </ng-template>
     </div>
-</div>
+</section>
 
 <!-- Modal de preview responsive -->
 <ng-template [(tuiPreviewDialog)]="open">

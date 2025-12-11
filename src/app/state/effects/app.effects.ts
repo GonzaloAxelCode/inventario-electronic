@@ -39,7 +39,7 @@ export class AppEffects {
                     this.store.dispatch(checkTokenAction());
                     this.store.dispatch(loadUserAction());
                     this.store.dispatch(loadCategorias());
-                    this.store.dispatch(loadProductosAction());
+                    this.store.dispatch(loadProductosAction({ page: 1, page_size: 10 }));
                     this.store.dispatch(loadProveedores());
                     this.store.dispatch(loadClientes());
                     this.store.dispatch(cargarVentasTiendaToday())

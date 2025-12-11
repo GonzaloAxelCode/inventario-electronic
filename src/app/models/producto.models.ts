@@ -43,6 +43,7 @@ export interface ProductoState {
     productos_search: Producto[];
     loadingProductos?: boolean;
     errors?: any;
+    search_products_found: string,
 
     loadingCreate: boolean;
     loadingUpdate: boolean;

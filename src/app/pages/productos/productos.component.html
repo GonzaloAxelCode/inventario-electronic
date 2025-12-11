@@ -8,7 +8,7 @@
                         <span tuiFade>Gestion de Productos</span>
                     </div>
 
-                  
+
                 </div>
             </h2>
         </div>
@@ -16,52 +16,39 @@
 
 
 
-   <!-- PESTAÑAS SIN ROUTER -->
-<nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
+        <!-- PESTAÑAS SIN ROUTER -->
+        <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
 
-    <button tuiTab 
-        (click)="setTab('productos')" 
-        [class.active-link]="activeTab === 'productos'">
-        Productos
-    </button>
+            <button tuiTab (click)="setTab('productos')" [class.active-link]="activeTab === 'productos'">
+                Productos
+            </button>
 
-    <button tuiTab 
-        (click)="setTab('categorias')" 
-        [class.active-link]="activeTab === 'categorias'">
-        Categorías
-    </button>
+            <button tuiTab (click)="setTab('categorias')" [class.active-link]="activeTab === 'categorias'">
+                Categorías
+            </button>
 
-    <button tuiTab 
-        (click)="setTab('graficos')" 
-        [class.active-link]="activeTab === 'graficos'">
-        Gráficos
-    </button>
+            <button tuiTab (click)="setTab('graficos')" [class.active-link]="activeTab === 'graficos'">
+                Gráficos
+            </button>
 
-    <button tuiTab 
-        (click)="setTab('calculo-ganancias')" 
-        [class.active-link]="activeTab === 'calculo-ganancias'">
-        Cálculo de ganancias
-    </button>
+            <button tuiTab (click)="setTab('calculo-ganancias')"
+                [class.active-link]="activeTab === 'calculo-ganancias'">
+                Cálculo de ganancias
+            </button>
 
-    <button tuiTab 
-        (click)="setTab('reportes')" 
-        [class.active-link]="activeTab === 'reportes'">
-        Reportes de Inventario (PDF)
-    </button>
+            <button tuiTab (click)="setTab('reportes')" [class.active-link]="activeTab === 'reportes'">
+                Reportes de Inventario (PDF)
+            </button>
 
-    <button tuiTab 
-        (click)="setTab('proyeccion')" 
-        [class.active-link]="activeTab === 'proyeccion'">
-        Proyección de ganancias
-    </button>
+            <button tuiTab (click)="setTab('proyeccion')" [class.active-link]="activeTab === 'proyeccion'">
+                Proyección de ganancias
+            </button>
 
-    <button tuiTab 
-        (click)="setTab('alertas')" 
-        [class.active-link]="activeTab === 'alertas'">
-        Alertas de Stock
-    </button>
+            <button tuiTab (click)="setTab('alertas')" [class.active-link]="activeTab === 'alertas'">
+                Alertas de Stock
+            </button>
 
-</nav>
+        </nav>
 
 
     </header>
@@ -71,12 +58,13 @@
         <div class="py-4">
             <!-- TAB: PRODUCTOS -->
             <ng-container *ngIf="activeTab === 'productos'">
-                <div class="flex gap-2">
+                <div class="flex gap-2 pb-4">
                     <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button"
                         (click)="showDialogCreateProduct()">
                         Agregar nuevo producto
                     </button>
 
+                    <app-buttonupdate [func]="clickRefreshProducts.bind(this)" [loading]="loading"></app-buttonupdate>
                 </div>
 
                 <app-tableproduct></app-tableproduct>
@@ -87,7 +75,7 @@
             <ng-container *ngIf="activeTab === 'categorias'">
                 <div class="flex gap-2 py-4">
                     <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button"
-                       (click)="showDialogCreateCategoria()">
+                        (click)="showDialogCreateCategoria()">
                         Agregar categoria
                     </button>
                 </div>
@@ -95,33 +83,31 @@
                 <app-tablecategories></app-tablecategories>
             </ng-container>
 
+            <ng-container *ngIf="activeTab === 'graficos'">
+                <!-- Contenido de Gráficos --> <app-pruebastext></app-pruebastext>
+            </ng-container>
 
+            <ng-container *ngIf="activeTab === 'calculo-ganancias'">
+                <!-- Contenido de Cálculo de ganancias --> <app-pruebastext></app-pruebastext>
+            </ng-container>
 
-    <ng-container *ngIf="activeTab === 'graficos'">
-        <!-- Contenido de Gráficos -->                            <app-pruebastext></app-pruebastext>
-    </ng-container>
+            <ng-container *ngIf="activeTab === 'reportes'">
+                <!-- Contenido de Reportes de Inventario (PDF) -->
+                <app-pruebastext></app-pruebastext>
+            </ng-container>
 
-    <ng-container *ngIf="activeTab === 'calculo-ganancias'">
-        <!-- Contenido de Cálculo de ganancias -->                           <app-pruebastext></app-pruebastext>
-    </ng-container>
+            <ng-container *ngIf="activeTab === 'proyeccion'">
+                <!-- Contenido de Proyección de ganancias -->
+                <app-pruebastext></app-pruebastext>
+            </ng-container>
 
-    <ng-container *ngIf="activeTab === 'reportes'">
-        <!-- Contenido de Reportes de Inventario (PDF) -->
-                                    <app-pruebastext></app-pruebastext>
-    </ng-container>
-
-    <ng-container *ngIf="activeTab === 'proyeccion'">
-        <!-- Contenido de Proyección de ganancias -->
-                                    <app-pruebastext></app-pruebastext>
-    </ng-container>
-
-                <ng-container *ngIf="activeTab === 'alertas'">
-                     <div class="">
-                <p class="text-2xl font-bold text-slate-700 dark:text-gray-300 mb-4">Productos con bajo stock</p>
-                           <app-pruebastext></app-pruebastext>
-                <app-dashboard-low-stock></app-dashboard-low-stock>
-            </div> 
-                </ng-container>
+            <ng-container *ngIf="activeTab === 'alertas'">
+                <div class="">
+                    <p class="text-2xl font-bold text-slate-700 dark:text-gray-300 mb-4">Productos con bajo stock</p>
+                    <app-pruebastext></app-pruebastext>
+                    <app-dashboard-low-stock></app-dashboard-low-stock>
+                </div>
+            </ng-container>
 
 
 

@@ -27,7 +27,7 @@ const initialState: ProductoState = {
     search_found: false,
     count: 0,
     next: null,
-    previous: null,
+    previous: null, search_products_found: "",
     productos: [],
     index_page: null,
     length_pages: null,
@@ -134,11 +134,13 @@ export const productoReducer = createReducer(
         ...state,
         loadingSearch: true
     })),
-    on(searchProductoSuccess, (state, { productos_search, search_found }) => ({
+    on(searchProductoSuccess, (state, { productos, search_products_found, count, next, previous, index_page, length_pages }) => ({
         ...state,
-        productos_search,
+        productos_search: productos,
         loadingSearch: false,
-        search_found,
+        search_products_found: search_products_found,
+        count: count,
+        next, previous, index_page, length_pages
     })),
     on(searchProductoFail, (state, { error }) => ({
         ...state,
