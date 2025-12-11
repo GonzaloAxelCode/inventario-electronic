@@ -7,6 +7,7 @@ import { TodaysalestableComponent } from '@/app/components/ventascomponents/toda
 import { Venta } from '@/app/models/venta.models';
 import { QuerySearchVenta } from '@/app/services/caja.service';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
+import { PAGE_SIZE_VENTAS } from "@/app/services/utils/pages-sizes";
 import { cargarVentasTienda, clearVentaSearch, searchVenta } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
@@ -69,9 +70,7 @@ export class ListallventasComponent {
 
   ventasState$!: Observable<Partial<VentaState>>;
   ventas: any = []
-  facturacionTotal = 14823.20;
-  totalDescuentos = 2498.80;
-  estimacionGanancia = 1482.50;
+
   allColumns = [
 
     { key: 'metodo_pago', label: 'Método de Pago' },
@@ -197,6 +196,16 @@ export class ListallventasComponent {
 
   clearSearch() {
     this.store.dispatch(clearVentaSearch());
+
+    const initialRange = this.range;
+    this.store.dispatch(cargarVentasTienda({
+      from_date: [initialRange.from.year, initialRange.from.month, initialRange.from.day],
+      to_date: [initialRange.to.year, initialRange.to.month, initialRange.to.day],
+      page: 1,
+      page_size: PAGE_SIZE_VENTAS
+
+    }))
+
   }
 
   onSubmitSearch() {
@@ -217,6 +226,8 @@ export class ListallventasComponent {
 
     this.store.dispatch(searchVenta({
       query: searchQuery,
+      page: 1,
+      page_size: PAGE_SIZE_VENTAS
     }))
 
   }
@@ -241,7 +252,7 @@ export class ListallventasComponent {
           from_date: [initialRange.from.year, initialRange.from.month, initialRange.from.day],
           to_date: [initialRange.to.year, initialRange.to.month, initialRange.to.day],
           page: index + 1,
-          page_size: 20
+          page_size: PAGE_SIZE_VENTAS
 
         }))
       } else {
@@ -257,7 +268,7 @@ export class ListallventasComponent {
           tipo_documento_cliente: this.form.value.tipo_documento_cliente === "Dni" ? "1" : "6",
           estado_sunat: this.form.value.estado_sunat || ""
         }
-        this.store.dispatch(searchVenta({ query: searchQuery, page: index + 1 }));
+        this.store.dispatch(searchVenta({ query: searchQuery, page: index + 1, page_size: PAGE_SIZE_VENTAS }));
       }
     });
   }

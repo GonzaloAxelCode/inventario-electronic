@@ -34,7 +34,7 @@ export const loadProductosAction = createAction(
 
 export const loadProductosSuccess = createAction(
     ActionTypes.LOAD_PRODUCTOS_SUCCESS,
-    props<{ productos: Producto[], next: any, previous: any, index_page: any, length_pages: any, }>()
+    props<{ productos: Producto[], next: any, previous: any, index_page: any, length_pages: any, count: any }>()
 );
 
 export const loadProductosFail = createAction(
@@ -104,7 +104,7 @@ export const deleteProductoFail = createAction(
 
 export const searchProductosAction = createAction(
     ActionTypes.SEARCH_PRODUCTOS,
-    props<{ query: Partial<QuerySearchProduct>, page?: number, page_size: number }>()
+    props<{ query: Partial<QuerySearchProduct>, page?: number, page_size?: number }>()
 
 );
 

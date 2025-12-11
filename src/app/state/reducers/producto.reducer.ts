@@ -52,10 +52,11 @@ export const productoReducer = createReducer(
 
 
     })),
-    on(loadProductosSuccess, (state, { productos }) => ({
+    on(loadProductosSuccess, (state, { productos, next, previous, index_page, length_pages, count }) => ({
         ...state,
         productos,
         loadingProductos: false,
+        next, previous, index_page, length_pages, count
 
 
     })),

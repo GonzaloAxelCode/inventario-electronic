@@ -1,3 +1,4 @@
+import { PAGE_SIZE_PRODUCTS, PAGE_SIZE_VENTAS } from '@/app/services/utils/pages-sizes';
 import { checkTokenAction } from '@/app/state/actions/auth.actions';
 import { loadCategorias } from '@/app/state/actions/categoria.actions';
 import { cargarProductosMenorStock, loadInventarios } from '@/app/state/actions/inventario.actions';
@@ -39,7 +40,7 @@ export class AppEffects {
                     this.store.dispatch(checkTokenAction());
                     this.store.dispatch(loadUserAction());
                     this.store.dispatch(loadCategorias());
-                    this.store.dispatch(loadProductosAction({ page: 1, page_size: 10 }));
+                    this.store.dispatch(loadProductosAction({ page: 1, page_size: PAGE_SIZE_PRODUCTS }));
                     this.store.dispatch(loadProveedores());
                     this.store.dispatch(loadClientes());
                     this.store.dispatch(cargarVentasTiendaToday())
@@ -52,7 +53,8 @@ export class AppEffects {
                     this.store.dispatch(cargarResumenVentas());
 
                     this.store.dispatch(cargarVentasTienda({
-                        page_size: 20,
+                        page_size: PAGE_SIZE_VENTAS,
+                        page: 1,
                         from_date: [initialRange.from.year, initialRange.from.month, initialRange.from.day],
                         to_date: [initialRange.to.year, initialRange.to.month, initialRange.to.day]
 

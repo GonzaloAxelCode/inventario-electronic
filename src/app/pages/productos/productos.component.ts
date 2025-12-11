@@ -16,6 +16,7 @@ import { PruebastextComponent } from '@/app/components/pruebastext/pruebastext.c
 import { TableproductComponent } from '@/app/components/Tables/tableproduct/tableproduct.component';
 import { DialogCreateCategoriaService } from '@/app/services/dialogs-services/dialog-create-categoria.service';
 import { DialogCreateProductService } from '@/app/services/dialogs-services/dialog-create-product.service';
+import { PAGE_SIZE_PRODUCTS } from '@/app/services/utils/pages-sizes';
 import { loadProductosAction } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectProducto } from '@/app/state/selectors/producto.selectors';
@@ -59,6 +60,7 @@ import { TablecategoriesComponent } from "../../components/Tables/tablecategorie
 })
 export class ProductosComponent {
   private readonly confirm = inject(TuiConfirmService);
+
   private readonly dialogs = inject(TuiDialogService);
   loading: any = false
   activeTab:
@@ -102,7 +104,7 @@ export class ProductosComponent {
 
   }
   clickRefreshProducts() {
-    this.store.dispatch(loadProductosAction({ page: 1, page_size: 10 }))
+    this.store.dispatch(loadProductosAction({ page: 1, page_size: PAGE_SIZE_PRODUCTS }))
   }
 
 }

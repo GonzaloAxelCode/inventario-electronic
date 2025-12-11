@@ -1,6 +1,6 @@
-<section class="py-3  sm:py-4 md:py-6  rounded-lg" [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos">
+<section class="py-3  sm:py-4 md:py-6  rounded-lg">
     <!-- Si no hay productos, mostramos el mensaje con el botón -->
-   <!-- Si no hay productos, mostramos el mensaje con el botón -->
+    <!-- Si no hay productos, mostramos el mensaje con el botón -->
     <tui-block-status
         *ngIf="(productosState$ | async)?.productos?.length === 0 && !(productosState$ | async)?.loadingProductos else tabla"
         size="m" class="m-auto">
@@ -12,78 +12,84 @@
 
         <span>Empieza a crear tus primeros productos</span>
 
-      
-    </tui-block-status> 
+
+    </tui-block-status>
 
     <div>
         <!-- Si hay productos, mostramos la tabla -->
         <ng-template #tabla>
-             <search tuiSearch class="pb-4">
-            <form [formGroup]="form" (submit)="onSubmitSearch()">
-                <fieldset tuiTextfieldSize="s">
-                     <tui-textfield iconStart="@tui.search">
-                        <input tuiTheme="ligth" formControlName="sku" placeholder="Buscar por Codigo" tuiTextfield />
-                    </tui-textfield>
-                    <tui-textfield iconStart="@tui.search">
-                        <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre" tuiTextfield />
-                    </tui-textfield>
+            <search tuiSearch class="pb-4">
+                <form [formGroup]="form" (submit)="onSubmitSearch()">
+                    <fieldset tuiTextfieldSize="s">
+                        <tui-textfield iconStart="@tui.search">
+                            <input tuiTheme="ligth" formControlName="sku" placeholder="Buscar por Codigo"
+                                tuiTextfield />
+                        </tui-textfield>
+                        <tui-textfield iconStart="@tui.search">
+                            <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre"
+                                tuiTextfield />
+                        </tui-textfield>
 
-                    <tui-select class="w-44" formControlName="categoria" [stringify]="stringify">
-                        Categoria
-                        <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
-                    </tui-select>
-                    <button size="s" appearance="primary-grayscale" tuiButton type="submit" (click)="onSubmitSearch()"
-                        [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null && !form.value.sku">
-                        >
-                        Buscar
-                    </button>
-                </fieldset>
-                <fieldset>
-                  
-
-                    Resultados: {{((productosState$ | async)?.count )}}
-                    <hr />
+                        <tui-select class="w-44" formControlName="categoria" [stringify]="stringify">
+                            Categoria
+                            <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
+                        </tui-select>
+                        <button size="s" appearance="primary-grayscale" tuiButton type="submit"
+                            (click)="onSubmitSearch()"
+                            [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null && !form.value.sku">
+                            >
+                            Buscar
+                        </button>
+                    </fieldset>
+                    <fieldset>
 
 
-                    <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
-                         (click)="clearSearch()">
-                        Limpiar {{ count() ? '(' + count() + ')' : '' }}
-                    </button>
+                        Resultados: {{((productosState$ | async)?.count )}}
+                        <hr />
 
-                </fieldset>
-            </form>
-        </search>
 
-            <div class="rounded-lg overflow-hidden"
-                [tuiSkeleton]="!!(productosState$ | async)?.loadingProductos || !!(productosState$ | async)?.loadingDelete">
+                        <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
+                            (click)="clearSearch()">
+                            Limpiar {{ count() ? '(' + count() + ')' : '' }}
+                        </button>
+
+                    </fieldset>
+                </form>
+            </search>
+            <tui-loader [overlay]="true" 
+            [showLoader]="!!(productosState$ | async)?.loadingProductos || !!(productosState$ | async)?.loadingDelete || !!(productosState$ | async)?.loadingProductos"/>
+            <div class="rounded-lg overflow-hidden">
                 <div
                     *ngIf="(isTheSearchWasDone ? ((productosState$ | async)?.productos_search?.length || 0) : ((productosState$ | async)?.productos?.length || 0)) > 0">
-                    
+
                     <!-- Vista de CARDS para móviles -->
                     <div class="block lg:hidden space-y-3 px-2">
                         <div *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)"
                             class="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-3 border border-neutral-200 dark:border-neutral-700">
-                            
+
                             <!-- Header con imagen y código -->
                             <div class="flex gap-3 mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
                                 <div (click)="onSetImageProduct(producto); open = true;"
                                     class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-sm">
-                                    <img loading="lazy" [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                                    <img loading="lazy"
+                                        [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
                                         [alt]="producto.nombre"
                                         class="w-full h-full object-cover cursor-pointer active:scale-95 transition-transform" />
                                 </div>
-                                
+
                                 <div class="flex-1 min-w-0">
                                     <p class="font-semibold text-lg mb-1 truncate">{{ producto.nombre }}</p>
                                     <tui-chip iconStart="@tui.scan-barcode" size="m" class="mb-2">
                                         {{ producto.sku }}
                                     </tui-chip>
-                                    
+
                                     <div *ngIf="displayedColumns.includes('categoria')" class="text-xs">
-                                        <span *ngIf="!mostrarAdvertencia(producto.categoria_nombre)" class="text-neutral-600 dark:text-neutral-400">
+                                        <span *ngIf="!mostrarAdvertencia(producto.categoria_nombre)"
+                                            class="text-neutral-600 dark:text-neutral-400">
                                             {{ producto.categoria_nombre }}
                                         </span>
-                                        <span *ngIf="mostrarAdvertencia(producto.categoria_nombre)" class="text-orange-600 dark:text-orange-400">
+                                        <span *ngIf="mostrarAdvertencia(producto.categoria_nombre)"
+                                            class="text-orange-600 dark:text-orange-400">
                                             ⚠️ Sin categoría
                                         </span>
                                     </div>
@@ -92,16 +98,20 @@
 
                             <!-- Características -->
                             <div class="space-y-1 mb-3" *ngIf="producto.caracteristicas">
-                                <div *ngFor="let item of producto.caracteristicas | keyvalue" 
+                                <div *ngFor="let item of producto.caracteristicas | keyvalue"
                                     class="flex items-start text-xs">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-white mr-2 mt-1 flex-shrink-0"></span>
-                                    <span class="text-neutral-600 dark:text-neutral-400 font-medium mr-1">{{ capitalize(item.key || '')  }}:</span>
-                                    <span class="text-neutral-800 dark:text-neutral-200 break-words">{{ item.value }}</span>
+                                    <span
+                                        class="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-white mr-2 mt-1 flex-shrink-0"></span>
+                                    <span class="text-neutral-600 dark:text-neutral-400 font-medium mr-1">{{
+                                        capitalize(item.key || '') }}:</span>
+                                    <span class="text-neutral-800 dark:text-neutral-200 break-words">{{ item.value
+                                        }}</span>
                                 </div>
                             </div>
 
                             <!-- Stock y Precio -->
-                            <div class="grid grid-cols-2 gap-2 mb-3 p-2 bg-neutral-50 dark:bg-neutral-700 rounded-lg" *ngIf="displayedColumns.includes('inventario')">
+                            <div class="grid grid-cols-2 gap-2 mb-3 p-2 bg-neutral-50 dark:bg-neutral-700 rounded-lg"
+                                *ngIf="displayedColumns.includes('inventario')">
                                 <!-- Stock -->
                                 <div class="text-center">
                                     <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Stock</div>
@@ -109,10 +119,12 @@
                                         <span class="text-lg font-semibold text-black dark:text-white">0</span>
                                     </ng-container>
                                     <ng-container *ngIf="producto.is_inventario">
-                                        <span class="text-2xl font-semibold" [ngClass]="getColorClass(producto.inventario?.cantidad || 0)">
+                                        <span class="text-2xl font-semibold"
+                                            [ngClass]="getColorClass(producto.inventario?.cantidad || 0)">
                                             {{ producto.inventario?.cantidad }}
                                         </span>
-                                        <p class="text-red-400 text-xs mt-1" *ngIf="(producto.inventario?.cantidad || 0) <= 0">
+                                        <p class="text-red-400 text-xs mt-1"
+                                            *ngIf="(producto.inventario?.cantidad || 0) <= 0">
                                             Agotado
                                         </p>
                                     </ng-container>
@@ -122,9 +134,8 @@
                                 <div class="text-center">
                                     <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Precio</div>
                                     <ng-container *ngIf="!producto.is_inventario">
-                                        <button appearance="primary-neutralscale" size="m" tuiButton
-                                            type="button" class="w-full text-xs py-1"
-                                            (click)="crearInventario(producto)">
+                                        <button appearance="primary-neutralscale" size="m" tuiButton type="button"
+                                            class="w-full text-xs py-1" (click)="crearInventario(producto)">
                                             Crear
                                         </button>
                                     </ng-container>
@@ -140,31 +151,32 @@
                             </div>
 
                             <!-- Estado y fecha -->
-                            <div class="flex justify-between items-center text-xs text-neutral-500 dark:text-neutral-400 mb-3" *ngIf="displayedColumns.includes('fechaCreacion')">
+                            <div class="flex justify-between items-center text-xs text-neutral-500 dark:text-neutral-400 mb-3"
+                                *ngIf="displayedColumns.includes('fechaCreacion')">
                                 <span>Fecha de creacion: {{ producto.fecha_creacion | date:'dd/MM/yyyy' }}</span>
-                                
+
                             </div>
 
                             <!-- Botones de acción -->
                             <div class="grid grid-cols-2 gap-2">
-                                <button appearance="positive" iconStart="@tui.pencil" tuiButton
-                                    type="button" (click)="showDialogUpdate(producto)"
-                                    [disabled]="!(userPermissions$ | async)?.can_update_product"
-                                    size="m" class="w-full text-xs">
+                                <button appearance="positive" iconStart="@tui.pencil" tuiButton type="button"
+                                    (click)="showDialogUpdate(producto)"
+                                    [disabled]="!(userPermissions$ | async)?.can_update_product" size="m"
+                                    class="w-full text-xs">
                                     Editar
                                 </button>
 
                                 <button [disabled]="!(userPermissions$ | async)?.can_delete_product"
                                     [appearance]="(userPermissions$ | async)?.can_delete_product ? 'error' : 'secondary-neutralscale'"
                                     iconStart="@tui.trash" tuiButton type="button"
-                                    (click)="onDeleteProducto(producto.id)"
-                                    size="m" class="w-full text-xs">
+                                    (click)="onDeleteProducto(producto.id)" size="m" class="w-full text-xs">
                                     Eliminar
                                 </button>
 
-                                <button *ngIf="!!(userPermissions$ | async)?.can_update_inventory || !!(userPermissions$ | async)?.can_modify_inventory" 
-                                    iconStart="@tui.pencil" tuiButton appearance="textfield"
-                                    size="m" class="col-span-2 w-full text-xs"
+                                <button
+                                    *ngIf="!!(userPermissions$ | async)?.can_update_inventory || !!(userPermissions$ | async)?.can_modify_inventory"
+                                    iconStart="@tui.pencil" tuiButton appearance="textfield" size="m"
+                                    class="col-span-2 w-full text-xs"
                                     (click)="showDialogEditInventario(producto.inventario)">
                                     Editar Inventario
                                 </button>
@@ -174,25 +186,27 @@
 
                     <!-- Vista de TABLA para desktop -->
                     <div class="hidden lg:block overflow-x-auto">
-                        <table tuiTable size="s" class="w-full min-w-[900px]"   *ngIf="((productosState$ | async)?.search_products_found ) === '' || ((productosState$ | async)?.search_products_found === 'products_found') "
->
+                        <table tuiTable size="s" class="w-full min-w-[900px]"
+                            *ngIf="((productosState$ | async)?.search_products_found ) === '' || ((productosState$ | async)?.search_products_found === 'products_found') ">
                             <thead>
                                 <tr>
                                     <th tuiTh class="text-center whitespace-nowrap">Codigo</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('nombre')" class="whitespace-nowrap">Nombre/Detalles</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('categoria')" class="whitespace-nowrap">Categoría</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('fechaCreacion')" class="whitespace-nowrap">Fecha Creación</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('inventario')" class="whitespace-nowrap">Stock</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('inventario')" class="whitespace-nowrap">Venta</th>
+                                    <th tuiTh *ngIf="displayedColumns.includes('nombre')" class="whitespace-nowrap">
+                                        Nombre/Detalles</th>
+                                    <th tuiTh *ngIf="displayedColumns.includes('categoria')" class="whitespace-nowrap">
+                                        Categoría</th>
+                                    <th tuiTh *ngIf="displayedColumns.includes('fechaCreacion')"
+                                        class="whitespace-nowrap">Fecha Creación</th>
+                                    <th tuiTh *ngIf="displayedColumns.includes('inventario')" class="whitespace-nowrap">
+                                        Stock</th>
+                                    <th tuiTh *ngIf="displayedColumns.includes('inventario')" class="whitespace-nowrap">
+                                        Venta</th>
                                     <th tuiTh class="text-center whitespace-nowrap">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr  
-                                    class="transition-colors"
-                        *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)"
-                                    
-                                    >
+                                <tr class="transition-colors"
+                                    *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)">
 
                                     <td tuiTd class="text-center">
                                         <div class="flex flex-col justify-center items-center py-2">
@@ -210,13 +224,16 @@
 
                                     <td tuiTd *ngIf="displayedColumns.includes('nombre')">
                                         <span class="font-semibold text-lg block mb-2">{{ producto.nombre }}</span>
-                                        
+
                                         <div class="space-y-1">
-                                            <div *ngFor="let item of producto.caracteristicas | keyvalue" 
+                                            <div *ngFor="let item of producto.caracteristicas | keyvalue"
                                                 class="flex items-center text-sm">
-                                                <span class="w-2 h-2 rounded-full bg-neutral-400 dark:bg-white mr-2 flex-shrink-0"></span>
-                                                <span class="text-neutral-600 dark:text-neutral-400 font-medium">{{ capitalize(item.key || '')  }}:</span>
-                                                <span class="ml-1 text-neutral-800 dark:text-neutral-200">{{ item.value }}</span>
+                                                <span
+                                                    class="w-2 h-2 rounded-full bg-neutral-400 dark:bg-white mr-2 flex-shrink-0"></span>
+                                                <span class="text-neutral-600 dark:text-neutral-400 font-medium">{{
+                                                    capitalize(item.key || '') }}:</span>
+                                                <span class="ml-1 text-neutral-800 dark:text-neutral-200">{{ item.value
+                                                    }}</span>
                                             </div>
                                         </div>
                                     </td>
@@ -225,19 +242,22 @@
                                         <p *ngIf="!mostrarAdvertencia(producto.categoria_nombre)">
                                             {{ producto.categoria_nombre }}
                                         </p>
-                                        <p *ngIf="mostrarAdvertencia(producto.categoria_nombre)" class="text-sm text-orange-600 dark:text-orange-400">
+                                        <p *ngIf="mostrarAdvertencia(producto.categoria_nombre)"
+                                            class="text-sm text-orange-600 dark:text-orange-400">
                                             ⚠️ Urgente: Asignar una nueva categoría
                                         </p>
                                     </td>
 
-                                    <td tuiTd *ngIf="displayedColumns.includes('fechaCreacion')" class="whitespace-nowrap">
+                                    <td tuiTd *ngIf="displayedColumns.includes('fechaCreacion')"
+                                        class="whitespace-nowrap">
                                         {{ producto.fecha_creacion | date:'dd/MM/yyyy' }}
                                     </td>
 
                                     <td tuiTd *ngIf="displayedColumns.includes('inventario')">
                                         <ng-container *ngIf="!producto.is_inventario">
                                             <div tuiBlockDetails>
-                                                <span class="-translate-y-1 text-lg" [ngClass]="'text-black dark:text-white'">
+                                                <span class="-translate-y-1 text-lg"
+                                                    [ngClass]="'text-black dark:text-white'">
                                                     0
                                                 </span>
                                             </div>
@@ -249,24 +269,26 @@
                                                     [ngClass]="getColorClass(producto.inventario?.cantidad || 0)">
                                                     {{ producto.inventario?.cantidad }}
                                                 </span>
-                                               
+
                                             </div>
                                         </ng-container>
                                     </td>
 
                                     <td tuiTd *ngIf="displayedColumns.includes('inventario')" class="text-center">
                                         <div class="flex gap-2 justify-center items-center">
-                                          
-                                          
-                                                <div class="flex flex-col">
-                                                    <div class="text-2xl font-bold whitespace-nowrap">
-                                                        {{ producto.inventario?.costo_venta | currency:'PEN':'S/ ': '1.2-2' }}
-                                                    </div>
-                                                    <p class="text-red-400 text-sm" *ngIf="producto.inventario?.costo_venta == 0">
-                                                        * Sin costo
-                                                    </p>
+
+
+                                            <div class="flex flex-col">
+                                                <div class="text-2xl font-bold whitespace-nowrap">
+                                                    {{ producto.inventario?.costo_venta | currency:'PEN':'S/ ': '1.2-2'
+                                                    }}
                                                 </div>
-                                                
+                                                <p class="text-red-400 text-sm"
+                                                    *ngIf="producto.inventario?.costo_venta == 0">
+                                                    * Sin costo
+                                                </p>
+                                            </div>
+
                                         </div>
                                     </td>
 
@@ -281,17 +303,17 @@
 
                                             <button [disabled]="!(userPermissions$ | async)?.can_delete_product"
                                                 [appearance]="(userPermissions$ | async)?.can_delete_product ? 'error' : 'secondary-neutralscale'"
-                                                iconStart="@tui.trash" tuiButton  type="button"
-                                                (click)="onDeleteProducto(producto.id)"
-                                                class="whitespace-nowrap">
+                                                iconStart="@tui.trash" tuiButton type="button"
+                                                (click)="onDeleteProducto(producto.id)" class="whitespace-nowrap">
                                                 Eliminar
                                             </button>
-                                            
-                                            <button *ngIf="!!(userPermissions$ | async)?.can_update_inventory || !!(userPermissions$ | async)?.can_modify_inventory" 
+
+                                            <button
+                                                *ngIf="!!(userPermissions$ | async)?.can_update_inventory || !!(userPermissions$ | async)?.can_modify_inventory"
                                                 iconStart="@tui.pencil" tuiButton appearance="textfield" type="submit"
-                                                size="s"  class="px-6 py-2 transition whitespace-nowrap"
+                                                size="s" class="px-6 py-2 transition whitespace-nowrap"
                                                 (click)="showDialogEditInventario(producto.inventario)">
-                                                 Inventario
+                                                Inventario
                                             </button>
                                         </div>
                                     </td>
@@ -301,23 +323,25 @@
                     </div>
                 </div>
 
-                
-            <tui-block-status *ngIf="((productosState$ | async)?.search_products_found ) === 'products_not_found'"
-                size="m" class="m-auto">
-                <img alt="survived"
-                    src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-                    tuiSlot="top" />
 
-                <h4>Productos no encontrados</h4>
+                <tui-block-status *ngIf="((productosState$ | async)?.search_products_found ) === 'products_not_found'"
+                    size="m" class="m-auto">
+                    <img alt="survived"
+                        src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+                        tuiSlot="top" />
 
-                <span>No coicidimos con ningun producto</span>
+                    <h4>Productos no encontrados</h4>
+
+                    <span>No coicidimos con ningun producto</span>
 
 
-            </tui-block-status>
-                  <div class="pt-4" *ngIf="((productosState$ | async)?.search_products_found ) === 'products_found' || ((productosState$ | async)?.search_products_found ) === '' ">
-                <tui-pagination   [index]="(productosState$ | async)?.index_page"
-                    [length]="(productosState$ | async)?.length_pages" (indexChange)="goToPage($event)" />
-            </div>
+                </tui-block-status>
+                <div class="pt-4 flex justify-center px-2"
+                    *ngIf="((productosState$ | async)?.search_products_found) === 'ventas_found' || ((productosState$ | async)?.search_products_found) === ''">
+                    <tui-pagination [index]="(productosState$ | async)?.index_page"
+                        [length]="(productosState$ | async)?.length_pages" (indexChange)="goToPage($event)"
+                        class="w-full overflow-x-auto" />
+                </div>
             </div>
         </ng-template>
     </div>
@@ -327,14 +351,14 @@
 <ng-template [(tuiPreviewDialog)]="open">
     <tui-preview>
         <tui-preview-title class="text-sm sm:text-base px-4">{{ titles[index] }}</tui-preview-title>
-        <tui-preview-pagination [length]="length" [(index)]="index" />
+
 
         <button iconStart="@tui.x" tuiIconButton tuiPreviewAction type="button" (click)="open = false"
             class="text-sm sm:text-base">
             Close
         </button>
 
-        <img *polymorpheusOutlet="content[index] as src" alt="preview" [src]="src" 
+        <img *polymorpheusOutlet="content[index] as src" alt="preview" [src]="src"
             class="w-full h-auto max-h-[70vh] sm:max-h-[80vh] object-contain p-2 sm:p-4" />
     </tui-preview>
 </ng-template>

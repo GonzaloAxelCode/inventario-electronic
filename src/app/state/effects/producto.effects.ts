@@ -38,6 +38,7 @@ export class ProductoEffects {
                         return loadProductosSuccess({
                             productos: response.results,
                             next: response.next,
+                            count: response.count,
                             previous: response.previous,
                             index_page: response.index_page,
                             length_pages: response.length_pages,

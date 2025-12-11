@@ -8,7 +8,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAlertService, TuiButton, TuiDialogService, TuiTextfield } from '@taiga-ui/core';
+import { TuiAlertService, TuiButton, TuiDialogService, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiChip, TuiConfirmService, TuiDataListWrapper, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiRadio, TuiSkeleton } from '@taiga-ui/kit';
 import { map, Observable, take } from 'rxjs';
 
@@ -18,6 +18,7 @@ import { DialogEditInventarioDetailService } from '@/app/services/dialogs-servic
 import { DialogUpdateProductService } from '@/app/services/dialogs-services/dialog-updateproduct.service';
 import { capitalize } from '@/app/services/utils/capitalize';
 import { URL_BASE } from '@/app/services/utils/endpoints';
+import { PAGE_SIZE_PRODUCTS } from '@/app/services/utils/pages-sizes';
 import { QuerySearchProduct } from '@/app/services/utils/querys';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
@@ -44,6 +45,7 @@ import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy'
     TuiPagination,
     TuiTextfield, TuiSearch, FormsModule, TuiDataListWrapper, NgForOf,
     TuiSelectModule, TuiTextfieldControllerModule,
+    TuiLoader
   ],
   templateUrl: './tableproduct.component.html',
   styleUrl: './tableproduct.component.scss',
@@ -163,9 +165,6 @@ export class TableproductComponent implements OnInit, AfterViewInit {
   }
   clearSearch() {
     this.store.dispatch(clearSearchProductos())
-    this.isTheSearchWasDone = false
-
-    this.store.dispatch(searchProductosAction({ query: {}, page_size: 10 }))
   }
 
   onSubmitSearch() {
@@ -175,7 +174,7 @@ export class TableproductComponent implements OnInit, AfterViewInit {
       categoria: this.form.value?.categoria?.id || 0,
       sku: (this.form.value.sku || "").trim(),
     }
-    this.store.dispatch(searchProductosAction({ query: searchQuery, page_size: 10 }))
+    this.store.dispatch(searchProductosAction({ query: searchQuery, page_size: PAGE_SIZE_PRODUCTS, page: 1 }))
 
   }
 
@@ -223,8 +222,8 @@ export class TableproductComponent implements OnInit, AfterViewInit {
     this.productosState$?.pipe(take(1)).subscribe(state => {
       if (state?.search_products_found === '') {
         this.store.dispatch(loadProductosAction({
-          page: index,
-          page_size: 10
+          page: index + 1,
+          page_size: PAGE_SIZE_PRODUCTS
         }))
       } else {
         const searchQuery: Partial<QuerySearchProduct> = {
@@ -232,7 +231,7 @@ export class TableproductComponent implements OnInit, AfterViewInit {
           categoria: this.form.value?.categoria?.id || 0,
           sku: (this.form.value.sku || "").trim(),
         };
-        this.store.dispatch(searchProductosAction({ query: searchQuery, page: index + 1, page_size: 10 }));
+        this.store.dispatch(searchProductosAction({ query: searchQuery, page: index + 1, page_size: PAGE_SIZE_PRODUCTS }));
       }
 
 
