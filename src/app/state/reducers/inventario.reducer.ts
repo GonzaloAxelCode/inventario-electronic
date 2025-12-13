@@ -15,6 +15,7 @@ import {
     eliminarInventarioAction,
     eliminarInventarioFail,
     eliminarInventarioSuccess,
+    forceSyncInventarios,
     loadInventarios,
     loadInventariosFail,
     loadInventariosSuccess,
@@ -77,6 +78,10 @@ const initialState: InventarioState = {
 };
 export const inventarioReducer = createReducer(
     initialState,
+    on(forceSyncInventarios, state => ({
+        ...state,
+        loadingProductosInventario: true
+    })),
 
 
     on(loadInventarios, state => ({

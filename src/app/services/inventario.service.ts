@@ -39,6 +39,17 @@ interface PaginationInventariosResponse {
 export class InventarioService {
     private siteURL = URL_BASE + '/api';
     private http = inject(HttpClient);
+
+
+
+
+    fetchInventariosPorTienda(): Observable<{ results: Inventario[] }> {
+        return this.http.get<any>(
+            `${this.siteURL}/inventarios/`
+        ).pipe(
+            catchError(error => throwError(() => error))
+        );
+    }
     fetchSearchInventarios(
         query: QuerySearchInventario,
         page: number,
@@ -56,17 +67,6 @@ export class InventarioService {
             catchError(error => throwError(() => error))
         );
     }
-
-
-
-    fetchInventariosPorTienda(): Observable<{ results: Inventario[] }> {
-        return this.http.get<any>(
-            `${this.siteURL}/inventarios/`
-        ).pipe(
-            catchError(error => throwError(() => error))
-        );
-    }
-
     fetchInventariosPorTiendaWithPaginationBackend(page: number, page_size: number): Observable<PaginationInventariosResponse> {
         return this.http.get<PaginationInventariosResponse>(
             `${this.siteURL}/inventarios/?page=${page}&page_size=${page_size}`

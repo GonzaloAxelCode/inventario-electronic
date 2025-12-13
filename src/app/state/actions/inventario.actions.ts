@@ -36,7 +36,17 @@ export enum InventarioActionTypes {
     SEARCH_INVENTARIOS_SUCCESS = 'SEARCH_INVENTARIOS_SUCCESS',
     SEARCH_INVENTARIOS_FAIL = 'SEARCH_INVENTARIOS_FAIL',
     CLEAR_SEARCH_INVENTARIOS = 'CLEAR_INVENTARIOS_PRODUCTOS',
+
+
 }
+
+export const loadInventariosFromCache = createAction(
+    '[Inventario] Load From Cache'
+);
+
+export const forceSyncInventarios = createAction(
+    '[Inventario] Force Sync'
+);
 
 
 export const loadInventarios = createAction(

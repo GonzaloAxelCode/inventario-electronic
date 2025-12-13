@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, exhaustMap, map, of } from 'rxjs';
+import { catchError, exhaustMap, from, map, of, switchMap, tap } from 'rxjs';
 
+import { InventarioCacheService } from '@/app/services/inventario-cache.service';
 import { InventarioService } from '@/app/services/inventario.service';
 import { InventarioSearchService } from '@/app/services/search-services/inventario-search.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
@@ -36,9 +37,12 @@ import {
 
     eliminarInventarioSuccess,
 
+    forceSyncInventarios,
+
     loadInventarios,
 
     loadInventariosFail,
+    loadInventariosFromCache,
     loadInventariosSuccess,
     searchInventarios,
 
@@ -59,36 +63,70 @@ const ERRORS_INVENTARIO = {
 export class InventarioEffects {
 
     constructor(
+        private cache: InventarioCacheService,
         private actions$: Actions,
         private inventarioService: InventarioService,
         private inventarioSearchService: InventarioSearchService,
         private toastr: ToastrService,
         private alertService: CustomAlertService
     ) { }
-
+    loadInventariosFromCache$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadInventariosFromCache),
+            switchMap(async () => {
+                const cached = await this.cache.getAll();
+                return loadInventariosSuccess({ inventarios: cached });
+            })
+        )
+    );
     loadInventariosEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(loadInventarios),
-            exhaustMap((action) =>
-                this.inventarioService.fetchInventariosPorTienda().pipe(
-                    map(res => {
+            exhaustMap(() =>
+                from(this.cache.getAll()).pipe(
+                    exhaustMap((cached) => {
+                        // 🟢 SI HAY CACHE → NO FETCH
+                        if (cached.length > 0) {
+                            return of(loadInventariosSuccess({ inventarios: cached }));
+                        }
 
-                        return loadInventariosSuccess({
-
-                            inventarios: res.results,
-
-
-                        })
-                    }),
-                    catchError(error => {
-                        console.error(error);
-
-                        return of(loadInventariosFail({ error }));
+                        // 🔴 SI NO HAY CACHE → FETCH
+                        return this.inventarioService.fetchInventariosPorTienda().pipe(
+                            tap(async res => {
+                                await this.cache.saveAll(res.results);
+                                await this.cache.setLastSync(new Date().toISOString());
+                            }),
+                            map(res =>
+                                loadInventariosSuccess({ inventarios: res.results })
+                            ),
+                            catchError(error => of(loadInventariosFail({ error })))
+                        );
                     })
                 )
             )
         )
     );
+
+
+    forceSyncInventariosEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(forceSyncInventarios),
+            exhaustMap(() =>
+                this.inventarioService.fetchInventariosPorTienda().pipe(
+                    tap(async res => {
+                        await this.cache.clear();
+                        await this.cache.saveAll(res.results);
+                        await this.cache.setLastSync(new Date().toISOString());
+                    }),
+                    map(res =>
+                        loadInventariosSuccess({ inventarios: res.results })
+                    ),
+                    catchError(error => of(loadInventariosFail({ error })))
+                )
+            )
+        )
+    );
+
 
     createInventarioEffect = createEffect(() =>
         this.actions$.pipe(
