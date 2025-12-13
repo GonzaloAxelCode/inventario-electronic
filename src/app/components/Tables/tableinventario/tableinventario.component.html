@@ -1,9 +1,10 @@
-<section class="" [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario">
+<section class="py-10  overflow-y-hidden" [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario">
 
   <!-- Caso 1: no hay inventarios y no se ha hecho búsqueda -->
   <tui-block-status *ngIf="!isTheSearchWasDone 
-           && (inventariosState$ | async)?.inventarios?.length === 0 
-           && !(inventariosState$ | async)?.loadingProductosInventario; else tabla" size="m" class="m-auto px-4">
+           && currentInventarios.length === 0
+           && !(inventariosState$ | async)?.loadingProductosInventario; else contenido" 
+           size="m" class="m-auto px-4">
     <img alt="no data"
       src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
       tuiSlot="top" class="max-w-[200px] sm:max-w-full mx-auto" />
@@ -11,279 +12,234 @@
     <span class="text-center text-xs sm:text-sm">Empieza a crear un inventario</span>
   </tui-block-status>
 
-  <ng-template #tabla>
-    <!-- buscador -->
-    <search tuiSearch class="pb-3 sm:pb-4">
+  <ng-template #contenido>
+    <!-- Buscador (FIJO, fuera del scroll) -->
+    <search tuiSearch class="pb-4 sm:pb-6 px-4">
       <form [formGroup]="form" (submit)="onSubmitSearch()">
         <!-- Campos de búsqueda principales -->
         <fieldset tuiTextfieldSize="s" class="grid grid-cols-1 gap-2 sm:gap-3 mb-3 sm:mb-4">
           <tui-textfield iconStart="@tui.search" class="w-full">
-            <input tuiTheme="ligth" formControlName="nombre" placeholder="Nombre o código"
-              tuiTextfield />
+            <input tuiTheme="ligth" formControlName="nombre" placeholder="Nombre o código" tuiTextfield />
           </tui-textfield>
 
-          <div class="grid grid-cols-2 gap-2 sm:gap-3">
+          <div class=" w-full">
             <tui-select class="w-full" formControlName="categoria" [stringify]="stringify">
               Categoria
               <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
             </tui-select>
 
-            <button size="s" appearance="textfield" tuiButton type="submit" (click)="onSubmitSearch()"
-              [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null"
-              class="w-full">
-              Buscar
-            </button>
           </div>
         </fieldset>
 
         <!-- Resultados y controles -->
-        <fieldset class="flex flex-col gap-2 mb-3 sm:mb-4">
-          <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+        <div class="flex flex-col gap-2 mb-3 sm:mb-4">
+          <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
             <span class="font-medium">
-              Resultados: {{ ( isTheSearchWasDone ? (inventariosState$ | async)?.inventarios_search?.length :
-              (inventariosState$ | async)?.inventarios?.length)}}
+              Resultados: {{ isTheSearchWasDone ? allInventariosSearch.length : allInventarios.length }}
             </span>
             
             <div class="h-4 w-px bg-neutral-300 dark:bg-neutral-600 hidden sm:block"></div>
             
-            <button iconEnd="@tui.list-filter-plus" tuiButton type="button" size="xs" appearance="flat-neutralscale"
-              (click)="expanded = !expanded" class="text-xs">
-              Filtros
-            </button>
-            
+          
             <div class="h-4 w-px bg-neutral-300 dark:bg-neutral-600 hidden sm:block"></div>
             
-            <button appearance="flat-neutralscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
+            <button appearance="primary-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
               (click)="clearSearch()" class="text-xs">
               Limpiar {{ count() ? '(' + count() + ')' : '' }}
             </button>
           </div>
-        </fieldset>
+        </div>
 
-        <!-- Filtros expandibles -->
-        <tui-expand [expanded]="expanded">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-3">
-            <fieldset class="w-full">
+        <!-- Filtros expandibles
+        <div >
+          <div class="flex  gap-3 pb-3">
+            <fieldset class="">
               <tui-input-range formControlName="stockRange">
                 <label tuiLabel class="text-xs sm:text-sm">Rango de Stock</label>
               </tui-input-range>
             </fieldset>
 
-            <fieldset class="w-full">
+            <fieldset class="">
               <tui-input-range formControlName="precioCompraRange">
                 <label tuiLabel class="text-xs sm:text-sm">Rango Precio Compra</label>
               </tui-input-range>
             </fieldset>
 
-            <fieldset class="w-full">
+            <fieldset class="">
               <tui-input-range formControlName="precioVentaRange">
                 <label tuiLabel class="text-xs sm:text-sm">Rango Precio Venta</label>
               </tui-input-range>
             </fieldset>
           </div>
-        </tui-expand>
+        </div>  -->
       </form>
     </search>
 
-    <div class="rounded-lg"
-      [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario || !!(inventariosState$ | async)?.loadingDelete">
+    <!-- CONTENEDOR CON SCROLL INFINITO -->
+    <div #scrollContainer
+      class="rounded-lg overflow-y-auto px-3 "
+      style="max-height: 75vh;"
+      [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario || !!(inventariosState$ | async)?.loadingDelete"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="300"
+      [scrollWindow]="false"
+      [infiniteScrollContainer]="scrollContainer"
+      (scrolled)="onScroll()">
 
       <!-- Caso 2: mostrar contenido si hay inventarios -->
-      <div
-        *ngIf="(isTheSearchWasDone ? ((inventariosState$ | async)?.inventarios_search?.length || 0) : ((inventariosState$ | async)?.inventarios?.length || 0)) > 0">
+      <div *ngIf="currentInventarios.length > 0">
         
-        <!-- Vista de CARDS para móviles -->
-        <div class="block lg:hidden space-y-3 px-2">
-          <div *ngFor="let inventario of (isTheSearchWasDone 
-                                         ? (inventariosState$ | async)?.inventarios_search 
-                                         : (inventariosState$ | async)?.inventarios)"
-            class="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-3 border border-neutral-200 dark:border-neutral-700">
+        <!-- Grid de Cards Moderno -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 px-2 sm:px-0 pb-4">
+          <div *ngFor="let inventario of currentInventarios; trackBy: trackByFn"
+            class="group bg-white dark:bg-neutral-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-neutral-200 dark:border-neutral-700 hover:border-blue-400 dark:hover:border-blue-500">
             
-            <!-- Header con imagen y código -->
-            <div class="flex gap-3 mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
-              <div (click)="onSetImageProduct(inventario); open = true;"
-                class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-sm">
-                <img [src]="inventario?.imagen_producto ? URL_BASE + inventario.imagen_producto : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
-                  [alt]="inventario.imagen_producto || 'Imagen del producto'"
-                  class="w-full h-full object-cover cursor-pointer active:scale-95 transition-transform" />
+            <!-- Imagen del producto -->
+            <div class="relative aspect-square overflow-hidden bg-neutral-100 dark:bg-neutral-900"
+              (click)="onSetImageProduct(inventario); open = true;">
+              <img [src]="inventario?.imagen_producto ? URL_BASE + inventario.imagen_producto : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                [alt]="inventario.producto_nombre"
+                class="w-full h-full object-cover cursor-pointer group-hover:scale-110 transition-transform duration-300" />
+              
+              <!-- Badge de stock bajo -->
+              <div *ngIf="inventario.cantidad <= 3" 
+                class="absolute top-2 right-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-lg">
+                Stock Bajo
               </div>
               
-              <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-sm mb-1">{{ inventario.producto_nombre }}</h3>
-                <p class="text-xs text-orange-600 dark:text-orange-400 mb-2" *ngIf="mostrarAdvertencia(inventario.producto_nombre)">
+              <!-- Badge de estado -->
+              <div *ngIf="!inventario.activo" 
+                class="absolute top-2 left-2 bg-gray-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-lg">
+                Inactivo
+              </div>
+            </div>
+
+            <!-- Contenido del card -->
+            <div class="p-4">
+              <!-- Nombre y SKU -->
+              <div class="mb-3">
+                <h3 class="font-semibold text-base mb-1 line-clamp-2 min-h-[2.5rem]">
+                  {{ inventario.producto_nombre }}
+                </h3>
+                <p class="text-xs text-orange-600 dark:text-orange-400 mb-2" 
+                  *ngIf="mostrarAdvertencia(inventario.producto_nombre)">
                   ⚠️ Producto eliminado
                 </p>
-                
-                <tui-chip iconStart="@tui.scan-barcode" size="xs" class="mb-2">
+                <tui-chip iconStart="@tui.scan-barcode" size="xs">
                   {{ inventario.producto_sku }}
                 </tui-chip>
-                <p class="flex gap-2  font-bold items-center"> <span class="text-xl ">{{inventario.cantidad }}</span> <span class="text-sm "> productos </span> </p>
-                
-               
               </div>
-            </div>
 
-            <!-- Stock y Precio -->
-            <div class="p-2">
-              <!-- Precio -->
-              <div class="">
-                <div class="text-2xl font-bold">
-                  S/. {{ inventario.costo_venta }}
+              <!-- Categoría -->
+              <div class="mb-3">
+                <tui-badge appearance="neutral" size="m" tuiStatus>
+                  {{ inventario.categoria_nombre }}
+                </tui-badge>
+              </div>
+
+              <!-- Stock y Precio -->
+              <div class="flex items-center justify-between mb-4 pb-3 border-b border-neutral-200 dark:border-neutral-700">
+                <div>
+                  <p class="text-xs text-neutral-600 dark:text-neutral-400 mb-1">Stock</p>
+                  <p class="text-3xl font-bold" [ngClass]="getColorClass(inventario.cantidad)">
+                    {{ inventario.cantidad }}
+                  </p>
                 </div>
+                <div class="text-right">
+                  <p class="text-xs text-neutral-600 dark:text-neutral-400 mb-1">Precio</p>
+                  <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                    S/. {{ inventario.costo_venta }}
+                  </p>
+                  <p class="text-xs text-red-400" *ngIf="inventario.costo_venta == 0">Sin costo</p>
+                </div>
+              </div>
+
+              <!-- Advertencias -->
+              <div class="mb-3" *ngIf="inventario.cantidad <= 0 || inventario.costo_venta <= 0 || !inventario.activo">
+                <div class="flex items-center gap-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg text-xs">
+                  <span class="text-yellow-600 dark:text-yellow-400">⚠️</span>
+                  <span class="text-yellow-700 dark:text-yellow-300">
+                    <span *ngIf="inventario.cantidad <= 0">Sin stock</span>
+                    <span *ngIf="inventario.cantidad > 0 && inventario.costo_venta <= 0"> Sin precio</span>
+                    <span *ngIf="!inventario.activo"> Inactivo</span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Botones de acción - Modo Normal -->
+              <div class="grid grid-cols-2 gap-2" *ngIf="mode === 'normal'">
+                <button [disabled]="!!!(userPermissions$ | async)?.can_delete_inventory"
+                  [appearance]="!!(userPermissions$ | async)?.can_delete_inventory ? 'error':'secondary-neutralscale'"
+                  (click)="eliminarInventario(inventario.id)" iconStart="@tui.trash" tuiButton
+                  type="button" size="s" class="w-full text-xs">
+                  Eliminar
+                </button>
                 
+                <button appearance="info" [disabled]="!inventario.activo"
+                  (click)="showDialogEditInventario(inventario)" iconStart="@tui.pencil" tuiButton type="button"
+                  size="s" class="w-full text-xs">
+                  Editar
+                </button>
               </div>
-            </div>
 
-            <!-- Advertencias -->
-            <div class="mb-3" *ngIf="inventario.cantidad <= 0 || inventario.costo_venta <= 0 || !inventario.activo">
-              <div class="flex items-center gap-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg text-xs">
-                <span class="text-yellow-600 dark:text-yellow-400">⚠️</span>
-                <span class="text-yellow-700 dark:text-yellow-300">
-                  <span *ngIf="inventario.cantidad <= 0">Sin stock</span>
-                  <span *ngIf="inventario.cantidad > 0 && inventario.costo_venta <= 0"> Sin precio</span>
-                  <span *ngIf="!inventario.activo"> Inactivo</span>
-                </span>
+              <!-- Botones de acción - Modo Selección -->
+              <div *ngIf="mode === 'select_product_sale_mode'">
+                <button [disabled]="inventario.cantidad <= 0 || !inventario.activo || inventario.costo_venta <= 0"
+                  [appearance]="inventario.cantidad <= 0 || inventario.costo_venta <= 0 || !inventario.activo ? 'secondary-grayscale': 'primary-grayscale'" 
+                  class="w-full"
+                  (click)="cerrarDialogo(inventario)"
+                  [iconStart]="inventario.cantidad <= 0 || inventario.costo_venta <= 0 ? '@tui.lock': '@tui.plus'" 
+                  tuiButton type="button" size="m">
+                  {{ inventario.cantidad <= 0 || inventario.costo_venta <= 0 || !inventario.activo ? 'No disponible' : 'Agregar' }}
+                </button>
               </div>
-            </div>
-
-            <!-- Botones de acción - Modo Normal -->
-            <div class="grid grid-cols-2 gap-2" *ngIf="mode === 'normal'">
-              <button [disabled]="!!!(userPermissions$ | async)?.can_delete_inventory"
-                [appearance]="!!(userPermissions$ | async)?.can_delete_inventory ? 'error':'secondary-neutralscale'"
-                (click)="eliminarInventario(inventario.id)" iconStart="@tui.trash" tuiButton
-                type="button" size="xs" class="w-full text-xs">
-                Eliminar
-              </button>
-              
-              <button appearance="info" [disabled]="!inventario.activo"
-                (click)="showDialogEditInventario(inventario)" iconStart="@tui.pencil" tuiButton type="button"
-                size="xs" class="w-full text-xs">
-                Actualizar
-              </button>
-            </div>
-
-            <!-- Botones de acción - Modo Selección -->
-            <div class="flex gap-2" *ngIf="mode === 'select_product_sale_mode'">
-              <button [disabled]="inventario.cantidad <= 0 || !inventario.activo || inventario.costo_venta <= 0"
-                [appearance]="inventario.cantidad <= 0 || inventario.costo_venta <= 0 || !inventario.activo ? 'secondary-grayscale': 'primary-grayscale'" 
-                class="w-full"
-                (click)="cerrarDialogo(inventario)"
-                [iconStart]="inventario.cantidad <= 0 || inventario.costo_venta <= 0 ? '@tui.lock': '@tui.plus'" 
-                tuiButton type="button" size="m">
-                {{ inventario.cantidad <= 0 || inventario.costo_venta <= 0 || !inventario.activo ? 'No disponible' : 'Agregar' }}
-              </button>
             </div>
           </div>
         </div>
 
-        <!-- Vista de TABLA para desktop -->
-        <div class="hidden lg:block overflow-x-auto">
-          <table tuiTable [columns]="allColumnKeys" size="s" class="w-full min-w-[900px]">
-            <thead>
-              <tr>
-                <th tuiTh class="whitespace-nowrap">Codigo SKU</th>
-                <th tuiTh class="whitespace-nowrap">Imagen</th>
-                <th tuiTh class="whitespace-nowrap">Nombre</th>
-                <th tuiTh class="whitespace-nowrap">Categoria</th>
-                <th tuiTh class="whitespace-nowrap">Stock</th>
-                <th tuiTh class="whitespace-nowrap">Costo Venta</th>
-                <th tuiTh class="whitespace-nowrap">Acciones</th>
-              </tr>
-            </thead>
-            <tbody tuiTbody>
-              <tr *ngFor="let inventario of (isTheSearchWasDone 
-                                         ? (inventariosState$ | async)?.inventarios_search 
-                                         : (inventariosState$ | async)?.inventarios)">
-
-                <td tuiTd>
-                  <div>
-                    <tui-chip size="m">
-
-
-                    <span class="text-md">{{ inventario.producto_sku }}</span>
-                                        </tui-chip>
-                  </div>
-                </td> 
-                
-                <td tuiTd class="text-left">
-                  <div class="flex justify-left items-center py-2">
-                    <div (click)="onSetImageProduct(inventario); open = true;"
-                      class="w-24 h-24 rounded-xl overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
-                      <img [src]="inventario?.imagen_producto ? URL_BASE + inventario.imagen_producto : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
-                        [alt]="inventario.imagen_producto || 'Imagen del producto'"
-                        class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200" />
-                    </div>
-                  </div>
-                </td>
-
-                <td tuiTd>
-                  <div>
-                    <span class="text-lg">{{ inventario.producto_nombre }}
-                      <p class="text-md text-orange-600 dark:text-orange-400" *ngIf="mostrarAdvertencia(inventario.producto_nombre)">
-                        ⚠️ Producto eliminado
-                      </p>
-                    </span>
-                  </div>
-                </td>
-
-                <td tuiTd>
-                  <div>
-                    <tui-badge appearance="neutral" size="xl" tuiStatus>
-                      {{ inventario.categoria_nombre }}
-                    </tui-badge>
-                  </div>
-                </td>
-
-                <td tuiTd>
-                  <div tuiBlockDetails>
-                    <span class="-translate-y-1" [ngClass]="getColorClass(inventario.cantidad)">
-                      {{ inventario.cantidad }}
-                    </span>
-                  </div>
-                </td>
-
-                <td tuiTd>
-                  <div tuiBlockDetails>
-                    <p class="text-2xl">S/. {{ inventario.costo_venta }}</p>
-                  </div>
-                  <p class="text-red-400" *ngIf="inventario.costo_venta == 0">* Sin costo</p>
-                </td>
-
-                <td tuiTd>
-                  <div class="flex gap-2" *ngIf="mode === 'normal'">
-                    <button [disabled]="!!!(userPermissions$ | async)?.can_delete_inventory"
-                      [appearance]="!!(userPermissions$ | async)?.can_delete_inventory ? 'error':'secondary-neutralscale'"
-                      (click)="eliminarInventario(inventario.id)" iconStart="@tui.trash" tuiButtonVertical tuiButton
-                      type="button" class="whitespace-nowrap">
-                      Eliminar
-                    </button>
-                    <button appearance="info" [disabled]="!inventario.activo" tuiButtonVertical
-                      (click)="showDialogEditInventario(inventario)" iconStart="@tui.pencil" tuiButton type="button"
-                      class="whitespace-nowrap">
-                      Actualizar
-                    </button>
-                  </div>
-                  
-                  <div class="flex gap-2" *ngIf="mode === 'select_product_sale_mode'">
-                    <button [disabled]="inventario.cantidad <= 0 || !inventario.activo || inventario.costo_venta <= 0"
-                      [appearance]="inventario.cantidad <= 0 || inventario.costo_venta <= 0 || !inventario.activo ? 'primary-grayscale': 'primary-grayscale'" 
-                      class="w-full"
-                      (click)="cerrarDialogo(inventario)" tuiButtonVertical
-                      [iconStart]="inventario.cantidad <= 0 || inventario.costo_venta <= 0 ? '@tui.lock': '@tui.plus'" 
-                      tuiButton type="button" class="whitespace-nowrap">
-                      Agregar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- Indicador de carga al hacer scroll -->
+        <div *ngIf="loading" class="flex justify-center items-center py-8">
+          <div class="flex flex-col items-center gap-3">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p class="text-sm text-neutral-600 dark:text-neutral-400">Cargando más productos...</p>
+          </div>
         </div>
+
+        <!-- Mensaje cuando no hay más items para cargar -->
+        <div *ngIf="!hasMore && !loading && currentInventarios.length > 0" 
+          class="text-center py-6 border-t border-neutral-200 dark:border-neutral-700">
+          <div class="flex flex-col items-center gap-2">
+            <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+              Has visto todos los productos
+            </p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+              Total: {{ isTheSearchWasDone ? allInventariosSearch.length : allInventarios.length }} productos
+            </p>
+          </div>
+        </div>
+
+        <!-- Contador de productos visibles -->
+        <div *ngIf="hasMore && currentInventarios.length > 0" 
+          class="text-center py-4 text-xs text-neutral-400 dark:text-neutral-500 sticky bottom-0 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-sm">
+          <p>
+            Mostrando <span class="font-semibold">{{ currentInventarios.length }}</span> 
+            de 
+            <span class="font-semibold">{{ isTheSearchWasDone ? allInventariosSearch.length : allInventarios.length }}</span> 
+            productos
+          </p>
+        </div>
+
       </div>
 
       <!-- Caso 3: búsqueda hecha pero sin resultados -->
       <tui-block-status *ngIf="isTheSearchWasDone 
-               && (inventariosState$ | async)?.inventarios_search?.length === 0" size="m" class="m-auto px-4">
+               && currentInventarios.length === 0
+               && !(inventariosState$ | async)?.loadingProductosInventario" 
+               size="m" class="m-auto px-4 py-8">
         <img alt="no matches"
           src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
           tuiSlot="top" class="max-w-[200px] sm:max-w-full mx-auto" />
