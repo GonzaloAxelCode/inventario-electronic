@@ -91,6 +91,7 @@ export interface ItemComprobante {
     tipoAfectacionIgv: string;
     descuento: number
     costo_original: number
+    producto_imagen?: string
 }
 
 export interface VentaProducto {
@@ -108,7 +109,8 @@ export interface VentaProducto {
     precio_unitario: number;
     date_created?: any
     descuento: number
-    costo_original: number
+    costo_original: number,
+
 }
 
 export interface CreateVenta {
