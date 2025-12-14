@@ -197,10 +197,10 @@
                                         Categoría</th>
                                          <th tuiTh class="whitespace-nowrap">Codigo</th>
                                   
+                                    
                                     <th tuiTh *ngIf="displayedColumns.includes('inventario')" class="whitespace-nowrap">
+                                        Venta</th> <th tuiTh *ngIf="displayedColumns.includes('inventario')" class="whitespace-nowrap">
                                         Stock</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('inventario')" class="whitespace-nowrap">
-                                        Venta</th>
                                     <th tuiTh class="text-center whitespace-nowrap">Acciones</th>
                                 </tr>
                             </thead>
@@ -253,7 +253,23 @@
                                     </td>
 
                                   
+ <td tuiTd *ngIf="displayedColumns.includes('inventario')" class="text-center">
+                                        <div class="flex gap-2 justify-center items-center">
 
+
+                                            <div class="flex flex-col">
+                                                <div class="text-2xl font-bold whitespace-nowrap">
+                                                    {{ producto.inventario?.costo_venta | currency:'PEN':'S/ ': '1.2-2'
+                                                    }}
+                                                </div>
+                                                <p class="text-red-400 text-sm"
+                                                    *ngIf="producto.inventario?.costo_venta == 0">
+                                                    * Sin costo
+                                                </p>
+                                            </div>
+
+                                        </div>
+                                    </td>
                                     <td tuiTd *ngIf="displayedColumns.includes('inventario')">
                                         <ng-container *ngIf="!producto.is_inventario">
                                             <div tuiBlockDetails>
@@ -275,23 +291,7 @@
                                         </ng-container>
                                     </td>
 
-                                    <td tuiTd *ngIf="displayedColumns.includes('inventario')" class="text-center">
-                                        <div class="flex gap-2 justify-center items-center">
-
-
-                                            <div class="flex flex-col">
-                                                <div class="text-2xl font-bold whitespace-nowrap">
-                                                    {{ producto.inventario?.costo_venta | currency:'PEN':'S/ ': '1.2-2'
-                                                    }}
-                                                </div>
-                                                <p class="text-red-400 text-sm"
-                                                    *ngIf="producto.inventario?.costo_venta == 0">
-                                                    * Sin costo
-                                                </p>
-                                            </div>
-
-                                        </div>
-                                    </td>
+                                   
 
                                     <td tuiTd>
                                         <div class="flex flex-col gap-2 justify-center ">
