@@ -65,7 +65,7 @@
                       <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300">Ticket</span>
                     </a>
 
-                    <button *ngIf="venta.estado !== 'ANULADA'" (click)="anularVenta(venta.id)"
+                    <button *ngIf="venta.estado !== 'ANULADA'" (click)="anularVenta(venta.id,venta.numero_documento_cliente)"
                       [disabled]="loadingAnularVenta"
                       class="px-3 sm:px-4 py-2 sm:py-3 bg-red-400 dark:bg-red-500 text-white dark:text-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-2">
                       <tui-loader *ngIf="loadingAnularVenta" size="s"

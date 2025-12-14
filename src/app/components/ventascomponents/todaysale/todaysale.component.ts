@@ -90,10 +90,11 @@ export class TodaysaleComponent {
     return valor ? parseFloat(valor.toFixed(2)) : 0.0;
   }
 
-  anularVenta(id: number) {
+  anularVenta(id: number, doc: any) {
     this.store.dispatch(anularVenta({
       ventaId: id,
-      motivo: "Anulación de la operación", tipo_motivo: "01"
+      motivo: "Anulación de la operación", tipo_motivo: "01",
+      anonima: doc == "00000000"
     }))
   }
   private destroy$ = new Subject<void>();
