@@ -1,26 +1,57 @@
 import { ComprobanteElectronico, Venta } from '@/app/models/venta.models';
 
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import { anularVenta, generarComprobanteVenta, generarComprobanteVentaExito } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
-import { CommonModule } from '@angular/common';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { CommonModule, NgForOf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAppearance, TuiButton, TuiDialogContext, TuiExpand, TuiIcon, TuiLoader } from '@taiga-ui/core';
-import { TuiBadge, TuiChip, TuiCopy, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle } from '@taiga-ui/kit';
+import { TuiAppearance, TuiButton, TuiDataList, TuiDialogContext, TuiExpand, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TuiBadge, TuiChip, TuiCopy, TuiDataListWrapper, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiSkeleton, TuiStatus } from '@taiga-ui/kit';
+import { TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
+import { TuiInputModule, TuiInputRangeModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
 import { injectContext } from '@taiga-ui/polymorpheus';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { Subject, takeUntil } from 'rxjs';
 
-import { URL_BASE } from '@/app/services/utils/endpoints';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Actions, ofType } from '@ngrx/effects';
-import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-dialogventadetail',
   standalone: true,
   imports: [CommonModule, TuiPreview,
-    TuiPreviewTitle, TuiIcon, TuiPreviewDialogDirective, TuiLoader, TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiChip, TuiLoader, TuiExpand, TuiCopy],
+    TuiPreviewTitle, CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TuiDataListWrapper,
+    TuiDataList,
+    TuiSelectModule,
+    TuiTextareaModule,
+    TuiButton,
+    TuiTextfield,
+    TuiTextfieldControllerModule,
+    TuiChip,
+    TuiInputModule,
+    TuiAppearance,
+    TuiTable,
+    TuiBadge,
+    InfiniteScrollModule,
+    TuiStatus,
+    NgForOf,
+    ScrollingModule,
+    TuiInputRangeModule,
+    TuiSearch,
+    TuiSkeleton,
+    TuiExpand,
+    TuiBlockStatus,
+    TuiPreview,
+    TuiPreviewTitle,
+    TuiPreviewDialogDirective, TuiIcon, TuiPreviewDialogDirective, TuiLoader, TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiChip, TuiLoader, TuiExpand, TuiCopy],
   templateUrl: './dialogventadetail.component.html',
   styleUrl: './dialogventadetail.component.scss'
 })
