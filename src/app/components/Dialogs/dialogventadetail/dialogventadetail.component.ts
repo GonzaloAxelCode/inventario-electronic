@@ -9,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAppearance, TuiButton, TuiDialogContext, TuiExpand, TuiIcon, TuiLoader } from '@taiga-ui/core';
-import { TuiBadge, TuiChip, TuiCopy } from '@taiga-ui/kit';
+import { TuiBadge, TuiChip, TuiCopy, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
 
 import { URL_BASE } from '@/app/services/utils/endpoints';
@@ -19,7 +19,8 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-dialogventadetail',
   standalone: true,
-  imports: [CommonModule, TuiIcon, TuiLoader, TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiChip, TuiLoader, TuiExpand, TuiCopy],
+  imports: [CommonModule, TuiPreview,
+    TuiPreviewTitle, TuiIcon, TuiPreviewDialogDirective, TuiLoader, TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiChip, TuiLoader, TuiExpand, TuiCopy],
   templateUrl: './dialogventadetail.component.html',
   styleUrl: './dialogventadetail.component.scss'
 })
@@ -28,6 +29,8 @@ export class DialogventadetailComponent implements OnInit {
   public venta: Venta = this.context.data ?? {} as Venta;
   protected expanded = false;
   pdfUrl!: SafeResourceUrl;
+  protected index = 0;
+  protected length = 1;
 
   public comprobante: ComprobanteElectronico = this.venta?.comprobante ?? {} as ComprobanteElectronico;
   constructor(private store: Store<AppState>, private sanitizer: DomSanitizer, private actions$: Actions
@@ -50,6 +53,20 @@ export class DialogventadetailComponent implements OnInit {
     });
   }
 
+  open = false;
+  protected titles = ["Producto Sin Imagen"]
+  protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
+
+  onSetImageProduct(item: any) {
+    const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
+
+    const imagenFinal = item?.imagen_producto
+      ? URL_BASE + item.imagen_producto
+      : placeholder;
+
+    this.titles = [item.descripcion || "Producto Sin Nombre"];
+    this.content = [imagenFinal];
+  }
 
   stripDomain(url?: string): string {
     if (!url) return '';
@@ -68,6 +85,22 @@ export class DialogventadetailComponent implements OnInit {
         .replace(/^https?:\/\/[^\/]+/i, '') // quitar dominio
         .replace(/^\/?axelmovilcomprobantes\/?/, '/'); // quitar subcarpeta
     }
+  }
+  enviarWhatsApp(
+    event: MouseEvent,
+    pdfUrl: string,
+    telefono: string
+  ) {
+    event.preventDefault();   // ⛔ evita navegación
+    event.stopPropagation();  // ⛔ evita clicks fantasmas
+
+    const mensaje = `Hola te saluda Movil Axel,
+Te envío tu comprobante electrónico:
+${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
+
+    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+
+    window.open(url, '_blank');
   }
 
 

@@ -29,6 +29,7 @@ import * as dayjs from 'dayjs';
 import * as advancedFormat from 'dayjs/plugin/advancedFormat';
 import * as localizedFormat from 'dayjs/plugin/localizedFormat';
 import { BehaviorSubject, map, Observable, take } from 'rxjs';
+import { ButtonupdateComponent } from "../../buttonupdate/buttonupdate.component";
 
 //@ts-ignore
 dayjs.extend(advancedFormat);    //@ts-ignore
@@ -43,7 +44,6 @@ dayjs.locale('es');
     AsyncPipe,
     NgIf,
     NgForOf,
-
     // taiga
     TuiButton,
     TuiBadge,
@@ -62,7 +62,7 @@ dayjs.locale('es');
     TodaysalestableComponent,
     MostsalesproductsComponent,
     CanceledsalesComponent,
-    PruebastextComponent],
+    PruebastextComponent, ButtonupdateComponent],
   templateUrl: './listallventas.component.html',
   styleUrl: './listallventas.component.scss'
 })
@@ -131,6 +131,17 @@ export class ListallventasComponent {
     this.form.reset();
 
   }
+  refreshVentas() {
+    const initialRange = this.range;
+    this.store.dispatch(cargarVentasTienda({
+      from_date: [initialRange.from.year, initialRange.from.month, initialRange.from.day],
+      to_date: [initialRange.to.year, initialRange.to.month, initialRange.to.day],
+      page: 1,
+      page_size: PAGE_SIZE_VENTAS
+
+    }))
+  }
+
   ngOnInit() {
     this.store.select(selectUsersState).pipe(
       map(userState => userState.user.tienda)

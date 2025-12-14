@@ -26,11 +26,11 @@
           <div class="space-y-3 mb-4">
 
             <!-- Grid responsive: 1 col móvil, 2 cols tablet, 3 cols desktop, 6 cols xl -->
-            <div class="flex flex-wrap sm:flex-nowrap gap-3 w-full">
+            <div class="flex flex-wrap lg:flex-nowrap gap-3 w-full">
 
               <!-- Búsqueda por nombre cliente -->
               <tui-textfield iconStart="@tui.search" class="w-full">
-                <input size="s"   formControlName="nombre_cliente" placeholder="Buscar cliente" tuiTextfield />
+                <input size="s" formControlName="nombre_cliente" placeholder="Buscar cliente" tuiTextfield />
               </tui-textfield>
 
               <!-- Método de Pago -->
@@ -39,47 +39,54 @@
                   <span class="hidden sm:inline">Método de Pago</span>
                   <span class="sm:hidden">Método</span>
                 </ng-container>
-                <select placeholder="Método pago" size="s"  tuiSelect [items]="metodos_pago"></select>
+                <select placeholder="Método pago" size="s" tuiSelect [items]="metodos_pago"></select>
               </tui-select>
 
 
 
               <!-- Tipo Comprobante -->
-              <tui-select class="w-full "   formControlName="tipo_comprobante">
+              <tui-select class="w-full " formControlName="tipo_comprobante">
                 <ng-container ngProjectAs="tuiLabel">
                   <span class="hidden sm:inline">Tipo Comprobante</span>
                   <span class="sm:hidden">Comprobante</span>
                 </ng-container>
-                <select placeholder="Comprobante"size="s"  tuiSelect [items]="tipoComprobantes"></select>
+                <select placeholder="Comprobante" size="s" tuiSelect [items]="tipoComprobantes"></select>
               </tui-select>
 
 
               <!-- Número Comprobante -->
               <tui-textfield iconStart="@tui.search" class="w-full">
-                <input formControlName="numero_comprobante" placeholder="N° Comprobante"
-                  tuiTextfield size="s"  />
+                <input formControlName="numero_comprobante" placeholder="N° Comprobante" tuiTextfield size="s" />
               </tui-textfield>
 
               <!-- DNI o RUC -->
               <tui-textfield iconStart="@tui.search" class="w-full">
-                <input  formControlName="numero_documento_cliente" placeholder="DNI o RUC"
-                  tuiTextfield size="s" />
+                <input formControlName="numero_documento_cliente" placeholder="DNI o RUC" tuiTextfield size="s" />
               </tui-textfield>
-              
 
 
 
-                
 
 
 
-            </div><button type="submit"
-                  loading="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas"
-                  iconStart="@tui.search" tuiButton appearance="textfield" tuiButtonVertical
-                  [disabled]="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas">
-                  Buscar
-                </button>
-          </div>
+
+
+            </div>
+            <div class="flex items-center gap-3">
+ <button type="submit"
+              loading="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas"
+              iconStart="@tui.search" tuiButton appearance="textfield" tuiButtonVertical
+              [disabled]="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas">
+              Buscar
+            </button>
+            <app-buttonupdate [func]="refreshVentas.bind(this)"
+              [loading]="!!(ventasState$ | async)?.loadingLoadVentas"></app-buttonupdate>
+
+          
+            </div>
+           
+          
+            </div>
 
           <!-- Sección de Resultados y Limpiar -->
           <fieldset class="mb-4">

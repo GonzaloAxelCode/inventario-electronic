@@ -1,5 +1,6 @@
 import { Categoria } from '@/app/models/categoria.models';
 import { DialogUpdateCategoriaService } from '@/app/services/dialogs-services/dialog-updatecategoria.service';
+import { loadClientes } from '@/app/state/actions/cliente.actions';
 import { AppState } from '@/app/state/app.state';
 import { ClienteState } from '@/app/state/reducers/cliente.reducer';
 import { selectCliente } from '@/app/state/selectors/cliente.selectors';
@@ -10,17 +11,18 @@ import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAlertService, TuiAppearance, TuiButton } from '@taiga-ui/core';
+import { TuiAlertService, TuiAppearance, TuiButton, TuiLoader } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiAvatar, TuiBadge, TuiChip, TuiConfirmData, TuiRadio, TuiSkeleton } from '@taiga-ui/kit';
 import { TuiBlockStatus } from '@taiga-ui/layout';
 import { Observable } from 'rxjs';
+import { ButtonupdateComponent } from '../../buttonupdate/buttonupdate.component';
 @Component({
   selector: 'app-tableclientes',
   standalone: true,
 
   imports: [CommonModule, TuiChip, FormsModule, TuiTable, CommonModule,
-    TuiAvatar,
-    TuiRadio,
+    TuiAvatar, TuiLoader,
+    TuiRadio, ButtonupdateComponent,
     FormsModule, TuiSkeleton,
     TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiBlockStatus
   ],
@@ -48,7 +50,9 @@ export class TableClientesComponent implements OnInit {
     this.selectClientes$ = this.store.select(selectCliente);
 
   }
-
+  refreshClientes() {
+    this.store.dispatch(loadClientes())
+  }
   private readonly dialogs = inject(TuiResponsiveDialogService);
   private readonly alerts = inject(TuiAlertService);
   protected onDeleteCliente(id: any): void {

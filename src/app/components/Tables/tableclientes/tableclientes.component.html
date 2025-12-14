@@ -1,4 +1,11 @@
-<div class="rounded-lg h-[200px] h-min-[200px]" [tuiSkeleton]="!!(selectClientes$ | async)?.loadingClientes">
+  <tui-loader [overlay]="true"
+        [showLoader]="!!(selectClientes$ | async)?.loadingClientes">
+      
+      
+      
+
+
+<div class="rounded-lg ">
 
   <tui-block-status
     *ngIf="(selectClientes$ | async)?.clientes?.length === 0 && !(selectClientes$ | async)?.loadingClientes; else  tabla1"
@@ -16,27 +23,30 @@
 
   <ng-template #tabla1>
 
-
+   <app-buttonupdate
+    [func]="refreshClientes.bind(this)"
+    [loading]="!!(selectClientes$ | async)?.loadingClientes">
+  </app-buttonupdate>
     <table tuiTable size="s" class="my-3">
       <thead>
         <tr>
           <th tuiTh>ID</th>
-                    <th tuiTh>Imagen</th>
+          <th tuiTh>Imagen</th>
           <th tuiTh>Nombres</th>
-          
+
           <th tuiTh>Telefono</th>
           <th tuiTh>Correo Email</th>
           <th tuiTh>Direccion</th>
-          
+
         </tr>
       </thead>
       <tbody tuiTbody *ngIf="(selectClientes$| async)?.clientes?.length">
         <tr *ngFor="let cliente of (selectClientes$| async)?.clientes">
           <td tuiTd>{{ cliente.id }}</td>
-<td tuiTd>
-<tui-avatar src="@tui.user" />
+          <td tuiTd>
+            <tui-avatar src="@tui.user" />
 
-           
+
           </td>
 
 
@@ -46,14 +56,14 @@
           </td>
 
           <td tuiTd>
-<tui-chip         iconStart="@tui.phone"
- size="s" *ngIf="cliente.phone" appearance="positive">{{ cliente.phone  }}</tui-chip>
- <span *ngIf="!cliente.phone" class="text-sm">
+            <tui-chip iconStart="@tui.phone" size="s" *ngIf="cliente.phone" appearance="positive">{{ cliente.phone
+              }}</tui-chip>
+            <span *ngIf="!cliente.phone" class="text-sm">
 
-  {{ "Sin telefono"}}
- </span>
- 
-            
+              {{ "Sin telefono"}}
+            </span>
+
+
           </td>
 
           <td tuiTd>
@@ -62,13 +72,13 @@
           </td>
           <td tuiTd>
 
-            {{ cliente.address  || "Sin Direccion"}}
+            {{ cliente.address || "Sin Direccion"}}
           </td>
 
 
-        
+
         </tr>
       </tbody>
     </table>
   </ng-template>
-</div>
+</div>      </tui-loader>
