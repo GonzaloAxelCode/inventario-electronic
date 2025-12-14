@@ -195,8 +195,8 @@
                                         Nombre/Detalles</th>
                                     <th tuiTh *ngIf="displayedColumns.includes('categoria')" class="whitespace-nowrap">
                                         Categoría</th>
-                                    <th tuiTh *ngIf="displayedColumns.includes('fechaCreacion')"
-                                        class="whitespace-nowrap">Fecha Creación</th>
+                                         <th tuiTh class="whitespace-nowrap">Codigo</th>
+                                  
                                     <th tuiTh *ngIf="displayedColumns.includes('inventario')" class="whitespace-nowrap">
                                         Stock</th>
                                     <th tuiTh *ngIf="displayedColumns.includes('inventario')" class="whitespace-nowrap">
@@ -247,11 +247,12 @@
                                             ⚠️ Urgente: Asignar una nueva categoría
                                         </p>
                                     </td>
+                                     <td tuiTd *ngIf="displayedColumns.includes('categoria')">
 
-                                    <td tuiTd *ngIf="displayedColumns.includes('fechaCreacion')"
-                                        class="whitespace-nowrap">
-                                        {{ producto.fecha_creacion | date:'dd/MM/yyyy' }}
+                                       <app-barcode [sku]="producto.sku"></app-barcode>
                                     </td>
+
+                                  
 
                                     <td tuiTd *ngIf="displayedColumns.includes('inventario')">
                                         <ng-container *ngIf="!producto.is_inventario">

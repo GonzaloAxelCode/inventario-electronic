@@ -29,6 +29,7 @@ import { tuiCountFilledControls } from '@taiga-ui/cdk';
 import type { TuiConfirmData } from '@taiga-ui/kit';
 import { TuiBlockDetails, TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
 import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
+import { BarcodeComponent } from '../../barcode/barcode.component';
 
 @Component({
   selector: 'app-tableproduct',
@@ -40,7 +41,7 @@ import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy'
     TuiButton,
     TuiTable,
     TuiBlockStatus,
-
+    BarcodeComponent,
     TuiButton, TuiBlockDetails,
     TuiPagination,
     TuiTextfield, TuiSearch, FormsModule, TuiDataListWrapper, NgForOf,
