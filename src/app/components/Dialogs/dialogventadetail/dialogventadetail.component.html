@@ -223,8 +223,17 @@
               <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
                 <tr *ngFor="let item of comprobante.items" class="group">
                   <td class="py-4">
-                    <img [src]="item.producto_imagen" alt="{{ item.descripcion }}" class="w-12 h-12 object-cover rounded">
-                  </td>
+                    
+                    
+
+
+                   <div 
+                                    class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-sm">
+                                    <img loading="lazy"
+                                        [src]="item.producto_imagen ? URL_BASE + item.producto_imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                                        [alt]="item.descripcion"
+                                        class="w-full h-full object-cover cursor-pointer active:scale-95 transition-transform" />
+                                </div>                  </td>
                   <td class="py-4">
                     <p class="text-sm sm:text-md font-medium text-neutral-900 dark:text-neutral-100">
                       {{ item.descripcion }}

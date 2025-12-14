@@ -12,6 +12,7 @@ import { TuiAppearance, TuiButton, TuiDialogContext, TuiExpand, TuiIcon, TuiLoad
 import { TuiBadge, TuiChip, TuiCopy } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
 
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Actions, ofType } from '@ngrx/effects';
 import { Subject, takeUntil } from 'rxjs';
@@ -34,7 +35,7 @@ export class DialogventadetailComponent implements OnInit {
     console.log(this.venta)
 
   }
-
+  URL_BASE = URL_BASE
   prevPdfTicket(url: string) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url + "#toolbar=1&navpanes=0&scrollbar=0&view=FitH");
   }
