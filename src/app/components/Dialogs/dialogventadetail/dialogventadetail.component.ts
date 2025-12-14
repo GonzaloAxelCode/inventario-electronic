@@ -139,8 +139,8 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
     return valor ? parseFloat(valor.toFixed(2)) : 0.0;
   }
 
-  anularVenta(id: number) {
-    this.store.dispatch(anularVenta({ ventaId: id, motivo: "Anulación de la operación", tipo_motivo: "01" }))
+  anularVenta(id: number, doc: string) {
+    this.store.dispatch(anularVenta({ ventaId: id, motivo: "Anulación de la operación", tipo_motivo: "01", anonima: doc == "00000000" }))
   }
   private destroy$ = new Subject<void>();
 

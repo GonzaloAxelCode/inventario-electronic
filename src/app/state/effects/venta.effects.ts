@@ -255,9 +255,9 @@ export class VentaEffects {
     anularVentaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(anularVenta),
-            exhaustMap(({ ventaId, motivo, tipo_motivo }) =>
+            exhaustMap(({ ventaId, motivo, tipo_motivo, anonima }) =>
                 // Llamamos al servicio que emite la nota de crédito (anula la venta)
-                this.ventaService.anularVenta(ventaId, motivo, tipo_motivo).pipe(
+                this.ventaService.anularVenta(ventaId, motivo, tipo_motivo, anonima).pipe(
                     map((response) => {
                         this.alertService.showSuccess('La venta fue anulada correctamente', 'Nota de Crédito emitida').subscribe();
 

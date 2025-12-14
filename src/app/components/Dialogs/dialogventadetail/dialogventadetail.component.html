@@ -104,7 +104,7 @@
 
 
     <!-- Anular -->
-    <button *ngIf="venta.estado !== 'ANULADA'" (click)="anularVenta(venta.id)"
+    <button *ngIf="venta.estado !== 'ANULADA'" (click)="anularVenta(venta.id,venta.numero_documento_cliente)"
       [disabled]="loadingAnularVenta"
       class="flex flex-col items-center justify-center gap-1 sm:gap-2
              px-3 sm:px-4 py-2 sm:py-3

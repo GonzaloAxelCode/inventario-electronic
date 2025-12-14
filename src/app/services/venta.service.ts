@@ -180,11 +180,12 @@ export class VentaService {
     }
 
 
-    anularVenta(ventaId: number, motivo: string, tipo_motivo: string): Observable<any> {
+    anularVenta(ventaId: number, motivo: string, tipo_motivo: string, anonima: boolean): Observable<any> {
         const body = {
             venta_id: ventaId,
             motivo: motivo,
-            tipo_motivo: tipo_motivo // Ejemplo: "01" → Anulación de la operación
+            tipo_motivo: tipo_motivo // Ejemplo: "01" → Anulación de la operación,
+            , anonima: anonima
         };
 
         return this.http.post<any>(

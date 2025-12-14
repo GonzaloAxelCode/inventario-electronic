@@ -233,7 +233,7 @@ export const clearVentaSearch = createAction(
 
 export const anularVenta = createAction(
     VentaActionTypes.ANULAR_VENTA,
-    props<{ ventaId: number, motivo: string, tipo_motivo: string }>() // enviamos el motivo para SUNAT
+    props<{ ventaId: number, motivo: string, tipo_motivo: string, anonima: boolean }>() // enviamos el motivo para SUNAT
 );
 
 export const anularVentaExito = createAction(
