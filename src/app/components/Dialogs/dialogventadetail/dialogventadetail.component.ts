@@ -12,7 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAppearance, TuiButton, TuiDataList, TuiDialogContext, TuiExpand, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiBadge, TuiChip, TuiCopy, TuiDataListWrapper, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiSkeleton, TuiStatus } from '@taiga-ui/kit';
+import { TuiBadge, TuiChip, TuiCopy, TuiDataListWrapper, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiSegmented, TuiSegmentedDirective, TuiSkeleton, TuiStatus } from '@taiga-ui/kit';
 import { TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputModule, TuiInputRangeModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
 import { injectContext } from '@taiga-ui/polymorpheus';
@@ -26,7 +26,7 @@ import { Actions, ofType } from '@ngrx/effects';
   standalone: true,
   imports: [CommonModule, TuiPreview,
     TuiPreviewTitle, CommonModule,
-    FormsModule,
+    FormsModule, TuiSegmented, TuiSegmentedDirective,
     ReactiveFormsModule,
     TuiDataListWrapper,
     TuiDataList,
@@ -62,6 +62,8 @@ export class DialogventadetailComponent implements OnInit {
   pdfUrl!: SafeResourceUrl;
   protected index = 0;
   protected length = 1;
+  selectedState: 'original' | 'anulado' = 'original';
+
 
   public comprobante: ComprobanteElectronico = this.venta?.comprobante ?? {} as ComprobanteElectronico;
   constructor(private store: Store<AppState>, private sanitizer: DomSanitizer, private actions$: Actions
@@ -69,6 +71,17 @@ export class DialogventadetailComponent implements OnInit {
     console.log(this.venta)
 
   }
+  numeroTelefonico = '';
+  numeroInvalido = true;
+
+  validarNumero(valor: string): void {
+    const soloNumeros = valor.replace(/\D/g, '');
+
+    // solo validar, NO modificar el ngModel directamente
+    this.numeroInvalido = soloNumeros.length !== 9;
+  }
+
+
   URL_BASE = URL_BASE
   prevPdfTicket(url: string) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url + "#toolbar=1&navpanes=0&scrollbar=0&view=FitH");
@@ -129,7 +142,7 @@ export class DialogventadetailComponent implements OnInit {
 Te envío tu comprobante electrónico:
 ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
 
-    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+    const url = `https://wa.me/51${telefono}?text=${encodeURIComponent(mensaje)}`;
 
     window.open(url, '_blank');
   }

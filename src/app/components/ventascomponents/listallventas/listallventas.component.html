@@ -26,7 +26,7 @@
           <div class="space-y-3 mb-4">
 
             <!-- Grid responsive: 1 col móvil, 2 cols tablet, 3 cols desktop, 6 cols xl -->
-            <div class="flex flex-wrap lg:flex-nowrap gap-3 w-full">
+            <div class="flex flex-wrap xl:flex-nowrap gap-3 w-full">
 
               <!-- Búsqueda por nombre cliente -->
               <tui-textfield iconStart="@tui.search" class="w-full">
@@ -133,10 +133,10 @@
                   <span class="text-lg font-bold text-neutral-900 dark:text-white">{{venta.id}}</span>
                 </div>
 
-                <tui-badge [appearance]="venta.estado === 'ANULADA' ? 'error' : 
-              venta.estado === 'Completada' ? 'positive' : 
-              venta.estado === 'En Espera Sunat' ? 'warning' : 'neutral'" tuiStatus size="s" class="text-xs">
-                  {{ venta.estado }}
+                <tui-badge [appearance]="venta.comprobante.estado_sunat === 'RECHAZADO' ? 'error' :
+                    venta.comprobante.estado_sunat === 'ACEPTADO' ? 'positive' :
+                    venta.comprobante.estado_sunat === 'PENDIENTE' ? 'warning' : 'neutral'" tuiStatus size="s" class="text-xs">
+                  {{ venta.comprobante.estado_sunat }}
                 </tui-badge>
               </div>
 
@@ -274,11 +274,11 @@
                 <!-- ESTADO, TOTAL Y ACCIONES -->
                 <div class="flex items-center gap-4 flex-shrink-0">
                   <!-- ESTADO -->
-                  <tui-badge [appearance]="venta.estado === 'ANULADA' ? 'error' :
-                    venta.estado === 'Completada' ? 'positive' :
-                    venta.estado === 'En Espera Sunat' ? 'warning' : 'neutral'" tuiStatus size="m"
+                  <tui-badge [appearance]="venta.comprobante.estado_sunat === 'RECHAZADO' ? 'error' :
+                    venta.comprobante.estado_sunat === 'ACEPTADO' ? 'positive' :
+                    venta.comprobante.estado_sunat === 'PENDIENTE' ? 'warning' : 'neutral'" tuiStatus size="m"
                     class="text-sm font-semibold whitespace-nowrap">
-                    {{ venta.estado }}
+                    {{ venta.comprobante.estado_sunat }}
                   </tui-badge>
 
                   <!-- TICKET -->

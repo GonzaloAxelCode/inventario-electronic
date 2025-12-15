@@ -159,18 +159,20 @@ export class VentaEffects {
             ofType(crearVenta),
             exhaustMap(({ venta }) => {
                 const servicio = venta.tipoComprobante === 'Anonima'
-                    ? this.ventaService.createVentaAnonima(venta)
+                    ? this.ventaService.createVenta(venta)
                     : venta.is_send_sunat ? this.ventaService.createVenta(venta) :
                         this.ventaService.createVentaPendiente(venta)
 
 
-
-
-
                 return servicio.pipe(
                     map(createdVenta => {
-                        this.alertService.showSuccess('Venta creada exitosamente', 'Éxito').subscribe();
-                        this.dialogServiceVentaDetail.open(createdVenta).subscribe();
+                        if (createdVenta.comprobante.estado_sunat === 'RECHAZADO') {
+                            this.alertService.showError('La venta fue creada pero el comprobante fue rechazado por SUNAT', 'Error SUNAT').subscribe();
+                        } else {
+                            this.alertService.showSuccess('Venta creada exitosamente y Fue Aceptada por SUNAT', 'Éxito').subscribe();
+                            this.dialogServiceVentaDetail.open(createdVenta).subscribe();
+                        }
+
                         return crearVentaExito({ venta: createdVenta });
                     }),
                     catchError(error => {

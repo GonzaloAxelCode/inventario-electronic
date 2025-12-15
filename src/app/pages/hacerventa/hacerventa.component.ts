@@ -601,8 +601,8 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       is_save_user: this.ventaForm.get("is_save_user")?.value
     }
 
-    console.log(preparedData)
     this.store.dispatch(crearVenta({ venta: preparedData }));
+
 
     this.actions$.pipe(
       ofType(crearVentaExito),
@@ -611,7 +611,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       this.store.dispatch(updateStockMultiple({ productos: preparedData.productos }));
       this.borrarCliente()
 
-      this.productosFormArray.clear();
+
       this.calcularTotales();
 
     });
