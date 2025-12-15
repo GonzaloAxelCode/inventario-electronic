@@ -3,7 +3,6 @@ import { checkTokenAction } from '@/app/state/actions/auth.actions';
 import { loadCategorias } from '@/app/state/actions/categoria.actions';
 import { cargarProductosMenorStock, loadInventarios } from '@/app/state/actions/inventario.actions';
 import { loadProductosAction } from '@/app/state/actions/producto.actions';
-import { loadProveedores } from '@/app/state/actions/proveedor.actions';
 import { loadTiendasAction } from '@/app/state/actions/tienda.actions';
 import { loadUserAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
@@ -13,7 +12,6 @@ import { Store } from '@ngrx/store';
 import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
 import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { loadCaja } from '../actions/caja.actions';
 import { loadClientes } from '../actions/cliente.actions';
 import { cargarResumenVentas, cargarTopProductosVentasHoy, cargarVentasRangoFechasTienda, cargarVentasTienda, cargarVentasTiendaToday } from '../actions/venta.actions';
 
@@ -37,21 +35,12 @@ export class AppEffects {
             this.actions$.pipe(
                 ofType('@ngrx/effects/init'),
                 tap(() => {
+                    const initialRange = this.range;
                     this.store.dispatch(checkTokenAction());
                     this.store.dispatch(loadUserAction());
-                    this.store.dispatch(loadCategorias());
-                    this.store.dispatch(loadProductosAction({ page: 1, page_size: PAGE_SIZE_PRODUCTS }));
-                    this.store.dispatch(loadProveedores());
-                    this.store.dispatch(loadClientes());
-                    this.store.dispatch(cargarVentasTiendaToday())
-                    this.store.dispatch(loadTiendasAction());
                     this.store.dispatch(loadInventarios());
-
-                    this.store.dispatch(cargarProductosMenorStock());
-                    const initialRange = this.range;
-                    this.store.dispatch(cargarTopProductosVentasHoy());
-                    this.store.dispatch(cargarResumenVentas());
-
+                    this.store.dispatch(loadProductosAction({ page: 1, page_size: PAGE_SIZE_PRODUCTS }));
+                    this.store.dispatch(cargarVentasTiendaToday())
                     this.store.dispatch(cargarVentasTienda({
                         page_size: PAGE_SIZE_VENTAS,
                         page: 1,
@@ -59,13 +48,20 @@ export class AppEffects {
                         to_date: [initialRange.to.year, initialRange.to.month, initialRange.to.day]
 
                     }))
+                    this.store.dispatch(cargarTopProductosVentasHoy());
+                    this.store.dispatch(cargarResumenVentas());
+
+                    this.store.dispatch(loadTiendasAction());
+                    this.store.dispatch(cargarProductosMenorStock());
 
                     this.store.dispatch(cargarVentasRangoFechasTienda({
 
                         fromDate: new Date(initialRange.from.year, initialRange.from.month, initialRange.from.day),
                         toDate: new Date(initialRange.to.year, initialRange.to.month, initialRange.to.day)
                     }));
-                    this.store.dispatch(loadCaja());
+                    this.store.dispatch(loadCategorias());
+                    this.store.dispatch(loadClientes());
+                    // this.store.dispatch(loadCaja());
 
                 })
             ),

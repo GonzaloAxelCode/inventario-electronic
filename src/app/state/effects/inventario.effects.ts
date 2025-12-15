@@ -70,6 +70,32 @@ export class InventarioEffects {
         private toastr: ToastrService,
         private alertService: CustomAlertService
     ) { }
+
+    // 🔹 Cargar todos los clientes
+    loadInventariosSync$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(forceSyncInventarios),
+            switchMap(() =>
+                this.inventarioService.fetchInventariosPorTienda().pipe(
+
+                    tap(res => {
+                        // side effects (cache)
+                        this.cache.saveAll(res.results);
+                        this.cache.setLastSync(new Date().toISOString());
+                    }),
+
+                    map(res =>
+                        loadInventariosSuccess({ inventarios: res.results })
+                    ),
+
+                    catchError(error =>
+                        of(loadInventariosFail({ error }))
+                    )
+                )
+            )
+        )
+    );
+
     loadInventariosFromCache$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loadInventariosFromCache),

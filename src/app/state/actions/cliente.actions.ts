@@ -1,4 +1,5 @@
 import { Cliente, ClienteCreate, ClienteUpdate } from '@/app/models/cliente.models';
+import { QuerySearchCliente } from '@/app/services/cliente.service';
 import { createAction, props } from '@ngrx/store';
 
 
@@ -25,8 +26,21 @@ export enum ClienteActionTypes {
 
     DEACTIVATE_CLIENTE = '[Cliente] Deactivate Cliente',
     DEACTIVATE_CLIENTE_SUCCESS = '[Cliente] Deactivate Cliente Success',
-    DEACTIVATE_CLIENTE_FAIL = '[Cliente] Deactivate Cliente Fail'
+    DEACTIVATE_CLIENTE_FAIL = '[Cliente] Deactivate Cliente Fail',
+    SEARCH_CLIENTES = 'SEARCH_CLIENTES',
+    SEARCH_CLIENTES_SUCCESS = 'SEARCH_CLIENTES_SUCCESS',
+    SEARCH_CLIENTES_FAIL = 'SEARCH_CLIENTES_FAIL',
+    CLEAR_SEARCH_CLIENTES = 'CLEAR_CLIENTES',
+
+
 }
+export const loadClientesFromCache = createAction(
+    '[Cliente] Load From Cache'
+);
+
+export const forceSyncClientes = createAction(
+    '[Cliente] Force Sync'
+);
 
 // 🔹 Cargar todos los clientes
 export const loadClientes = createAction(ClienteActionTypes.LOAD_CLIENTES);
@@ -107,4 +121,21 @@ export const deleteClienteSuccess = createAction(
 export const deleteClienteFail = createAction(
     ClienteActionTypes.DELETE_CLIENTE_FAIL,
     props<{ error: any }>()
+);
+
+
+export const searchClientes = createAction(
+    ClienteActionTypes.SEARCH_CLIENTES,
+    props<{ clientes: Cliente[], query: QuerySearchCliente }>()
+);
+export const searchClientesSuccess = createAction(
+    ClienteActionTypes.SEARCH_CLIENTES_SUCCESS,
+    props<{ clientes_search: Cliente[], search_found: boolean }>()
+);
+export const searchClientesFail = createAction(
+    ClienteActionTypes.SEARCH_CLIENTES_FAIL,
+    props<{ error: any }>()
+);
+export const clearSearchClientes = createAction(
+    ClienteActionTypes.CLEAR_SEARCH_CLIENTES,
 );

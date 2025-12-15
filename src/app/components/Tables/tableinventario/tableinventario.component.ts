@@ -60,7 +60,7 @@ import { map, Observable, Subject, takeUntil } from 'rxjs';
     TuiBlockStatus,
     TuiPreview,
     TuiPreviewTitle,
-    TuiPreviewDialogDirective
+    TuiPreviewDialogDirective, TuiTextfield, FormsModule, ReactiveFormsModule
   ],
   templateUrl: './tableinventario.component.html',
   providers: [
@@ -122,10 +122,6 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
     precioCompraRange: new FormControl<[number, number] | null>(null),
     precioVentaRange: new FormControl<[number, number] | null>(null)
   });
-
-  filteredData: any = []
-  private page = 1;
-  private pageSize = 20;
 
   selectCategorias$?: Observable<Categoria[]>;
   tiendaUser!: number

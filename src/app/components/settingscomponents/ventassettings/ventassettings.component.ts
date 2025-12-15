@@ -19,13 +19,15 @@ export class VentassettingsComponent {
   constructor(private store: Store<AppState>) {
 
   }
-  syncInventarios() {
-    this.store.dispatch(forceSyncInventarios());
-    this.store.dispatch(forceSyncInventarios());
+  ngOnInit(): void {
     this.store.select(selectInventario).subscribe((state) => {
       this.loadingInventariosRefresh = state.loadingProductosInventario || false
     })
 
+
+  }
+  syncInventarios() {
+    this.store.dispatch(forceSyncInventarios());
 
   }
 

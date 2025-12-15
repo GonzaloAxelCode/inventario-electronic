@@ -1,14 +1,14 @@
 export interface Cliente {
     id?: number;
     document: string;
-    fullname?: string;
-    firstname?: string;
-    lastname?: string;
+    fullname: string;
+    firstname: string;
+    lastname: string;
     department?: string;
     province?: string;
     district?: string;
     address?: string;
-    phone?: string;
+    phone: string;
     email?: string;
     tienda?: number;
     activo?: boolean;

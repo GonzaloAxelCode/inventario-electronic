@@ -5,6 +5,10 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { URL_BASE } from './utils/endpoints';
 import { getAuthDataFromLocalStorage } from './utils/localstorage-functions';
+export interface QuerySearchCliente {
+    text: string;
+
+}
 
 @Injectable({
     providedIn: 'root',
@@ -19,9 +23,9 @@ export class ClienteService {
     }
 
     // 🔹 Obtener todos los clientes de la tienda del usuario autenticado
-    fetchClientes(): Observable<Cliente[]> {
+    fetchClientes(): Observable<{ results: Cliente[] }> {
         const headers = this.getAuthHeaders();
-        return this.http.get<Cliente[]>(`${this.siteURL}/clientes/`, { headers }).pipe(
+        return this.http.get<any>(`${this.siteURL}/clientes/`, { headers }).pipe(
             catchError(error => {
                 console.error(error);
                 return throwError(() => error);

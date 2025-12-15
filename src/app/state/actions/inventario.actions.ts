@@ -150,6 +150,7 @@ export const eliminarInventarioFail = createAction(
     props<{ error: any }>()
 );
 export const clearSearchInventarios = createAction(
+
     InventarioActionTypes.CLEAR_SEARCH_INVENTARIOS
 );
 

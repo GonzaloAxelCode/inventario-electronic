@@ -1,6 +1,7 @@
 import { Cliente } from '@/app/models/cliente.models';
 import { createReducer, on } from '@ngrx/store';
 import {
+    clearSearchClientes,
     createClienteAction,
     createClienteFail,
     createClienteSuccess,
@@ -10,12 +11,16 @@ import {
     deleteClienteAction,
     deleteClienteFail,
     deleteClienteSuccess,
+    forceSyncClientes,
     getClienteAction,
     getClienteFail,
     getClienteSuccess,
     loadClientes,
     loadClientesFail,
     loadClientesSuccess,
+    searchClientes,
+    searchClientesFail,
+    searchClientesSuccess,
     updateClienteAction,
     updateClienteFail,
     updateClienteSuccess
@@ -23,28 +28,50 @@ import {
 
 export interface ClienteState {
     clientes: Cliente[];
+    search_found: boolean;
+    count: number;
+    next: any;
+    previous: any
+    index_page: any;
+    length_pages: any;
     clienteSeleccionado?: Cliente | null;
     loadingClientes: boolean;
     loadingCreateCliente: boolean;
     loadingUpdateCliente: boolean;
     loadingDesactivateCliente: boolean;
     loadingGetCliente: boolean;
+    loadingSearch: boolean;
     errors?: any;
+    clientes_search: Cliente[];
 }
 
 export const initialState: ClienteState = {
     clientes: [],
+    clientes_search: [],
+    search_found: false,  // Inicializa como string vacío si es que no hay un valor predeterminado
+    count: 0,
+    next: null,
+    previous: null,
+    errors: {},  // Inicializa como un objeto vacío
+    index_page: null,
+    length_pages: null,
+    loadingSearch: false,
     clienteSeleccionado: null,
     loadingClientes: false,
     loadingCreateCliente: false,
     loadingUpdateCliente: false,
     loadingDesactivateCliente: false,
     loadingGetCliente: false,
-    errors: {}
+
 };
 
 export const clienteReducer = createReducer(
     initialState,
+    on(forceSyncClientes, state => ({
+        ...state,
+        loadingClientes: true
+    })),
+
 
     // 🔹 Cargar todos los clientes
     on(loadClientes, state => ({
@@ -142,5 +169,30 @@ export const clienteReducer = createReducer(
         ...state,
         errors: error,
         loadingDesactivateCliente: false
-    }))
+    })),
+
+
+    //search
+    on(searchClientes, state => ({
+        ...state,
+        loadingSearch: true
+    })),
+    on(searchClientesSuccess, (state, { clientes_search, search_found }) => ({
+        ...state,
+        clientes_search: clientes_search,
+        search_found: search_found
+
+    })),
+    on(searchClientesFail, (state, { error }) => ({
+        ...state,
+        errors: error,
+        loadingSearch: false
+    })),
+    on(clearSearchClientes, (state) => ({
+        ...state,
+        count: 0,
+        loadingSearch: false,
+        clientes_search: [],
+        search_found: false
+    })),
 );

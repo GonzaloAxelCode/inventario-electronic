@@ -1,8 +1,10 @@
 import { Cliente } from '@/app/models/cliente.models';
+import { ClienteCacheService } from '@/app/services/cliente-cache.service';
 import { ClienteService } from '@/app/services/cliente.service';
+import { ClienteSearchService } from '@/app/services/search-services/cliente-search.service';
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
+import { catchError, exhaustMap, from, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import {
     createClienteAction,
     createClienteFail,
@@ -13,12 +15,15 @@ import {
     deleteClienteAction,
     deleteClienteFail,
     deleteClienteSuccess,
+    forceSyncClientes,
     getClienteAction,
     getClienteFail,
     getClienteSuccess,
     loadClientes,
     loadClientesFail,
     loadClientesSuccess,
+    searchClientes,
+    searchClientesSuccess,
     updateClienteAction,
     updateClienteFail,
     updateClienteSuccess
@@ -28,18 +33,74 @@ import {
 export class ClienteEffects {
     private actions$ = inject(Actions);
     private clienteService = inject(ClienteService);
+    private clienteSearchService = inject(ClienteSearchService);
+    private cache: ClienteCacheService = inject(ClienteCacheService);
 
     // 🔹 Cargar todos los clientes
-    loadClientes$ = createEffect(() =>
+    loadClientesSync$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(forceSyncClientes),
+            switchMap(() =>
+                this.clienteService.fetchClientes().pipe(
+
+                    tap(res => {
+                        // side effects (cache)
+                        this.cache.saveAll(res.results);
+                        this.cache.setLastSync(new Date().toISOString());
+                    }),
+
+                    map(res =>
+                        loadClientesSuccess({ clientes: res.results })
+                    ),
+
+                    catchError(error =>
+                        of(loadClientesFail({ error }))
+                    )
+                )
+            )
+        )
+    );
+
+    loadClientesFromCache$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(forceSyncClientes),
+            mergeMap(({ }) =>
+                this.clienteService.fetchClientes().pipe(
+                    tap(async (res) => {
+                        await this.cache.saveAll(res.results);
+                        await this.cache.setLastSync(new Date().toISOString());
+                    }),
+                    map(res =>
+                        loadClientesSuccess({ clientes: res.results })
+                    ),
+                    catchError(error => of(loadClientesFail({ error })))
+                )
+            )
+        )
+    );
+    loadClientesEffect$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loadClientes),
-            mergeMap(() =>
-                this.clienteService.fetchClientes().pipe(
-                    map((clientes: Cliente[]) => {
+            exhaustMap(() =>
+                from(this.cache.getAll()).pipe(
+                    exhaustMap((cached) => {
+                        // 🟢 SI HAY CACHE → NO FETCH
+                        if (cached.length > 0) {
+                            return of(loadClientesSuccess({ clientes: cached }));
+                        }
 
-                        return loadClientesSuccess({ clientes })
-                    }),
-                    catchError(error => of(loadClientesFail({ error })))
+                        // 🔴 SI NO HAY CACHE → FETCH
+                        return this.clienteService.fetchClientes().pipe(
+                            tap(async (res) => {
+                                await this.cache.saveAll(res.results);
+                                await this.cache.setLastSync(new Date().toISOString());
+                            }),
+                            map(res =>
+                                loadClientesSuccess({ clientes: res.results })
+                            ),
+                            catchError(error => of(loadClientesFail({ error })))
+                        );
+                    })
                 )
             )
         )
@@ -111,4 +172,23 @@ export class ClienteEffects {
             )
         )
     );
+
+
+
+    searchClientesEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(searchClientes),
+            map(action => {
+
+                const resultados = this.clienteSearchService.filtrarClientes(action.clientes, action.query);
+
+
+                return searchClientesSuccess({
+                    clientes_search: resultados.data,
+                    search_found: resultados.found
+                });
+            })
+        )
+    );
+
 }

@@ -1,84 +1,140 @@
-  <tui-loader [overlay]="true"
-        [showLoader]="!!(selectClientes$ | async)?.loadingClientes">
-      
-      
-      
+<tui-loader
+  [overlay]="true"
+  [showLoader]="!!(selectClientes$ | async)?.loadingClientes"
+>
 
+     <!-- Buscador (FIJO, fuera del scroll) -->
+    <search tuiSearch class="py-2">
+      <form [formGroup]="form" (submit)="onSubmitSearch()">
+        <!-- Campos de búsqueda principales -->
+        <fieldset tuiTextfieldSize="s" class="grid grid-cols-1 gap-2 sm:gap-3 mb-3 sm:mb-4">
+          <tui-textfield iconStart="@tui.search" class="w-full">
+            <input tuiTheme="ligth" formControlName="text" placeholder="Buscar por nombre, correo, direccion, telefono o dni o ruc" tuiTextfield />
+          </tui-textfield>
+          
+        </fieldset>
 
-<div class="rounded-lg ">
-
-  <tui-block-status
-    *ngIf="(selectClientes$ | async)?.clientes?.length === 0 && !(selectClientes$ | async)?.loadingClientes; else  tabla1"
-    size="m" class="m-auto">
-    <img alt="survived"
-      src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-      tuiSlot="top" />
-
-    <h4>Aun no tienes ningun cliente</h4>
-
-    <span>Empieza a crear clientes</span>
-
-
-  </tui-block-status>
-
-  <ng-template #tabla1>
-
-   <app-buttonupdate
-    [func]="refreshClientes.bind(this)"
-    [loading]="!!(selectClientes$ | async)?.loadingClientes">
-  </app-buttonupdate>
-    <table tuiTable size="s" class="my-3">
-      <thead>
-        <tr>
-          <th tuiTh>ID</th>
-          <th tuiTh>Imagen</th>
-          <th tuiTh>Nombres</th>
-
-          <th tuiTh>Telefono</th>
-          <th tuiTh>Correo Email</th>
-          <th tuiTh>Direccion</th>
-
-        </tr>
-      </thead>
-      <tbody tuiTbody *ngIf="(selectClientes$| async)?.clientes?.length">
-        <tr *ngFor="let cliente of (selectClientes$| async)?.clientes">
-          <td tuiTd>{{ cliente.id }}</td>
-          <td tuiTd>
-            <tui-avatar src="@tui.user" />
-
-
-          </td>
-
-
-          <td tuiTd>
-
-            {{ cliente.fullname }}
-          </td>
-
-          <td tuiTd>
-            <tui-chip iconStart="@tui.phone" size="s" *ngIf="cliente.phone" appearance="positive">{{ cliente.phone
-              }}</tui-chip>
-            <span *ngIf="!cliente.phone" class="text-sm">
-
-              {{ "Sin telefono"}}
+        <!-- Resultados y controles -->
+        <div class="flex flex-col gap-2 mb-3 sm:mb-4">
+          <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
+            <span class="font-medium">
+              Resultados: {{ isTheSearchWasDone ? allClientesSearch.length : allClientes.length }}
             </span>
+            
+            <div class="h-4 w-px bg-neutral-300 dark:bg-neutral-600 hidden sm:block"></div>
+            
+          
+            <div class="h-4 w-px bg-neutral-300 dark:bg-neutral-600 hidden sm:block"></div>
+            
+            <button appearance="primary-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
+              (click)="clearSearch()" class="text-xs">
+              Limpiar {{ count() ? '(' + count() + ')' : '' }}
+            </button>
+            
+        
+        
+          </div><app-buttonupdate
+          [func]="refreshClientes.bind(this)"
+          [loading]="!!(selectClientes$ | async)?.loadingClientes">
+        </app-buttonupdate>
+        </div>
+
+      
+      </form>
+    </search>
 
 
-          </td>
 
-          <td tuiTd>
+  <div class="rounded-lg p-2">
 
-            {{ cliente.email || "Sin correo"}}
-          </td>
-          <td tuiTd>
+    <!-- ===== ESTADO VACÍO ===== -->
+    <tui-block-status
+      *ngIf="
+        (selectClientes$ | async)?.clientes?.length === 0 &&
+        !(selectClientes$ | async)?.loadingClientes;
+        else listaClientes
+      "
+      size="m"
+      class="m-auto"
+    >
+      <img
+        tuiSlot="top"
+        alt="sin datos"
+        src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+        class="w-56 mx-auto"
+      />
+      <h4>Aún no tienes ningún cliente</h4>
+      <span>Empieza a crear clientes</span>
+    </tui-block-status>
 
-            {{ cliente.address || "Sin Direccion"}}
-          </td>
+    <!-- ===== LISTA DE CLIENTES ===== -->
+    <ng-template #listaClientes>
 
+      <!-- Botón refresh -->
+     
 
+      <!-- Cards -->
+      <div class="space-y-3">
 
-        </tr>
-      </tbody>
-    </table>
-  </ng-template>
-</div>      </tui-loader>
+        <div *ngFor="let cliente of currentClientes; trackBy: trackByFn"
+          class="
+            flex gap-4 p-4 rounded-xl
+            bg-white dark:bg-neutral-900
+            border border-neutral-200 dark:border-neutral-800
+            shadow-sm hover:shadow-md transition
+          "
+        >
+
+          <!-- Avatar -->
+          <tui-avatar
+            size="l"
+            src="@tui.user"
+          ></tui-avatar>
+
+          <!-- Información -->
+          <div class="flex-1">
+
+            <!-- Nombre + ID -->
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-semibold text-base">
+                {{ cliente.fullname }}
+              </span>
+              <span class="text-xs text-neutral-500">
+                #{{ cliente.id }}
+              </span>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="mb-1">
+              <tui-chip
+                *ngIf="cliente.phone"
+                size="s"
+                iconStart="@tui.phone"
+                appearance="positive"
+              >
+                {{ cliente.phone }}
+              </tui-chip>
+
+              <span *ngIf="!cliente.phone" class="text-sm text-neutral-500">
+                Sin teléfono
+              </span>
+            </div>
+
+            <!-- Email -->
+            <div class="text-sm text-neutral-600 dark:text-neutral-400">
+              {{ cliente.email || 'Sin correo' }}
+            </div>
+
+            <!-- Dirección -->
+            <div class="text-sm text-neutral-600 dark:text-neutral-400">
+              {{ cliente.address || 'Sin dirección' }}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </ng-template>
+
+  </div>
+</tui-loader>

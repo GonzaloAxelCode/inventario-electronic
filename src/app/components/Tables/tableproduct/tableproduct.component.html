@@ -64,7 +64,10 @@
 
                     <!-- Vista de CARDS para móviles -->
                     <div class="block lg:hidden space-y-3 px-2">
-                        <div *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)"
+                        <div 
+
+
+                                                            *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)"
                             class="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-3 border border-neutral-200 dark:border-neutral-700">
 
                             <!-- Header con imagen y código -->

@@ -83,7 +83,6 @@ export const inventarioReducer = createReducer(
         loadingProductosInventario: true
     })),
 
-
     on(loadInventarios, state => ({
         ...state,
         loadingProductosInventario: true
