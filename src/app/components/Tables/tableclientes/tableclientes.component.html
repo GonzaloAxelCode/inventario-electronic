@@ -3,56 +3,57 @@
   [showLoader]="!!(selectClientes$ | async)?.loadingClientes"
 >
 
-     <!-- Buscador (FIJO, fuera del scroll) -->
-    <search tuiSearch class="py-2">
-      <form [formGroup]="form" (submit)="onSubmitSearch()">
-        <!-- Campos de búsqueda principales -->
-        <fieldset tuiTextfieldSize="s" class="grid grid-cols-1 gap-2 sm:gap-3 mb-3 sm:mb-4">
-          <tui-textfield iconStart="@tui.search" class="w-full">
-            <input tuiTheme="ligth" formControlName="text" placeholder="Buscar por nombre, correo, direccion, telefono o dni o ruc" tuiTextfield />
-          </tui-textfield>
-          
-        </fieldset>
+  <!-- ================= BUSCADOR ================= -->
+  <search tuiSearch class="py-2">
+    <form [formGroup]="form" (submit)="onSubmitSearch()" class="flex">
 
-        <!-- Resultados y controles -->
-        <div class="flex flex-col gap-2 mb-3 sm:mb-4">
-          <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
-            <span class="font-medium">
-              Resultados: {{ isTheSearchWasDone ? allClientesSearch.length : allClientes.length }}
-            </span>
-            
-            <div class="h-4 w-px bg-neutral-300 dark:bg-neutral-600 hidden sm:block"></div>
-            
-          
-            <div class="h-4 w-px bg-neutral-300 dark:bg-neutral-600 hidden sm:block"></div>
-            
-            <button appearance="primary-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
-              (click)="clearSearch()" class="text-xs">
-              Limpiar {{ count() ? '(' + count() + ')' : '' }}
-            </button>
-            
-        
-        
-          </div><app-buttonupdate
-          [func]="refreshClientes.bind(this)"
-          [loading]="!!(selectClientes$ | async)?.loadingClientes">
-        </app-buttonupdate>
+      <fieldset tuiTextfieldSize="s" class="grid grid-cols-1 gap-2 mb-3">
+        <tui-textfield iconStart="@tui.search">
+          <input
+            tuiTheme="ligth"
+            tuiTextfield
+            formControlName="text"
+            placeholder="Buscar por nombre, correo, dirección, teléfono, DNI o RUC"
+          />
+        </tui-textfield>
+      </fieldset>
+
+      <div class="flex flex-col gap-2 mb-3">
+        <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+          <span class="font-medium">
+            Resultados:
+            {{ isTheSearchWasDone ? allClientesSearch.length : allClientes.length }}
+          </span>
+
+          <div class="h-4 w-px bg-neutral-300 dark:bg-neutral-600 hidden sm:block"></div>
+
+          <button
+            tuiButton
+            appearance="primary-grayscale"
+            iconStart="@tui.rotate-cw"
+            size="xs"
+            type="reset"
+            (click)="clearSearch()"
+          >
+            Limpiar {{ count() ? '(' + count() + ')' : '' }}
+          </button>
         </div>
 
       
-      </form>
-    </search>
+      </div>
 
+    </form>
+  </search>
 
-
+  <!-- ================= CONTENEDOR ================= -->
   <div class="rounded-lg p-2">
 
-    <!-- ===== ESTADO VACÍO ===== -->
+    <!-- ================= ESTADO VACÍO ================= -->
     <tui-block-status
       *ngIf="
         (selectClientes$ | async)?.clientes?.length === 0 &&
         !(selectClientes$ | async)?.loadingClientes;
-        else listaClientes
+        else tablaClientes
       "
       size="m"
       class="m-auto"
@@ -67,70 +68,140 @@
       <span>Empieza a crear clientes</span>
     </tui-block-status>
 
-    <!-- ===== LISTA DE CLIENTES ===== -->
-    <ng-template #listaClientes>
+    <!-- ================= TABLA FAKE RESPONSIVE ================= -->
+    <ng-template #tablaClientes>
 
-      <!-- Botón refresh -->
-     
+      <!-- HEADER (solo desktop) -->
+      <div
+        class="
+          hidden sm:grid
+          grid-cols-[70px_2fr_1.5fr_2fr_2fr]
+          px-4 py-3
+          bg-neutral-100 dark:bg-neutral-800
+          border border-neutral-200 dark:border-neutral-700
+          rounded-t-lg
+          text-xs font-semibold uppercase
+          text-neutral-600 dark:text-neutral-300
+        "
+      >
+        <div>ID</div>
+        <div>Cliente</div>
+        <div>Teléfono</div>
+        <div>Email</div>
+        <div>Dirección</div>
+      </div>
 
-      <!-- Cards -->
-      <div class="space-y-3">
+      <!-- ========= CONTENEDOR CON SCROLL INFINITO ========= -->
+      <div
+        #scrollContainer
+        class="
+          border border-neutral-200 dark:border-neutral-700
+          sm:border-t-0
+          rounded-lg sm:rounded-b-lg
+          divide-y divide-neutral-200 dark:divide-neutral-800
+          overflow-y-auto
+        "
+        style="max-height: 55vh;"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="300"
+        [scrollWindow]="false"
+        [infiniteScrollContainer]="scrollContainer"
+        (scrolled)="onScroll()"
 
-        <div *ngFor="let cliente of currentClientes; trackBy: trackByFn"
+        
+        infiniteScroll
+[scrollWindow]="true"
+      >
+
+        <!-- ROW -->
+        <div
+          *ngFor="let cliente of currentClientes; trackBy: trackByFn"
           class="
-            flex gap-4 p-4 rounded-xl
-            bg-white dark:bg-neutral-900
-            border border-neutral-200 dark:border-neutral-800
-            shadow-sm hover:shadow-md transition
+            grid grid-cols-1
+            sm:grid-cols-[70px_2fr_1.5fr_2fr_2fr]
+            gap-3 sm:gap-0
+            px-4 py-4 sm:py-3
+            bg-white dark:bg-neutral-800
+            hover:bg-neutral-50 dark:hover:bg-neutral-800
+            transition
           "
         >
 
-          <!-- Avatar -->
-          <tui-avatar
-            size="l"
-            src="@tui.user"
-          ></tui-avatar>
-
-          <!-- Información -->
-          <div class="flex-1">
-
-            <!-- Nombre + ID -->
-            <div class="flex items-center gap-2 mb-1">
-              <span class="font-semibold text-base">
+          <!-- ===== MOBILE CARD ===== -->
+          <div class="flex items-center gap-3 sm:hidden">
+            <tui-avatar size="m" src="@tui.user"></tui-avatar>
+            <div>
+              <div class="font-semibold text-sm">
                 {{ cliente.fullname }}
-              </span>
-              <span class="text-xs text-neutral-500">
+              </div>
+              <div class="text-xs text-neutral-500">
                 #{{ cliente.id }}
-              </span>
-            </div>
-
-            <!-- Teléfono -->
-            <div class="mb-1">
-              <tui-chip
-                *ngIf="cliente.phone"
-                size="s"
-                iconStart="@tui.phone"
-                appearance="positive"
-              >
-                {{ cliente.phone }}
-              </tui-chip>
-
-              <span *ngIf="!cliente.phone" class="text-sm text-neutral-500">
-                Sin teléfono
-              </span>
-            </div>
-
-            <!-- Email -->
-            <div class="text-sm text-neutral-600 dark:text-neutral-400">
-              {{ cliente.email || 'Sin correo' }}
-            </div>
-
-            <!-- Dirección -->
-            <div class="text-sm text-neutral-600 dark:text-neutral-400">
-              {{ cliente.address || 'Sin dirección' }}
+              </div>
             </div>
           </div>
 
+          <div class="sm:hidden text-sm">
+            <span class="text-neutral-500">Teléfono:</span>
+            <span>{{ cliente.phone || 'Sin teléfono' }}</span>
+          </div>
+
+          <div class="sm:hidden text-sm truncate">
+            <span class="text-neutral-500">Email:</span>
+            <span>{{ cliente.email || 'Sin correo' }}</span>
+          </div>
+
+          <div class="sm:hidden text-sm truncate">
+            <span class="text-neutral-500">Dirección:</span>
+            <span>{{ cliente.address || 'Sin dirección' }}</span>
+          </div>
+
+          <!-- ===== DESKTOP ===== -->
+          <div class="hidden sm:flex items-center gap-2 text-sm">
+            <tui-avatar size="s" src="@tui.user"></tui-avatar>
+            <span>#{{ cliente.id }}</span>
+          </div>
+
+          <div class="hidden sm:block font-medium text-sm truncate">
+            {{ cliente.fullname }}
+          </div>
+
+          <div class="hidden sm:block">
+            <tui-chip
+              *ngIf="cliente.phone; else sinTelefonoDesk"
+              size="s"
+              iconStart="@tui.phone"
+              appearance="positive"
+            >
+              {{ cliente.phone }}
+            </tui-chip>
+
+            <ng-template #sinTelefonoDesk>
+              <span class="text-xs text-neutral-500">Sin teléfono</span>
+            </ng-template>
+          </div>
+
+          <div class="hidden sm:block text-sm text-neutral-600 dark:text-neutral-400 truncate">
+            {{ cliente.email || 'Sin correo' }}
+          </div>
+
+          <div class="hidden sm:block text-sm text-neutral-600 dark:text-neutral-400 truncate">
+            {{ cliente.address || 'Sin dirección' }}
+          </div>
+
+        </div>
+
+        <!-- Loader -->
+        <div *ngIf="loading" class="flex justify-center py-6">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+
+        <!-- Fin -->
+        <div
+          *ngIf="!hasMore && !loading && currentClientes.length > 0"
+          class="text-center text-xs text-neutral-500 py-4"
+        >
+          Has visto todos los clientes
         </div>
 
       </div>

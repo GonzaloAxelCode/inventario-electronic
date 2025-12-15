@@ -17,6 +17,7 @@ import { tuiCountFilledControls } from '@taiga-ui/cdk';
 import { TuiAppearance, TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiAvatar, TuiBadge, TuiChip, TuiConfirmData, TuiRadio, TuiSkeleton } from '@taiga-ui/kit';
 import { TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
 import { ButtonupdateComponent } from '../../buttonupdate/buttonupdate.component';
 @Component({
@@ -26,7 +27,7 @@ import { ButtonupdateComponent } from '../../buttonupdate/buttonupdate.component
   imports: [CommonModule, TuiChip, ReactiveFormsModule, TuiTable, CommonModule,
     TuiAvatar, TuiLoader, TuiTextfield, TuiSearch,
     TuiRadio, ButtonupdateComponent,
-    FormsModule, TuiSkeleton,
+    FormsModule, TuiSkeleton, InfiniteScrollModule,
     TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiBlockStatus
   ],
   templateUrl: './tableclientes.component.html',
@@ -42,7 +43,6 @@ export class TableClientesComponent implements OnInit {
 
   refreshClientes() {
     this.store.dispatch(forceSyncClientes());
-
   }
   private readonly dialogs = inject(TuiResponsiveDialogService);
 
@@ -115,7 +115,7 @@ export class TableClientesComponent implements OnInit {
   loading = false;
   hasMore = true;
 
-  private readonly itemsPerBatch = 20; // Items por cada scroll
+  private readonly itemsPerBatch = 10; // Items por cada scroll
   private currentIndex = 0;
   private destroy$ = new Subject<void>();
 

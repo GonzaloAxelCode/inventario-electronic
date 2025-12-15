@@ -1,17 +1,28 @@
 <div>
     <div class="flex gap-3 items-center py-3">
         <div class="flex gap-2 flex-col">
-    <p class="text-2xl py-3 font-bold">Sincronizar nuevos productos para venta</p>
+            <p class="text-2xl py-3 font-bold">Sincronizar nuevos productos para venta</p>
 
-    <p class="text-sm font-normal -mt-2 mb-3">
-        Actualiza el inventario desde el servidor.
-        Esto reemplazará los productos guardados <br> localmente y traerá los cambios más recientes.
-    </p>
-</div>
-          <app-buttonupdate
-    [func]="syncInventarios.bind(this)"
-    [loading]="loadingInventariosRefresh">
-  </app-buttonupdate>
+            <p class="text-sm font-normal -mt-2 mb-3">
+                Actualiza el inventario desde el servidor.
+                Esto reemplazará los productos guardados <br> localmente y traerá los cambios más recientes.
+            </p>
+        </div>
+        <app-buttonupdate [func]="syncInventarios.bind(this)" [loading]="loadingInventariosRefresh">
+        </app-buttonupdate>
+
+    </div>
+  <div class="flex gap-3 items-center py-3">
+        <div class="flex gap-2 flex-col">
+            <p class="text-2xl py-3 font-bold">Sincronizar nuevos clientes para la venta</p>
+
+            <p class="text-sm font-normal -mt-2 mb-3">
+                Actualiza los clientes desde el servidor.
+                Esto reemplazará los clientes guardados <br> localmente y traerá los cambios más recientes.
+            </p>
+        </div>
+        <app-buttonupdate [func]="syncClientes.bind(this)" [loading]="loadingClientesRefresh">
+        </app-buttonupdate>
 
     </div>
 </div>
