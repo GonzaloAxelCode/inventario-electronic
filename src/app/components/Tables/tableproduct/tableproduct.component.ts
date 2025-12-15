@@ -165,9 +165,12 @@ export class TableproductComponent implements OnInit, AfterViewInit {
     this.dialogEditInventarioService.open(currentInventario).subscribe((result: any) => {
     });
   }
+  isResetProducts = false
   clearSearch() {
+    this.isResetProducts = true
     this.store.dispatch(clearSearchProductos())
     this.store.dispatch(loadProductosAction({ page: 1, page_size: PAGE_SIZE_PRODUCTS }))
+    this.filteredData = []
   }
 
   onSubmitSearch() {

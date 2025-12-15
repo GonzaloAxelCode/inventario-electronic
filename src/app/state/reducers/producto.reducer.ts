@@ -150,10 +150,22 @@ export const productoReducer = createReducer(
     })),
     on(clearSearchProductos, (state) => ({
         ...state,
-        count: 0,
+
         loadingSearch: false,
         productos_search: [],
-        search_found: false
+        productos: state.productos,
+        search_found: false,
+
+        search_products_found: "",
+
+
+        loadingProductos: false,
+        errors: {},
+        loadingCreate: false,
+        loadingUpdate: false,
+        loadingDeactivate: false,
+        loadingDelete: false,
+
     })),
     on(actualizarInventarioWithProductsSuccess, (state, { idProduct, newInventario }) => ({
         ...state,
