@@ -64,6 +64,10 @@
 
                     <!-- Vista de CARDS para móviles -->
                     <div class="block lg:hidden space-y-3 px-2">
+                        <div  *ngIf="((productosState$ | async)?.search_products_found ) === '' || ((productosState$ | async)?.search_products_found === 'products_found') ">
+                          
+
+
                         <div 
 
 
@@ -185,6 +189,7 @@
                                 </button>
                             </div>
                         </div>
+                                                </div>
                     </div>
 
                     <!-- Vista de TABLA para desktop -->
