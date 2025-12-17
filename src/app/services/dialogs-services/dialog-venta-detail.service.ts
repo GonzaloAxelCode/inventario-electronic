@@ -20,7 +20,7 @@ export class DialogVentaDetailService {
         const component = new PolymorpheusComponent(DialogventadetailComponent);
         const options: Partial<VentaDialogOptions> = {
             dismissible: false,
-            size: "fullscreen",
+            size: "auto",
             data,
             appearance: 'lorem-ipsum',
 
