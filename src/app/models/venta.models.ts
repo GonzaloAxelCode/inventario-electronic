@@ -11,7 +11,7 @@ export interface Venta {
     estado: string;
     activo: boolean;
     tipo_comprobante: string
-    productos: Partial<ProductSale>[]
+    productos: ProductSale[]
     subtotal: number;
     gravado_total: number
     igv_total: number
@@ -170,5 +170,9 @@ export interface ProductSale {
     total?: number;
     costo_original?: number
     descuento?: number
+    cantidad_total_vendida: number;
+    producto_imagen?: string
+
+
 
 }

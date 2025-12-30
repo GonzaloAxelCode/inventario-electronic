@@ -7,6 +7,7 @@ import { TodaysalestableComponent } from '@/app/components/ventascomponents/toda
 import { Venta } from '@/app/models/venta.models';
 import { QuerySearchVenta } from '@/app/services/caja.service';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
+import { URL_BASE } from "@/app/services/utils/endpoints";
 import { PAGE_SIZE_VENTAS } from "@/app/services/utils/pages-sizes";
 import { cargarVentasTienda, clearVentaSearch, searchVenta } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
@@ -70,7 +71,7 @@ export class ListallventasComponent {
 
   ventasState$!: Observable<Partial<VentaState>>;
   ventas: any = []
-
+  URL_BASE = URL_BASE
   allColumns = [
 
     { key: 'metodo_pago', label: 'Método de Pago' },
@@ -81,6 +82,11 @@ export class ListallventasComponent {
       new TuiDay(2025, 11, 31)
     )
   );
+  getValorVentaRedondeado(valor: number) {
+    return valor ? parseFloat(valor.toFixed(2)) : 0.0;
+  }
+
+
   formatoCorto(fecha: string): string {
     //@ts-ignore
     const txt = dayjs(fecha).format('D, MMM YYYY');

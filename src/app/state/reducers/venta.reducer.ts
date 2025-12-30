@@ -45,8 +45,10 @@ export interface ProductsSales {
     producto_id: number;
     nombre: string;
     cantidad_total_vendida: number;
-
-
+    producto_imagen?: string
+    producto_nombre?: string
+    cantidad: number
+    precio_unitario: number
 }
 export interface VentaState {
     ventas: Venta[];

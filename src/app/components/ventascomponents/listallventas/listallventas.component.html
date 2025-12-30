@@ -252,7 +252,7 @@
                     </svg>
                     <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300">Ticket</span>
                   </a>
-                  <div *ngIf="!venta.comprobante"
+                  <div *ngIf="!venta.comprobante "
                     class="flex flex-col items-center justify-center gap-1 px-3 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg opacity-50">
                     <svg class="w-4 h-4 text-neutral-700 dark:text-neutral-300" fill="none" stroke="currentColor"
                       viewBox="0 0 24 24">
@@ -336,7 +336,40 @@
                 </div>
 
               </div>
+                    <!-- DESKTOP PRODYYCTS-->
+      <div class="hidden lg:block divide-y divide-neutral-200 dark:divide-neutral-800">
 
+        <div *ngFor="let item of venta.productos" class="flex flex-row gap-3
+           px-1 py-4 items-center">
+
+          <!-- Imagen -->
+          <div class="flex justify-center">
+            <img [src]="item.producto_imagen
+          ? URL_BASE + item.producto_imagen
+          : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" class="w-12 h-12 rounded-lg object-cover
+               border border-neutral-300 dark:border-neutral-600" />
+          </div>
+
+          <!-- Producto -->
+          <div>
+            <p class="font-medium text-neutral-900 dark:text-neutral-100">
+              {{ item.producto_nombre }}
+            </p>
+            
+          </div>
+
+          <!-- Cantidad -->
+          <div class="text-right font-semibold">
+            Se vendió {{ item.cantidad > 1 ? 'unas' : 'una' }}  {{ item.cantidad }} unidad{{ item.cantidad > 1 ? 'es' : '' }}.
+          </div>
+
+                  <!-- Total -->
+          <div class="text-right text-lg font-bold text-neutral-900 dark:text-neutral-100">
+            S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) }}
+          </div>
+
+        </div>
+      </div>
             </div>
           </div>
         </div>

@@ -1,6 +1,5 @@
 <!-- Vista para ventas que si se enviaro-->
-<div 
-  class="p-0 flex flex-col sm:flex-row dark:bg-neutral-800 bg-white ">
+<div class="p-0 flex flex-col sm:flex-row dark:bg-neutral-800 bg-white ">
 
   <div class=" p-3" *ngIf="selectedState === 'original' && venta.comprobante.estado_sunat === 'ACEPTADO'">
 
@@ -82,7 +81,7 @@
     </div>
   </div>
 
-  <div class="p-3"  *ngIf="selectedState === 'anulado' && venta.comprobante.estado_sunat === 'ACEPTADO'"> 
+  <div class="p-3" *ngIf="selectedState === 'anulado' && venta.comprobante.estado_sunat === 'ACEPTADO'">
 
     <div class="flex flex-row sm:flex-col gap-2 mb-4">
 
@@ -265,7 +264,7 @@
 
 
                     </tui-textfield>
-                    <button tuiButton appearance="positive"  (click)="enviarWhatsApp(
+                    <button tuiButton appearance="positive" (click)="enviarWhatsApp(
     $event,
     stripDomain(comprobante.pdf_url),numeroTelefonico
   )" class="inline-flex flex-col h-full items-center justify-center gap-1 sm:gap-2 p-4
@@ -402,127 +401,109 @@
 
 
       <!-- Header de la tabla -->
-      <div class="hidden md:grid grid-cols-[80px_2fr_1fr_1fr_1fr_1fr]
+      <div class="hidden md:grid grid-cols-[70px_3fr_1fr_1fr_1fr_1fr]
          gap-4 px-4 py-2
          text-xs font-semibold uppercase
          text-neutral-500 dark:text-neutral-400
          border-b border-neutral-200 dark:border-neutral-800">
         <div>Img</div>
         <div>Descripción</div>
-        <div>Cant.</div>
-        <div>Precio</div>
-        <div>Desc.</div>
+        
+        <div>Cantidad</div>
+        
         <div>Total</div>
       </div>
-  <!-- DESKTOP -->
-<div class="hidden lg:block divide-y divide-neutral-200 dark:divide-neutral-800">
+      <!-- DESKTOP -->
+      <div class="hidden lg:block divide-y divide-neutral-200 dark:divide-neutral-800">
 
-  <div
-    *ngFor="let item of comprobante.items"
-    class="grid grid-cols-[70px_3fr_1fr_1fr_1fr_1fr]
+        <div *ngFor="let item of comprobante.items" class="grid grid-cols-[70px_3fr_1fr_1fr_1fr_1fr]
            px-1 py-4 items-center">
 
-    <!-- Imagen -->
-    <div class="flex justify-center">
-      <img
-        [src]="item.producto_imagen
+          <!-- Imagen -->
+          <div class="flex justify-center">
+            <img [src]="item.producto_imagen
           ? URL_BASE + item.producto_imagen
-          : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
-        class="w-12 h-12 rounded-lg object-cover
+          : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" class="w-12 h-12 rounded-lg object-cover
                border border-neutral-300 dark:border-neutral-600" />
-    </div>
+          </div>
 
-    <!-- Producto -->
-    <div>
-      <p class="font-medium text-neutral-900 dark:text-neutral-100">
-        {{ item.descripcion }}
-      </p>
-      <p class="text-xs text-neutral-500 font-mono">
-        {{ item.codigo }}
-      </p>
-    </div>
+          <!-- Producto -->
+          <div>
+            <p class="font-medium text-neutral-900 dark:text-neutral-100">
+              {{ item.descripcion }}
+            </p>
+            <p class="text-xs text-neutral-500 font-mono">
+              {{ item.codigo }}
+            </p>
+          </div>
 
-    <!-- Cantidad -->
-    <div class="text-right font-semibold">
-      {{ item.cantidad }}
-    </div>
+          <!-- Cantidad -->
+          <div class="text-right font-semibold">
+            {{ item.cantidad }}
+          </div>
 
-    <!-- Precio -->
-    <div class="text-right text-neutral-700 dark:text-neutral-300">
-      S/ {{ getValorVentaRedondeado(item.costo_original) }}
-    </div>
+                 <!-- Total -->
+          <div class="text-right font-bold text-neutral-900 dark:text-neutral-100">
+            S/ {{ getValorVentaRedondeado((item?.valorVenta || 0) + (item?.igv || 0)) }}
+          </div>
 
-    <!-- Descuento -->
-    <div class="text-right text-neutral-700 dark:text-neutral-300">
-      S/ {{ getValorVentaRedondeado(item.descuento) }}
-    </div>
+        </div>
+      </div>
 
-    <!-- Total -->
-    <div class="text-right font-bold text-neutral-900 dark:text-neutral-100">
-      S/ {{ getValorVentaRedondeado((item?.valorVenta || 0) + (item?.igv || 0)) }}
-    </div>
+      <!-- MOBILE -->
+      <div class="lg:hidden space-y-4">
 
-  </div>
-</div>
- 
-<!-- MOBILE -->
-<div class="lg:hidden space-y-4">
-
-  <div
-    *ngFor="let item of comprobante.items"
-    class="rounded-xl
+        <div *ngFor="let item of comprobante.items" class="rounded-xl
            border border-neutral-200 dark:border-neutral-800
            bg-white dark:bg-neutral-900
            shadow-sm p-4">
 
-    <!-- Header -->
-    <div class="flex gap-3 items-center">
-      <img
-        [src]="item.producto_imagen
+          <!-- Header -->
+          <div class="flex gap-3 items-center">
+            <img [src]="item.producto_imagen
           ? URL_BASE + item.producto_imagen
-          : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
-        class="w-14 h-14 rounded-lg object-cover
+          : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" class="w-14 h-14 rounded-lg object-cover
                border border-neutral-300 dark:border-neutral-600" />
 
-      <div class="flex-1">
-        <p class="font-medium text-neutral-900 dark:text-neutral-100">
-          {{ item.descripcion }}
-        </p>
-        <p class="text-xs text-neutral-500 font-mono">
-          {{ item.codigo }}
-        </p>
+            <div class="flex-1">
+              <p class="font-medium text-neutral-900 dark:text-neutral-100">
+                {{ item.descripcion }}
+              </p>
+              <p class="text-xs text-neutral-500 font-mono">
+                {{ item.codigo }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Datos -->
+          <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
+
+            <div>
+              <p class="text-xs text-neutral-500">Cantidad</p>
+              <p class="font-semibold">{{ item.cantidad }}</p>
+            </div>
+
+            <div class="text-right">
+              <p class="text-xs text-neutral-500">Precio</p>
+              <p>S/ {{ getValorVentaRedondeado(item.costo_original) }}</p>
+            </div>
+
+            <div>
+              <p class="text-xs text-neutral-500">Descuento</p>
+              <p>S/ {{ getValorVentaRedondeado(item.descuento) }}</p>
+            </div>
+
+            <div class="text-right">
+              <p class="text-xs text-neutral-500">Total</p>
+              <p class="font-bold text-neutral-900 dark:text-neutral-100">
+                S/ {{ getValorVentaRedondeado((item?.valorVenta || 0) + (item?.igv || 0)) }}
+              </p>
+            </div>
+
+          </div>
+        </div>
+
       </div>
-    </div>
-
-    <!-- Datos -->
-    <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
-
-      <div>
-        <p class="text-xs text-neutral-500">Cantidad</p>
-        <p class="font-semibold">{{ item.cantidad }}</p>
-      </div>
-
-      <div class="text-right">
-        <p class="text-xs text-neutral-500">Precio</p>
-        <p>S/ {{ getValorVentaRedondeado(item.costo_original) }}</p>
-      </div>
-
-      <div>
-        <p class="text-xs text-neutral-500">Descuento</p>
-        <p>S/ {{ getValorVentaRedondeado(item.descuento) }}</p>
-      </div>
-
-      <div class="text-right">
-        <p class="text-xs text-neutral-500">Total</p>
-        <p class="font-bold text-neutral-900 dark:text-neutral-100">
-          S/ {{ getValorVentaRedondeado((item?.valorVenta || 0) + (item?.igv || 0)) }}
-        </p>
-      </div>
-
-    </div>
-  </div>
-
-</div>
 
 
     </div>
