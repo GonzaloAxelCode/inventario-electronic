@@ -73,7 +73,7 @@ export interface ComprobanteElectronico {
     pdf_url: string;
     cdr_url: string;
     ticket_url: string;
-    items: ItemComprobante[];
+    items: ItemComprobante[]
     descuento_total: number
 }
 export interface ItemComprobante {

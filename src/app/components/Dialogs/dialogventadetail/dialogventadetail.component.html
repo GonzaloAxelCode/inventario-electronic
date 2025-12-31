@@ -416,7 +416,7 @@
       <!-- DESKTOP -->
       <div class="hidden lg:block divide-y divide-neutral-200 dark:divide-neutral-800">
 
-        <div *ngFor="let item of comprobante.items" class="grid grid-cols-[70px_3fr_1fr_1fr_1fr_1fr]
+        <div *ngFor="let item of venta.productos" class="grid grid-cols-[70px_3fr_1fr_1fr_1fr_1fr]
            px-1 py-4 items-center">
 
           <!-- Imagen -->
@@ -430,11 +430,9 @@
           <!-- Producto -->
           <div>
             <p class="font-medium text-neutral-900 dark:text-neutral-100">
-              {{ item.descripcion }}
+              {{ item.producto_nombre }}
             </p>
-            <p class="text-xs text-neutral-500 font-mono">
-              {{ item.codigo }}
-            </p>
+            
           </div>
 
           <!-- Cantidad -->
@@ -444,7 +442,7 @@
 
                  <!-- Total -->
           <div class="text-right font-bold text-neutral-900 dark:text-neutral-100">
-            S/ {{ getValorVentaRedondeado((item?.valorVenta || 0) + (item?.igv || 0)) }}
+            S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) }}
           </div>
 
         </div>
@@ -453,7 +451,7 @@
       <!-- MOBILE -->
       <div class="lg:hidden space-y-4">
 
-        <div *ngFor="let item of comprobante.items" class="rounded-xl
+        <div *ngFor="let item of venta.productos" class="rounded-xl
            border border-neutral-200 dark:border-neutral-800
            bg-white dark:bg-neutral-900
            shadow-sm p-4">
@@ -467,11 +465,9 @@
 
             <div class="flex-1">
               <p class="font-medium text-neutral-900 dark:text-neutral-100">
-                {{ item.descripcion }}
+                {{ item.producto_nombre }}
               </p>
-              <p class="text-xs text-neutral-500 font-mono">
-                {{ item.codigo }}
-              </p>
+              
             </div>
           </div>
 
@@ -483,20 +479,12 @@
               <p class="font-semibold">{{ item.cantidad }}</p>
             </div>
 
-            <div class="text-right">
-              <p class="text-xs text-neutral-500">Precio</p>
-              <p>S/ {{ getValorVentaRedondeado(item.costo_original) }}</p>
-            </div>
-
-            <div>
-              <p class="text-xs text-neutral-500">Descuento</p>
-              <p>S/ {{ getValorVentaRedondeado(item.descuento) }}</p>
-            </div>
+                      
 
             <div class="text-right">
               <p class="text-xs text-neutral-500">Total</p>
               <p class="font-bold text-neutral-900 dark:text-neutral-100">
-                S/ {{ getValorVentaRedondeado((item?.valorVenta || 0) + (item?.igv || 0)) }}
+                S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) }}
               </p>
             </div>
 

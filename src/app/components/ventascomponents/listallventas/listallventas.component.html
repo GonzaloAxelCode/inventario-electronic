@@ -73,20 +73,20 @@
 
             </div>
             <div class="flex items-center gap-3">
- <button type="submit"
-              loading="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas"
-              iconStart="@tui.search" tuiButton appearance="textfield" tuiButtonVertical
-              [disabled]="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas">
-              Buscar
-            </button>
-            <app-buttonupdate [func]="refreshVentas.bind(this)"
-              [loading]="!!(ventasState$ | async)?.loadingLoadVentas"></app-buttonupdate>
+              <button type="submit"
+                loading="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas"
+                iconStart="@tui.search" tuiButton appearance="textfield" tuiButtonVertical
+                [disabled]="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas">
+                Buscar
+              </button>
+              <app-buttonupdate [func]="refreshVentas.bind(this)"
+                [loading]="!!(ventasState$ | async)?.loadingLoadVentas"></app-buttonupdate>
 
-          
+
             </div>
-           
-          
-            </div>
+
+
+          </div>
 
           <!-- Sección de Resultados y Limpiar -->
           <fieldset class="mb-4">
@@ -114,9 +114,8 @@
       </search>
       <tui-loader [overlay]="true"
         [showLoader]="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas">
-<!-- HEADER TABLA DESKTOP -->
-<div
-  class="hidden lg:grid
+        <!-- HEADER TABLA DESKTOP -->
+        <div class="hidden lg:grid
          grid-cols-[1fr_160px_120px_140px_120px]
          gap-4
          px-6 py-3
@@ -127,12 +126,12 @@
          text-xs font-semibold uppercase tracking-wide
          text-neutral-500 dark:text-neutral-400">
 
-  <div>Venta / Comprobante</div>
-  <div class="text-center"></div>
-  <div class="text-center">Respuesta Sunat</div>
-  <div class="text-right">Total</div>
-  <div class="text-center">Acciones</div>
-</div>
+          <div>Venta / Comprobante</div>
+          <div class="text-center"></div>
+          <div class="text-center">Respuesta Sunat</div>
+          <div class="text-right">Total</div>
+          <div class="text-center">Acciones</div>
+        </div>
 
         <!-- Contenedor principal -->
         <div
@@ -154,7 +153,8 @@
 
                 <tui-badge [appearance]="venta.comprobante.estado_sunat === 'RECHAZADO' ? 'error' :
                     venta.comprobante.estado_sunat === 'ACEPTADO' ? 'positive' :
-                    venta.comprobante.estado_sunat === 'PENDIENTE' ? 'warning' : 'neutral'" tuiStatus size="s" class="text-xs">
+                    venta.comprobante.estado_sunat === 'PENDIENTE' ? 'warning' : 'neutral'" tuiStatus size="s"
+                  class="text-xs">
                   {{ venta.comprobante.estado_sunat }}
                 </tui-badge>
               </div>
@@ -241,7 +241,7 @@
 
                 <!-- ICONO Y INFO PRINCIPAL -->
                 <div class="flex items-center gap-4 flex-1 min-w-0">
-                   <!-- TICKET -->
+                  <!-- TICKET -->
                   <a *ngIf="venta.comprobante" [href]="stripDomain(venta.comprobante.ticket_url)" target="_blank"
                     class="flex flex-col items-center justify-center gap-1 px-3 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg transition-colors">
                     <svg class="w-4 h-4 text-neutral-700 dark:text-neutral-300" fill="none" stroke="currentColor"
@@ -317,7 +317,7 @@
                     {{ venta.comprobante.estado_sunat }}
                   </tui-badge>
 
-                 
+
 
                   <!-- TOTAL -->
                   <div class="text-right min-w-[100px]">
@@ -336,40 +336,41 @@
                 </div>
 
               </div>
-                    <!-- DESKTOP PRODYYCTS-->
-      <div class="hidden lg:block divide-y divide-neutral-200 dark:divide-neutral-800">
+              <!-- DESKTOP PRODYYCTS-->
+              <div class="hidden lg:block divide-y divide-neutral-200 dark:divide-neutral-800">
 
-        <div *ngFor="let item of venta.productos" class="flex flex-row gap-3
+                <div *ngFor="let item of venta.productos" class="flex flex-row gap-3
            px-1 py-4 items-center">
 
-          <!-- Imagen -->
-          <div class="flex justify-center">
-            <img [src]="item.producto_imagen
+                  <!-- Imagen -->
+                  <div class="flex justify-center cursor-pointer" (click)="onSetImageProduct(item.producto_imagen, item.producto_nombre); open = true;">
+                    <img [src]="item.producto_imagen
           ? URL_BASE + item.producto_imagen
           : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" class="w-12 h-12 rounded-lg object-cover
                border border-neutral-300 dark:border-neutral-600" />
-          </div>
+                  </div>
 
-          <!-- Producto -->
-          <div>
-            <p class="font-medium text-neutral-900 dark:text-neutral-100">
-              {{ item.producto_nombre }}
-            </p>
-            
-          </div>
+                  <!-- Producto -->
+                  <div>
+                    <p class="font-medium text-neutral-900 dark:text-neutral-100">
+                      {{ item.producto_nombre }}
+                    </p>
 
-          <!-- Cantidad -->
-          <div class="text-right font-semibold">
-            Se vendió {{ item.cantidad > 1 ? 'unas' : 'una' }}  {{ item.cantidad }} unidad{{ item.cantidad > 1 ? 'es' : '' }}.
-          </div>
+                  </div>
+
+                  <!-- Cantidad -->
+                  <div class="text-right font-semibold">
+                    Se vendió {{ item.cantidad > 1 ? 'unas' : 'una' }} {{ item.cantidad }} unidad{{ item.cantidad > 1 ?
+                    'es' : '' }}.
+                  </div>
 
                   <!-- Total -->
-          <div class="text-right text-lg font-bold text-neutral-900 dark:text-neutral-100">
-            S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) }}
-          </div>
+                  <div class="text-right text-lg font-bold text-neutral-900 dark:text-neutral-100">
+                    S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) }}
+                  </div>
 
-        </div>
-      </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -394,3 +395,21 @@
     </ng-template>
   </section>
 </div>
+
+
+
+
+<ng-template [(tuiPreviewDialog)]="open">
+    <tui-preview>
+        <tui-preview-title class="text-sm sm:text-base px-4">{{ titles[index] }}</tui-preview-title>
+
+
+        <button iconStart="@tui.x" tuiIconButton tuiPreviewAction type="button" (click)="open = false"
+            class="text-sm sm:text-base">
+            Close
+        </button>
+
+        <img *polymorpheusOutlet="content[index] as src" alt="preview" [src]="src"
+            class="w-full h-auto max-h-[70vh] sm:max-h-[80vh] object-contain p-2 sm:p-4" />
+    </tui-preview>
+</ng-template>

@@ -1,19 +1,21 @@
 
 
 import { ComprobanteElectronico, Venta } from '@/app/models/venta.models';
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import { anularVenta, generarComprobanteVenta, generarComprobanteVentaExito } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAppearance, TuiButton, TuiExpand, TuiIcon, TuiLoader } from '@taiga-ui/core';
-import { TuiBadge, TuiChip, TuiCopy } from '@taiga-ui/kit';
-
+import { TuiAppearance, TuiButton, TuiExpand, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TuiBadge, TuiChip, TuiCopy, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiSegmented, TuiTabs } from '@taiga-ui/kit';
+import { PolymorpheusOutlet } from '@taiga-ui/polymorpheus';
 import * as dayjs from 'dayjs';
 import * as advancedFormat from 'dayjs/plugin/advancedFormat';
 import * as localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -25,13 +27,13 @@ dayjs.locale('es');
 @Component({
   selector: 'app-todaysale',
   standalone: true,
-  imports: [CommonModule, TuiIcon, TuiLoader, TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiChip, TuiLoader, TuiExpand, TuiCopy],
+  imports: [CommonModule, TuiSegmented, TuiTabs, TuiTextfield, ReactiveFormsModule, FormsModule, PolymorpheusOutlet, TuiPreviewDialogDirective, TuiPreview, TuiPreviewTitle, TuiIcon, TuiLoader, TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiChip, TuiLoader, TuiExpand, TuiCopy],
   templateUrl: './todaysale.component.html',
   styleUrl: './todaysale.component.scss'
 })
 export class TodaysaleComponent {
 
-
+  selectedState: 'original' | 'anulado' = 'original';
   public venta: Venta = {} as Venta;
   protected expanded = false;
   pdfUrl!: SafeResourceUrl;
@@ -64,7 +66,17 @@ export class TodaysaleComponent {
       this.comprobante = ultimaVenta?.comprobante;
     });
   }
+  onSetImageProduct(img: any, name: any) {
 
+    const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
+
+    const imagenFinal = img
+      ? URL_BASE + img
+      : placeholder;
+
+    this.titles = [name || "Producto Sin Nombre"];
+    this.content = [imagenFinal];
+  }
 
   stripDomain(url?: string): string {
     if (!url) return '';
@@ -109,7 +121,39 @@ export class TodaysaleComponent {
       //hacer algo
     });
   }
+  open = false;
+  protected titles = ["Producto Sin Imagen"]
+  protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
+  URL_BASE = URL_BASE
+  protected index = 0;
+  protected length = 1;
 
+  enviarWhatsApp(
+    event: MouseEvent,
+    pdfUrl: string,
+    telefono: string
+  ) {
+    event.preventDefault();   // ⛔ evita navegación
+    event.stopPropagation();  // ⛔ evita clicks fantasmas
+
+    const mensaje = `Hola te saluda Movil Axel,
+Te envío tu comprobante electrónico:
+${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
+
+    const url = `https://wa.me/51${telefono}?text=${encodeURIComponent(mensaje)}`;
+
+    window.open(url, '_blank');
+  }
+
+  numeroTelefonico = '';
+  numeroInvalido = true;
+
+  validarNumero(valor: string): void {
+    const soloNumeros = valor.replace(/\D/g, '');
+
+    // solo validar, NO modificar el ngModel directamente
+    this.numeroInvalido = soloNumeros.length !== 9;
+  }
 
 
   // Uso:

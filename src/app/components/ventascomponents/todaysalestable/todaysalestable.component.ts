@@ -13,13 +13,14 @@ import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiDayLike } from '@taiga-ui/cdk';
 import { TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiTextfield } from '@taiga-ui/core';
-import { TuiBadge, TuiDataListWrapper, TuiItemsWithMore, TuiStatus, TuiTabs } from '@taiga-ui/kit';
+import { TuiBadge, TuiDataListWrapper, TuiItemsWithMore, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiStatus, TuiTabs } from '@taiga-ui/kit';
 import { TuiAppBar, TuiBlockStatus, TuiNavigation, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputDateModule, TuiInputDateRangeModule, TuiInputModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { map, Observable } from 'rxjs';
 
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import * as dayjs from 'dayjs';
 import * as advancedFormat from 'dayjs/plugin/advancedFormat';
 import * as localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -59,7 +60,7 @@ dayjs.locale('es');
     TuiTextfield,
     TuiTextfieldControllerModule,
     TuiNavigation,
-    TuiTabs
+    TuiTabs, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle
   ],
   templateUrl: './todaysalestable.component.html',
   styleUrl: './todaysalestable.component.scss'
@@ -69,15 +70,34 @@ export class TodaysalestableComponent {
   ventasState$!: Observable<Partial<VentaState>>;
   ventas: any = []
 
+  protected titles = ["Producto Sin Imagen"]
+  protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
+  protected open = false;
+  protected index = 0;
+  protected length = 1;
   allColumns = [
 
     { key: 'metodo_pago', label: 'Método de Pago' },
   ];
-
+  URL_BASE = URL_BASE
   formatoCorto(fecha: string): string {
     //@ts-ignore
     const txt = dayjs(fecha).format('D, MMM YYYY');
     return txt.charAt(0).toUpperCase() + txt.slice(1);
+  }
+  getValorVentaRedondeado(valor: number) {
+    return valor ? parseFloat(valor.toFixed(2)) : 0.0;
+  }
+  onSetImageProduct(img: any, name: any) {
+
+    const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
+
+    const imagenFinal = img
+      ? URL_BASE + img
+      : placeholder;
+
+    this.titles = [name || "Producto Sin Nombre"];
+    this.content = [imagenFinal];
   }
 
 

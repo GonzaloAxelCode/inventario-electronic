@@ -1,9 +1,4 @@
-import { PruebastextComponent } from "@/app/components/pruebastext/pruebastext.component";
-import { CanceledsalesComponent } from '@/app/components/ventascomponents/canceledsales/canceledsales.component';
 
-import { MostsalesproductsComponent } from '@/app/components/ventascomponents/mostsalesproducts/mostsalesproducts.component';
-import { TodaysaleComponent } from '@/app/components/ventascomponents/todaysale/todaysale.component';
-import { TodaysalestableComponent } from '@/app/components/ventascomponents/todaysalestable/todaysalestable.component';
 import { Venta } from '@/app/models/venta.models';
 import { QuerySearchVenta } from '@/app/services/caja.service';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
@@ -21,9 +16,10 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule }
 import { Store } from '@ngrx/store';
 import { tuiCountFilledControls, TuiDay, TuiDayLike, TuiDayRange } from '@taiga-ui/cdk';
 import { TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiBadge, TuiChip, TuiPagination, TuiSkeleton } from '@taiga-ui/kit';
+import { TuiBadge, TuiChip, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle } from '@taiga-ui/kit';
 import { TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputDateRangeModule, TuiInputModule, TuiSelectModule } from "@taiga-ui/legacy";
+import { PolymorpheusOutlet } from '@taiga-ui/polymorpheus';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import * as dayjs from 'dayjs';
@@ -52,18 +48,14 @@ dayjs.locale('es');
     TuiInputDateRangeModule,
     TuiSelectModule,
     TuiPagination,
-    TuiSkeleton,
+    PolymorpheusOutlet,
     TuiLoader,
     TuiSearch,
     TuiTextfield,
     TuiChip,
     TuiBlockStatus,
     // tus componentes
-    TodaysaleComponent,
-    TodaysalestableComponent,
-    MostsalesproductsComponent,
-    CanceledsalesComponent,
-    PruebastextComponent, ButtonupdateComponent],
+    ButtonupdateComponent, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle],
   templateUrl: './listallventas.component.html',
   styleUrl: './listallventas.component.scss'
 })
@@ -85,8 +77,22 @@ export class ListallventasComponent {
   getValorVentaRedondeado(valor: number) {
     return valor ? parseFloat(valor.toFixed(2)) : 0.0;
   }
+  protected titles = ["Producto Sin Imagen"]
+  protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
+  protected open = false;
+  protected index = 0;
+  protected length = 1;
+  onSetImageProduct(img: any, name: any) {
 
+    const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
 
+    const imagenFinal = img
+      ? URL_BASE + img
+      : placeholder;
+
+    this.titles = [name || "Producto Sin Nombre"];
+    this.content = [imagenFinal];
+  }
   formatoCorto(fecha: string): string {
     //@ts-ignore
     const txt = dayjs(fecha).format('D, MMM YYYY');
