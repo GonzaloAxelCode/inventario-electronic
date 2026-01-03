@@ -52,27 +52,17 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrl: './dialogeditinventario.component.scss'
 })
 export class DialogeditinventarioComponent implements OnInit {
-
-
-
   userPermissions$ = this.store.select(selectPermissions);
   inventarioFormEdit!: FormGroup;
-
   protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Inventario>>>();
-
   public inventario: Partial<Inventario> = this.context.data ?? {};
-
-
   constructor(private fb: FormBuilder, private store: Store<AppState>, private actions$: Actions) {
     this.inventarioFormEdit = this.fb.group({
-      cantidad: [this.inventario.cantidad, [Validators.required, Validators.min(1)]],
+      cantidad: [this.inventario.cantidad, [Validators.required, Validators.min(0)]],
       producto_id: [this.inventario.producto],
       costo_compra: [this.inventario.costo_compra, [Validators.required,]],
       costo_venta: [this.inventario.costo_venta, [Validators.required,]],
-
     });
-
-
   }
   private destroy$ = new Subject<void>();
   loadingInventarioUpdate = false;

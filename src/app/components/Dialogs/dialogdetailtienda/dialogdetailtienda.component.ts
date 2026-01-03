@@ -53,7 +53,7 @@ export class DialogdetailtiendaComponent implements OnInit {
             ofType(eliminarTiendaPermanentlySuccess),
             takeUntil(this.destroy$)
           ).subscribe(() => {
-            this.alerts.open('Eliminado exitosamente.').subscribe();
+
             this.context.completeWith(true);
 
           });

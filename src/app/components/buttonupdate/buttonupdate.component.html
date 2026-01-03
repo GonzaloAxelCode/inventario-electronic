@@ -1,11 +1,27 @@
 <button
 
     
+*ngIf="vertical"
+    [loading]="loading"
+    [disabled]="loading"
+    iconStart="@tui.plus" tuiButton appearance="textfield"  type="button"
+
+tuiButtonVertical
+
+    (click)="onClick()"
+>
+   {{text}}
+</button>
+<button
+
+   *ngIf="!vertical" 
     
     [loading]="loading"
     [disabled]="loading"
-    iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button"
+    iconStart="@tui.plus" tuiButton appearance="textfield"  type="button"
+
+
     (click)="onClick()"
 >
-   Refresh
+      {{text}}
 </button>

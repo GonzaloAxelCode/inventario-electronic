@@ -85,9 +85,9 @@ export class DialogcreateinventarioComponent implements OnInit {
       producto: [this.producto.id, Validators.required],
 
       //proveedor: [null, Validators.required],
-      cantidad: [50, [Validators.required, Validators.min(1)]],
-      stock_minimo: [1, [Validators.required, Validators.min(1)]],
-      stock_maximo: [500, [Validators.required, Validators.max(500)]],
+      cantidad: [50, [Validators.required, Validators.min(0)]],
+      stock_minimo: [1, [Validators.required, Validators.min(0)]],
+      stock_maximo: [500, [Validators.required, Validators.max(15000)]],
       costo_compra: [8, [Validators.required,]],
       costo_venta: [15, [Validators.required,]],
       descripcion: ['', Validators.required],

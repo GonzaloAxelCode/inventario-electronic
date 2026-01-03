@@ -162,3 +162,26 @@
             class="w-full h-auto max-h-[70vh] sm:max-h-[80vh] object-contain p-2 sm:p-4" />
     </tui-preview>
 </ng-template>
+
+
+
+<!--  Para mostrar si no se hio una venta aqui -->
+<div class="">
+  <section>
+    <div *ngIf="ventas.length <= 0" class="h-[50vh] mx-auto flex flex-col items-center justify-center">
+      <img alt="survived" src="https://concepthousewares.co.uk/assets/images/empty_cart.png" tuiSlot="top"
+        class="object-contain w-56 h-56 text-center" />
+      <h2 class="text-xl text-center">No se hizo una venta hoy</h2>
+      <p class="text-md text-center">Empieza hacer tu primera venta</p>
+      <a  routerLink="/app/ventas/crear">
+
+
+      <button appearance="primary-grayscale" tuiButton iconStart="@tui.store" class="my-3" size="s" type="button">
+        Hacer venta
+      </button>
+      </a>
+    </div>
+  </section>
+</div>
+
+

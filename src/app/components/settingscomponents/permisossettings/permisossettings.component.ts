@@ -31,7 +31,7 @@ import { Observable } from 'rxjs';
   templateUrl: './permisossettings.component.html',
   styleUrl: './permisossettings.component.scss',
   providers: [
-    tuiSwitchOptionsProvider({ showIcons: true, appearance: () => 'neutral' }),
+    tuiSwitchOptionsProvider({ showIcons: true, appearance: () => 'textfield' }),
   ],
 })
 export class PermisossettingsComponent implements OnInit {

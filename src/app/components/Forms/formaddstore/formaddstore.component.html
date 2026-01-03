@@ -1,32 +1,143 @@
 <div class="form-container mt-5">
   <form [formGroup]="tiendaForm" (ngSubmit)="onSubmit()" class="space-y-4">
-    <tui-input 
-      formControlName="nombre" 
-      placeholder="Ingrese el nombre de la tienda" 
-      class="full-width"
-    >
-      Nombre
-    </tui-input>
-       <tui-input 
-      formControlName="direccion" 
-      placeholder="Ingrese la dirección de la tienda" 
-      class="full-width"
-    >
-      Dirección
-    </tui-input>
 
- 
+    <!-- Grid responsivo -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-    <div class="w-full flex flex-1">
-      <button tuiButton size="m"
-       appearance="outline-grayscale"
-        class="w-full"
-         type="submit" [disabled]="tiendaForm.invalid"
-         
+      <!-- Nombre -->
+      <div>
+        <tui-input 
+          formControlName="nombre" 
+          placeholder="Ingrese el nombre de la tienda" 
+          class="w-full"
         >
-        Crear Tienda     <tui-loader [showLoader]="!!(loadingCreateTienda$  | async)?.loadingCreateTienda"></tui-loader>
-      </button>
+          Nombre
+        </tui-input>
+        <div *ngIf="tiendaForm.get('nombre')?.touched && tiendaForm.get('nombre')?.invalid" class="text-red-500 text-sm">
+          El nombre es obligatorio
+        </div>
+      </div>
+
+      <!-- Razon Social -->
+      <div>
+        <tui-input 
+          formControlName="razon_social" 
+          placeholder="Ingrese la razón social" 
+          class="w-full"
+        >
+          Razón Social
+        </tui-input>
+      </div>
+
+      <!-- RUC -->
+      <div>
+        <tui-input 
+          formControlName="ruc" 
+          placeholder="Ingrese el RUC" 
+          class="w-full"
+        >
+          RUC
+        </tui-input>
+      </div>
+
+      <!-- Dirección -->
+      <div>
+        <tui-input 
+          formControlName="direccion" 
+          placeholder="Ingrese la dirección de la tienda" 
+          class="w-full"
+        >
+          Dirección
+        </tui-input>
+        <div *ngIf="tiendaForm.get('direccion')?.touched && tiendaForm.get('direccion')?.invalid" class="text-red-500 text-sm">
+          La dirección es obligatoria
+        </div>
+      </div>
+
+      <!-- Teléfono -->
+      <div>
+        <tui-input 
+          formControlName="telefono" 
+          placeholder="Ingrese el teléfono" 
+          class="w-full"
+        >
+          Teléfono
+        </tui-input>
+      </div>
+
+      <!-- Email -->
+      <div>
+        <tui-input 
+          formControlName="email" 
+          placeholder="Ingrese el correo electrónico" 
+          class="w-full"
+          type="email"
+        >
+          Email
+        </tui-input>
+      </div>
+
+      <!-- Usuario SOL -->
+      <div>
+        <tui-input 
+          formControlName="sol_user" 
+          placeholder="Usuario SOL" 
+          class="w-full"
+        >
+          Usuario SOL
+        </tui-input>
+      </div>
+
+      <!-- Contraseña SOL -->
+      <div>
+        <tui-input 
+          formControlName="sol_password" 
+          placeholder="Contraseña SOL" 
+          class="w-full"
+          type="password"
+        >
+          Contraseña SOL
+        </tui-input>
+      </div>
+
+      <!-- Logo -->
+<div class="lg:col-span-2">
+  <label class="block mb-2 text-sm font-medium">Logo de la Tienda</label>
+
+  <!-- Contenedor clicable -->
+  <div class="w-32 h-32 border rounded overflow-hidden cursor-pointer"
+       (click)="fileInput.click()">
+
+    <!-- Preview de la imagen o fondo gris si no hay -->
+    <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo Preview"
+         class="w-full h-full object-cover"/>
+    <div *ngIf="!logoPreview" class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
+      Seleccionar
     </div>
-  </form>
+  </div>
+
+  <!-- Input oculto -->
+  <input type="file" #fileInput (change)="onFileSelected($event)"
+         accept="image/*" class="hidden"/>
 </div>
 
+
+    </div>
+
+    <!-- Botón -->
+    <div class="w-full flex flex-1">
+      <button 
+        tuiButton 
+        size="m"
+        appearance="outline-grayscale"
+        class="w-full"
+        type="submit" 
+        [disabled]="tiendaForm.invalid"
+      >
+        Crear Tienda
+        <tui-loader [showLoader]="!!(loadingCreateTienda$  | async)?.loadingCreateTienda"></tui-loader>
+      </button>
+    </div>
+
+  </form>
+</div>

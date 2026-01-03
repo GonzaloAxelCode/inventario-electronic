@@ -21,6 +21,7 @@ import { es } from 'date-fns/locale';
 import { map, Observable } from 'rxjs';
 
 import { URL_BASE } from '@/app/services/utils/endpoints';
+import { RouterLink } from '@angular/router';
 import * as dayjs from 'dayjs';
 import * as advancedFormat from 'dayjs/plugin/advancedFormat';
 import * as localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -37,18 +38,15 @@ dayjs.locale('es');
     ReactiveFormsModule,
     NgForOf,
     NgIf,
-
     TuiItemsWithMore,
     TuiAppearance,
     TuiAppBar,
     TuiBadge,
     TuiBlockStatus,
     TuiButton,
-
     TuiDataList,
     TuiDataListWrapper,
     TuiDropdown,
-
     TuiInputDateModule,
     TuiInputDateRangeModule,
     TuiInputModule,
@@ -60,7 +58,8 @@ dayjs.locale('es');
     TuiTextfield,
     TuiTextfieldControllerModule,
     TuiNavigation,
-    TuiTabs, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle
+    TuiTabs, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle,
+    RouterLink
   ],
   templateUrl: './todaysalestable.component.html',
   styleUrl: './todaysalestable.component.scss'

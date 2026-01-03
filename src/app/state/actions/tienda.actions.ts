@@ -1,4 +1,4 @@
-import { Tienda, TiendaCreate } from '@/app/models/tienda.models';
+import { Tienda } from '@/app/models/tienda.models';
 import { User } from '@/app/models/user.models';
 import { createAction, props } from '@ngrx/store';
 
@@ -41,7 +41,7 @@ export const loadTiendasFail = createAction(
 
 export const createTiendaAction = createAction(
     ActionTypes.CREATE_TIENDA,
-    props<{ tienda: TiendaCreate }>()
+    props<{ tienda: FormData }>()
 );
 
 export const createTiendaSuccess = createAction(

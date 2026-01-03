@@ -1,5 +1,5 @@
 <!-- Vista para ventas que si se enviaro-->
-<div class="p-0 flex flex-col sm:flex-row dark:bg-neutral-800 bg-white ">
+<div class="p-0 flex flex-col sm:flex-row dark:bg-neutral-800 bg-white " *ngIf="venta">
 
   <div class=" p-3" *ngIf="selectedState === 'original' && venta.comprobante.estado_sunat === 'ACEPTADO'">
 
@@ -408,9 +408,9 @@
          border-b border-neutral-200 dark:border-neutral-800">
         <div>Img</div>
         <div>Descripción</div>
-        
+
         <div>Cantidad</div>
-        
+
         <div>Total</div>
       </div>
       <!-- DESKTOP -->
@@ -432,7 +432,7 @@
             <p class="font-medium text-neutral-900 dark:text-neutral-100">
               {{ item.producto_nombre }}
             </p>
-            
+
           </div>
 
           <!-- Cantidad -->
@@ -440,7 +440,7 @@
             {{ item.cantidad }}
           </div>
 
-                 <!-- Total -->
+          <!-- Total -->
           <div class="text-right font-bold text-neutral-900 dark:text-neutral-100">
             S/ {{ getValorVentaRedondeado((item?.valor_total || 0) + (item?.igv || 0)) }}
           </div>
@@ -457,7 +457,8 @@
            shadow-sm p-4">
 
           <!-- Header -->
-          <div class="flex gap-3 items-center cursor-pointer" (click)="onSetImageProduct(item.producto_imagen, item.producto_nombre); open = true;">
+          <div class="flex gap-3 items-center cursor-pointer"
+            (click)="onSetImageProduct(item.producto_imagen, item.producto_nombre); open = true;">
             <img [src]="item.producto_imagen
           ? URL_BASE + item.producto_imagen
           : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" class="w-14 h-14 rounded-lg object-cover
@@ -467,7 +468,7 @@
               <p class="font-medium text-neutral-900 dark:text-neutral-100">
                 {{ item.producto_nombre }}
               </p>
-                         </div>
+            </div>
           </div>
 
           <!-- Datos -->
@@ -478,9 +479,9 @@
               <p class="font-semibold">{{ item.cantidad }}</p>
             </div>
 
-         
 
-                        <div class="text-right">
+
+            <div class="text-right">
               <p class="text-xs text-neutral-500">Total</p>
               <p class="font-bold text-neutral-900 dark:text-neutral-100">
                 S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) }}
@@ -514,3 +515,25 @@
       class="w-full h-auto max-h-[70vh] sm:max-h-[80vh] object-contain p-2 sm:p-4" />
   </tui-preview>
 </ng-template>
+
+
+<!--  Para mostrar si no se hio una venta aqui -->
+<div class="">
+  <section>
+    <div *ngIf="!venta" class="h-[50vh] mx-auto flex flex-col items-center justify-center">
+      <img alt="survived" src="https://concepthousewares.co.uk/assets/images/empty_cart.png" tuiSlot="top"
+        class="object-contain w-56 h-56 text-center" />
+      <h2 class="text-xl text-center">No se hizo una venta hoy</h2>
+      <p class="text-md text-center">Empieza hacer tu primera venta</p>
+            <a  routerLink="/app/ventas/crear">
+
+
+
+      <button appearance="primary-grayscale" tuiButton iconStart="@tui.store" class="my-3" size="s" type="button">
+        Hacer venta
+      </button>
+
+            </a>
+    </div>
+  </section>
+</div>

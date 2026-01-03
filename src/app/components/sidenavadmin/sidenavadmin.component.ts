@@ -82,7 +82,7 @@ export class SidenavadminComponent implements OnInit {
   loadingAuthenticated$: Observable<any>;
   authState$ = this.store.pipe(select(selectAuth));
 
-  logout() {
+  logout2() {
     this.store.dispatch(clearTokensAction())
     this.store.dispatch(clearUserAction())
     this.onClose()

@@ -92,7 +92,7 @@
 
         </a>
         <!-- Governance -->
-        <button (click)="logout2()"
+        <button (click)="logout2()" *ngIf="user.is_superuser"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
           <div class="flex items-center gap-3">
             <tui-icon icon="bookmark-x" class="w-5 h-5"></tui-icon>
@@ -121,7 +121,7 @@
       <div class="flex items-center justify-between gap-3">
         <!-- User Info -->
         <button class="flex items-center gap-3 flex-1 min-w-0 hrounded-lg px-2 py-2 transition-all duration-200">
-          <img src="https://i.pravatar.cc/150?img=12" alt="Mark Bennet" class="w-10 h-10 rounded-full">
+          <img src="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/metaai-color.png" alt="Mark Bennet" class="w-10 h-10 rounded-full">
           <div class="flex flex-col items-start min-w-0">
             <span class="text-sm font-medium text-neutral-900 dark:text-white truncate">{{user.username}}</span>
             <span class="text-xs text-neutral-500 dark:text-neutral-400 truncate">{{user.first_name}}</span>
@@ -194,7 +194,7 @@
         <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
         Configuracion
       </a>
-      <a (click)="logout()" #rla="routerLinkActive" role="menuitemradio" routerLinkActive tuiOption
+      <a (click)="logout()" #rla="routerLinkActive"  *ngIf="user.is_superuser" role="menuitemradio" routerLinkActive tuiOption
         [attr.aria-checked]="rla.isActive" class="w-[200px]">
         <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
         Cerrar Session

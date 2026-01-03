@@ -20,8 +20,8 @@ export class AppEffects {
     constructor(private actions$: Actions, private store: Store<AppState>) { }
     private _range = new BehaviorSubject<TuiDayRange>(
         new TuiDayRange(
-            new TuiDay(2025, 0, 1),
-            new TuiDay(2025, 11, 31)
+            new TuiDay(2025, 11, 1),
+            new TuiDay(2026, 11, 31)
         )
     );
     range$ = this._range.asObservable();

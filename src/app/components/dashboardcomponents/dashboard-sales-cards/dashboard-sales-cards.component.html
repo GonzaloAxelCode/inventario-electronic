@@ -86,6 +86,13 @@
             </button>
           </tui-data-list>
         </tui-select>
+         <tui-select (ngModelChange)="onYearChange($event)" tuiTextfieldSize="s" formControlName="year" class="w-full">
+          <tui-data-list size="s" *tuiDataList>
+            <button class="text-slate-700 dark:text-gray-300" *ngFor="let year of years" tuiOption [value]="year.number">
+              {{ year.number }}
+            </button>
+          </tui-data-list>
+        </tui-select>
       </form>
 
     </div>

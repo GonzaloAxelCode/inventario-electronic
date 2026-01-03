@@ -1,4 +1,4 @@
-import { Tienda, TiendaCreate } from '@/app/models/tienda.models';
+import { Tienda } from '@/app/models/tienda.models';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -20,7 +20,7 @@ export class TiendaService {
         );
     }
 
-    createTienda(tienda: TiendaCreate): Observable<Tienda> {
+    createTienda(tienda: FormData): Observable<Tienda> {
         return this.http.post<Tienda>(`${this.siteURL}/tiendas/create/`, tienda).pipe(
             catchError(error => {
                 printError(error)

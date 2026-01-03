@@ -17,8 +17,16 @@
   } as data">
     <tui-axes *ngIf="data.labels && data.values" class="axes" [axisXLabels]="data.labels" [horizontalLines]="10"
       [verticalLines]="data.labels.length - 1" [axisYLabels]="axisYSecondaryLabels">
-      <tui-line-days-chart class="chart" [height]="3000" [value]="data.values" [xStringify]="xStringify$ | async"
+      <tui-line-days-chart class="chart" [height]="2100" [value]="data.values" [xStringify]="xStringify$ | async"
         [yStringify]="yStringify" />
     </tui-axes>
   </ng-container>   </div>
 </section>
+
+
+
+
+
+
+
+

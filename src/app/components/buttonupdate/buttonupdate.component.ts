@@ -22,6 +22,8 @@ export class ButtonupdateComponent {
 
   @Input() func!: () => void;
   @Input() loading: any = false
+  @Input() vertical: boolean = true
+  @Input() text: string = 'Refresh'
 
   protected onClick() {
     if (this.func) {

@@ -1,7 +1,4 @@
-<div class="p-4 md:p-6">
-  <div class="flex gap-2">
-  </div>
-
+<div >
   <section>
     <div *ngIf="(ventasState$ | async)?.ventas?.length === 0 && !(ventasState$ | async)?.loadingLoadVentas else tabla"
       class="h-[50vh] mx-auto flex flex-col items-center justify-center">
@@ -17,10 +14,12 @@
         <div class="mb-4 w-full">
           <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range"
             class="w-full">
-            Range
+            Escoje buscar las ventas entre dos fechas
           </tui-input-date-range>
         </div>
         <form [formGroup]="form" (submit)="onSubmitSearch()">
+<tui-expand [expanded]="expanded">
+
 
           <!-- Filtros de Búsqueda -->
           <div class="space-y-3 mb-4">
@@ -39,7 +38,7 @@
                   <span class="hidden sm:inline">Método de Pago</span>
                   <span class="sm:hidden">Método</span>
                 </ng-container>
-                <select placeholder="Método pago" size="s" tuiSelect [items]="metodos_pago"></select>
+                <select placeholder="Método pago" size="m" tuiSelect [items]="metodos_pago" ></select>
               </tui-select>
 
 
@@ -65,49 +64,59 @@
               </tui-textfield>
 
 
-
-
-
-
-
-
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex flex-row items-center gap-3">
               <button type="submit"
                 loading="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas"
-                iconStart="@tui.search" tuiButton appearance="textfield" tuiButtonVertical
-                [disabled]="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas">
+                iconStart="@tui.search" tuiButton appearance="textfield"
+                [disabled]="!!(ventasState$ | async)?.loadingSearch  || !!(ventasState$ | async)?.loadingLoadVentas"
+                  class="col-span-1 w-full flex-1"
+                >
                 Buscar
               </button>
-              <app-buttonupdate [func]="refreshVentas.bind(this)"
+              <span class="w-auto">
+                <app-buttonupdate [func]="refreshVentas.bind(this)" [vertical]="false"
                 [loading]="!!(ventasState$ | async)?.loadingLoadVentas"></app-buttonupdate>
-
-
+              </span>
+              
             </div>
 
 
           </div>
-
+</tui-expand>
           <!-- Sección de Resultados y Limpiar -->
           <fieldset class="mb-4">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 
                 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg py-2 ">
 
               <!-- Contador de Resultados -->
-              <div class="flex items-center gap-2">
+              <div class="flex items-center flex-col gap-2">
                 <span class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
                   Resultados:
                 </span>
                 <span class="text-base  font-semibold text-neutral-900 dark:text-white">
-                  {{ (ventasState$ | async)?.count || 0 }}
+                  {{ (ventasState$ | async)?.count || 0 }} Ventas
                 </span>
+               
               </div>
 
               <!-- Botón Limpiar -->
-              <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="button"
+              <button appearance="primary-grayscale" iconStart="@tui.rotate-cw" size="s" tuiButton type="button"
                 (click)="clearSearch()" class="w-full sm:w-auto">
-                <span class="">Limpiar</span>
+                <span class="">Limpiar busqueda</span>
               </button>
+               <span class="flex flex-col gap-1">
+                <span>
+                  Mas filtros
+                </span>
+                    <input
+        tuiSwitch
+        type="checkbox"
+        [ngModel]="true"
+        
+        [size]="'m'"
+    />
+                </span>
             </div>
           </fieldset>
         </form>
@@ -121,7 +130,7 @@
          px-6 py-3
          mb-2
          rounded-xl
-         bg-neutral-100 dark:bg-neutral-900
+         bg-neutral-100 dark:bg-neutral-800
          border border-neutral-200 dark:border-neutral-700
          text-xs font-semibold uppercase tracking-wide
          text-neutral-500 dark:text-neutral-400">

@@ -17,7 +17,7 @@ export class AdminmanagestoreComponent {
   private readonly dialog = tuiDialog(DialogcreatetiendaComponent, {
     dismissible: true,
     label: 'Nueva Tienda',
-    size: "s"
+    size: "l"
   });
   protected showDialog(): void {
     this.dialog().subscribe({

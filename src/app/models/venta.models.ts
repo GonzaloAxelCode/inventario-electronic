@@ -27,7 +27,6 @@ export interface Venta {
     direccion_cliente: string,
     telefono_cliente: string,
     comprobante_nota_credito: NotaCredito,
-
     email_cliente: string
 
 

@@ -7,16 +7,25 @@ export interface Tienda {
     ciudad?: string;
     telefono?: string;
     activo?: boolean;
-    encargado?: User | null;     // 👈 objeto completo, no solo ID
+    encargado?: User | null;
     capacidad?: number;
-    date_created?: any
+    date_created?: any;
     ruc?: string;
     imagen?: string | null;
-    users_tienda: User[];       // 👈 array de usuarios
+    users_tienda: User[];
 }
-export type TiendaCreate = Omit<Tienda, 'id' | 'users_tienda' | 'activo' | 'encargado' | 'parent' | 'capacidad' | 'imagen' | 'ciudad'>;
 
-
+export interface TiendaCreate {
+    nombre: string;
+    razon_social?: string;
+    ruc?: string;
+    direccion?: string;
+    telefono?: string;
+    email?: string;
+    sol_user?: string;
+    sol_password?: string;
+    logo_img?: File | null; // para enviar el archivo
+}
 
 export interface TiendaState {
     tiendas: Tienda[];

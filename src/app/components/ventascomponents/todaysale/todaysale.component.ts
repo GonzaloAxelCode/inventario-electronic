@@ -34,7 +34,10 @@ dayjs.locale('es');
 export class TodaysaleComponent {
 
   selectedState: 'original' | 'anulado' = 'original';
-  public venta: Venta = {} as Venta;
+  public venta: Venta = {
+    id: 0,
+    activo: false,
+  } as Venta;
   protected expanded = false;
   pdfUrl!: SafeResourceUrl;
 

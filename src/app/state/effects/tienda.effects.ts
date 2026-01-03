@@ -48,6 +48,7 @@ export class TiendaEffects {
                     }),
                     catchError(error => {
                         this.alertService.showError('Error al crear la tienda', 'Error').subscribe();
+                        console.log(error)
                         return of(createTiendaFail({ error }));
                     })
                 )

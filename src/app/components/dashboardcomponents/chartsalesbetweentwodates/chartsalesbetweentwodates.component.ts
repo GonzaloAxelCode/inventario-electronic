@@ -40,16 +40,19 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
 
   protected readonly axisYSecondaryLabels = [
     's/. 300', 's/. 600', 's/. 900', 's/. 1200', 's/. 1500',
-    's/. 1800', 's/. 2100', 's/. 2400', 's/. 2700', 's/. 3000',
+    's/. 1800', 's/. 2100'
   ];
+
+
   private readonly store = inject(Store<AppState>);
   private readonly months$ = inject(TUI_MONTHS);
 
   // Rango actual como BehaviorSubject para manejar cambios reactivamente
   private _range = new BehaviorSubject<TuiDayRange>(
     new TuiDayRange(
-      new TuiDay(2025, 0, 1),
-      TuiDay.currentLocal().append({ day: 1 })
+      new TuiDay(2025, 11, 1),
+      //TuiDay.currentLocal().append({ day: 1 }),
+      new TuiDay(2026, 6, 1),
     )
   );
 
@@ -95,12 +98,12 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
 
   }
   allSalesYear() {
-    const fromDate = new Date(2025, 0, 1);
-    const toDate = new Date(2025, 11, 31);
+    const fromDate = new Date(2025, 11, 1);
+    const toDate = new Date(2026, 11, 31);
 
     const newRange: TuiDayRange = new TuiDayRange(
-      new TuiDay(2025, 0, 1),
-      new TuiDay(2025, 11, 31)
+      new TuiDay(2025, 11, 1),
+      new TuiDay(2026, 11, 31)
     );
 
 

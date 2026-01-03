@@ -16,7 +16,8 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule }
 import { Store } from '@ngrx/store';
 import { tuiCountFilledControls, TuiDay, TuiDayLike, TuiDayRange } from '@taiga-ui/cdk';
 import { TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiBadge, TuiChip, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle } from '@taiga-ui/kit';
+import { TuiExpand } from '@taiga-ui/experimental';
+import { TuiBadge, TuiChip, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiSwitch, tuiSwitchOptionsProvider } from '@taiga-ui/kit';
 import { TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputDateRangeModule, TuiInputModule, TuiSelectModule } from "@taiga-ui/legacy";
 import { PolymorpheusOutlet } from '@taiga-ui/polymorpheus';
@@ -27,7 +28,6 @@ import * as advancedFormat from 'dayjs/plugin/advancedFormat';
 import * as localizedFormat from 'dayjs/plugin/localizedFormat';
 import { BehaviorSubject, map, Observable, take } from 'rxjs';
 import { ButtonupdateComponent } from "../../buttonupdate/buttonupdate.component";
-
 //@ts-ignore
 dayjs.extend(advancedFormat);    //@ts-ignore
 dayjs.extend(localizedFormat);
@@ -49,18 +49,20 @@ dayjs.locale('es');
     TuiSelectModule,
     TuiPagination,
     PolymorpheusOutlet,
-    TuiLoader,
+    TuiLoader, TuiSwitch,
     TuiSearch,
     TuiTextfield,
     TuiChip,
-    TuiBlockStatus,
+    TuiBlockStatus, TuiExpand,
     // tus componentes
     ButtonupdateComponent, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle],
-  templateUrl: './listallventas.component.html',
+  templateUrl: './listallventas.component.html', providers: [
+    tuiSwitchOptionsProvider({ showIcons: true, appearance: () => 'positive' }),
+  ],
   styleUrl: './listallventas.component.scss'
 })
 export class ListallventasComponent {
-
+  protected expanded = false;
   ventasState$!: Observable<Partial<VentaState>>;
   ventas: any = []
   URL_BASE = URL_BASE
@@ -70,8 +72,8 @@ export class ListallventasComponent {
   ];
   private _range = new BehaviorSubject<TuiDayRange>(
     new TuiDayRange(
-      new TuiDay(2025, 0, 1),
-      new TuiDay(2025, 11, 31)
+      new TuiDay(2025, 11, 1),
+      new TuiDay(2026, 11, 31)
     )
   );
   getValorVentaRedondeado(valor: number) {

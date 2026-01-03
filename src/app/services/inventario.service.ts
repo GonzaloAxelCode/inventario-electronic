@@ -98,7 +98,10 @@ export class InventarioService {
     actualizarInventario(inventarioUpdated: Partial<Inventario>): Observable<any> {
 
         return this.http.patch(`${this.siteURL}/inventarios/actualizar/${inventarioUpdated.id}/`, inventarioUpdated).pipe(
-            catchError(error => throwError(() => error))
+            catchError(error => throwError(() => {
+                console.log(error)
+                return error
+            }))
         );
     }
 

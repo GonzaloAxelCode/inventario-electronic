@@ -40,6 +40,7 @@ export class DashboardSalesCardsComponent implements OnInit, OnDestroy {
   ventasState$?: Observable<VentaState>
   currentDay: string = '';
   currentMonth: string = '';
+
   currentWeek: number = 0;
   tiendaUser!: number
   constructor(private store: Store<AppState>, private tuiDatePipe: TuiFormatDatePipe) {
@@ -54,10 +55,17 @@ export class DashboardSalesCardsComponent implements OnInit, OnDestroy {
     this.currentWeek = this.getWeekNumber(today);
 
 
+
   }
   protected readonly testForm = new FormGroup({
     testValue: new FormControl(TuiDay.currentLocal()),
   });
+
+  years = [
+    { number: 2025 },
+    { number: 2026 },
+    { number: 2027 },
+  ]
   months = [
     { number: 1, name: 'Enero' },
     { number: 2, name: 'Febrero' },
@@ -72,8 +80,13 @@ export class DashboardSalesCardsComponent implements OnInit, OnDestroy {
     { number: 11, name: 'Noviembre' },
     { number: 12, name: 'Diciembre' },
   ];
+  protected readonly testFormMonth = new FormGroup({
+    month: new FormControl(this.getCurrentMonthName()), // Valor inicial: 0 (Enero)
+    year: new FormControl(parseInt(new Date().getFullYear().toString())), // Valor inicial: 2026
+  });
   onMonthChange(selectedMonth: string) {
     const selectedMonthObj: any = this.months.find((month) => month.name === selectedMonth);
+    const formValues = this.testFormMonth.value;
 
 
     // Aquí puedes hacer algo con el mes seleccionado, como actualizar otro campo o realizar alguna acción.
@@ -81,15 +94,25 @@ export class DashboardSalesCardsComponent implements OnInit, OnDestroy {
 
       month: selectedMonthObj.number,
       day: 1,
-      year: new Date().getFullYear(), // Año actual
+      year: parseInt(formValues.year?.toString() || '2026'), // Año actual
+      tipo: "month_year"
+    }))
+  }
+  onYearChange(selectedYear: number) {
+
+    const formValues = this.testFormMonth.value;
+    const selectedMonthObj: any = this.months.find((month) => month.name === formValues.month);
+    // Aquí puedes hacer algo con el mes seleccionado, como actualizar otro campo o realizar alguna acción.
+    this.store.dispatch(cargarResumenVentasByDate({
+      month: selectedMonthObj.number,
+      day: 1,
+      year: selectedYear, // Año actual
       tipo: "month_year"
     }))
   }
 
 
-  protected readonly testFormMonth = new FormGroup({
-    month: new FormControl(this.getCurrentMonthName()), // Valor inicial: 0 (Enero)
-  });
+
 
   getCurrentMonthName(): string {
     const currentMonth = new Date().getMonth(); // Obtiene el índice del mes actual (0 = Enero, 1 = Febrero, etc.)

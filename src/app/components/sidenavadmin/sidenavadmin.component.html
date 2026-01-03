@@ -16,20 +16,21 @@
 
  <a (click)="onClose()" routerLink="/admin" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
                     class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
-                    <tui-icon icon="store" class="text-green-500"></tui-icon> <span>Home</span>
+                    <tui-icon icon="store" class="text-green-500"></tui-icon> <span>Dashboard</span>
                 </a>
                 <a (click)="onClose()" routerLink="/admin/store" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
                     class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
                     <tui-icon icon="store" class="text-green-500"></tui-icon> <span>Tiendas</span>
                 </a>
-                <a (click)="onClose()" routerLink="/admin/history" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
-                    class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
-                    <tui-icon icon="history" class="text-green-500"></tui-icon> <span>Historial de actividades</span>
-                </a>
-                <a (click)="onClose()" routerLink="/admin/config" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
-                    class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
-                    <tui-icon icon="settings" class="text-grey-500"></tui-icon> <span>Configuracion</span>
-                </a>
+                
+                <button (click)="logout2()" *ngIf="user.is_superuser"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
+          <div class="flex items-center gap-3">
+            <tui-icon icon="bookmark-x" class="w-5 h-5"></tui-icon>
+            <span>Cerrar Session</span>
+          </div>
+
+        </button> 
             </div>
 
 
