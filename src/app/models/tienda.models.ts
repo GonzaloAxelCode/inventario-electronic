@@ -2,18 +2,26 @@ import { User } from "./user.models";
 
 export interface Tienda {
     id: number;
-    nombre?: string;
-    direccion?: string;
-    ciudad?: string;
-    telefono?: string;
-    activo?: boolean;
-    encargado?: User | null;
-    capacidad?: number;
-    date_created?: any;
-    ruc?: string;
-    imagen?: string | null;
+
+    nombre: string;
+    razon_social: string | null;
+    ruc: string | null;
+
+    direccion: string | null;
+    telefono: string | null;
+    email: string | null;
+
+    sol_user: string | null;
+    sol_password: string | null; // ⚠️ idealmente no usar en frontend
+
+    logo_img: string | null; // URL del backend
+    activo: boolean;
+    is_deleted: boolean;
+
+    date_created: string; // ISO string (DateTimeField)
     users_tienda: User[];
 }
+
 
 export interface TiendaCreate {
     nombre: string;
@@ -33,6 +41,7 @@ export interface TiendaState {
     loadingActiveTienda: boolean,
     loadingTiendas: boolean;
     loadingDeleteTienda: boolean;
+    loadingUpdateTienda: boolean;
     errors?: any;
 }
 

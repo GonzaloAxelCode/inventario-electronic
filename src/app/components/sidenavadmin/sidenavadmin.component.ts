@@ -6,6 +6,7 @@
 import { User } from '@/app/models/user.models';
 import { SidebarService } from '@/app/services/ui/sidebar-service.service';
 import { clearTokensAction } from '@/app/state/actions/auth.actions';
+import { clearInventariosFromCache } from '@/app/state/actions/inventario.actions';
 import { clearUserAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
 import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
@@ -32,6 +33,7 @@ import {
 import {
   TuiAvatar,
   TuiAvatarLabeled,
+  TuiButtonLoading,
   TuiDrawer,
   TuiTabs
 } from '@taiga-ui/kit';
@@ -49,7 +51,7 @@ import { HeaderComponent } from "../header/header.component";
     NgIf,
     TuiDataList,
     TuiDropdown,
-    TuiNavigation,
+    TuiNavigation, TuiButtonLoading,
     TuiTabs, TuiAvatarLabeled, TuiFallbackSrcPipe,
     TuiTextfield, RouterLinkActive, RouterLinkWithHref, TuiIcon, HeaderComponent,
     TuiDropdownMobile,
@@ -81,12 +83,17 @@ export class SidenavadminComponent implements OnInit {
 
   loadingAuthenticated$: Observable<any>;
   authState$ = this.store.pipe(select(selectAuth));
-
+  loadingLogout = false;
   logout2() {
-    this.store.dispatch(clearTokensAction())
-    this.store.dispatch(clearUserAction())
-    this.onClose()
-    this.router.navigate(['/login']);
+    this.loadingLogout = true;
+
+    setTimeout(() => {
+      this.store.dispatch(clearTokensAction())
+      this.store.dispatch(clearUserAction())
+      this.store.dispatch(clearInventariosFromCache())
+      this.onClose()
+      this.router.navigate(['/login']);
+    }, 3000);
   }
   isActiveRoute(route: string): boolean {
     return this.router.url === route;

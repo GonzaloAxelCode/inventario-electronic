@@ -5,7 +5,7 @@ import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { TiendaService } from '@/app/services/tienda.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
-import { createTiendaAction, createTiendaFail, createTiendaSuccess, desactivateTiendaAction, desactivateTiendaFail, desactivateTiendaSuccess, eliminarTiendaPermanently, eliminarTiendaPermanentlyFail, eliminarTiendaPermanentlySuccess, loadTiendasAction, loadTiendasFail, loadTiendasSuccess } from '../actions/tienda.actions';
+import { createTiendaAction, createTiendaFail, createTiendaSuccess, desactivateTiendaAction, desactivateTiendaFail, desactivateTiendaSuccess, eliminarTiendaPermanently, eliminarTiendaPermanentlyFail, eliminarTiendaPermanentlySuccess, loadTiendasAction, loadTiendasFail, loadTiendasSuccess, updateTiendaAction, updateTiendaFail, updateTiendaSuccess } from '../actions/tienda.actions';
 
 @Injectable()
 export class TiendaEffects {
@@ -55,7 +55,24 @@ export class TiendaEffects {
             )
         )
     );
-
+    updateTiendaEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(updateTiendaAction),
+            exhaustMap(({ newTienda, id }) =>
+                this.tiendaService.updateTIenda(newTienda, id).pipe(
+                    map(createdTienda => {
+                        this.alertService.showSuccess('Tienda actualizada exitosamente', 'Éxito').subscribe();
+                        return updateTiendaSuccess({ tienda: createdTienda });
+                    }),
+                    catchError(error => {
+                        this.alertService.showError('Error al actualizar la tienda', 'Error').subscribe();
+                        console.log(error)
+                        return of(updateTiendaFail({ error }));
+                    })
+                )
+            )
+        )
+    );
     descativateCategoriaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(desactivateTiendaAction),

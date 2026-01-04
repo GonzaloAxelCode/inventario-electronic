@@ -1,6 +1,6 @@
 import { clearTokensAction } from '@/app/state/actions/auth.actions';
 import { forceSyncClientes } from '@/app/state/actions/cliente.actions';
-import { forceSyncInventarios } from '@/app/state/actions/inventario.actions';
+import { clearInventariosFromCache, forceSyncInventarios } from '@/app/state/actions/inventario.actions';
 import { clearUserAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectCliente } from '@/app/state/selectors/cliente.selectors';
@@ -10,12 +10,13 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiAppearance, TuiButton } from '@taiga-ui/core';
+import { TuiButtonLoading } from '@taiga-ui/kit';
 import { ButtonupdateComponent } from "../../buttonupdate/buttonupdate.component";
 
 @Component({
   selector: 'app-ventassettings',
   standalone: true,
-  imports: [ButtonupdateComponent, RouterModule, CommonModule, TuiButton, TuiAppearance],
+  imports: [ButtonupdateComponent, TuiButtonLoading, RouterModule, CommonModule, TuiButton, TuiAppearance],
   templateUrl: './ventassettings.component.html',
   styleUrl: './ventassettings.component.scss'
 })
@@ -51,6 +52,7 @@ export class VentassettingsComponent {
     setTimeout(() => {
       this.store.dispatch(clearTokensAction());
       this.store.dispatch(clearUserAction());
+      this.store.dispatch(clearInventariosFromCache())
       this.loadingLogout = false;
       this.router.navigate(['/login']);
     }, 3000);

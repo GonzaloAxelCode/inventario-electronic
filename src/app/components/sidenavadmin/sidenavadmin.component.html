@@ -1,68 +1,72 @@
-<body class="grid overflow-x-hidden">
-    <ng-template #sidebarTemplateadmin>
+<ng-template #sidebarTemplateadmin>
 
-        <nav class="flex flex-col  justify-between bg-tui-background  md:min-w-[200px] ">
+    <nav class="flex flex-col  justify-between bg-tui-background  md:min-w-[200px] ">
+        <div class="flex flex-col p-3 overflow-y-auto flex-1">
 
-            <div class="flex flex-col gap-1 ">
-                <a (click)="onClose()" routerLink="/admin"
-                    class="flex items-center gap-3 p-3 text-xl font-bold transition-all duration-300 ease-in-out text-white">
-                    <span>
-                        <img src="https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_350,h_150/v1755473642/APP%20INVENTARIO/T-removebg-preview_zgnu7f.png"
-                            class="w-32 transition-all duration-300 invert-0 dark:invert" alt="">
-                    </span>
-                </a>
-
+            <a (click)="onClose()" routerLink="/admin"
+                class="flex items-center gap-3 p-3 text-xl font-bold transition-all duration-300 ease-in-out text-white">
+                <span>
+                    <img src="https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_350,h_150/v1755473642/APP%20INVENTARIO/T-removebg-preview_zgnu7f.png"
+                        class="w-32 transition-all duration-300 invert-0 dark:invert" alt="">
+                </span>
+            </a>
 
 
- <a (click)="onClose()" routerLink="/admin" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
-                    class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
-                    <tui-icon icon="store" class="text-green-500"></tui-icon> <span>Dashboard</span>
-                </a>
-                <a (click)="onClose()" routerLink="/admin/store" routerLinkActive="bg-gray-300  dark:bg-neutral-700"
-                    class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
-                    <tui-icon icon="store" class="text-green-500"></tui-icon> <span>Tiendas</span>
-                </a>
-                
-                <button (click)="logout2()" *ngIf="user.is_superuser"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
-          <div class="flex items-center gap-3">
-            <tui-icon icon="bookmark-x" class="w-5 h-5"></tui-icon>
-            <span>Cerrar Session</span>
-          </div>
+            <!-- Home -->
+            <a routerLink="/admin" (click)="onClose()" [routerLinkActiveOptions]="{ exact: true }"
+                routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm">
+                <tui-icon icon="home" class="w-5 h-5"></tui-icon>
+                <span>Dashboard</span>
+            </a>
 
-        </button> 
-            </div>
+            <!-- Workspace -->
+            <a routerLink="/admin/store" (click)="onClose()"
+                routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
+                <tui-icon icon="briefcase" class="w-5 h-5"></tui-icon>
+                <span>Tiendas</span>
+            </a>
 
 
-
-        </nav>
-    </ng-template>
-
-
-    <div class="flex md:hidden">
-        <tui-drawer *tuiPopup="open()" direction="left" class="drawer" [overlay]="true" (click.self)="onClose()">
-            <aside class="relative">
-                <div class="absolute right-0 top-0">
-                    <button class="" tuiButton type="button" iconStart="@tui.x" size="s" appearance="floating"
-                        (click)="onClose()">
-                    </button>
+            <button tuiButton (click)="logout2()" [loading]="loadingLogout" appearance="textfield"
+                [disabled]="loadingLogout" *ngIf="user.is_superuser"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
+                <div class="flex items-center gap-3">
+                    <tui-icon icon="bookmark-x" class="w-5 h-5"></tui-icon>
+                    <span>Cerrar Session</span>
                 </div>
 
-                <ng-container *ngTemplateOutlet="sidebarTemplateadmin"></ng-container>
-            </aside>
-        </tui-drawer>
-    </div>
-    <div class="flex h-screen w-screen">
-        <!-- Sidebar (estático) -->
-        <aside class="hidden md:block p-5 pr-0 h-screen overflow-y-auto bg-tui-background sticky top-0">
+            </button>
+        </div>
+    </nav>
+</ng-template>
+
+
+<div class="flex md:hidden">
+    <tui-drawer *tuiPopup="open()" direction="left" class="drawer" [overlay]="true" (click.self)="onClose()">
+        <aside class="relative">
+            <div class="absolute right-0 top-0">
+                <button class="" tuiButton type="button" iconStart="@tui.x" size="s" appearance="floating"
+                    (click)="onClose()">
+                </button>
+            </div>
+
+            <ng-container *ngTemplateOutlet="sidebarTemplateadmin"></ng-container>
+        </aside>
+    </tui-drawer>
+</div>
+
+<div class="relative flex h-screen w-full">
+    <div class="flex w-full mx-auto">
+        <aside class="hidden md:block">
             <ng-container *ngTemplateOutlet="sidebarTemplateadmin"></ng-container>
         </aside>
 
-        <!-- Contenido principal (scrollable) -->
-        <main class="flex-1 h-screen overflow-y-auto">
+
+        <div class="flex-1 relative overflow-auto h-screen bg-neutral-50 dark:bg-neutral-800">
             <app-header></app-header>
             <router-outlet></router-outlet>
-        </main>
+        </div>
     </div>
-
-</body>
+</div>

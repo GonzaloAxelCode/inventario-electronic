@@ -28,6 +28,14 @@ export class TiendaService {
             })
         );
     }
+    updateTIenda(newtienda: FormData, id: number): Observable<Tienda> {
+        return this.http.post<Tienda>(`${this.siteURL}/tiendas/update/${id}/`, newtienda).pipe(
+            catchError(error => {
+                printError(error)
+                return throwError(error)
+            })
+        );
+    }
     desactivateTienda({ id, activo }: { id: number, activo: boolean }): Observable<any> {
         return this.http.patch(`${this.siteURL}/tiendas/desactivate/${id}/`, { activo }).pipe(
             catchError(error => {

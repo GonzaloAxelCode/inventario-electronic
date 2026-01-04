@@ -16,6 +16,11 @@ export enum ActionTypes {
     ELIMINAR_TIENDA_PERMANENTEMENTE_SUCCESS = 'ELIMINAR_TIENDA_PERMANENTEMENTE_SUCCESS',
     ELIMINAR_TIENDA_PERMANENTEMENTE_FAIL = 'ELIMINAR_TIENDA_PERMANENTEMENTE_FAIL',
     AGREGATE_USERS_IN_TIENDA = 'AGREGATE_USERS_IN_TIENDA',
+
+
+    UPDATE_TIENDA = 'UPDATE_TIENDA',
+    UPDATE_TIENDA_SUCCESS = 'UPDATE_TIENDA_SUCCESS ',
+    UPDATE_TIENDA_FAIL = 'UPDATE_TIENDA_FAIL'
 }
 
 export const loadTiendasAction = createAction(
@@ -82,5 +87,21 @@ export const eliminarTiendaPermanentlySuccess = createAction(
 );
 export const eliminarTiendaPermanentlyFail = createAction(
     ActionTypes.ELIMINAR_TIENDA_PERMANENTEMENTE_FAIL,
+    props<{ error: any }>()
+);
+
+
+export const updateTiendaAction = createAction(
+    ActionTypes.UPDATE_TIENDA,
+    props<{ newTienda: FormData, id: number }>()
+);
+
+export const updateTiendaSuccess = createAction(
+    ActionTypes.UPDATE_TIENDA_SUCCESS,
+    props<{ tienda: Tienda }>()
+);
+
+export const updateTiendaFail = createAction(
+    ActionTypes.UPDATE_TIENDA_FAIL,
     props<{ error: any }>()
 );

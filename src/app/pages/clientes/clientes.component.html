@@ -1,5 +1,5 @@
-<main tuiNavigationMain>
-    <header tuiSubheader>
+<div tuiNavigationMain class="pl-4">
+    <header tuiSubheader class="">
         <div class="flex gap-4 items-center">
             <h2 tuiHeader>
                 <div tuiTitle>
@@ -36,11 +36,14 @@
 
 
     <div>
-        <div class="py-4">
+        <div class="pt-4">
             
             <ng-container *ngIf="activeTab === 'mis-clientes'">
                 
                                <app-tableclientes></app-tableclientes>
+                               
+                
+                
             </ng-container>
 
 
@@ -53,4 +56,4 @@
         </div>
     </div>
 
-</main>
+</div>

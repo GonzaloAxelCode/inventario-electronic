@@ -1,6 +1,9 @@
+import { Tienda } from '@/app/models/tienda.models';
 import { User } from '@/app/models/user.models';
 import { SidebarService } from '@/app/services/ui/sidebar-service.service';
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import { clearTokensAction } from '@/app/state/actions/auth.actions';
+import { clearInventariosFromCache } from '@/app/state/actions/inventario.actions';
 import { clearUserAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
 import { UserState } from '@/app/state/reducers/user.reducer';
@@ -74,6 +77,7 @@ export class SidenavComponent implements OnInit {
   isAuthenticated$: Observable<any>;
   userState$!: Observable<UserState>;
   user!: User
+  tienda!: Tienda
 
   constructor(private store: Store<AppState>, public router: Router, public sidebarService: SidebarService) {
 
@@ -116,8 +120,10 @@ export class SidenavComponent implements OnInit {
   logout2() {
     this.store.dispatch(clearTokensAction())
     this.store.dispatch(clearUserAction())
+    this.store.dispatch(clearInventariosFromCache())
     this.onClose()
     this.router.navigate(['/login']);
+
   }
 
   //user menu 
@@ -129,12 +135,12 @@ export class SidenavComponent implements OnInit {
   protected onClickMenuUser(): void {
     this.openMenuUser = false;
   }
-
+  URL_BASE = URL_BASE
 
   ngOnInit() {
     this.userState$.subscribe(userState => {
       this.user = userState.user;
-
+      this.tienda = userState.user.tienda_data ?? {} as Tienda
     });
   }
   isopenSidebar = this.sidebarService.open

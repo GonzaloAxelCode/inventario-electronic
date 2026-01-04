@@ -1,6 +1,7 @@
 import { Tienda, TiendaState } from '@/app/models/tienda.models';
 import { DialogDetailTiendaService } from '@/app/services/dialogs-services/dialog-detailtienda.service';
 import { DialogUpdateTiendaService } from '@/app/services/dialogs-services/dialog-updatetienda.service';
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import { desactivateTiendaAction } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
@@ -23,7 +24,7 @@ import { Observable, tap } from 'rxjs';
   styleUrl: './tabletiendas.component.scss'
 })
 export class TabletiendasComponent implements OnInit {
-
+  URL_BASE = URL_BASE
   tiendasState$?: Observable<TiendaState>;
   allColumns = [
     { key: 'id', label: 'ID' },

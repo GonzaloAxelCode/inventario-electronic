@@ -1,85 +1,226 @@
 <!-- Dialog: Detalle de Tienda -->
 
-  <tui-loader [showLoader]="deleteTiendaLoader"
-        [overlay]="true">
-        
-<div class="w-full max-w-4xl mx-auto ">
-  <!-- Card -->
-  <div class="rounded-2xl b">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row gap-6  p-2 rounded-t-2xl">
-      <!-- Imagen / Avatar -->
-      <div class="shrink-0">
-        <div
-          class="h-24 w-24 rounded-2xl overflow-hidden ring-1 ring-gray-200 dark:ring-gray-700 bg-white dark:bg-neutral-800 grid place-items-center">
-          <img *ngIf="tienda.imagen; else fallbackAvatar" [src]="tienda.imagen!" [alt]="tienda.nombre || 'Tienda'"
-            class="h-full w-full object-cover" (error)="tienda!.imagen = null" />
-          <ng-template #fallbackAvatar>
-            <div class="h-full w-full grid place-items-center text-2xl font-semibold">
-              {{'T'}}
+
+
+
+<tui-loader [showLoader]="deleteTiendaLoader" [overlay]="true">
+
+  <div class="w-full max-w-4xl mx-auto ">
+    <!-- Card -->
+    <div class="rounded-2xl b">
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row gap-6  p-2 rounded-t-2xl">
+        <!-- Imagen / Avatar -->
+        <div class="shrink-0">
+          <div
+            class="h-24 w-24 rounded-2xl overflow-hidden ring-1 ring-gray-200 dark:ring-gray-700 bg-white dark:bg-neutral-800 grid place-items-center">
+
+            <div
+              class="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-sm">
+              <img loading="lazy"
+                [src]="tienda?.logo_img ? URL_BASE + tienda.logo_img : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                [alt]="tienda.nombre"
+                class="w-full h-full object-cover cursor-pointer active:scale-95 transition-transform" />
             </div>
-          </ng-template>
-        </div>
-      </div>
-
-      <!-- Títulos -->
-      <div class="flex-1 min-w-0">
-        <div class="flex items-start gap-3 flex-wrap">
-          <h2 class="text-2xl md:text-3xl font-semibold tracking-tight truncate">
-            {{ tienda.nombre || 'Tienda sin nombre' }}
-          </h2>
-
-          <span class="px-2.5 py-1 rounded-full text-xs font-medium" [ngClass]="tienda.activo ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' :
-                                         'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'">
-            {{ tienda.activo ? 'Activa' : 'Inactiva' }}
-          </span>
-        </div>
-
-        <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-          <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <div class="flex items-center gap-2">
-              <span class="font-medium">ID:</span>
-              <span class="tabular-nums">{{ tienda.id ?? '—' }}</span>
-            </div>
-          
-          
-
-            <div class="flex items-center gap-2" *ngIf="tienda.capacidad !== undefined">
-              <span class="font-medium">Direccion:</span>
-              <span class="tabular-nums">{{ tienda.direccion }}</span>
-            </div>
-           
 
           </div>
         </div>
+
+        <!-- Títulos -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start gap-3 flex-wrap">
+            <h2 class="text-2xl md:text-3xl font-semibold tracking-tight truncate">
+              {{ tienda.nombre || 'Tienda sin nombre' }}
+            </h2>
+
+            <span class="px-2.5 py-1 rounded-full text-xs font-medium" [ngClass]="tienda.activo ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' :
+                                         'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'">
+              {{ tienda.activo ? 'Activa' : 'Inactiva' }}
+            </span>
+          </div>
+
+          <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <div class="flex items-center gap-2">
+                <span class="font-medium">ID:</span>
+                <span class="tabular-nums">{{ tienda.id ?? '—' }}</span>
+              </div>
+
+
+
+              <div class="flex items-center gap-2">
+                <span class="font-medium">Direccion:</span>
+                <span class="tabular-nums">{{ tienda.direccion }}</span>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones (opcional en el diálogo) -->
+
       </div>
 
-      <!-- Acciones (opcional en el diálogo) -->
-    
-    </div>
 
-    <!-- Body -->
-    <div class="p-2">
-         <!-- Usuarios / Encargados relacionados -->
-      <div class="mt-2">
-       
 
-        <div class="rounded-2xl overflow-hidden">
-          <!-- Tu tabla existente -->
-          <app-tableusers [idtienda]="tienda.id"></app-tableusers>
-          
-        </div>
+
+      <!-- PESTAÑAS SIN ROUTER -->
+      <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
+
+        <button tuiTab (click)="setTab('update')" [class.active-link]="activeTab === 'update'">
+          Actualizar Tienda
+        </button>
+
+        <button tuiTab (click)="setTab('personal')" [class.active-link]="activeTab === 'personal'">
+          Gestionar Personal
+        </button>
+
+        <button tuiTab (click)="setTab('config')" [class.active-link]="activeTab === 'config'">
+          Configuracion
+        </button>
+
+
+
+      </nav>
+
+      <!-- Body -->
+      <div class="p-2">
+
+      <ng-container *ngIf="activeTab === 'update'">
+
+
+        <form [formGroup]="tiendaForm" (ngSubmit)="onSubmit()" class="space-y-4">
+
+          <!-- Grid responsivo -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+            <!-- Nombre -->
+            <div>
+              <tui-input formControlName="nombre" placeholder="Ingrese el nombre de la tienda" class="w-full">
+                Nombre
+              </tui-input>
+              <div *ngIf="tiendaForm.get('nombre')?.touched && tiendaForm.get('nombre')?.invalid"
+                class="text-red-500 text-sm">
+                El nombre es obligatorio
+              </div>
+            </div>
+
+            <!-- Razon Social -->
+            <div>
+              <tui-input formControlName="razon_social" placeholder="Ingrese la razón social" class="w-full">
+                Razón Social
+              </tui-input>
+            </div>
+
+            <!-- RUC -->
+            <div>
+              <tui-input formControlName="ruc" placeholder="Ingrese el RUC" class="w-full">
+                RUC
+              </tui-input>
+            </div>
+
+            <!-- Dirección -->
+            <div>
+              <tui-input formControlName="direccion" placeholder="Ingrese la dirección de la tienda" class="w-full">
+                Dirección
+              </tui-input>
+              <div *ngIf="tiendaForm.get('direccion')?.touched && tiendaForm.get('direccion')?.invalid"
+                class="text-red-500 text-sm">
+                La dirección es obligatoria
+              </div>
+            </div>
+
+            <!-- Teléfono -->
+            <div>
+              <tui-input formControlName="telefono" placeholder="Ingrese el teléfono" class="w-full">
+                Teléfono
+              </tui-input>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <tui-input formControlName="email" placeholder="Ingrese el correo electrónico" class="w-full"
+                type="email">
+                Email
+              </tui-input>
+            </div>
+
+            <!-- Usuario SOL -->
+            <div>
+              <tui-input formControlName="sol_user" placeholder="Usuario SOL" class="w-full">
+                Usuario SOL
+              </tui-input>
+            </div>
+
+            <!-- Contraseña SOL -->
+            <div>
+              <tui-input formControlName="sol_password" placeholder="Contraseña SOL" class="w-full" type="password">
+                Contraseña SOL
+              </tui-input>
+            </div>
+
+            <!-- Logo -->
+            <div class="lg:col-span-2">
+              <label class="block mb-2 text-sm font-medium">Logo de la Tienda</label>
+
+              <!-- Contenedor clicable -->
+              <div class="w-32 h-32 border rounded overflow-hidden cursor-pointer" (click)="fileInput.click()">
+
+                <!-- Preview de la imagen o fondo gris si no hay -->
+                <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo Preview" class="w-full h-full object-cover" />
+                <div *ngIf="!logoPreview"
+                  class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
+                  Seleccionar
+                </div>
+              </div>
+
+              <!-- Input oculto -->
+              <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" class="hidden" />
+            </div>
+
+
+          </div>
+
+          <!-- Botón -->
+          <div class="w-full flex flex-1">
+            <button tuiButton size="m" appearance="outline-grayscale" class="w-full" type="submit"
+              [disabled]="tiendaForm.invalid">
+              Actualizar Tienda
+              <tui-loader [showLoader]="!!(loadingUpdateTienda)"></tui-loader>
+            </button>
+          </div>
+
+        </form>
+
+      </ng-container>
+
+
+
+        <!-- Usuarios / Encargados relacionados -->
+                     <ng-container *ngIf="activeTab === 'personal'">
+        <div class="mt-2">
+
+
+          <div class="rounded-2xl overflow-hidden">
+            <!-- Tu tabla existente -->
+            <app-tableusers [idtienda]="tienda.id"></app-tableusers>
+
+          </div>
+
         
-                  <button
-                   tuiButton
-                    appearance="outline-destructive"
-                    [disabled]="deleteTiendaLoader"
+        </div>
+</ng-container>
+            <ng-container *ngIf="activeTab === 'config'">
 
-                    (click)="onDeleteTienda(tienda.id)"
-                    class="mt-10 flex flex-1 text-center" >Eliminar tienda permanentemente</button>
+
+
+
+          <button tuiButton appearance="outline-destructive" [disabled]="deleteTiendaLoader"
+            (click)="onDeleteTienda(tienda.id)" class="mt-10 flex flex-1 text-center">Eliminar tienda
+            permanentemente</button>            </ng-container>
       </div>
     </div>
   </div>
-</div>
 
-      </tui-loader>
+</tui-loader>

@@ -1,3 +1,5 @@
+import { Tienda } from "./tienda.models";
+
 export interface User {
     id: number;
     username: string;
@@ -12,6 +14,7 @@ export interface User {
     desactivate_account: boolean;
     tienda: any | number
     tienda_nombre?: string | null
+    tienda_data?: Tienda
     permissions: UserPermissions;
     user_permissions_list: string[];   // 👈 faltaba
     all_permissions_meta: string[];    // 👈 faltaba

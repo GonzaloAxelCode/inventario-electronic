@@ -14,6 +14,7 @@ import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
+import { tuiTablePaginationOptionsProvider } from '@taiga-ui/addon-table';
 import { tuiCountFilledControls, TuiDay, TuiDayLike, TuiDayRange } from '@taiga-ui/cdk';
 import { TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiExpand } from '@taiga-ui/experimental';
@@ -58,6 +59,7 @@ dayjs.locale('es');
     ButtonupdateComponent, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle],
   templateUrl: './listallventas.component.html', providers: [
     tuiSwitchOptionsProvider({ showIcons: true, appearance: () => 'positive' }),
+    tuiTablePaginationOptionsProvider({ size: 2 })
   ],
   styleUrl: './listallventas.component.scss'
 })
@@ -79,6 +81,10 @@ export class ListallventasComponent {
   getValorVentaRedondeado(valor: number) {
     return valor ? parseFloat(valor.toFixed(2)) : 0.0;
   }
+
+
+
+
   protected titles = ["Producto Sin Imagen"]
   protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
   protected open = false;

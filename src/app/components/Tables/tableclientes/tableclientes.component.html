@@ -2,7 +2,7 @@
   [overlay]="true"
   [showLoader]="!!(selectClientes$ | async)?.loadingClientes"
 >
-
+<div >
   <!-- ================= BUSCADOR ================= -->
   <search tuiSearch class="py-2">
     <form [formGroup]="form" (submit)="onSubmitSearch()" class="flex">
@@ -46,7 +46,7 @@
   </search>
 
   <!-- ================= CONTENEDOR ================= -->
-  <div class="rounded-lg p-2">
+  <div class=" ">
 
     <!-- ================= ESTADO VACÍO ================= -->
     <tui-block-status
@@ -76,10 +76,10 @@
         class="
           hidden sm:grid
           grid-cols-[70px_2fr_1.5fr_2fr_2fr]
-          px-4 py-3
+          py-3
           bg-neutral-100 dark:bg-neutral-800
           border border-neutral-200 dark:border-neutral-700
-          rounded-t-lg
+          pl-3
           text-xs font-semibold uppercase
           text-neutral-600 dark:text-neutral-300
         "
@@ -95,23 +95,22 @@
       <div
         #scrollContainer
         class="
-          border border-neutral-200 dark:border-neutral-700
-          sm:border-t-0
+         
           rounded-lg sm:rounded-b-lg
-          divide-y divide-neutral-200 dark:divide-neutral-800
+
           overflow-y-auto
         "
-        style="max-height: 55vh;"
+        style="max-height: 63vh;"
         infiniteScroll
-        [infiniteScrollDistance]="2"
+        [infiniteScrollDistance]="2"       
         [infiniteScrollThrottle]="300"
-        [scrollWindow]="false"
+        [scrollWindow]="true"
         [infiniteScrollContainer]="scrollContainer"
         (scrolled)="onScroll()"
 
         
         infiniteScroll
-[scrollWindow]="true"
+        
       >
 
         <!-- ROW -->
@@ -122,8 +121,7 @@
             sm:grid-cols-[70px_2fr_1.5fr_2fr_2fr]
             gap-3 sm:gap-0
             px-4 py-4 sm:py-3
-            bg-white dark:bg-neutral-800
-            hover:bg-neutral-50 dark:hover:bg-neutral-800
+            bg-transparent
             transition
           "
         >
@@ -207,5 +205,5 @@
       </div>
     </ng-template>
 
-  </div>
+  </div></div>
 </tui-loader>

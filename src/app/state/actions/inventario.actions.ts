@@ -43,7 +43,9 @@ export enum InventarioActionTypes {
 export const loadInventariosFromCache = createAction(
     '[Inventario] Load From Cache'
 );
-
+export const clearInventariosFromCache = createAction(
+    '[Inventario] Clear From Cache'
+);
 export const forceSyncInventarios = createAction(
     '[Inventario] Force Sync'
 );

@@ -23,6 +23,13 @@
           <p   (click)="tienda.activo && showDialogDetailTienda(tienda) "  class=" hover:underline text-2xl font-bold leading-tight line-clamp-2">
             {{ tienda.nombre    }}
           </p>
+          <div 
+                                            class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-sm">
+                                            <img loading="lazy"
+                                                [src]="tienda?.logo_img ? URL_BASE + tienda.logo_img : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                                                [alt]="tienda.nombre"
+                                                class="w-full h-full object-cover cursor-pointer active:scale-95 transition-transform" />
+                                        </div>
         </div>
 
         <!-- Información adicional: Teléfono -->

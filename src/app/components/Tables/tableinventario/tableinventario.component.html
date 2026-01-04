@@ -235,17 +235,33 @@
 
       </div>
 
-      <!-- Caso 3: búsqueda hecha pero sin resultados -->
-      <tui-block-status *ngIf="isTheSearchWasDone 
+    
+
+
+
+                    <div class=""  *ngIf="isTheSearchWasDone 
                && currentInventarios.length === 0
-               && !(inventariosState$ | async)?.loadingProductosInventario" 
-               size="m" class="m-auto px-4 py-8">
-        <img alt="no matches"
-          src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-          tuiSlot="top" class="max-w-[200px] sm:max-w-full mx-auto" />
-        <h4 class="text-center text-sm sm:text-base">Productos no encontrados en el inventario</h4>
-        <span class="text-center text-xs sm:text-sm">No coincidimos con ningún producto</span>
-      </tui-block-status>
+               && !(inventariosState$ | async)?.loadingProductosInventario" >
+                        <section>
+                            <div class="h-[50vh] mx-auto flex flex-col items-center justify-center">
+                                <img alt="survived" src="https://concepthousewares.co.uk/assets/images/empty_cart.png"
+                                    tuiSlot="top" class="object-contain w-56 h-56 text-center" />
+                                <h2 class="text-xl text-center">No se encontro productos </h2>
+                                <p class="text-md text-center">Lo sentimos no encontramos los productos con esas especificaciones.</p>
+                                <a routerLink="/app/ventas/crear">
+                                    <button appearance="primary-grayscale" tuiButton iconStart="@tui.store" class="my-3"
+                                        size="s" type="button" (click)="clearSearch()">
+                                    Limpiar busqueda
+                                    </button>
+                                </a>
+                            </div>
+                        </section>
+                    </div>
+
+
+
+
+
 
     </div>
   </ng-template>

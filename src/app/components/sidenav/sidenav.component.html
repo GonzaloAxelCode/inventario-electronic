@@ -3,13 +3,13 @@
 
     <div class="flex flex-col">
       <!-- Logo -->
-      <a routerLink="/app"  (click)="onClose()"
+      <a routerLink="/app" (click)="onClose()"
         class="flex items-center gap-2 px-2 py-2 border-b border-neutral-200 dark:border-neutral-800">
         <div class="flex ml-8 flex-col items-center justify-center relative">
           <img
-            src="https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_500,h_210,g_auto/v1764500497/logofinal_pdsf0v.png"
+            [src]="tienda.logo_img ? tienda.logo_img : 'https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_500,h_210,g_auto/v1764500497/logofinal_pdsf0v.png'"
             class="h-20 w-24 object-contain filter dark:invert invert-0 transition duration-200" alt="">
-          <p class="text-xs absolute bottom-1">Accesorios</p>
+            
 
           <div class="inline-flex  absolute bottom-10 -right-10 items-center justify-center 
             px-2 py-1 scale-75
@@ -59,7 +59,8 @@
 
         </a>
         <!-- Risk Management -->
-        <a routerLink="/app/ventas/crear"  (click)="onClose()" routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+        <a routerLink="/app/ventas/crear" (click)="onClose()"
+          routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
 
 
@@ -70,7 +71,8 @@
 
         </a>
         <!-- Compliance -->
-        <a routerLink="/app/clientes" (click)="onClose()"  routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+        <a routerLink="/app/clientes" (click)="onClose()"
+          routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
           <div class="flex items-center gap-3">
             <tui-icon icon="check-circle" class="w-5 h-5"></tui-icon>
@@ -79,11 +81,8 @@
 
         </a>
 
-
-
-
-        <!-- Governance -->
-        <a routerLink="/app/settings/ventas" (click)="onClose()" routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
+        <a routerLink="/app/settings/ventas" (click)="onClose()"
+          routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
           <div class="flex items-center gap-3">
             <tui-icon icon="clipboard" class="w-5 h-5"></tui-icon>
@@ -91,7 +90,7 @@
           </div>
 
         </a>
-        <!-- Governance -->
+
         <button (click)="logout2()" *ngIf="user.is_superuser"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
           <div class="flex items-center gap-3">
@@ -101,9 +100,7 @@
 
         </button>
 
-
-        <!-- Issues and Exceptions -->
-        <a routerLink="/app/store"  (click)="onClose()" *ngIf="user.is_superuser"
+        <a routerLink="/app/store" (click)="onClose()" *ngIf="user.is_superuser"
           routerLinkActive="bg-black dark:bg-neutral-800 text-white font-medium"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 htransition-all duration-200 text-sm mt-1">
           <div class="flex items-center gap-3">
@@ -121,7 +118,8 @@
       <div class="flex items-center justify-between gap-3">
         <!-- User Info -->
         <button class="flex items-center gap-3 flex-1 min-w-0 hrounded-lg px-2 py-2 transition-all duration-200">
-          <img src="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/metaai-color.png" alt="Mark Bennet" class="w-10 h-10 rounded-full">
+          <img src="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/metaai-color.png"
+            alt="Mark Bennet" class="w-10 h-10 rounded-full">
           <div class="flex flex-col items-start min-w-0">
             <span class="text-sm font-medium text-neutral-900 dark:text-white truncate">{{user.username}}</span>
             <span class="text-xs text-neutral-500 dark:text-neutral-400 truncate">{{user.first_name}}</span>
@@ -138,7 +136,7 @@
 </ng-template>
 
 <!-- Mobile Drawer -->
-<div class="flex md:hidden ">
+<div class="flex md:hidden">
   <tui-drawer *tuiPopup="open()" direction="left" class="drawer" [overlay]="true" (click.self)="onClose()">
     <aside class="relative">
       <div class="absolute right-4 top-4 z-10">
@@ -160,15 +158,12 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="flex-1 relative overflow-auto h-screen bg-neutral-50 dark:bg-neutral-800">
+    <div class="flex-1 relative overflow-auto h-screen bg-neutral-50 dark:bg-neutral-800 ">
       <app-header></app-header>
       <router-outlet></router-outlet>
     </div>
   </div>
 </div>
-
-
-
 
 <ng-template #content>
   <tui-data-list role="menu" size="s">
@@ -194,13 +189,18 @@
         <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
         Configuracion
       </a>
-      <a (click)="logout()" #rla="routerLinkActive"  *ngIf="user.is_superuser" role="menuitemradio" routerLinkActive tuiOption
-        [attr.aria-checked]="rla.isActive" class="w-[200px]">
+      <a (click)="logout()" #rla="routerLinkActive" *ngIf="user.is_superuser" role="menuitemradio" routerLinkActive
+        tuiOption [attr.aria-checked]="rla.isActive" class="w-[200px]">
         <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
         Cerrar Session
-
       </a>
-
     </tui-opt-group>
   </tui-data-list>
 </ng-template>
+
+
+
+
+
+
+
