@@ -67,7 +67,7 @@ const routes: Routes = [
 					{ path: 'cuenta', component: MyaccountComponent },
 					{ path: 'ventas', component: VentassettingsComponent },
 					{ path: 'permisos', component: PermisossettingsComponent },
-					{ path: 'perfil', component: PerfilsettingsComponent },
+					{ path: 'myaccount', component: PerfilsettingsComponent },
 				]
 			},
 		]

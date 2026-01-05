@@ -54,7 +54,7 @@ export class SettingslayoutComponent implements OnInit {
   ngOnInit() {
     this.userState$.subscribe(userState => {
       this.user = userState.user;
-
+      console.log(this.user)
     });
   }
 
