@@ -3,11 +3,13 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, exhaustMap, map, of } from 'rxjs';
+import { catchError, exhaustMap, map, mergeMap, of } from 'rxjs';
 
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
 import { VentaService } from '@/app/services/venta.service';
+import { forceSyncClientes } from '../actions/cliente.actions';
+import { forceSyncInventarios } from '../actions/inventario.actions';
 import {
     anularVenta,
     anularVentaError,
@@ -154,35 +156,63 @@ export class VentaEffects {
         )
     );
 
+
     createVentaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(crearVenta),
             exhaustMap(({ venta }) => {
-                const servicio = venta.tipoComprobante === 'Anonima'
-                    ? this.ventaService.createVenta(venta)
-                    : venta.is_send_sunat ? this.ventaService.createVenta(venta) :
-                        this.ventaService.createVentaPendiente(venta)
 
+                const servicio =
+                    venta.tipoComprobante === 'Anonima'
+                        ? this.ventaService.createVenta(venta)
+                        : venta.is_send_sunat
+                            ? this.ventaService.createVenta(venta)
+                            : this.ventaService.createVentaPendiente(venta);
 
                 return servicio.pipe(
-                    map(createdVenta => {
-                        if (createdVenta.comprobante.estado_sunat === 'RECHAZADO') {
-                            this.alertService.showError('La venta fue creada pero el comprobante fue rechazado por SUNAT', 'Error SUNAT').subscribe();
+                    mergeMap(createdVenta => {
+
+                        // 🔔 Mensajes UI
+                        if (createdVenta?.comprobante?.estado_sunat === 'RECHAZADO') {
+                            this.alertService
+                                .showError(
+                                    'La venta fue creada pero el comprobante fue rechazado por SUNAT. Intente registrarlo más tarde.',
+                                    'Error SUNAT'
+                                )
+                                .subscribe();
                         } else {
-                            this.alertService.showSuccess('Venta creada exitosamente y Fue Aceptada por SUNAT', 'Éxito').subscribe();
-                            this.dialogServiceVentaDetail.open(createdVenta).subscribe();
+                            this.alertService
+                                .showSuccess(
+                                    'Venta creada exitosamente y fue aceptada por SUNAT',
+                                    'Éxito'
+                                )
+                                .subscribe();
+
+                            this.dialogServiceVentaDetail
+                                .open(createdVenta)
+                                .subscribe();
                         }
 
-                        return crearVentaExito({ venta: createdVenta });
+                        // 🚀 Despacha múltiples acciones
+                        return [
+                            crearVentaExito({ venta: createdVenta }),
+                            forceSyncInventarios(),
+                            forceSyncClientes()
+                        ];
                     }),
+
                     catchError(error => {
-                        this.alertService.showError('Error al crear la venta', 'Error').subscribe();
+                        this.alertService
+                            .showError('Error al crear la venta', 'Error')
+                            .subscribe();
+
                         return of(crearVentaError({ error }));
                     })
                 );
             })
         )
     );
+
     cancelarVentaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cancelarVenta),
@@ -253,24 +283,47 @@ export class VentaEffects {
         )
     );
 
-
     anularVentaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(anularVenta),
-            exhaustMap(({ ventaId, motivo, tipo_motivo, anonima }) =>
-                // Llamamos al servicio que emite la nota de crédito (anula la venta)
-                this.ventaService.anularVenta(ventaId, motivo, tipo_motivo, anonima).pipe(
-                    map((response) => {
-                        this.alertService.showSuccess('La venta fue anulada correctamente', 'Nota de Crédito emitida').subscribe();
+            exhaustMap(({ ventaId, venta, motivo, tipo_motivo, anonima }) =>
+                this.ventaService
+                    .anularVenta(ventaId, motivo, tipo_motivo, anonima)
+                    .pipe(
+                        mergeMap(response => {
+                            // 🔔 UI
+                            this.alertService
+                                .showSuccess(
+                                    'La venta fue anulada correctamente',
+                                    'Nota de Crédito emitida'
+                                )
+                                .subscribe();
 
-                        return anularVentaExito({ ventaId });
-                    }),
-                    catchError((error) => {
-                        this.alertService.showError('No se pudo anular la venta', 'Error').subscribe();
-                        console.error('Error al anular venta:', error);
-                        return of(anularVentaError({ error }));
-                    })
-                )
+                            this.dialogServiceVentaDetail
+                                .open({
+                                    ...venta,
+                                    comprobante_nota_credito: response.comprobante_nota_credito
+                                })
+                                .subscribe();
+
+                            // 🚀 Múltiples acciones
+                            return [
+                                anularVentaExito({
+                                    ventaId,
+                                    comprobante_nota_credito: response.comprobante_nota_credito
+                                }),
+                                forceSyncInventarios()
+                            ];
+                        }),
+
+                        catchError(error => {
+                            this.alertService
+                                .showError('No se pudo anular la venta', 'Error')
+                                .subscribe();
+
+                            return of(anularVentaError({ error }));
+                        })
+                    )
             )
         )
     );

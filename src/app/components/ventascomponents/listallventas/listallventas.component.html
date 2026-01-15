@@ -143,8 +143,13 @@
           <div class="block lg:hidden space-y-3 px-2">
             <div
               *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas)"
-              class="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-3 border border-neutral-200 dark:border-neutral-700">
-
+              class=" relative bg-white dark:bg-neutral-800 rounded-lg shadow-md p-3 border border-neutral-200 dark:border-neutral-700">
+   <div *ngIf="venta.comprobante_nota_credito" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+       opacity-20 pointer-events-none z-10">
+              <img
+                src="https://png.pngtree.com/png-vector/20221210/ourmid/pngtree-canceled-canceled-annulled-red-vector-png-image_15495002.png"
+                alt="">
+            </div>
               <!-- Header con ID y Estado -->
               <div
                 class="flex items-center justify-between mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
@@ -237,7 +242,12 @@
               p-4 
               border border-neutral-200 dark:border-neutral-700 
               hover:shadow-md transition-all duration-300">
-
+   <div *ngIf="venta.comprobante_nota_credito" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+       opacity-20 pointer-events-none z-10">
+              <img
+                src="https://png.pngtree.com/png-vector/20221210/ourmid/pngtree-canceled-canceled-annulled-red-vector-png-image_15495002.png"
+                alt="">
+            </div>
               <!-- LISTA COMPACTA -->
               <div class="flex items-center justify-between gap-4">
 

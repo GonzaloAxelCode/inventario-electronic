@@ -12,7 +12,7 @@ export class CustomAlertService {
         return this.alerts.open(message, {
             label: title,
             closeable: true,
-            autoClose: 3000,
+            autoClose: 5000,
             appearance: 'positive',
             icon: '@tui.badge-check', // Ícono fijo para éxito
         });
@@ -22,7 +22,7 @@ export class CustomAlertService {
         return this.alerts.open(message, {
             label: title,
             closeable: true,
-            autoClose: 5000,
+            autoClose: 8000,
             appearance: 'negative',
             icon: '@tui.badge-x', // Ícono fijo para error
         });
@@ -32,7 +32,7 @@ export class CustomAlertService {
         return this.alerts.open(message, {
             label: title,
             closeable: true,
-            autoClose: 3000,
+            autoClose: 5000,
             appearance: 'info',
             icon: '@tui.badge-info', // Ícono fijo para información
         });

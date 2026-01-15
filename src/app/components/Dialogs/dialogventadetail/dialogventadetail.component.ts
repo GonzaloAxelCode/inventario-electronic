@@ -1,7 +1,7 @@
 import { ComprobanteElectronico, Venta } from '@/app/models/venta.models';
 
 import { URL_BASE } from '@/app/services/utils/endpoints';
-import { anularVenta, generarComprobanteVenta, generarComprobanteVentaExito } from '@/app/state/actions/venta.actions';
+import { anularVenta, anularVentaExito, generarComprobanteVenta, generarComprobanteVentaExito } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
@@ -153,7 +153,15 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
   }
 
   anularVenta(id: number, doc: string) {
-    this.store.dispatch(anularVenta({ ventaId: id, motivo: "Anulación de la operación", tipo_motivo: "01", anonima: doc == "00000000" }))
+    this.store.dispatch(anularVenta({ ventaId: id, venta: this.venta, motivo: "Anulación de la operación", tipo_motivo: "01", anonima: doc == "00000000" }))
+
+    this.actions$.pipe(
+      ofType(anularVentaExito),
+      takeUntil(this.destroy$)
+    ).subscribe(({ ventad }: any) => {
+      this.context.completeWith(true)
+    });
+
   }
   private destroy$ = new Subject<void>();
 

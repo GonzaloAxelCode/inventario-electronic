@@ -233,12 +233,12 @@ export const clearVentaSearch = createAction(
 
 export const anularVenta = createAction(
     VentaActionTypes.ANULAR_VENTA,
-    props<{ ventaId: number, motivo: string, tipo_motivo: string, anonima: boolean }>() // enviamos el motivo para SUNAT
+    props<{ ventaId: number, venta: any, motivo: string, tipo_motivo: string, anonima: boolean }>() // enviamos el motivo para SUNAT
 );
 
 export const anularVentaExito = createAction(
     VentaActionTypes.ANULAR_VENTA_EXITO,
-    props<{ ventaId: number }>() // respuesta del backend con info de la nota
+    props<{ ventaId: number, comprobante_nota_credito: any }>() // respuesta del backend con info de la nota
 );
 
 export const anularVentaError = createAction(

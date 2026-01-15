@@ -316,11 +316,33 @@ export const ventaReducer = createReducer(
         loadingNotaCredito: true,
         errors: null
     })),
-    on(anularVentaExito, (state, { ventaId }) => ({
+    on(anularVentaExito, (state, { ventaId, comprobante_nota_credito }) => ({
         ...state,
         loadingNotaCredito: false,
-        errors: null
+        errors: null,
+
+        ventas: state.ventas.map(venta =>
+            venta.id === ventaId
+                ? {
+                    ...venta,
+
+                    comprobante_nota_credito: comprobante_nota_credito
+                }
+                : venta
+        ),
+
+        ventasToday: state.ventasToday.map(venta =>
+            venta.id === ventaId
+                ? {
+                    ...venta,
+
+                    comprobante_nota_credito: comprobante_nota_credito
+                }
+                : venta
+        )
     })),
+
+
     on(anularVentaError, (state, { error }) => ({
         ...state,
         loadingNotaCredito: false,

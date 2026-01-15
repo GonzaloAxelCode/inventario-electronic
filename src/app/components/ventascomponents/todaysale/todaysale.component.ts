@@ -109,8 +109,10 @@ export class TodaysaleComponent {
     this.store.dispatch(anularVenta({
       ventaId: id,
       motivo: "Anulación de la operación", tipo_motivo: "01",
-      anonima: doc == "00000000"
+      anonima: doc == "00000000",
+      venta: this.venta,
     }))
+
   }
   private destroy$ = new Subject<void>();
 
