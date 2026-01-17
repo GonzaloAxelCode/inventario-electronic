@@ -87,7 +87,7 @@
 <!--  Para mostrar si no se hio una venta aqui -->
 <div class="">
     <section>
-        <div *ngIf="ventas.length >= 0" class="h-[50vh] mx-auto flex flex-col items-center justify-center">
+        <div *ngIf="ventas.length <= 0" class="h-[50vh] mx-auto flex flex-col items-center justify-center">
             <img alt="survived" src="https://concepthousewares.co.uk/assets/images/empty_cart.png" tuiSlot="top"
                 class="object-contain w-56 h-56 text-center" />
             <h2 class="text-xl text-center">No hay ventas candeladas hoy</h2>

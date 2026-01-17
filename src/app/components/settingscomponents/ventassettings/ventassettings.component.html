@@ -8,7 +8,7 @@
                 Esto reemplazará los productos guardados <br> localmente y traerá los cambios más recientes.
             </p>
         </div>
-        <app-buttonupdate [func]="syncInventarios.bind(this)" [loading]="loadingInventariosRefresh">
+        <app-buttonupdate [func]="syncInventarios.bind(this)" [loading]="(loadingInventariosRefresh$ | async) ?? false">
         </app-buttonupdate>
     </div>
     <div class="flex gap-3 items-center py-3">
@@ -20,7 +20,7 @@
                 Esto reemplazará los clientes guardados <br> localmente y traerá los cambios más recientes.
             </p>
         </div>
-        <app-buttonupdate [func]="syncClientes.bind(this)" [loading]="loadingClientesRefresh">
+        <app-buttonupdate [func]="syncClientes.bind(this)" [loading]="(loadingClientesRefresh$ | async) ?? false">
         </app-buttonupdate>
     </div>
     <div class="flex gap-3 items-center py-3">

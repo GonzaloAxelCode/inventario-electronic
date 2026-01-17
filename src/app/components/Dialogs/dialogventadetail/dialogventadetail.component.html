@@ -158,12 +158,12 @@
           class="h-8 sm:h-10 dark:invert object-contain" alt="Logo">
       </a>
 
-      <div class="py-3 px-3">
+      <div class="">
 
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-2">
 
           <!-- Sección de encabezado -->
-          <div class="flex flex-col gap-6 border-b border-neutral-200 dark:border-neutral-800 pb-6">
+          <div class="flex flex-col gap-6 border-b border-neutral-200 dark:border-neutral-800">
 
             <!-- Sello de anulado -->
             <div *ngIf="venta.comprobante_nota_credito" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
@@ -413,56 +413,9 @@
 
 
 
-        <!-- Header de la tabla -->
-        <div class="hidden md:grid grid-cols-[70px_3fr_1fr_1fr_1fr_1fr]
-         gap-4 px-4 py-2
-         text-xs font-semibold uppercase
-         text-neutral-500 dark:text-neutral-400
-         border-b border-neutral-200 dark:border-neutral-800">
-          <div>Img</div>
-          <div>Descripción</div>
-
-          <div>Cantidad</div>
-
-          <div>Total</div>
-        </div>
-        <!-- DESKTOP -->
-        <div class="hidden lg:block divide-y divide-neutral-200 dark:divide-neutral-800">
-
-          <div *ngFor="let item of venta.productos" class="grid grid-cols-[70px_3fr_1fr_1fr_1fr_1fr]
-           px-1 py-4 items-center">
-
-            <!-- Imagen -->
-            <div class="flex justify-center">
-              <img [src]="item.producto_imagen
-          ? URL_BASE + item.producto_imagen
-          : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" class="w-12 h-12 rounded-lg object-cover
-               border border-neutral-300 dark:border-neutral-600" />
-            </div>
-
-            <!-- Producto -->
-            <div>
-              <p class="font-medium text-neutral-900 dark:text-neutral-100">
-                {{ item.producto_nombre }}
-              </p>
-
-            </div>
-
-            <!-- Cantidad -->
-            <div class="text-right font-semibold">
-              {{ item.cantidad }}
-            </div>
-
-            <!-- Total -->
-            <div class="text-right font-bold text-neutral-900 dark:text-neutral-100">
-              S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) }}
-            </div>
-
-          </div>
-        </div>
 
         <!-- MOBILE -->
-        <div class="lg:hidden space-y-4">
+        <div class="space-y-4">
 
           <div *ngFor="let item of venta.productos" class="rounded-xl
            border border-neutral-200 dark:border-neutral-800
@@ -473,7 +426,7 @@
             <div class="flex gap-3 items-center">
               <img [src]="item.producto_imagen
           ? URL_BASE + item.producto_imagen
-          : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" class="w-14 h-14 rounded-lg object-cover
+          : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" class="w-24 h-24 rounded-lg object-cover
                border border-neutral-300 dark:border-neutral-600" />
 
               <div class="flex-1">
@@ -488,15 +441,15 @@
             <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
 
               <div>
-                <p class="text-xs text-neutral-500">Cantidad</p>
-                <p class="font-semibold">{{ item.cantidad }}</p>
+                <p class="text-sm text-neutral-500">Cantidad</p>
+                <p class="text-2xl font-semibold">{{ item.cantidad }}</p>
               </div>
 
 
 
               <div class="text-right">
-                <p class="text-xs text-neutral-500">Total</p>
-                <p class="font-bold text-neutral-900 dark:text-neutral-100">
+                <p class="text-sm text-neutral-500">Total</p>
+                <p class="font-bold text-2xl text-neutral-900 dark:text-neutral-100">
                   S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) }}
                 </p>
               </div>

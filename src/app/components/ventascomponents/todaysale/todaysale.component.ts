@@ -111,8 +111,9 @@ export class TodaysaleComponent {
       motivo: "Anulación de la operación", tipo_motivo: "01",
       anonima: doc == "00000000",
       venta: this.venta,
-    }))
 
+    }))
+    console.log(this.venta)
   }
   private destroy$ = new Subject<void>();
 

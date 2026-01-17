@@ -1,5 +1,5 @@
 <!-- Vista para ventas que si se enviaro-->
-<div class="p-0 flex flex-col sm:flex-row dark:bg-neutral-800 bg-white " *ngIf="venta">
+<div class="p-0 flex flex-col sm:flex-row " *ngIf="venta">
 
   <div class=" p-3" *ngIf="selectedState === 'original' && venta.comprobante.estado_sunat === 'ACEPTADO'">
 
@@ -150,7 +150,16 @@
     </div>
   </div>
   <div class="flex flex-col flex-1 col-span-3 ">
+ <div class="flex flex-col gap-6 ">
 
+            <!-- Sello de anulado -->
+            <div *ngIf="venta.comprobante_nota_credito" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+       opacity-20 pointer-events-none z-10">
+              <img
+                src="https://png.pngtree.com/png-vector/20221210/ourmid/pngtree-canceled-canceled-annulled-red-vector-png-image_15495002.png"
+                alt="">
+            </div>
+          </div>
     <div class="px-3 sm:px-3 pb-0  overflow-hidden">
       <a routerLink="/" class="inline-block mb-2 sm:mb-3">
         <img
@@ -442,7 +451,7 @@
 
           <!-- Total -->
           <div class="text-right font-bold text-neutral-900 dark:text-neutral-100">
-            S/ {{ getValorVentaRedondeado((item?.valor_total || 0) + (item?.igv || 0)) }}
+            S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) }}
           </div>
 
         </div>
