@@ -1,134 +1,351 @@
-<div class="bg-white flex items-center justify-center min-h-screen p-6">
-	<div class="w-full max-w-md">
-		<!-- Logo -->
-		<div class="text-center mb-8">
-			<img class="h-14 mx-auto mb-8"
-				src="https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_350,h_150/v1755473642/APP%20INVENTARIO/T-removebg-preview_zgnu7f.png"
-				alt="Logo">
-			<h1 class="text-3xl font-bold text-slate-900 mb-2">
-				Iniciar Sesión
-			</h1>
-			<p class="text-slate-600 text-sm">
-				Sistema de Gestión de Inventario
-			</p>
-		</div>
+<div class="flex min-h-screen w-full bg-white flex-wrap lg:flex-nowrap ">
 
-		<!-- Login Card -->
-		<div class="bg-white border-2 border-slate-200 rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-			<!-- Form -->
-			<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
-				<!-- Username Field -->
-				<div class="space-y-2">
-					<label for="username" class="block text-sm font-semibold text-slate-700">
-						Usuario
-					</label>
-					<div class="relative">
-						<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-							<svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-							</svg>
-						</div>
-						<input
-							id="username"
-							type="text"
-							formControlName="username"
-							placeholder="Ingresa tu usuario"
-							autocapitalize="none"
-							autocorrect="off"
-							autocomplete="off"
-							class="w-full pl-12 pr-4 py-3.5 border-2 border-slate-200 rounded-xl text-slate-900  focus:outline-none focus:border-blue-600 transition-colors duration-200 bg-white hover:border-slate-300"
-						/>
-					</div>
-				</div>
+    <!-- LADO IZQUIERDO / FEATURES -->
+    <div class="relative p-5 w-full  items-center justify-center overflow-hidden order-2 lg:order-1">
 
-				<!-- Password Field -->
-				<div class="space-y-2">
-					<div class="flex items-center justify-between">
-						<label for="password" class="block text-sm font-semibold text-slate-700">
-							Contraseña
-						</label>
-						
-					</div>
-					<div class="relative">
-						<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-							<svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-							</svg>
-						</div>
-						<input
-							id="password"
-							type="password"
-							formControlName="password"
-							placeholder="Ingresa tu contraseña"
-							autocomplete="current-password"
-							class="w-full pl-12 pr-4 py-3.5 border-2 border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 transition-colors duration-200 bg-white hover:border-slate-300"
-						/>
-					</div>
-				</div>
+        <!-- Background abstracto -->
+        <div
+            class="absolute inset-0 bg-cover bg-center opacity-10"
+            style="background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926');">
+        </div>
 
-				<!-- Error Message -->
-				<div *ngIf="authState$ | async as authState">
-					<div *ngIf="authState.errors?.detail" class="bg-red-50 border-2 border-red-200 rounded-xl p-3.5 flex items-start space-x-3">
-						<svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-							<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-						</svg>
-						<p class="text-red-800 text-sm font-medium">
-							{{ authState.errors?.detail }}
-						</p>
-					</div>
-				</div>
+        <div class="absolute inset-0 bg-white/70"></div>
 
-				
+        <div class="relative z-10 px-14 w-full">
 
-				<!-- Submit Button -->
-				<button
-					type="submit"
-					[disabled]="isLoading$ | async"
-					class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-4 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-sm hover:shadow-md"
-				>
-					<span *ngIf="!(isLoading$ | async)">Iniciar Sesión</span>
-					<div *ngIf="isLoading$ | async" class="flex items-center justify-center space-x-2">
-						<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-						</svg>
-						<span>Iniciando...</span>
-					</div>
-				</button>
-			</form>
-		</div>
+            <!-- LOGO -->
+            <div class="flex items-center gap-3 mb-8">
+                		<img class="w-14 h-14 object-contain" src="https://play-lh.googleusercontent.com/WmJJ8jUmn5QD78CHUvrwqmroo3OlJDaWHxjFCyRfhg-Wi2R6P7i43FwIPkw86hy5pg=w240-h480-rw" alt="">
+                <div>
+                    <h1 class="text-xl font-semibold text-gray-900">
+                        GV Software Plus
+                    </h1>
+                    <p class="text-xs text-gray-500">
+                        Para tiendas de celulares
+                    </p>
+                </div>
+            </div>
 
-		<!-- Footer -->
-		<div class="mt-8 space-y-4">
-			<!-- Sign Up Link -->
-			<div class="text-center">
-				<p class="text-sm text-slate-600">
-					¿No tienes una cuenta? 
-					<a href="#" class="text-blue-600 hover:text-blue-700 font-semibold transition-colors ml-1">
-						Solicitar acceso
-					</a>
-				</p>
-			</div>
+            <p class="text-gray-600 mb-8">
+                Sistema especializado para venta de celulares, accesorios y control de inventario.
+            </p>
 
-			<!-- Divider -->
-			<div class="relative">
-				<div class="absolute inset-0 flex items-center">
-					<div class="w-full border-t border-slate-200"></div>
-				</div>
-				<div class="relative flex justify-center text-xs">
-					<span class="px-4 bg-white text-slate-500 font-medium">O continuar con</span>
-				</div>
-			</div>
+      <!-- FEATURES -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
 
-			
+    <!-- Inventario -->
+    <div class="flex gap-3 p-4 rounded-xl bg-white/80 shadow-sm">
+        <span class="text-xl">📦</span>
+        <div>
+            <p class="text-sm font-semibold text-gray-900">
+                Inventario de productos
+            </p>
+            <p class="text-xs text-gray-500">
+                Modelos, precios, características e imágenes
+            </p>
+        </div>
+    </div>
 
-			<!-- Security Info -->
-			<div class="flex items-center justify-center space-x-2 text-xs text-slate-500 pt-2">
-				<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-					<path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-				</svg>
-				<span>Protegido con encriptación SSL de 256 bits</span>
-			</div>
-		</div>
-	</div>
+    <!-- Stock -->
+    <div class="flex gap-3 p-4 rounded-xl bg-white/80 shadow-sm">
+        <span class="text-xl">📊</span>
+        <div>
+            <p class="text-sm font-semibold text-gray-900">
+                Control de stock
+            </p>
+            <p class="text-xs text-gray-500">
+                Entradas, salidas y alertas
+            </p>
+        </div>
+    </div>
+
+    <!-- Ventas -->
+    <div class="flex gap-3 p-4 rounded-xl bg-white/80 shadow-sm">
+        <span class="text-xl">💳</span>
+        <div>
+            <p class="text-sm font-semibold text-gray-900">
+                Ventas rápidas
+            </p>
+            <p class="text-xs text-gray-500">
+                Flujo optimizado para tienda
+            </p>
+        </div>
+    </div>
+
+    <!-- Reportes -->
+    <div class="flex gap-3 p-4 rounded-xl bg-white/80 shadow-sm">
+        <span class="text-xl">📈</span>
+        <div>
+            <p class="text-sm font-semibold text-gray-900">
+                Reportes de ventas
+            </p>
+            <p class="text-xs text-gray-500">
+                Diario, semanal y mensual
+            </p>
+        </div>
+    </div>
+
+    <!-- Clientes -->
+    <div class="flex gap-3 p-4 rounded-xl bg-white/80 shadow-sm">
+        <span class="text-xl">👤</span>
+        <div>
+            <p class="text-sm font-semibold text-gray-900">
+                Gestión de clientes
+            </p>
+            <p class="text-xs text-gray-500">
+                Consulta por DNI en tiempo real
+            </p>
+        </div>
+    </div>
+
+    <!-- Facturación -->
+    <div class="flex gap-3 p-4 rounded-xl bg-white/80 shadow-sm">
+        <span class="text-xl">🧾</span>
+        <div>
+            <p class="text-sm font-semibold text-gray-900">
+                Facturación electrónica
+            </p>
+            <p class="text-xs text-gray-500">
+                Boleta y factura SUNAT
+            </p>
+        </div>
+    </div>
+
+    <!-- Nube -->
+    <div class="flex gap-3 p-4 rounded-xl bg-white/80 shadow-sm">
+        <span class="text-xl">☁️</span>
+        <div>
+            <p class="text-sm font-semibold text-gray-900">
+                Comprobantes en la nube
+            </p>
+            <p class="text-xs text-gray-500">
+                Acceso seguro y centralizado
+            </p>
+        </div>
+    </div>
+
+    <!-- Código de barras -->
+    <div class="flex gap-3 p-4 rounded-xl bg-white/80 shadow-sm">
+        <span class="text-xl">🔎</span>
+        <div>
+            <p class="text-sm font-semibold text-gray-900">
+                Lector de códigos de barras
+            </p>
+            <p class="text-xs text-gray-500">
+                Ideal para ventas rápidas
+            </p>
+        </div>
+    </div>
+
+    <!-- PROXIMAMENTE: App móvil -->
+    <div class="flex gap-3 p-4 rounded-xl bg-gray-50 border border-dashed border-gray-300">
+        <span class="text-xl opacity-50">📱</span>
+        <div class="flex-1">
+            <div class="flex items-center gap-2">
+                <p class="text-sm font-semibold text-gray-700">
+                    App móvil
+                </p>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600">
+                    Próximamente
+                </span>
+            </div>
+            <p class="text-xs text-gray-400">
+                Ventas y stock desde el celular
+            </p>
+        </div>
+    </div>
+
+    <!-- PROXIMAMENTE: Reportes avanzados -->
+    <div class="flex gap-3 p-4 rounded-xl bg-gray-50 border border-dashed border-gray-300">
+        <span class="text-xl opacity-50">📊</span>
+        <div class="flex-1">
+            <div class="flex items-center gap-2">
+                <p class="text-sm font-semibold text-gray-700">
+                    Reportes avanzados
+                </p>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600">
+                    Próximamente
+                </span>
+            </div>
+            <p class="text-xs text-gray-400">
+                Métricas, ganancias y proyecciones
+            </p>
+        </div>
+    </div>
+
+    <!-- PROXIMAMENTE: Multi-tienda -->
+    <div class="flex gap-3 p-4 rounded-xl bg-gray-50 border border-dashed border-gray-300">
+        <span class="text-xl opacity-50">🏪</span>
+        <div class="flex-1">
+            <div class="flex items-center gap-2">
+                <p class="text-sm font-semibold text-gray-700">
+                    Servicio tecnico Avanzado
+                </p>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600">
+                    Próximamente
+                </span>
+            </div>
+            <p class="text-xs text-gray-400">
+                Registro independiente de stock y ventas por servicio
+            </p>
+        </div>
+    </div>
+
+</div>
+ 
+
+            <p class="mt-8 text-xs text-gray-400">
+                🚀 En evolución constante
+            </p>
+        </div>
+    </div>
+
+<div class=" min-h-screen flex-col mx-auto flex items-center justify-center bg-white px-4 lg:px-12">
+		<img class="w-14 h-14 object-contain" src="https://play-lh.googleusercontent.com/WmJJ8jUmn5QD78CHUvrwqmroo3OlJDaWHxjFCyRfhg-Wi2R6P7i43FwIPkw86hy5pg=w240-h480-rw" alt="">
+    <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()"
+        class="w-full max-w-sm flex flex-col items-center"
+    >
+        <h2 class="text-2xl font-semibold text-gray-900">
+            Ingresa a tu tienda
+        </h2>
+
+        <p class="text-sm text-gray-500 mt-1 text-center">
+            Gestión de celulares y accesorios
+        </p>
+
+      <!-- Usuario -->
+<input
+    type="text"
+    formControlName="username"
+    placeholder="Usuario"
+    autocomplete="off"
+    class="mt-8 w-full h-11 rounded-full 
+           bg-white border border-gray-300 
+           text-gray-800 placeholder-gray-400 
+           px-5 outline-none
+           focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400
+           transition"
+/>
+
+<!-- Password -->
+<input
+    type="password"
+    formControlName="password"
+    placeholder="Contraseña"
+    autocomplete="current-password"
+    class="mt-4 w-full h-11 rounded-full 
+           bg-white border border-gray-300 
+           text-gray-800 placeholder-gray-400 
+           px-5 outline-none
+           focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400
+           transition"
+/>
+
+       <!-- BOTÓN -->
+<button
+    type="submit"
+    [disabled]="isLoading$ | async"
+    class="mt-6 w-full h-11 rounded-full 
+           bg-indigo-500 text-white font-medium 
+           hover:opacity-90 transition
+           disabled:opacity-50 disabled:cursor-not-allowed
+           flex items-center justify-center gap-2"
+>
+    <!-- Texto normal -->
+    <span *ngIf="!(isLoading$ | async)">
+        Entrar
+    </span>
+
+    <!-- Loading -->
+    <span *ngIf="isLoading$ | async" class="flex items-center gap-2">
+        <svg
+            class="animate-spin h-4 w-4 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+        >
+            <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+            ></circle>
+            <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            ></path>
+        </svg>
+        <span>Ingresando...</span>
+    </span>
+</button>
+<!-- ERRORES -->
+<div
+    *ngIf="authState$ | async as authState"
+    class="w-full mt-4"
+>
+    <div
+        *ngIf="authState.errors?.detail"
+        class="bg-red-50 border border-red-200 
+               text-red-600 text-xs
+               rounded-lg px-4 py-2 text-center"
+    >
+        Datos incorrectos. Por favor, verifica tu usuario y contraseña.
+    </div>
+</div>
+
+        <!-- LINKS RÁPIDOS -->
+        <div class="flex justify-between w-full mt-4 text-xs text-gray-500">
+            <a href="#" class="hover:underline">
+                ¿Olvidaste tu contraseña?
+            </a>
+            <a href="#" class="hover:underline text-indigo-500">
+                Solicitar acceso
+            </a>
+        </div>
+
+        <!-- DEMO -->
+        <div class="mt-5 w-full">
+            <button
+                type="button"
+                class="w-full h-10 rounded-full border border-indigo-300 text-indigo-500 text-sm hover:bg-indigo-50 transition"
+            >
+                Probar demo (aun no disponible)
+            </button>
+        </div>
+
+        <!-- INFO / AYUDA -->
+        <div class="mt-6 text-center text-xs text-gray-500 space-y-2">
+            <p>
+                ¿Necesitas ayuda o más información?
+            </p>
+            <p>
+                <a href="#" class="text-indigo-500 hover:underline">
+                   Problemas o fallas ?.Contactar con el desarrollador
+                </a>
+            </p>
+        </div>
+
+        <!-- CONFIANZA -->
+        <div class="mt-6 text-center text-[11px] text-gray-400 leading-relaxed">
+            <p>
+                Software especializado para tiendas de celulares,
+                accesorios y servicio técnico.
+            </p>
+            <p class="mt-1">
+                Soporte directo · Sin contratos · Creado por desarrollador independiente
+            </p>
+        </div>
+
+        <!-- FOOTER -->
+        <p class="mt-6 text-[11px] text-gray-400 text-center">
+            © 2026 Gonzalo Valdez · GV Software Plus
+        </p>
+    </form>
+</div>
+ 
 </div>

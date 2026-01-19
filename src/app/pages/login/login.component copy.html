@@ -1,0 +1,218 @@
+<div class="flex min-h-screen w-full bg-white">
+
+    <!-- LADO IZQUIERDO / FEATURES -->
+    <div class="relative w-1/2 hidden lg:flex items-center justify-center overflow-hidden">
+
+        <!-- Background abstracto -->
+        <div
+            class="absolute inset-0 bg-cover bg-center opacity-10"
+            style="background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926');">
+        </div>
+
+        <div class="absolute inset-0 bg-white/70"></div>
+
+        <div class="relative z-10 px-14 max-w-xl">
+
+            <!-- LOGO -->
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-indigo-500 text-white flex items-center justify-center font-bold text-lg">
+                    GV
+                </div>
+                <div>
+                    <h1 class="text-xl font-semibold text-gray-900">
+                        GV Software Plus
+                    </h1>
+                    <p class="text-xs text-gray-500">
+                        Para tiendas de celulares
+                    </p>
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-8">
+                Sistema especializado para venta de celulares, accesorios y control de inventario.
+            </p>
+
+            <!-- FEATURES -->
+            <div class="space-y-4">
+
+                <!-- Feature -->
+                <div class="flex gap-4 p-4 rounded-xl bg-white/80 shadow-sm">
+                    <span class="text-xl">📦</span>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">
+                            Inventario por modelo y color
+                        </p>
+                        <p class="text-xs text-gray-500">
+                            IMEI, marca, capacidad y estado
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 p-4 rounded-xl bg-white/80 shadow-sm">
+                    <span class="text-xl">💳</span>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">
+                            Ventas rápidas
+                        </p>
+                        <p class="text-xs text-gray-500">
+                            Boleta y factura electrónica
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 p-4 rounded-xl bg-white/80 shadow-sm">
+                    <span class="text-xl">🔧</span>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">
+                            Servicio técnico
+                        </p>
+                        <p class="text-xs text-gray-500">
+                            Reparaciones y repuestos
+                        </p>
+                    </div>
+                </div>
+
+                <!-- PROXIMAMENTE -->
+                <div class="flex gap-4 p-4 rounded-xl bg-gray-50 border border-dashed border-gray-300">
+                    <span class="text-xl opacity-50">📱</span>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                            <p class="text-sm font-semibold text-gray-700">
+                                App móvil
+                            </p>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600">
+                                Próximamente
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-400">
+                            Ventas y stock desde tu celular
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 p-4 rounded-xl bg-gray-50 border border-dashed border-gray-300">
+                    <span class="text-xl opacity-50">📊</span>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                            <p class="text-sm font-semibold text-gray-700">
+                                Reportes avanzados
+                            </p>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600">
+                                Próximamente
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-400">
+                            Ganancias, métricas y proyecciones
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="mt-8 text-xs text-gray-400">
+                🚀 En evolución constante
+            </p>
+        </div>
+    </div>
+
+<div class="w-full min-h-screen flex items-center justify-center bg-white px-4">
+    <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()"
+        class="w-full max-w-sm flex flex-col items-center"
+    >
+        <h2 class="text-2xl font-semibold text-gray-900">
+            Iniciar sesión
+        </h2>
+
+        <p class="text-sm text-gray-500 mt-1 text-center">
+            Gestión de celulares y accesorios
+        </p>
+
+      <!-- Usuario -->
+<input
+    type="text"
+    formControlName="username"
+    placeholder="Usuario"
+    autocomplete="off"
+    class="mt-8 w-full h-11 rounded-full 
+           bg-white border border-gray-300 
+           text-gray-800 placeholder-gray-400 
+           px-5 outline-none
+           focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400
+           transition"
+/>
+
+<!-- Password -->
+<input
+    type="password"
+    formControlName="password"
+    placeholder="Contraseña"
+    autocomplete="current-password"
+    class="mt-4 w-full h-11 rounded-full 
+           bg-white border border-gray-300 
+           text-gray-800 placeholder-gray-400 
+           px-5 outline-none
+           focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400
+           transition"
+/>
+
+        <!-- BOTÓN -->
+        <button
+            type="submit"
+            class="mt-6 w-full h-11 rounded-full bg-indigo-500 text-white font-medium hover:opacity-90 transition"
+        >
+            Entrar
+        </button>
+
+        <!-- LINKS RÁPIDOS -->
+        <div class="flex justify-between w-full mt-4 text-xs text-gray-500">
+            <a href="#" class="hover:underline">
+                ¿Olvidaste tu contraseña?
+            </a>
+            <a href="#" class="hover:underline text-indigo-500">
+                Solicitar acceso
+            </a>
+        </div>
+
+        <!-- DEMO -->
+        <div class="mt-5 w-full">
+            <button
+                type="button"
+                class="w-full h-10 rounded-full border border-indigo-300 text-indigo-500 text-sm hover:bg-indigo-50 transition"
+            >
+                Probar demo
+            </button>
+        </div>
+
+        <!-- INFO / AYUDA -->
+        <div class="mt-6 text-center text-xs text-gray-500 space-y-2">
+            <p>
+                ¿Necesitas ayuda o más información?
+            </p>
+            <p>
+                <a href="#" class="text-indigo-500 hover:underline">
+                    Contactar con el desarrollador
+                </a>
+            </p>
+        </div>
+
+        <!-- CONFIANZA -->
+        <div class="mt-6 text-center text-[11px] text-gray-400 leading-relaxed">
+            <p>
+                Software especializado para tiendas de celulares,
+                accesorios y servicio técnico.
+            </p>
+            <p class="mt-1">
+                Soporte directo · Sin contratos · Creado por desarrollador independiente
+            </p>
+        </div>
+
+        <!-- FOOTER -->
+        <p class="mt-6 text-[11px] text-gray-400 text-center">
+            © 2026 Gonzalo Valdez · GV Software Plus
+        </p>
+    </form>
+</div>
+ 
+</div>
