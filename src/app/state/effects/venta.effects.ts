@@ -67,7 +67,7 @@ export class VentaEffects {
                 this.ventaService.getVentasHoy().pipe(
                     map(response => {
 
-                        return cargarVentasTiendaExitoToday({ ventasToday: response.results });
+                        return cargarVentasTiendaExitoToday({ ventasToday: response.results.filter((venta: any) => venta.estado !== 'PENDIENTE') });
                     }),
                     catchError(error => of(cargarVentasTiendaErrorToday({ error })))
                 )
@@ -139,7 +139,8 @@ export class VentaEffects {
                     map(response => {
 
                         return cargarVentasTiendaExito({
-                            ventas: response.results,
+
+                            ventas: response.results.filter((venta: any) => venta.estado !== 'PENDIENTE'),
                             count: response.count,
                             next: response.next,
                             previous: response.previous,
@@ -265,7 +266,7 @@ export class VentaEffects {
                     map(response => {
 
                         return searchVentaSuccess({
-                            ventas: response.results,
+                            ventas: response.results.filter((venta: any) => venta.estado !== 'PENDIENTE'),
                             search_ventas_found: response.search_ventas_found,
                             count: response.count,
                             next: response.next,
