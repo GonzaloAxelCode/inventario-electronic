@@ -27,14 +27,16 @@ export class FormaddstoreComponent {
 
     this.tiendaForm = this.fb.group({
       nombre: ['', Validators.required],
-      razon_social: [''],        // opcional
-      ruc: ['',],       // valor por defecto
-      direccion: [''],           // opcional
+      razon_social: ['', Validators.required],        // opcional
+      ruc: ['', Validators.required],       // valor por defecto
+      direccion: ['', Validators.required],           // opcional
       telefono: [''],   // valor por defecto
       email: [''],               // opcional
       sol_user: [''],            // opcional
       sol_password: [''],        // opcional
       activo: [true],            // por defecto activo
+      representante: [''],        // nuevo campo para representante de la tienda
+      serie: ["", Validators.required]
     });
 
 

@@ -600,6 +600,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       estado: this.ventaForm.get("is_send_sunat")?.value,
       is_save_user: this.ventaForm.get("is_save_user")?.value
     }
+    console.log({ preparedData })
 
     this.store.dispatch(crearVenta({ venta: preparedData }));
 
@@ -610,11 +611,10 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.store.dispatch(updateStockMultiple({ productos: preparedData.productos }));
       this.borrarCliente()
-
-
       this.calcularTotales();
 
     });
+
   }
   get productosFormArray(): FormArray<FormGroup> {
     return this.ventaForm.get('productos') as FormArray<FormGroup>;

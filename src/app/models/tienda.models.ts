@@ -10,14 +10,17 @@ export interface Tienda {
     direccion: string | null;
     telefono: string | null;
     email: string | null;
-
+    serie: string | null;
+    representante: string | null;
     sol_user: string | null;
     sol_password: string | null; // ⚠️ idealmente no usar en frontend
 
     logo_img: string | null; // URL del backend
     activo: boolean;
     is_deleted: boolean;
-
+    correlativo_inicial_boleta: number;
+    correlativo_inicial_factura: number;
+    correlativo_inicial_nota_credito: number;
     date_created: string; // ISO string (DateTimeField)
     users_tienda: User[];
 }

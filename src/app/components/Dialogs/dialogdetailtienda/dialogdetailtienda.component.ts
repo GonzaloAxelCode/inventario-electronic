@@ -49,14 +49,18 @@ export class DialogdetailtiendaComponent implements OnInit {
 
     this.tiendaForm = this.fb.group({
       nombre: [this.tienda.nombre || '', Validators.required],
-      razon_social: [this.tienda.razon_social || ''],        // opcional
-      ruc: [this.tienda.ruc || '',],       // valor por defecto
-      direccion: [this.tienda.direccion || ''],           // opcional
+      razon_social: [this.tienda.razon_social || '', Validators.required],        // opcional
+      ruc: [this.tienda.ruc || '', Validators.required],       // valor por defecto
+      direccion: [this.tienda.direccion || '', Validators.required],           // opcional
       telefono: [this.tienda.telefono || ''],   // valor por defecto
       email: [this.tienda.email || ''],               // opcional
       sol_user: [this.tienda.sol_user || ''],            // opcional
       sol_password: [this.tienda.sol_password || ''],        // opcional
-
+      representante: [this.tienda.representante || ''],        // nuevo campo para representante de la tienda
+      serie: [this.tienda.serie || '', Validators.required],
+      correlativo_inicial_boleta: [this.tienda.correlativo_inicial_boleta || 1],
+      correlativo_inicial_factura: [this.tienda.correlativo_inicial_factura || 1],
+      correlativo_inicial_nota_credito: [this.tienda.correlativo_inicial_nota_credito || 1]
     });
   }
 

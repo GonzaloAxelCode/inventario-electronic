@@ -1,10 +1,9 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.example.app',
-  appName: 'angular-app',
+  appId: 'com.tuempresa.facturacion',
+  appName: 'FacturacionApp',
   webDir: 'dist/angular-app',
-
 
 };
 
