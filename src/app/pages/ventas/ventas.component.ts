@@ -13,14 +13,12 @@ import {
   TuiTabs,
 } from '@taiga-ui/kit';
 
-import { TuiIcon } from '@taiga-ui/core';
-
-import { PruebastextComponent } from '@/app/components/pruebastext/pruebastext.component';
 import { CanceledsalesComponent } from '@/app/components/ventascomponents/canceledsales/canceledsales.component';
 import { ListallventasComponent } from '@/app/components/ventascomponents/listallventas/listallventas.component';
 import { MostsalesproductsComponent } from '@/app/components/ventascomponents/mostsalesproducts/mostsalesproducts.component';
 import { TodaysaleComponent } from '@/app/components/ventascomponents/todaysale/todaysale.component';
 import { TodaysalestableComponent } from '@/app/components/ventascomponents/todaysalestable/todaysalestable.component';
+import { TuiIcon } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-ventas',
@@ -35,7 +33,7 @@ import { TodaysalestableComponent } from '@/app/components/ventascomponents/toda
     TuiFade,
     TuiIcon,
     ListallventasComponent,
-    PruebastextComponent,
+
     TodaysalestableComponent,
     TodaysaleComponent,
     CanceledsalesComponent,

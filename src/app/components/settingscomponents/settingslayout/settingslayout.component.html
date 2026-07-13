@@ -1,53 +1,33 @@
-<main tuiNavigationMain>
-    <header tuiSubheader>
-        
-            <div class="flex gap-4 items-center ">
-                
-                          <img src="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/metaai-color.png" alt="Mark Bennet" class="w-10 h-10 rounded-full">
-                <h2 tuiHeader>
-                    <div tuiTitle>
-                        <div tuiNavigationLogo>
-                            <tui-icon icon="@tui.gitlab" />
-                            <span tuiFade>{{user.first_name}} {{user.last_name}}</span>
-                            
-                        </div>
-                        
-                        <div tuiSubtitle [style.display]="'flex'" [style.gap.rem]="1">
-                            <span>
-                                <tui-icon icon="@tui.user" />
-                              {{user.username}}
-                            </span>
-                            {{user.is_active ? "Activo":"Desactivado"}}
-                            <span>
-                                <tui-icon icon="@tui.lock" />
-                                {{user.is_superuser ? "Administrador":"Personal"}}
-                            </span>
-                        </div>
+<main tuiNavigationMain class="bg-neutral-50 dark:bg-neutral-800 min-h-screen">
+    <header tuiSubheader class="bg-transparent border-none">
+        <div class="flex gap-4 items-center">
+            <h2 tuiHeader>
+                <div tuiTitle>
+                    <div tuiNavigationLogo>
+                        <tui-icon icon="@tui.settings" />
+                        <span tuiFade>Configuración</span>
                     </div>
-
-                </h2>
-            </div>
-
-
-
+                </div>
+            </h2>
+        </div>
 
         <nav tuiTabs class="flex flex-wrap gap-2">
-                     <a tuiTab routerLink="/app/settings/ventas" routerLinkActive="active-link">
-                Configuraciones
-            </a>
-              <a tuiTab routerLink="/app/settings/myaccount" routerLinkActive="active-link">
+            <a tuiTab routerLink="/app/settings/cuenta" routerLinkActive="active-link">
                 Mi Cuenta
+            </a>
+            <a tuiTab routerLink="/app/settings/seguridad" routerLinkActive="active-link">
+                Seguridad
             </a>
             <a tuiTab routerLink="/app/settings/permisos" routerLinkActive="active-link">
                 Mis Permisos
             </a>
-         
-            
+            <a tuiTab routerLink="/app/settings/temas" routerLinkActive="active-link">
+                Temas y UI
+            </a>
         </nav>
     </header>
 
     <div>
         <router-outlet></router-outlet>
-
     </div>
 </main>

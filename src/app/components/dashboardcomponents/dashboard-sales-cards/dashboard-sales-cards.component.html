@@ -1,106 +1,126 @@
-<ng-template #iconoVentas>
-  <svg width="20" fill="currentColor" height="20" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M1362 1185q0 153-99.5 263.5t-258.5 136.5v175q0 14-9 23t-23 9h-135q-13 0-22.5-9.5t-9.5-22.5v-175q-66-9-127.5-31t-101.5-44.5-74-48-46.5-37.5-17.5-18q-17-21-2-41l103-135q7-10 23-12 15-2 24 9l2 2q113 99 243 125 37 8 74 8 81 0 142.5-43t61.5-122q0-28-15-53t-33.5-42-58.5-37.5-66-32-80-32.5q-39-16-61.5-25t-61.5-26.5-62.5-31-56.5-35.5-53.5-42.5-43.5-49-35.5-58-21-66.5-8.5-78q0-138 98-242t255-134v-180q0-13 9.5-22.5t22.5-9.5h135q14 0 23 9t9 23v176q57 6 110.5 23t87 33.5 63.5 37.5 39 29 15 14q17 18 5 38l-81 146q-8 15-23 16-14 3-27-7-3-3-14.5-12t-39-26.5-58.5-32-74.5-26-85.5-11.5q-95 0-155 43t-60 111q0 26 8.5 48t29.5 41.5 39.5 33 56 31 60.5 27 70 27.5q53 20 81 31.5t76 35 75.5 42.5 62 50 53 63.5 31.5 76.5 13 94z">
-    </path>
-  </svg>
-</ng-template>
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cosl-3 lg:grid-cols-3 gap-4 pb-4">
-  <div class="card">
-    <div class=" flex justify-between gap-3">
-      <span class="flex items-center gap-2 text-slate-700 dark:text-gray-300">
-        <!-- Usar el ng-template aquí -->
-        
-        <p class="title-text text-slate-700 dark:text-gray-300">
-          Ventas del dia
-        </p>
-      </span>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
+  <!-- Card: Ventas del día -->
+  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDJ2LTJoMzRtMC00SDJ2MmgzNG0wLTRIMXYyaDM0bTAtNEgxdjJoMzQiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-
+    <div class="relative flex items-start justify-between mb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-inner">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-emerald-100 text-sm font-medium">Ventas del Día</p>
+          <p class="text-white/60 text-xs">{{ currentDay }}</p>
+        </div>
+      </div>
       <form [formGroup]="testForm">
-
-
-        <p tuiDropdownOpen [tuiDropdown]="dropdown">
-          <button tuiButton appearance="outline-grayscale" iconEnd="@tui.calendar-1" size="s" type="button">
-            {{ getFormattedDate() }}
+        <div class="relative" tuiDropdownOpen [tuiDropdown]="dropdownFecha">
+          <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 backdrop-blur-sm text-white text-xs font-medium hover:bg-white/25 transition-colors" type="button">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            Seleccionar
           </button>
-          <ng-template #dropdown>
-            <tui-input-date formControlName="testValue" tuiTextfieldSize="l">
-              Seleccionar
+          <ng-template #dropdownFecha>
+            <tui-input-date formControlName="testValue" tuiTextfieldSize="m">
+              Seleccionar fecha
             </tui-input-date>
           </ng-template>
-        </p>
+        </div>
       </form>
-
     </div>
-    <div class="data">
-      <p class="text-slate-700 dark:text-gray-300 rounded-lg" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
-        <span>S/.</span> {{ todaySales}}
+
+    <div class="relative">
+      <p class="text-white text-4xl font-extrabold tracking-tight" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
+        S/. {{ todaySales | number:'1.2-2' }}
       </p>
-
+      <p class="text-emerald-200 text-xs mt-2 font-medium">{{ getFormattedDate() }}</p>
     </div>
+
+    <div class="absolute bottom-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mb-16 group-hover:scale-150 transition-transform duration-700"></div>
   </div>
 
-  <div class="card">
-    <div class=" flex items-center justify-between gap-3">
-      <span class="flex gap-2 items-center text-slate-700 dark:text-gray-300">
+  <!-- Card: Ventas semana -->
+  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-500 via-purple-600 to-indigo-700 p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDJ2LTJoMzRtMC00SDJ2MmgzNG0wLTRIMXYyaDM0bTAtNEgxdjJoMzQiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-
-
-        <p class="title-text">
-          Ventas esta semana
-        </p>
+    <div class="relative flex items-start justify-between mb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-inner">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-purple-100 text-sm font-medium">Ventas Semana</p>
+          <p class="text-white/60 text-xs">Semana {{ currentWeek }}</p>
+        </div>
+      </div>
+      <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 backdrop-blur-sm text-white text-xs font-medium">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        Semanal
       </span>
-
-  <button tuiButton appearance="outline-grayscale" class="mb-2 text-slate-700 dark:text-gray-300" disabled iconEnd="@tui.calendar-1" size="s" type="button">
-           Semana 
-          </button>
-
-
-
     </div>
-    <div class="data">
-      <p class="text-slate-700 dark:text-gray-300 rounded-lg"  [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
-        <span>S/.</span> {{ thisWeekSales}}
+
+    <div class="relative">
+      <p class="text-white text-4xl font-extrabold tracking-tight" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
+        S/. {{ thisWeekSales | number:'1.2-2' }}
       </p>
-
-
+      <p class="text-purple-200 text-xs mt-2 font-medium">Acumulado de la semana actual</p>
     </div>
+
+    <div class="absolute bottom-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mb-16 group-hover:scale-150 transition-transform duration-700"></div>
   </div>
 
-  <div class="card">
-    <div class=" flex items-center justify-between gap-3">
-      <span class="flex gap-2 items-center text-slate-700 dark:text-gray-300">
-        
-        <p class="title-text text-slate-700 dark:text-gray-300 "  >
-          Ventas Mensual
-        </p>
+  <!-- Card: Ventas mensual -->
+  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 sm:col-span-2 lg:col-span-1">
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDJ2LTJoMzRtMC00SDJ2MmgzNG0wLTRIMXYyaDM0bTAtNEgxdjJoMzQiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-      </span>
-      <form [formGroup]="testFormMonth" class="w-[120px]">
-        <tui-select (ngModelChange)="onMonthChange($event)" tuiTextfieldSize="s" formControlName="month" class="w-full">
+    <div class="relative flex items-start justify-between mb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-inner">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-amber-100 text-sm font-medium">Ventas Mensual</p>
+          <p class="text-white/60 text-xs">{{ getCurrentMonthName() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative">
+      <p class="text-white text-4xl font-extrabold tracking-tight" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
+        S/. {{ thisMonthSales | number:'1.2-2' }}
+      </p>
+    </div>
+
+    <div class="relative mt-4 flex gap-2">
+      <form [formGroup]="testFormMonth" class="flex gap-2 w-full">
+        <tui-select (ngModelChange)="onMonthChange($event)" tuiTextfieldSize="s" formControlName="month" class="flex-1">
           <tui-data-list size="s" *tuiDataList>
-            <button class="text-slate-700 dark:text-gray-300" *ngFor="let month of months" tuiOption [value]="month.name">
+            <button *ngFor="let month of months" tuiOption [value]="month.name">
               {{ month.name }}
             </button>
           </tui-data-list>
         </tui-select>
-         <tui-select (ngModelChange)="onYearChange($event)" tuiTextfieldSize="s" formControlName="year" class="w-full">
+        <tui-select (ngModelChange)="onYearChange($event)" tuiTextfieldSize="s" formControlName="year" class="w-24">
           <tui-data-list size="s" *tuiDataList>
-            <button class="text-slate-700 dark:text-gray-300" *ngFor="let year of years" tuiOption [value]="year.number">
+            <button *ngFor="let year of years" tuiOption [value]="year.number">
               {{ year.number }}
             </button>
           </tui-data-list>
         </tui-select>
       </form>
-
     </div>
-    <div class="data">
-      <p class="text-slate-700 dark:text-gray-300 rounded-lg" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
-        <span>S/.</span> {{ thisMonthSales }}
-      </p>
 
-    </div>
+    <div class="absolute bottom-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mb-16 group-hover:scale-150 transition-transform duration-700"></div>
   </div>
+
 </div>

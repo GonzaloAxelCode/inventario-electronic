@@ -1,0 +1,328 @@
+<div class="flex flex-col">
+
+    <tui-loader [showLoader]="loaderSearchCliente || (loadingCreatePedido$ | async)?.loadingCreate"
+        [overlay]="true">
+
+        <form [formGroup]="pedidoForm" class="h-full">
+
+
+            <!-- Contenido principal - Layout adaptable -->
+            <div class="flex flex-col lg:grid lg:grid-cols-[1fr_400px] gap-0 h-auto lg:h-[calc(100vh-180px)]">
+
+                <!-- Area de productos -->
+                <div class="p-3 sm:p-4 order-1">
+                    <div class="h-full" #containerAreaProducts tabindex="0" (click)="clickedInside()">
+
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                            <h2 class="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white">
+                                Productos agregados ({{ productosFormArray.length }})
+                            </h2>
+                            <button iconStart="@tui.plus" tuiButton appearance="primary-grayscale" type="button"
+                                (click)="showDialog()" tuiButtonVertical size="m" class="w-full sm:w-auto">
+
+                            </button>
+                        </div>
+
+                        <!-- Lista de productos -->
+                        <div class="space-y-3 rounded-lg focus:outline-none transition-colors">
+
+                            <div *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item"
+                                class="bg-neutral-50 dark:bg-neutral-800 relative rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transition-all hover:shadow-lg border border-neutral-200 dark:border-neutral-700">
+
+                                <p class="absolute right-2 top-2 ">
+                                    <button tuiIconButton appearance="negative" iconStart="@tui.x" type="button"
+                                        (click)="eliminarProductoForm(i)" size="s">
+                                    </button>
+                                </p>
+
+                                <div class="flex flex-col gap-3 sm:gap-4">
+
+
+                                    <!-- Header del producto (Imagen + Info basica) -->
+                                    <div class="flex gap-3 sm:gap-4">
+                                        <!-- Imagen y SKU -->
+                                        <div class="flex flex-col items-center gap-2 shrink-0">
+                                            <div
+                                                class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-xl sm:rounded-2xl overflow-hidden border-2 border-neutral-200 dark:border-neutral-700 shadow-sm">
+                                                <img [src]="item.get('imagen_producto')?.value"
+                                                    alt="Imagen del producto" class="w-full h-full object-cover" />
+                                            </div>
+                                            <tui-chip iconStart="@tui.scan-barcode" size="xs" class="text-xs">
+                                                {{ item.get('producto_sku')?.value }}
+                                            </tui-chip>
+                                        </div>
+
+                                        <!-- Info del producto -->
+                                        <div class="flex-1 min-w-0 pr-8">
+                                            <p
+                                                class="font-bold text-base sm:text-lg md:text-xl text-neutral-900 dark:text-white mb-1 truncate">
+                                                {{ item.get('producto_nombre')?.value }}
+                                            </p>
+                                            <p
+                                                class="text-xs sm:text-sm font-medium text-neutral-500 dark:text-neutral-400 truncate">
+                                                {{ item.get('nombre_categoria')?.value }}
+                                            </p>
+                                            <p
+                                                class="text-xs sm:text-sm font-medium text-neutral-500 dark:text-neutral-400 mt-1">
+                                                <strong>Precio:</strong>
+                                                <span class="text-black dark:text-white">
+                                                    S/. {{ item.get('costo_original')?.value }}
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Controles (Cantidad, Descuento, Total) -->
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+
+                                        <!-- Cantidad -->
+                                        <div class="w-full">
+                                            <label
+                                                class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Cantidad</label>
+                                            <tui-select formControlName="cantidad_final" class="w-full"
+                                                tuiTextfieldSize="m">
+                                                <tui-data-list *tuiDataList>
+                                                    <button *ngFor="let cantidad of arrayCantidades" tuiOption
+                                                        type="button" [value]="cantidad" class="text-sm">
+                                                        {{ cantidad }}
+                                                    </button>
+                                                </tui-data-list>
+                                            </tui-select>
+                                        </div>
+
+                                        <!-- Descuento -->
+                                        <div class="w-full input-select-cantidad">
+                                            <tui-textfield>
+                                                <label tuiLabel class="text-xs">Descuento</label>
+                                                <input formControlName="descuento" prefix="S/. " tuiInputNumber
+                                                    [max]="((+item.get('costo_original')?.value || 0) * (+item.get('cantidad_final')?.value || 0)) -1"
+                                                    [min]="0" [step]="1" class="text-sm input-select-cantidad" />
+                                            </tui-textfield>
+                                        </div>
+
+                                        <!-- Total -->
+                                        <div class="w-full text-center sm:text-right  rounded-lg p-3">
+                                            <p
+                                                class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-1">
+                                                Total
+                                            </p>
+                                            <p
+                                                class="text-xl sm:text-2xl md:text-3xl font-black text-neutral-900 dark:text-white">
+                                                {{ ((+item.get('costo_original')?.value || 0) *
+                                                (+item.get('cantidad_final')?.value || 0)) -
+                                                item.get("descuento")?.value | tuiAmount: 'S/.' :
+                                                'left' | async }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Estado vacio -->
+                            <div *ngIf="productosFormArray.length === 0"
+                                class="h-full text-center py-12 sm:py-16 md:py-20 text-neutral-400 dark:text-neutral-300 rounded-xl sm:rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 border-dashed border-neutral-300 dark:border-neutral-700">
+                                <img class="pb-4 sm:pb-6 w-24 h-24 sm:w-32 sm:h-32 object-contain mx-auto opacity-60"
+                                    src="https://cdn-icons-png.flaticon.com/512/10951/10951882.png" alt="Carrito vacio">
+                                <p class="text-lg sm:text-xl md:text-2xl font-bold mb-2">No hay productos agregados
+                                </p>
+                                <p class="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 px-4">
+                                    Escanea los productos
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel lateral derecho (Resumen y cliente) -->
+                <div
+                    class="px-5 pt-2 flex flex-col border-t lg:border-t-0 lg:border-l border-neutral-200 dark:border-neutral-700 order-1 lg:order-2">
+
+                    <!-- Informacion del cliente -->
+                    <div class="rounded-lg py-3">
+                        <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">
+                            Cliente
+                        </h3>
+                        <tui-segmented class="full">
+                            <button (click)="changeModeClient('buscar')" type="button">Buscar cliente</button>
+                            <button (click)="changeModeClient('nuevo')" type="button">Nuevo cliente</button>
+                        </tui-segmented>
+
+                        <div *ngIf="vistaActiva === 'buscar'">
+                            <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 my-3">
+                                Seleccionar cliente
+                            </h3>
+                            <tui-textfield tuiChevron>
+                                <input tuiComboBox formControlName="documento_cliente_existente"
+                                    placeholder="Buscar cliente por DNI o RUC" />
+
+                                <tui-data-list-wrapper *tuiTextfieldDropdown new
+                                    [items]="documents | tuiFilterByInput" />
+                            </tui-textfield>
+                        </div>
+                        <div *ngIf="vistaActiva === 'nuevo'">
+                            <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mt-3">
+                                Consultar cliente activo
+                            </h3>
+                            <div class="pt-3">
+                                <!-- Busqueda de cliente -->
+                                <div *ngIf="!pedidoForm.get('cliente')?.value" class="flex gap-2">
+                                    <tui-input class="flex-1" formControlName="documento_cliente">
+                                        DNI / RUC
+                                        <input placeholder="DNI o RUC" tuiTextfieldLegacy size="s" type="text" />
+                                    </tui-input>
+
+                                    <button tuiIconButton iconStart="@tui.search" type="button"
+                                        appearance="primary-grayscale" (click)="buscarCliente()" size="l"
+                                        [disabled]="pedidoForm.get('documento_cliente')?.invalid">
+                                    </button>
+                                </div>
+
+                                <!-- Cliente encontrado -->
+                                <div *ngIf="pedidoForm.get('cliente')?.value" class="rounded-lg p-3">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div class="flex-1 min-w-0">
+                                            <p
+                                                class="font-semibold text-sm sm:text-base text-neutral-900 dark:text-white truncate">
+                                                {{ pedidoForm.get('nombre_cliente')?.value }}
+                                            </p>
+                                            <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
+                                                {{ pedidoForm.get('documento_cliente')?.value }}
+                                            </p>
+                                        </div>
+                                        <button tuiIconButton iconStart="@tui.x" type="button" size="xs"
+                                            appearance="flat" (click)="borrarCliente()">
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <button tuiButton size="s" tuiButton class="font-bold w-full flex-1 flex"
+                                            type="button" appearance="primary-grayscale"
+                                            (click)="expanded = !expanded">
+                                            {{ expanded ? '- Ocultar detalles' : '+ Agregar mas informacion' }}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Detalles expandibles -->
+                                <div [@expandCollapse]="expanded ? 'open' : 'closed'" class="overflow-hidden">
+                                    <div class="space-y-2 pt-2">
+                                        <tui-textfield class="w-full">
+                                            <input tuiTextfield size="s" formControlName="direccion_cliente"
+                                                placeholder="Direccion" class="text-sm" />
+                                        </tui-textfield>
+                                        <tui-textfield class="w-full">
+                                            <input tuiTextfield size="s" type="email"
+                                                formControlName="correo_cliente" placeholder="Correo electronico"
+                                                class="text-sm" />
+                                        </tui-textfield>
+                                        <tui-textfield class="w-full">
+                                            <input tuiTextfield size="s" formControlName="telefono_cliente"
+                                                placeholder="Telefono" class="text-sm" />
+                                        </tui-textfield>
+                                    </div>
+                                </div>
+
+                                <span *ngIf="errorClientNotFound" class="text-red-500 text-xs block">
+                                    Cliente no encontrado. Intente mas tarde.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metodo de pago -->
+                    <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+                        Metodo de Pago
+                    </h3>
+                    <div class="flex flex-col w-full gap-3 py-4">
+                        <tui-select formControlName="metodoPago" class="w-full">
+                            Metodo
+                            <tui-data-list *tuiDataList>
+                                <button *ngFor="let metodo of listMetodosPago" tuiOption [value]="metodo">
+                                    {{ metodo }}
+                                </button>
+                            </tui-data-list>
+                        </tui-select>
+
+                        <tui-select formControlName="formaPago" class="w-full">
+                            Forma
+                            <tui-data-list *tuiDataList>
+                                <button *ngFor="let pago of formasPago" tuiOption [value]="pago">
+                                    {{ pago }}
+                                </button>
+                            </tui-data-list>
+                        </tui-select>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div class="mb-3">
+                        <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
+                            Observaciones
+                        </h3>
+                        <tui-textfield class="w-full">
+                            <textarea tuiTextfield formControlName="observaciones" rows="2"
+                                placeholder="Notas adicionales del pedido..." class="text-sm resize-none">
+                            </textarea>
+                        </tui-textfield>
+                    </div>
+
+                    <!-- Resumen de totales -->
+                    <div class="flex-1">
+                        <div class="space-y-3">
+                            <!-- Subtotal -->
+                            <div class="flex justify-between items-center">
+                                <span
+                                    class="text-sm sm:text-base md:text-lg font-semibold text-neutral-900 dark:text-white">
+                                    Subtotal
+                                </span>
+                                <span class="text-lg sm:text-xl md:text-2xl font-bold text-black dark:text-white">
+                                    {{ salesTotals.subtotal | currency:'S/' }}
+                                </span>
+                            </div>
+
+                            <!-- Descuentos -->
+                            <div class="flex justify-between items-center pb-3">
+                                <span
+                                    class="text-sm sm:text-base md:text-lg font-semibold text-neutral-900 dark:text-white">
+                                    Descuentos
+                                </span>
+                                <span class="text-lg sm:text-xl md:text-2xl font-bold text-red-500">
+                                    - {{ salesTotals.descuentoTotales | currency:'S/' }}
+                                </span>
+                            </div>
+
+                            <!-- Total -->
+                            <div class="flex flex-col gap-2 border-t pt-4 border-neutral-200 dark:border-neutral-700">
+                                <div class="flex justify-between items-start">
+                                    <span
+                                        class="text-lg sm:text-xl md:text-2xl font-semibold text-neutral-900 dark:text-white">
+                                        Total
+                                    </span>
+                                    <div class="text-right">
+                                        <span
+                                            class="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white block">
+                                            {{ salesTotals.total | currency:'S/' }}
+                                        </span>
+                                        <p class="text-xs py-2">
+                                            * Incluye IGV 18% ({{ salesTotals.igv | currency:'S/' }})
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de finalizar pedido -->
+                    <div class="space-y-2 pb-4">
+                        <button
+                            [disabled]="!pedidoForm.valid || pedidoForm.get('productos')?.value.length === 0"
+                            class="w-full" tuiButton type="submit" (click)="registrarPedido()" appearance="primary-grayscale"
+                            size="l">
+                            <span class="flex items-center justify-center gap-2 text-sm sm:text-base">
+                                <span>Registrar Pedido</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </tui-loader>
+</div>

@@ -11,19 +11,19 @@ import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAlertService, TuiAppearance, TuiButton } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiConfirmData, TuiRadio, TuiSkeleton } from '@taiga-ui/kit';
+import { TuiAlertService, TuiAppearance, TuiButton, TuiLoader } from '@taiga-ui/core';
+import { TUI_CONFIRM, TuiBadge, TuiChip, TuiConfirmData, TuiRadio, TuiSkeleton } from '@taiga-ui/kit';
 import { TuiBlockStatus } from '@taiga-ui/layout';
 import { Observable } from 'rxjs';
 @Component({
   selector: 'app-tablecategories',
   standalone: true,
 
-  imports: [CommonModule, FormsModule, TuiTable, CommonModule,
-
+  imports: [CommonModule, FormsModule, TuiTable,
     TuiRadio,
-    FormsModule, TuiSkeleton,
-    TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiBlockStatus
+    TuiSkeleton,
+    TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiBlockStatus,
+    TuiLoader, TuiChip
   ],
   templateUrl: './tablecategories.component.html',
   styleUrl: './tablecategories.component.scss'

@@ -8,6 +8,7 @@ import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
@@ -44,7 +45,7 @@ export class TabletiendasComponent implements OnInit {
   editingId: number | any = null;
   editedTienda: Partial<Tienda> = {};
 
-  constructor(private store: Store<AppState>, private cdRef: ChangeDetectorRef) { }
+  constructor(private store: Store<AppState>, private cdRef: ChangeDetectorRef, private router: Router) { }
 
   ngOnInit() {
 
@@ -102,10 +103,7 @@ export class TabletiendasComponent implements OnInit {
     });
   }
   protected showDialogDetailTienda(tienda: Tienda): void {
-
-    this.dialogServiceDetail.open(tienda).subscribe((result: any) => {
-
-    });
+    this.router.navigate(['/admin/store', tienda.id]);
   }
   private cardColors = [
 
@@ -118,10 +116,41 @@ export class TabletiendasComponent implements OnInit {
 
   getCardBorderColor(index: number): string {
     const borders = [
-
-      'dark:border-neutral-700 border-neutral-200'     // 💛 Amarillo acento para el matching
+      'dark:border-neutral-700 border-neutral-200'
     ];
     return borders[index % borders.length];
+  }
+
+  private gradients = [
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+    'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)',
+    'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
+  ];
+
+  getGradient(index: number): string {
+    return this.gradients[index % this.gradients.length];
+  }
+
+  private userColors = [
+    '#667eea', '#f5576c', '#4facfe', '#43e97b',
+    '#fa709a', '#a18cd1', '#fccb90', '#e0c3fc',
+  ];
+
+  getUserColor(index: number): string {
+    return this.userColors[index % this.userColors.length];
+  }
+
+  getUserNames(tienda: Tienda): string {
+    const users = tienda.users_tienda || [];
+    if (users.length === 0) return '';
+    const names = users.slice(0, 3).map(u => u.first_name || u.username);
+    const extra = users.length > 3 ? ` +${users.length - 3} más` : '';
+    return names.join(', ') + extra;
   }
 
 

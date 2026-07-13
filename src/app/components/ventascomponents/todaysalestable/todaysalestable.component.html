@@ -1,6 +1,17 @@
 <!-- ================= MOBILE ================= -->
 <div class="space-y-3 sm:hidden">
 
+  <!-- Estado vacio -->
+  <div *ngIf="ventas.length === 0"
+    class="flex flex-col items-center justify-center py-20 text-neutral-400 dark:text-neutral-500">
+    <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+    <p class="text-lg font-bold text-neutral-600 dark:text-neutral-300">No hubo ventas hoy</p>
+    <p class="text-sm text-neutral-400 dark:text-neutral-500">Las ventas realizadas hoy aparecerán aquí</p>
+  </div>
+
   <div *ngFor="let venta of ventas"
        class="bg-white dark:bg-neutral-800
               border border-neutral-200 dark:border-neutral-700
@@ -86,6 +97,17 @@
 
 <!-- ================= DESKTOP ================= -->
 <div class="hidden sm:block space-y-4">
+
+  <!-- Estado vacio -->
+  <div *ngIf="ventas.length === 0"
+    class="flex flex-col items-center justify-center py-20 text-neutral-400 dark:text-neutral-500">
+    <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+    <p class="text-lg font-bold text-neutral-600 dark:text-neutral-300">No hubo ventas hoy</p>
+    <p class="text-sm text-neutral-400 dark:text-neutral-500">Las ventas realizadas hoy aparecerán aquí</p>
+  </div>
 
   <div *ngFor="let venta of ventas"
        class="bg-white dark:bg-neutral-800 overflow-hidden

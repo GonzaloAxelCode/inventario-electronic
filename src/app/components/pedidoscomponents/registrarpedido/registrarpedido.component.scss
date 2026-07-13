@@ -1,0 +1,35 @@
+:host {
+    display: block;
+}
+
+.table {
+    inline-size: 100%;
+}
+
+div[tuiCell] {
+    padding-left: 0;
+    padding-right: 0;
+    box-shadow: none;
+}
+
+.input-select-cantidad {
+
+    ::ng-deep tui-select {
+        .t-input {
+            font-size: 18px !important;
+
+            padding-top: 4px !important;
+            padding-bottom: 8px !important;
+            line-height: 0 !important;
+        }
+    }
+}
+
+.full {
+    inline-size: 100%;
+
+    & > * {
+        flex: 1;
+        min-inline-size: 0;
+    }
+}

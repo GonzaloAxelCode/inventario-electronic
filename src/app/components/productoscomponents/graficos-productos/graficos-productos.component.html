@@ -1,0 +1,99 @@
+<div class="flex flex-col gap-6 p-4">
+
+  <!-- Header -->
+  <div>
+    <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Gráficos de Productos</h3>
+    <p class="text-sm text-neutral-500 dark:text-neutral-400">Datos de ejemplo con Taiga UI Charts</p>
+  </div>
+
+  <!-- Grid responsive de gráficos -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- 1. Ring Chart: Productos más vendidos -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Productos Más Vendidos</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Unidades vendidas por producto</p>
+
+      <div class="chart-wrapper">
+        <tui-ring-chart
+          [value]="ringValue"
+          [(activeItemIndex)]="ringActiveIndex">
+          <div class="text-center">
+            <p class="text-xl font-bold text-neutral-900 dark:text-white">135</p>
+            <p class="text-[10px] text-neutral-500">Total</p>
+          </div>
+        </tui-ring-chart>
+
+        <div class="chart-legend">
+          <tui-legend-item
+            *ngFor="let label of ringLabels; let index = index"
+            size="s"
+            class="legend-item"
+            [active]="isRingActive(index)"
+            [color]="'var(--tui-chart-categorical-0' + index + ')'"
+            [text]="label"
+            (tuiHoveredChange)="onRingHover(index, $event)">
+            <span>{{ ringValue[index] }}</span>
+          </tui-legend-item>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Pie Chart: Distribución por categoría -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Distribución por Categoría</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Porcentaje de productos por categoría</p>
+
+      <div class="chart-wrapper">
+        <tui-pie-chart
+          [value]="pieValue"
+          [(activeItemIndex)]="pieActiveIndex">
+        </tui-pie-chart>
+
+        <div class="chart-legend">
+          <tui-legend-item
+            *ngFor="let label of pieLabels; let index = index"
+            size="s"
+            class="legend-item"
+            [active]="isPieActive(index)"
+            [color]="'var(--tui-chart-categorical-0' + index + ')'"
+            [text]="label"
+            (tuiHoveredChange)="onPieHover(index, $event)">
+            <span>{{ pieValue[index] }}%</span>
+          </tui-legend-item>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 5. Barras horizontales: Top productos por ingresos (full width) -->
+  <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+    <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Top Productos por Ingresos</h4>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Ingresos en soles (S/)</p>
+
+    <div class="space-y-3">
+      <div *ngFor="let item of horizontalData; let i = index" class="flex items-center gap-3">
+        <span class="text-xs font-bold text-neutral-400 w-4 text-right">{{ i + 1 }}</span>
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-sm font-medium text-neutral-900 dark:text-white">{{ item.nombre }}</span>
+            <span class="text-sm font-bold text-neutral-600 dark:text-neutral-300">S/ {{ item.ingresos | number }}</span>
+          </div>
+          <div class="w-full bg-neutral-100 dark:bg-neutral-700 rounded-full h-3 overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700 ease-out"
+              [style.width.%]="(item.ingresos / horizontalMax) * 100"
+              [style.background-color]="'var(--tui-chart-categorical-0' + i + ')'">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nota -->
+  <p class="text-xs text-neutral-400 dark:text-neutral-500 text-center italic">
+    * Gráficos de ejemplo con Taiga UI. Próximamente se conectarán con datos reales del backend.
+  </p>
+
+</div>

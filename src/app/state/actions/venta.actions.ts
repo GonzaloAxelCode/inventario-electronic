@@ -1,5 +1,5 @@
 import { CreateVenta, Venta } from '@/app/models/venta.models';
-import { QuerySearchVenta } from '@/app/services/caja.service';
+import { QuerySearchVenta } from '@/app/services/venta.service';
 import { createAction, props } from '@ngrx/store';
 import { ProductsSales } from '../reducers/venta.reducer';
 

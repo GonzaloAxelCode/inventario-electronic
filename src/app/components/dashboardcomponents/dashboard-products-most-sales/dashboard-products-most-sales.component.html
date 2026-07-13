@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div class="wrapper" *ngIf="hasData; else emptyState">
   <tui-ring-chart
   [tuiSkeleton]="!!(selectVentas$ | async)?.loadingMostSales"
     [value]="value"
@@ -22,4 +22,10 @@
     </tui-legend-item>
   </div>
 </div>
+
+<ng-template #emptyState>
+  <div class="flex items-center justify-center h-48 text-gray-400 text-sm">
+    No hay productos vendidos hoy
+  </div>
+</ng-template>
 

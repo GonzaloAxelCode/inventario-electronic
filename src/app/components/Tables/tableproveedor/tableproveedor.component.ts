@@ -1,7 +1,7 @@
 import { Proveedor } from '@/app/models/proveedor.models';
 import { DialogCreateProveedorService } from '@/app/services/dialogs-services/dialog-createproveedor.service';
 import { DialogUpdateProveedorService } from '@/app/services/dialogs-services/dialog-updateproveedor.service';
-import { onActiveToggleProveedorAction } from '@/app/state/actions/proveedor.actions';
+import { toggleProveedorAction } from '@/app/state/actions/proveedor.actions';
 import { AppState } from '@/app/state/app.state';
 import { ProveedorState } from '@/app/state/reducers/proveedor.reducer';
 import { selectProveedores } from '@/app/state/selectors/proveedor.selectors';
@@ -93,7 +93,7 @@ export class TableproveedorComponent implements OnInit {
       .subscribe((confirm) => {
         if (confirm) {
 
-          this.store.dispatch(onActiveToggleProveedorAction({ proveedor, activo: !proveedor.activo }));
+          this.store.dispatch(toggleProveedorAction({ proveedor, activo: !proveedor.activo }));
           this.alerts.open(' Acción exitosa.',).subscribe();
         } else {
 

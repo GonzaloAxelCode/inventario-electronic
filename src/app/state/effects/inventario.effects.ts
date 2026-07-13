@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, exhaustMap, from, map, of, switchMap, tap } from 'rxjs';
+import { catchError, exhaustMap, from, map, mergeMap, of, switchMap, tap } from 'rxjs';
 
 import { InventarioCacheService } from '@/app/services/inventario-cache.service';
 import { InventarioService } from '@/app/services/inventario.service';
@@ -71,31 +71,6 @@ export class InventarioEffects {
         private alertService: CustomAlertService
     ) { }
 
-    // 🔹 Cargar todos los clientes
-    loadInventariosSync$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(forceSyncInventarios),
-            switchMap(() =>
-                this.inventarioService.fetchInventariosPorTienda().pipe(
-
-                    tap(res => {
-                        // side effects (cache)
-                        this.cache.saveAll(res.results);
-                        this.cache.setLastSync(new Date().toISOString());
-                    }),
-
-                    map(res =>
-                        loadInventariosSuccess({ inventarios: res.results })
-                    ),
-
-                    catchError(error =>
-                        of(loadInventariosFail({ error }))
-                    )
-                )
-            )
-        )
-    );
-
     loadInventariosFromCache$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loadInventariosFromCache),
@@ -159,9 +134,12 @@ export class InventarioEffects {
             ofType(createInventario),
             exhaustMap(({ inventario }) =>
                 this.inventarioService.createInventario(inventario).pipe(
-                    map((res: any) => {
+                    mergeMap((res: any) => {
                         this.alertService.showSuccess('Inventario creado exitosamente').subscribe();
-                        return createInventarioSuccess({ inventario: res });
+                        return [
+                            createInventarioSuccess({ inventario: res }),
+                            forceSyncInventarios()
+                        ];
                     }),
                     catchError(error => {
 
@@ -183,9 +161,12 @@ export class InventarioEffects {
             ofType(updateStock),
             exhaustMap(({ inventarioId, cantidad }) =>
                 this.inventarioService.updateStock(inventarioId, cantidad).pipe(
-                    map((res) => {
+                    mergeMap((res) => {
                         this.alertService.showSuccess('Stock actualizado exitosamente').subscribe();
-                        return updateStockSuccess({ inventario: res.inventario });
+                        return [
+                            updateStockSuccess({ inventario: res.inventario }),
+                            forceSyncInventarios()
+                        ];
                     }),
                     catchError(error => {
                         this.alertService.showError('Error al actualizar el stock').subscribe();
@@ -201,9 +182,12 @@ export class InventarioEffects {
             ofType(actualizarInventario),
             exhaustMap(({ newInventario }) =>
                 this.inventarioService.actualizarInventario(newInventario).pipe(
-                    map(() => {
+                    mergeMap(() => {
                         this.alertService.showSuccess('Inventario actualizado exitosamente').subscribe();
-                        return actualizarInventarioSuccess({ newInventario });
+                        return [
+                            actualizarInventarioSuccess({ newInventario }),
+                            forceSyncInventarios()
+                        ];
                     }),
                     catchError(error => {
                         this.alertService.showError('Error al actualizar el inventario').subscribe();

@@ -17,23 +17,27 @@
 
 
         <!-- PESTAÑAS SIN ROUTER -->
-        <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
+        <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
+            class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
 
-            <button tuiTab (click)="setTab('productos')" [class.active-link]="activeTab === 'productos'">
+            <button tuiTab type="button">
                 Productos
             </button>
 
-            <button tuiTab (click)="setTab('categorias')" [class.active-link]="activeTab === 'categorias'">
+            <button tuiTab type="button">
                 Categorías
             </button>
 
-            <button tuiTab (click)="setTab('graficos')" [class.active-link]="activeTab === 'graficos'">
+            <button tuiTab type="button">
                 Gráficos
             </button>
 
-         
-            <button tuiTab (click)="setTab('alertas')" [class.active-link]="activeTab === 'alertas'">
+            <button tuiTab type="button">
                 Alertas de Stock
+            </button>
+
+            <button tuiTab type="button">
+                Agregar productos por Excel
             </button>
 
         </nav>
@@ -72,17 +76,17 @@
             </ng-container>
 
             <ng-container *ngIf="activeTab === 'graficos'">
-                <!-- Contenido de Gráficos --> <app-pruebastext></app-pruebastext>
+                <app-graficos-productos></app-graficos-productos>
             </ng-container>
 
                  
 
                   <ng-container *ngIf="activeTab === 'alertas'">
-                <div class="">
-                    <p class="text-2xl font-bold text-slate-700 dark:text-gray-300 mb-4">Productos con bajo stock</p>
-                    <app-pruebastext></app-pruebastext>
-                    <app-dashboard-low-stock></app-dashboard-low-stock>
-                </div>
+                    <app-alertas-stock></app-alertas-stock>
+            </ng-container>
+
+            <ng-container *ngIf="activeTab === 'excel'">
+                <app-subircsvproductos></app-subircsvproductos>
             </ng-container>
 
 

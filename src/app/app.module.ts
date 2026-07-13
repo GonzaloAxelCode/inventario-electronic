@@ -37,7 +37,6 @@ import { TiendaService } from './services/tienda.service';
 import { UserService } from './services/user.service';
 import { VentaService } from './services/venta.service';
 import { AppEffects } from './state/effects/app.effects';
-import { CajaEffects } from './state/effects/caja.effect';
 import { ClienteEffects } from './state/effects/cliente.effects';
 import { InventarioEffects } from './state/effects/inventario.effects';
 import { ProductoEffects } from './state/effects/producto.effects';
@@ -45,6 +44,12 @@ import { ProveedorEffects } from './state/effects/proveedor.effects';
 import { TiendaEffects } from './state/effects/tienda.effects';
 import { UserEffects } from './state/effects/user.effects';
 import { VentaEffects } from './state/effects/venta.effects';
+import { CompraEffects } from './state/effects/compra.effects';
+import { CompraService } from './services/compra.service';
+import { PedidoEffects } from './state/effects/pedido.effects';
+import { PedidoService } from './services/pedido.service';
+import { GuiaRemisionEffects } from './state/effects/guia-remision.effects';
+import { GuiaRemisionService } from './services/guia-remision.service';
 
 
 @NgModule({
@@ -71,8 +76,10 @@ import { VentaEffects } from './state/effects/venta.effects';
 			InventarioEffects,
 			ProveedorEffects,
 			VentaEffects,
-			CajaEffects,
-			ClienteEffects
+			ClienteEffects,
+			CompraEffects,
+			PedidoEffects,
+			GuiaRemisionEffects,
 		]),
 		TranslateModule.forRoot({
 			defaultLanguage: 'en',
@@ -96,6 +103,9 @@ import { VentaEffects } from './state/effects/venta.effects';
 		ProveedorService,
 		ConsultaService,
 		VentaService,
+		CompraService,
+		PedidoService,
+		GuiaRemisionService,
 		provideAnimations(),
 		provideToastr(),
 

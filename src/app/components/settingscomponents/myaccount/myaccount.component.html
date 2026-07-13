@@ -1,1 +1,92 @@
-<p>myaccount works!</p>
+<div class="max-w-4xl p-6 space-y-10">
+
+  <!-- Perfil del Usuario -->
+  <section>
+    <div class="flex items-center gap-6 mb-8">
+      <!-- Avatar -->
+      <div class="relative">
+        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-3xl font-bold shadow-xl shadow-indigo-500/20">
+          {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+        </div>
+        <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white dark:border-neutral-900"
+             [class]="user.is_active ? 'bg-emerald-500' : 'bg-red-500'"></div>
+      </div>
+
+      <!-- Info -->
+      <div class="flex-1">
+        <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">{{ user.first_name || 'Sin nombre' }} {{ user.last_name || 'Sin apellido' }}</h2>
+        <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">{{ user.username }}</p>
+        <div class="flex items-center gap-2 mt-2">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                [class]="user.is_superuser ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'">
+            {{ user.is_superuser ? 'Administrador' : 'Personal' }}
+          </span>
+          <span class="text-xs text-neutral-400 dark:text-neutral-500">•</span>
+          <span class="text-xs text-neutral-500 dark:text-neutral-400">Miembro desde {{ user.date_joined | date:'MMM yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
+      <div class="space-y-1">
+        <label class="text-xs font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">Nombre</label>
+        <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ user.first_name || '—' }}</p>
+      </div>
+      <div class="space-y-1">
+        <label class="text-xs font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">Apellido</label>
+        <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ user.last_name || '—' }}</p>
+      </div>
+      <div class="space-y-1">
+        <label class="text-xs font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">Usuario</label>
+        <p class="text-sm font-semibold text-neutral-900 dark:text-white font-mono">{{ user.username }}</p>
+      </div>
+      <div class="space-y-1">
+        <label class="text-xs font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">Estado</label>
+        <p class="text-sm font-semibold"
+           [class]="user.is_active ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'">
+          {{ user.is_active ? 'Activo' : 'Inactivo' }}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Separador -->
+  <div class="border-t border-neutral-200 dark:border-neutral-700/50"></div>
+
+  <!-- Tienda Asignada -->
+  <section *ngIf="tienda?.nombre">
+    <div class="flex items-center gap-4 mb-6">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/20 p-2">
+        <img *ngIf="tienda.logo_img" [src]="tienda.logo_img" alt="Logo" class="w-full h-full object-contain rounded-lg">
+        <svg *ngIf="!tienda.logo_img" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-neutral-900 dark:text-white">{{ tienda.nombre }}</h3>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400">RUC: {{ tienda.ruc || 'Sin RUC' }}</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
+      <div class="space-y-1">
+        <label class="text-xs font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">Razón Social</label>
+        <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ tienda.razon_social || '—' }}</p>
+      </div>
+      <div class="space-y-1">
+        <label class="text-xs font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">Dirección</label>
+        <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ tienda.direccion || '—' }}</p>
+      </div>
+      <div class="space-y-1">
+        <label class="text-xs font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">Teléfono</label>
+        <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ tienda.telefono || '—' }}</p>
+      </div>
+      <div class="space-y-1">
+        <label class="text-xs font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">Email</label>
+        <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ tienda.email || '—' }}</p>
+      </div>
+    </div>
+  </section>
+
+</div>

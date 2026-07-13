@@ -1,0 +1,211 @@
+<div class="flex flex-col gap-6">
+
+  <!-- Separador -->
+  <div class="flex items-center gap-4">
+    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-600 to-transparent"></div>
+    <span class="text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">Estadísticas generales</span>
+    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-600 to-transparent"></div>
+  </div>
+
+  <!-- Fila 1: Gauge + Donut + Progress Circles -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+
+    <!-- 1. Gauge - Satisfacción -->
+    <div class="p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col items-center">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Rendimiento de Ventas</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Comparativa mensual</p>
+
+      <!-- Selects Mes A -->
+      <div class="flex flex-wrap gap-1.5 mb-2 w-full justify-center">
+        <select tuiTextfieldSize="s"
+          class="text-xs px-2 py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+          [ngModel]="selectedMonthA" (ngModelChange)="onMonthAChange($event)">
+          <option *ngFor="let m of monthNames" [value]="m">{{ m }}</option>
+        </select>
+        <select tuiTextfieldSize="s"
+          class="text-xs px-2 py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+          [ngModel]="selectedYearA" (ngModelChange)="onYearAChange($event)">
+          <option *ngFor="let y of yearNumbers" [ngValue]="y">{{ y }}</option>
+        </select>
+      </div>
+
+      <p class="text-[10px] text-neutral-400 dark:text-neutral-500 mb-1">vs</p>
+
+      <!-- Selects Mes B -->
+      <div class="flex flex-wrap gap-1.5 mb-3 w-full justify-center">
+        <select tuiTextfieldSize="s"
+          class="text-xs px-2 py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+          [ngModel]="selectedMonthB" (ngModelChange)="onMonthBChange($event)">
+          <option *ngFor="let m of monthNames" [value]="m">{{ m }}</option>
+        </select>
+        <select tuiTextfieldSize="s"
+          class="text-xs px-2 py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+          [ngModel]="selectedYearB" (ngModelChange)="onYearBChange($event)">
+          <option *ngFor="let y of yearNumbers" [ngValue]="y">{{ y }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="loadingGauge; else gaugeLoaded">
+        <div class="w-40 h-24 bg-neutral-100 dark:bg-neutral-700 rounded-full animate-pulse"></div>
+        <div class="h-3 w-24 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse mt-3 mx-auto"></div>
+      </div>
+      <ng-template #gaugeLoaded>
+        <div class="relative w-40 h-24 overflow-hidden">
+          <svg viewBox="0 0 100 60" class="w-full h-full">
+            <path d="M 5 55 A 45 45 0 0 1 95 55" fill="none" stroke="#E5E7EB" stroke-width="8" stroke-linecap="round" />
+            <path d="M 5 55 A 45 45 0 0 1 95 55" fill="none"
+              [attr.stroke]="gaugeValue >= 0 ? 'url(#gaugeGrad)' : '#EF4444'"
+              stroke-width="8" stroke-linecap="round"
+              [attr.stroke-dasharray]="getGaugeDash()" />
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#EF4444" />
+                <stop offset="50%" stop-color="#F59E0B" />
+                <stop offset="100%" stop-color="#10B981" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
+            <p class="text-3xl font-extrabold"
+              [class]="gaugeValue >= 0 ? 'text-neutral-900 dark:text-white' : 'text-red-600 dark:text-red-400'">
+              {{ gaugeValue >= 0 ? '+' : '' }}{{ gaugeValue | number:'1.0-0' }}%
+            </p>
+          </div>
+        </div>
+        <p class="text-xs mt-2 font-semibold"
+          [class]="variacion >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+          {{ variacion >= 0 ? '+' : '' }}{{ variacion | number:'1.0-0' }} soles vs mes anterior
+        </p>
+      </ng-template>
+    </div>
+
+    <!-- 2. Donut - Métodos de pago -->
+    <div class="p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Métodos de Pago</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Distribución del mes</p>
+      <app-dashboard-payment-methods></app-dashboard-payment-methods>
+    </div>
+
+    <!-- 3. Progress Circles - Objetivos -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1 flex items-center gap-2">
+        Objetivos del Mes
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-sm shadow-violet-500/30">
+          Próximamente
+        </span>
+      </h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Progreso hacia metas</p>
+      <div class="grid grid-cols-2 gap-3">
+        <div *ngFor="let obj of objectives" class="flex flex-col items-center">
+          <div class="relative w-16 h-16">
+            <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
+              <circle cx="18" cy="18" r="14" fill="none" stroke="#E5E7EB" stroke-width="3" />
+              <circle cx="18" cy="18" r="14" fill="none"
+                [attr.stroke]="obj.color" stroke-width="3"
+                [attr.stroke-dasharray]="getCircleProgress(obj.current, obj.target)"
+                stroke-linecap="round" />
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-[10px] font-bold text-neutral-900 dark:text-white">{{ obj.current }}%</span>
+            </div>
+          </div>
+          <p class="text-[10px] text-neutral-500 dark:text-neutral-400 text-center mt-1 leading-tight">{{ obj.label }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fila 2: Radial Bars + Sparkline -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- 5. Top productos -->
+    <div class="p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Top Productos</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Por volumen de ventas</p>
+      <div class="flex gap-2 mb-3">
+        <select tuiTextfieldSize="s"
+          class="text-xs px-2 py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+          [ngModel]="selectedMonthTop" (ngModelChange)="onMonthTopChange($event)">
+          <option *ngFor="let m of monthNames" [value]="m">{{ m }}</option>
+        </select>
+        <select tuiTextfieldSize="s"
+          class="text-xs px-2 py-1 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+          [ngModel]="selectedYearTop" (ngModelChange)="onYearTopChange($event)">
+          <option *ngFor="let y of yearNumbers" [ngValue]="y">{{ y }}</option>
+        </select>
+      </div>
+      <div *ngIf="loadingTopProducts; else topProductsLoaded">
+        <div class="space-y-3">
+          <div *ngFor="let i of [1, 2, 3, 4, 5]" class="flex items-center gap-3">
+            <div class="w-20 h-3 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
+            <div class="flex-1 h-5 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+              <div class="h-full bg-neutral-200 dark:bg-neutral-600 rounded-full animate-pulse" [style.width.%]="70 - i * 10"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #topProductsLoaded>
+        <div *ngIf="topProducts.length > 0; else emptyTop" class="space-y-3">
+          <div *ngFor="let prod of topProducts" class="flex items-center gap-3">
+            <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300 w-20 shrink-0 truncate">{{ prod.name }}</span>
+            <div class="flex-1 h-5 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-700 ease-out flex items-center justify-end pr-2"
+                [style.width.%]="prod.value"
+                [style.background-color]="prod.color">
+                <span class="text-[10px] font-bold text-white drop-shadow-sm">{{ prod.value }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #emptyTop>
+          <div class="flex items-center justify-center h-20 text-neutral-400 text-xs">
+            No hay datos de productos
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+
+    <!-- 6. Sparkline - Tendencia de ventas -->
+    <div class="p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Tendencia de Ventas</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Últimos 20 días</p>
+      <div *ngIf="loadingSparkline; else sparklineLoaded">
+        <div class="h-24 bg-neutral-100 dark:bg-neutral-700 rounded-lg animate-pulse"></div>
+      </div>
+      <ng-template #sparklineLoaded>
+        <div *ngIf="sparklineData.length > 0; else emptySparkline">
+          <div class="relative h-24">
+            <svg viewBox="0 0 200 50" class="w-full h-full" preserveAspectRatio="none">
+              <path [attr.d]="getSparklineArea()" fill="url(#sparkGrad)" opacity="0.3" />
+              <path [attr.d]="getSparklinePath()" fill="none" stroke="#8B5CF6" stroke-width="1.5" stroke-linecap="round" />
+              <circle *ngFor="let v of sparklineData; let i = index"
+                [attr.cx]="i * (200 / (sparklineData.length - 1 || 1))"
+                [attr.cy]="sparklineMax === sparklineMin ? 25 : 50 - ((v - sparklineMin) / (sparklineMax - sparklineMin)) * 40 - 5"
+                r="1.5" fill="#8B5CF6" />
+              <defs>
+                <linearGradient id="sparkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#8B5CF6" />
+                  <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="flex justify-between mt-2">
+            <span class="text-[10px] text-neutral-400">{{ sparklineLabels.length > 0 ? sparklineLabels[0] : '' }}</span>
+            <span class="text-[10px] font-bold"
+              [class]="getSparklinePercentChange() >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+              {{ getSparklinePercentChange() >= 0 ? '+' : '' }}{{ getSparklinePercentChange() }}%
+            </span>
+            <span class="text-[10px] text-neutral-400">{{ sparklineLabels.length > 0 ? sparklineLabels[sparklineLabels.length - 1] : '' }}</span>
+          </div>
+        </div>
+        <ng-template #emptySparkline>
+          <div class="flex items-center justify-center h-24 text-neutral-400 text-xs">
+            No hay datos de tendencia
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+  </div>
+
+</div>

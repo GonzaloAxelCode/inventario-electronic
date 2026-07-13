@@ -1,7 +1,7 @@
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
-import { AsyncPipe, NgForOf } from '@angular/common';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TuiLegendItem, TuiRingChart } from '@taiga-ui/addon-charts';
@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
   selector: 'app-dashboard-products-most-sales',
   standalone: true,
 
-  imports: [AsyncPipe, NgForOf, TuiAmountPipe, TuiHovered, TuiLegendItem, TuiRingChart, TuiSkeleton],
+  imports: [AsyncPipe, NgForOf, NgIf, TuiAmountPipe, TuiHovered, TuiLegendItem, TuiRingChart, TuiSkeleton],
 
   templateUrl: './dashboard-products-most-sales.component.html',
   styleUrl: './dashboard-products-most-sales.component.scss'
@@ -26,6 +26,7 @@ export class DashboardProductsMostSalesComponent implements OnInit {
   protected value: number[] = [];  // Para las cantidades vendidas
   protected labels: string[] = [];  // Para los nombres de los productos
   protected selectVentas$: Observable<VentaState>;
+  protected hasData = false;
 
   constructor() {
 
@@ -39,7 +40,9 @@ export class DashboardProductsMostSalesComponent implements OnInit {
       if (productos && productos.topProductoMostSales) {
         this.labels = productos.topProductoMostSales.map((producto: any) => producto.nombre);
         this.value = productos.topProductoMostSales.map((producto: any) => producto.cantidad_total_vendida);
-
+        this.hasData = this.value.length > 0 && this.value.some(v => v > 0);
+      } else {
+        this.hasData = false;
       }
 
     });

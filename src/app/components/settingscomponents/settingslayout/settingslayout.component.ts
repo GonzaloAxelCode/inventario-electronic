@@ -1,9 +1,5 @@
-import { User } from '@/app/models/user.models';
-import { AppState } from '@/app/state/app.state';
-import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
-import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiRepeatTimes } from '@taiga-ui/cdk';
@@ -14,19 +10,17 @@ import {
   TuiTextfield,
   TuiTitle
 } from '@taiga-ui/core';
-import { TuiAvatar, TuiBadge, TuiBlock, TuiBreadcrumbs, TuiFade, TuiTabs, TuiTabsWithMore } from '@taiga-ui/kit';
+import { TuiBadge, TuiBlock, TuiBreadcrumbs, TuiFade, TuiTabs, TuiTabsWithMore } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiHeader, TuiNavigation } from '@taiga-ui/layout';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-settingslayout',
   standalone: true,
-  imports: [CommonModule, RouterModule, TuiTabsWithMore, TuiButton, NgIf,
+  imports: [CommonModule, RouterModule, TuiTabsWithMore, TuiButton,
     TuiAppearance,
     TuiBadge,
     TuiBlock,
-    TuiBreadcrumbs, NgIf,
-    TuiButton,
+    TuiBreadcrumbs,
     TuiCardLarge,
     TuiFade,
     TuiGroup,
@@ -37,25 +31,12 @@ import { Observable } from 'rxjs';
     TuiRepeatTimes,
     TuiTabs,
     TuiTextfield,
-    TuiTitle, TuiIcon, TuiAvatar],
+    TuiTitle],
   templateUrl: './settingslayout.component.html',
   styleUrl: './settingslayout.component.scss'
 })
-export class SettingslayoutComponent implements OnInit {
+export class SettingslayoutComponent {
 
-  userState$!: Observable<UserState>;
-  user: User = initialStateUser.user;
-
-  constructor(private store: Store<AppState>) {
-
-    this.userState$ = this.store.select(selectUsersState);
-  }
-
-  ngOnInit() {
-    this.userState$.subscribe(userState => {
-      this.user = userState.user;
-      console.log(this.user)
-    });
-  }
+  constructor(private store: Store) {}
 
 }

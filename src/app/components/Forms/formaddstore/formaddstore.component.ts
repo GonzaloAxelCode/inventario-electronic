@@ -77,7 +77,7 @@ export class FormaddstoreComponent {
 
       // Despachamos la acción con FormData
       this.store.dispatch(createTiendaAction({ tienda: formData }));
-
+      
       // Limpiamos el formulario
       this.tiendaForm.reset({
         nombre: [''],

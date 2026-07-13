@@ -1,23 +1,65 @@
+<div tuiNavigationMain class="pl-4 bg-neutral-50 dark:bg-neutral-800 min-h-screen">
+    <header tuiSubheader class="bg-transparent border-none">
+        <div class="flex gap-4 items-center">
+            <h2 tuiHeader>
+                <div tuiTitle>
+                    <div tuiNavigationLogo>
+                        <tui-icon icon="@tui.buildings" />
+                        <span tuiFade>Tiendas</span>
+                    </div>
+                </div>
+            </h2>
+        </div>
 
+        <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
+            <button tuiTab 
+                (click)="setTab('gestion')" 
+                [class.active-link]="activeTab === 'gestion'">
+                Gestión de Tiendas
+            </button>
 
+            <button tuiTab 
+                (click)="setTab('reportes')" 
+                [class.active-link]="activeTab === 'reportes'">
+                Reportes
+            </button>
 
-<div class="p-4">
-	 
-<div class="flex gap-2">
-    <button
-    iconStart="@tui.plus"
-    tuiButton
-    appearance="outline-grayscale"
-    tuiButtonVertical
-    type="button"
-    class="my-5 pr-3"
-    
-    (click)="showDialog()"
->
-  Crear una nueva tienda
-</button>
+            <button tuiTab 
+                (click)="setTab('configuracion')" 
+                [class.active-link]="activeTab === 'configuracion'">
+                Configuración
+            </button>
+        </nav>
+    </header>
 
+    <div>
+        <div class="pt-4">
+            <ng-container *ngIf="activeTab === 'gestion'">
+                <div class="px-4">
+                    <button
+                        iconStart="@tui.plus"
+                        tuiButton
+                        appearance="outline-grayscale"
+                        type="button"
+                        class="mb-4"
+                        (click)="showDialog()">
+                        Crear una nueva tienda
+                    </button>
+                    <app-tabletiendas></app-tabletiendas>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="activeTab === 'reportes'">
+                <div class="px-4">
+                    <p class="text-neutral-500 dark:text-neutral-400 text-sm">Próximamente disponibles.</p>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="activeTab === 'configuracion'">
+                <div class="px-4">
+                    <p class="text-neutral-500 dark:text-neutral-400 text-sm">Próximamente disponibles.</p>
+                </div>
+            </ng-container>
+        </div>
+    </div>
 </div>
-<app-tabletiendas></app-tabletiendas>
- </div>
-

@@ -1,0 +1,109 @@
+<div class="max-w-4xl p-6 space-y-8">
+
+  <!-- Tema Oscuro -->
+  <section>
+    <h2 class="text-xl font-bold dark:text-white mb-1 flex items-center gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+      </svg>
+      Apariencia
+    </h2>
+    <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">Personaliza la apariencia de la interfaz.</p>
+
+    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 space-y-4">
+      <!-- Dark Mode Toggle -->
+      <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+               [class]="isDarkMode ? 'bg-indigo-100 dark:bg-indigo-900/30' : 'bg-amber-100'">
+            <svg *ngIf="!isDarkMode" class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <svg *ngIf="isDarkMode" class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-medium dark:text-white">Modo Oscuro</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+              {{ isDarkMode ? 'Activado - Interfaz oscura' : 'Desactivado - Interfaz clara' }}
+            </p>
+          </div>
+        </div>
+        <label tuiSwitch>
+          <input type="checkbox" [ngModel]="isDarkMode" (ngModelChange)="toggleDarkMode()">
+        </label>
+      </div>
+
+      <!-- Reset -->
+      <div class="flex items-center justify-between py-3">
+        <div>
+          <p class="text-sm font-medium dark:text-white">Restablecer tema</p>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">Volver a la configuración predeterminada del sistema</p>
+        </div>
+        <button tuiButton appearance="flat" size="small" type="button" (click)="resetTheme()">
+          Restablecer
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Configuración de Interfaz -->
+  <section>
+    <h2 class="text-xl font-bold dark:text-white mb-1 flex items-center gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
+      </svg>
+      Interfaz
+    </h2>
+    <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">Ajustes de la interfaz de usuario.</p>
+
+    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-neutral-200 dark:bg-neutral-700">
+            <svg class="w-5 h-5 text-neutral-600 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-medium dark:text-white">Sidebar Compacto</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">Mostrar solo iconos en la barra lateral</p>
+          </div>
+        </div>
+        <span class="text-xs text-neutral-400 bg-neutral-200 dark:bg-neutral-700 px-2 py-1 rounded">Próximamente</span>
+      </div>
+
+      <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-neutral-200 dark:bg-neutral-700">
+            <svg class="w-5 h-5 text-neutral-600 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-medium dark:text-white">Color de Acento</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">Color principal de la interfaz</p>
+          </div>
+        </div>
+        <span class="text-xs text-neutral-400 bg-neutral-200 dark:bg-neutral-700 px-2 py-1 rounded">Próximamente</span>
+      </div>
+
+      <div class="flex items-center justify-between py-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-neutral-200 dark:bg-neutral-700">
+            <svg class="w-5 h-5 text-neutral-600 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21h5m-2 4v-2M7 4h2M3 8h2m10-4h2M3 12h2m10 0h2M7 20h2"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-medium dark:text-white">Idioma</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">Español (predeterminado)</p>
+          </div>
+        </div>
+        <span class="text-xs text-neutral-400 bg-neutral-200 dark:bg-neutral-700 px-2 py-1 rounded">Próximamente</span>
+      </div>
+    </div>
+  </section>
+
+</div>

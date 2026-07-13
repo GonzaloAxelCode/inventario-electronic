@@ -11,7 +11,6 @@ import { AdminlayoutComponent } from './layouts/adminlayout/adminlayout.componen
 import { AuthlayoutComponent } from './layouts/authlayout/authlayout.component';
 import { MainlayoutComponent } from './layouts/mainlayout/mainlayout.component';
 
-import { CajaComponent } from './pages/caja/caja.component';
 import { ComprasComponent } from './pages/compras/compras.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { HacerventaComponent } from './pages/hacerventa/hacerventa.component';
@@ -20,16 +19,14 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { ProductosComponent } from './pages/productos/productos.component';
 
-import { ReportesComponent } from './pages/reportes/reportes.component';
-import { SettiingsComponent } from './pages/settiings/settiings.component';
 import { TiendasComponent } from './pages/tiendas/tiendas.component';
 import { VentasComponent } from './pages/ventas/ventas.component';
 
 import { MyaccountComponent } from './components/settingscomponents/myaccount/myaccount.component';
-import { PerfilsettingsComponent } from './components/settingscomponents/perfilsettings/perfilsettings.component';
 import { PermisossettingsComponent } from './components/settingscomponents/permisossettings/permisossettings.component';
+import { SeguridadComponent } from './components/settingscomponents/seguridad/seguridad.component';
 import { SettingslayoutComponent } from './components/settingscomponents/settingslayout/settingslayout.component';
-import { VentassettingsComponent } from './components/settingscomponents/ventassettings/ventassettings.component';
+import { TemasSettingsComponent } from './components/settingscomponents/temassettings/temassettings.component';
 
 
 import { normalUserGuard } from './guards/appuser.guard';
@@ -37,7 +34,11 @@ import { AdminhistoryComponent } from './pages/admin/adminhistory/adminhistory.c
 import { AdminhomeComponent } from './pages/admin/adminhome/adminhome.component';
 import { AdminmanagestoreComponent } from './pages/admin/adminmanagestore/adminmanagestore.component';
 import { AdminsettingsComponent } from './pages/admin/adminsettings/adminsettings.component';
+import { AdmintiendadetailComponent } from './pages/admin/admintiendadetail/admintiendadetail.component';
 import { ClientesComponent } from './pages/clientes/clientes.component';
+import { ProveedoresComponent } from './pages/proveedores/proveedores.component';
+import { PedidosComponent } from './pages/pedidos/pedidos.component';
+import { GuiaRemisionComponent } from './pages/guia-remision/guia-remision.component';
 
 const routes: Routes = [
 	// Rutas para USUARIOS NORMALES - Solo accesibles por usuarios no-superusuarios
@@ -56,18 +57,19 @@ const routes: Routes = [
 			{ path: 'perfil', component: PerfilComponent },
 			{ path: 'clientes', component: ClientesComponent },
 			{ path: 'tiendas', component: TiendasComponent },
-			{ path: 'reportes', component: ReportesComponent },
-			{ path: 'caja', component: CajaComponent },
 			{ path: 'compras', component: ComprasComponent },
+			{ path: 'pedidos', component: PedidosComponent },
+			{ path: 'proveedores', component: ProveedoresComponent },
+			{ path: 'guia-remision', component: GuiaRemisionComponent },
 			{
 				path: 'settings',
 				component: SettingslayoutComponent,
 				children: [
-					{ path: '', component: SettiingsComponent },
+					{ path: '', redirectTo: 'cuenta', pathMatch: 'full' },
 					{ path: 'cuenta', component: MyaccountComponent },
-					{ path: 'ventas', component: VentassettingsComponent },
+					{ path: 'seguridad', component: SeguridadComponent },
 					{ path: 'permisos', component: PermisossettingsComponent },
-					{ path: 'myaccount', component: PerfilsettingsComponent },
+					{ path: 'temas', component: TemasSettingsComponent },
 				]
 			},
 		]
@@ -83,6 +85,7 @@ const routes: Routes = [
 			{ path: 'history', component: AdminhistoryComponent },
 			{ path: 'config', component: AdminsettingsComponent },
 			{ path: 'store', component: AdminmanagestoreComponent },
+			{ path: 'store/:id', component: AdmintiendadetailComponent },
 
 		]
 	},

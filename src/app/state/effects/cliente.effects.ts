@@ -36,31 +36,6 @@ export class ClienteEffects {
     private clienteSearchService = inject(ClienteSearchService);
     private cache: ClienteCacheService = inject(ClienteCacheService);
 
-    // 🔹 Cargar todos los clientes
-    loadClientesSync$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(forceSyncClientes),
-            switchMap(() =>
-                this.clienteService.fetchClientes().pipe(
-
-                    tap(res => {
-                        // side effects (cache)
-                        this.cache.saveAll(res.results);
-                        this.cache.setLastSync(new Date().toISOString());
-                    }),
-
-                    map(res =>
-                        loadClientesSuccess({ clientes: res.results })
-                    ),
-
-                    catchError(error =>
-                        of(loadClientesFail({ error }))
-                    )
-                )
-            )
-        )
-    );
-
     loadClientesFromCache$ = createEffect(() =>
         this.actions$.pipe(
             ofType(forceSyncClientes),

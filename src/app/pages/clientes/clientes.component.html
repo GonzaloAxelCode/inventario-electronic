@@ -1,5 +1,8 @@
-<div tuiNavigationMain class="pl-4">
-    <header tuiSubheader class="">
+<div tuiNavigationMain class="pl-4 bg-neutral-50 dark:bg-neutral-800"
+     [class.h-screen]="activeTab === 'mis-clientes'"
+     [class.overflow-hidden]="activeTab === 'mis-clientes'"
+     [class.min-h-screen]="activeTab !== 'mis-clientes'">
+    <header tuiSubheader class="bg-transparent border-none">
         <div class="flex gap-4 items-center">
             <h2 tuiHeader>
                 <div tuiTitle>
@@ -16,7 +19,6 @@
 
 
 
-
 <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
 
     <button tuiTab 
@@ -25,9 +27,17 @@
        Clientes registrados
     </button>
 
-   
+    <button tuiTab 
+        (click)="setTab('estadisticas')" 
+        [class.active-link]="activeTab === 'estadisticas'">
+       Estadísticas
+    </button>
 
-  
+    <button tuiTab 
+        (click)="setTab('sorteos')" 
+        [class.active-link]="activeTab === 'sorteos'">
+       Sorteos
+    </button>
 
 </nav>
 
@@ -39,18 +49,15 @@
         <div class="pt-4">
             
             <ng-container *ngIf="activeTab === 'mis-clientes'">
-                
                                <app-tableclientes></app-tableclientes>
-                               
-                
-                
             </ng-container>
 
+            <ng-container *ngIf="activeTab === 'estadisticas'">
+                <app-estadisticas-clientes></app-estadisticas-clientes>
+            </ng-container>
 
-
-            <ng-container *ngIf="activeTab === 'ultimos-agregados'">
-                                                   <app-pruebastext></app-pruebastext> 
-
+            <ng-container *ngIf="activeTab === 'sorteos'">
+                <app-sorteos-clientes></app-sorteos-clientes>
             </ng-container>
 
         </div>

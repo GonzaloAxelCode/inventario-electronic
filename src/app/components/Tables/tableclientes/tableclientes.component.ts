@@ -1,13 +1,13 @@
 import { Categoria } from '@/app/models/categoria.models';
 import { DialogUpdateCategoriaService } from '@/app/services/dialogs-services/dialog-updatecategoria.service';
 import { URL_BASE } from '@/app/services/utils/endpoints';
-import { clearSearchClientes, forceSyncClientes, searchClientes } from '@/app/state/actions/cliente.actions';
+import { clearSearchClientes, deleteClienteAction, forceSyncClientes, searchClientes } from '@/app/state/actions/cliente.actions';
 import { AppState } from '@/app/state/app.state';
 import { ClienteState } from '@/app/state/reducers/cliente.reducer';
 import { selectCliente } from '@/app/state/selectors/cliente.selectors';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -76,9 +76,9 @@ export class TableClientesComponent implements OnInit {
   }
 
 
-  protected onDeleteCliente(id: any): void {
+  protected onDeleteCliente(id: number): void {
     const data: TuiConfirmData = {
-      content: '¿Estás seguro de que deseas eliminarlo?',
+      content: '¿Estás seguro de que deseas eliminar este cliente?',
       yes: 'Eliminar',
       no: 'Cancelar',
     };
@@ -90,8 +90,37 @@ export class TableClientesComponent implements OnInit {
         data,
       })
       .subscribe((confirm) => {
-
+        if (confirm) {
+          this.store.dispatch(deleteClienteAction({ id }));
+        }
       });
+  }
+
+  protected onViewCliente(cliente: any): void {
+    console.log('Ver cliente:', cliente);
+  }
+
+  getInitials(fullname: string): string {
+    if (!fullname) return '?';
+    const parts = fullname.split(' ').filter(Boolean);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return parts[0].substring(0, 2).toUpperCase();
+  }
+
+  getAvatarColor(id: number): string {
+    const colors = [
+      '#667eea',
+      '#f093fb',
+      '#4facfe',
+      '#43e97b',
+      '#fa709a',
+      '#a18cd1',
+      '#fccb90',
+      '#8ec5fc',
+    ];
+    return colors[id % colors.length];
   }
   private readonly dialogService = inject(DialogUpdateCategoriaService);
   protected showDialogUpdate(categoria: Categoria): void {
@@ -99,7 +128,6 @@ export class TableClientesComponent implements OnInit {
 
     });
   }
-  @ViewChild('scrollContainer', { read: ElementRef }) scrollContainer?: ElementRef;
   URL_BASE = URL_BASE
   protected open = false;
   protected index = 0;

@@ -1,6 +1,6 @@
 
 import { Venta } from '@/app/models/venta.models';
-import { QuerySearchVenta } from '@/app/services/caja.service';
+import { QuerySearchVenta } from '@/app/services/venta.service';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
 import { URL_BASE } from "@/app/services/utils/endpoints";
 import { PAGE_SIZE_VENTAS } from "@/app/services/utils/pages-sizes";

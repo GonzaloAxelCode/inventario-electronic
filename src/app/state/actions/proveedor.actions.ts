@@ -1,4 +1,4 @@
-import { Proveedor, ProveedorCreate } from '@/app/models/proveedor.models';
+import { Proveedor, ProveedorCreate, ToggleProveedorResponse } from '@/app/models/proveedor.models';
 import { createAction, props } from '@ngrx/store';
 
 export enum ProveedorActionTypes {
@@ -11,9 +11,9 @@ export enum ProveedorActionTypes {
     UPDATE_PROVEEDOR = '[Proveedor] Update Proveedor',
     UPDATE_PROVEEDOR_SUCCESS = '[Proveedor] Update Proveedor Success',
     UPDATE_PROVEEDOR_FAIL = '[Proveedor] Update Proveedor Fail',
-    DELETE_PROVEEDOR = '[Proveedor] Delete Proveedor',
-    DELETE_PROVEEDOR_SUCCESS = '[Proveedor] Delete Proveedor Success',
-    DELETE_PROVEEDOR_FAIL = '[Proveedor] Delete Proveedor Fail'
+    TOGGLE_PROVEEDOR = '[Proveedor] Toggle Proveedor',
+    TOGGLE_PROVEEDOR_SUCCESS = '[Proveedor] Toggle Proveedor Success',
+    TOGGLE_PROVEEDOR_FAIL = '[Proveedor] Toggle Proveedor Fail',
 }
 
 export const loadProveedores = createAction(ProveedorActionTypes.LOAD_PROVEEDORES);
@@ -52,16 +52,15 @@ export const updateProveedorFail = createAction(
     props<{ error: any }>()
 );
 
-export const onActiveToggleProveedorAction = createAction(
-    ProveedorActionTypes.DELETE_PROVEEDOR,
-    props<{ proveedor: Proveedor, activo: boolean }>()
+export const toggleProveedorAction = createAction(
+    ProveedorActionTypes.TOGGLE_PROVEEDOR,
+    props<{ proveedor: Proveedor; activo: boolean }>()
 );
-export const onActiveToggleProveedorSuccess = createAction(
-    ProveedorActionTypes.DELETE_PROVEEDOR_SUCCESS,
-    props<any>()
+export const toggleProveedorSuccess = createAction(
+    ProveedorActionTypes.TOGGLE_PROVEEDOR_SUCCESS,
+    props<{ response: ToggleProveedorResponse }>()
 );
-export const onActiveToggleProveedorFail = createAction(
-    ProveedorActionTypes.DELETE_PROVEEDOR_FAIL,
+export const toggleProveedorFail = createAction(
+    ProveedorActionTypes.TOGGLE_PROVEEDOR_FAIL,
     props<{ error: any }>()
 );
-

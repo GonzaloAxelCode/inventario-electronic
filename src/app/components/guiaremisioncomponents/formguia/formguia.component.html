@@ -1,0 +1,211 @@
+<div class="max-w-4xl mx-auto p-4">
+  <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-6">
+
+    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-neutral-200 dark:border-neutral-700">
+      <div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-neutral-900 dark:text-white">Nueva Guía de Remisión</h2>
+        <p class="text-sm text-neutral-500 dark:text-neutral-400">Completa los datos para generar la guía</p>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+
+      <!-- FECHAS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Fecha de emisión</label>
+          <input type="date" formControlName="fecha_emision"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                   bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Fecha de traslado</label>
+          <input type="date" formControlName="fecha_traslado"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                   bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+        </div>
+      </div>
+
+      <!-- DESTINATARIO -->
+      <div class="bg-neutral-50 dark:bg-neutral-700/50 rounded-lg p-4">
+        <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Datos del Destinatario</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">RUC</label>
+            <input type="text" formControlName="ruc_destinatario" maxlength="11" placeholder="20123456789"
+              class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                     bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm"
+              [class.border-red-500]="isInvalid('ruc_destinatario')" />
+            <span *ngIf="isInvalid('ruc_destinatario')" class="text-xs text-red-500">RUC inválido (11 dígitos)</span>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">Razón Social</label>
+            <input type="text" formControlName="razon_social_destinatario" placeholder="Empresa Destino S.A.C."
+              class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                     bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm"
+              [class.border-red-500]="isInvalid('razon_social_destinatario')" />
+          </div>
+          <div class="md:col-span-3">
+            <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">Dirección</label>
+            <input type="text" formControlName="direccion_destinatario" placeholder="Av. Principal 123, Lima"
+              class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                     bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <!-- PUNTO PARTIDA / LLEGADA -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Punto de partida</label>
+          <input type="text" formControlName="punto_partida"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                   bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Punto de llegada</label>
+          <input type="text" formControlName="punto_llegada" placeholder="Av. Destino 456, Lima"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                   bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+        </div>
+      </div>
+
+      <!-- TRANSPORTISTA -->
+      <div class="bg-neutral-50 dark:bg-neutral-700/50 rounded-lg p-4">
+        <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Datos del Transportista</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">Nombre del chofer</label>
+            <input type="text" formControlName="nombre_chofer" placeholder="Juan Pérez"
+              class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                     bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">DNI</label>
+            <input type="text" formControlName="dni_chofer" maxlength="8" placeholder="12345678"
+              class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                     bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">Placa del vehículo</label>
+            <input type="text" formControlName="placa_vehiculo" placeholder="ABC-123"
+              class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                     bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm uppercase" />
+          </div>
+          <div>
+            <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">N° Licencia</label>
+            <input type="text" formControlName="numero_licencia" placeholder="Q12345678"
+              class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                     bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ITEMS -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300">Detalle de Mercaderías</h3>
+          <button type="button" (click)="addItem()"
+            class="px-3 py-1 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400
+                   rounded-lg text-xs font-medium hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors">
+            + Agregar item
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <div *ngFor="let item of items; let i = index; trackBy: trackByIndex"
+            class="bg-neutral-50 dark:bg-neutral-700/50 rounded-lg p-3 border border-neutral-200 dark:border-neutral-600">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Item #{{ i + 1 }}</span>
+              <button type="button" (click)="removeItem(i)"
+                *ngIf="items.length > 1"
+                class="text-red-400 hover:text-red-600 text-xs">Eliminar</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+              <div class="md:col-span-2">
+                <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">Código</label>
+                <input type="text" [value]="item.codigo" (input)="updateItem(i, 'codigo', $any($event.target).value)"
+                  placeholder="FRR-001"
+                  class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                         bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+              </div>
+              <div class="md:col-span-5">
+                <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">Descripción</label>
+                <input type="text" [value]="item.descripcion" (input)="updateItem(i, 'descripcion', $any($event.target).value)"
+                  placeholder="Martillo de uña 16oz"
+                  class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                         bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">Unidad</label>
+                <select [value]="item.unidad_medida" (change)="updateItem(i, 'unidad_medida', $any($event.target).value)"
+                  class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                         bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm">
+                  <option *ngFor="let u of unidadesMedida" [value]="u">{{ u }}</option>
+                </select>
+              </div>
+              <div class="md:col-span-1">
+                <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">Cant.</label>
+                <input type="number" [value]="item.cantidad" (input)="updateItem(i, 'cantidad', $any($event.target).value)"
+                  min="1"
+                  class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                         bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">Peso (kg)</label>
+                <input type="number" [value]="item.peso_kg" (input)="updateItem(i, 'peso_kg', $any($event.target).value)"
+                  min="0" step="0.1"
+                  class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                         bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PESO Y BULTOS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Peso total (kg)</label>
+          <input type="number" formControlName="peso_total_kg" min="0.1" step="0.1"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                   bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Número de bultos</label>
+          <input type="number" formControlName="num_bultos" min="1"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                   bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm" />
+        </div>
+      </div>
+
+      <!-- OBSERVACIONES -->
+      <div>
+        <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Observaciones</label>
+        <textarea formControlName="observaciones" rows="2" placeholder="Instrucciones adicionales..."
+          class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600
+                 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm resize-none"></textarea>
+      </div>
+
+      <!-- BOTONES -->
+      <div class="flex justify-end gap-3 pt-4 border-t border-neutral-200 dark:border-neutral-700">
+        <button type="button" (click)="cancelar.emit()"
+          class="px-6 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200
+                 rounded-lg text-sm font-medium hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">
+          Cancelar
+        </button>
+        <button type="submit"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+          Registrar Guía
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

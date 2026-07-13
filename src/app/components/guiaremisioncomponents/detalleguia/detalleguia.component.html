@@ -1,0 +1,194 @@
+<div class="max-w-4xl mx-auto p-4" *ngIf="guia">
+  <!-- BOTONES DE ACCIÓN -->
+  <div class="flex justify-between items-center mb-4 no-print">
+    <button (click)="cerrar.emit()"
+      class="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200
+             rounded-lg text-sm font-medium hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">
+      Volver a la lista
+    </button>
+    <div class="flex gap-2">
+      <button (click)="onImprimir()"
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+        Imprimir
+      </button>
+      <button (click)="onAnular()"
+        *ngIf="guia.estado !== 'ANULADA' && guia.estado !== 'ENTREGADA'"
+        class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
+        Anular
+      </button>
+    </div>
+  </div>
+
+  <!-- DOCUMENTO -->
+  <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 print:shadow-none print:border-none">
+
+    <!-- HEADER DEL DOCUMENTO -->
+    <div class="p-6 border-b border-neutral-200 dark:border-neutral-700">
+      <div class="flex justify-between items-start">
+        <div>
+          <h1 class="text-lg font-bold text-neutral-900 dark:text-white">GUÍA DE REMISIÓN REMITENTE</h1>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">RUC: {{ guia.ruc_remitente }}</p>
+          <p class="text-sm font-semibold text-neutral-700 dark:text-neutral-300">{{ guia.razon_social_remitente }}</p>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ guia.direccion_remitente }}</p>
+        </div>
+        <div class="text-right">
+          <div class="bg-neutral-100 dark:bg-neutral-700 rounded-lg px-4 py-2 mb-2">
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">N° Documento</p>
+            <p class="text-lg font-extrabold text-neutral-900 dark:text-white">{{ guia.serie }}-{{ guia.correlativo }}</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold"
+            [ngClass]="getEstadoClass(guia.estado)">
+            {{ guia.estado_display }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FECHAS -->
+    <div class="p-6 border-b border-neutral-200 dark:border-neutral-700 grid grid-cols-2 gap-4">
+      <div>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Fecha de emisión</p>
+        <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ formatoLargo(guia.fecha_emision) }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Fecha de traslado</p>
+        <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ formatoLargo(guia.fecha_traslado) }}</p>
+      </div>
+    </div>
+
+    <!-- REMITENTE / DESTINATARIO -->
+    <div class="p-6 border-b border-neutral-200 dark:border-neutral-700 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-neutral-50 dark:bg-neutral-700/50 rounded-lg p-4">
+        <h3 class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase mb-2">Remitente</h3>
+        <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ guia.razon_social_remitente }}</p>
+        <p class="text-xs text-neutral-600 dark:text-neutral-400">RUC: {{ guia.ruc_remitente }}</p>
+        <p class="text-xs text-neutral-600 dark:text-neutral-400">{{ guia.direccion_remitente }}</p>
+      </div>
+      <div class="bg-neutral-50 dark:bg-neutral-700/50 rounded-lg p-4">
+        <h3 class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase mb-2">Destinatario</h3>
+        <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ guia.razon_social_destinatario }}</p>
+        <p class="text-xs text-neutral-600 dark:text-neutral-400">RUC: {{ guia.ruc_destinatario }}</p>
+        <p class="text-xs text-neutral-600 dark:text-neutral-400">{{ guia.direccion_destinatario }}</p>
+      </div>
+    </div>
+
+    <!-- PUNTO PARTIDA / LLEGADA -->
+    <div class="p-6 border-b border-neutral-200 dark:border-neutral-700 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase mb-1">Punto de partida</p>
+        <p class="text-sm text-neutral-800 dark:text-neutral-200">{{ guia.punto_partida }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase mb-1">Punto de llegada</p>
+        <p class="text-sm text-neutral-800 dark:text-neutral-200">{{ guia.punto_llegada }}</p>
+      </div>
+    </div>
+
+    <!-- TRANSPORTISTA -->
+    <div class="p-6 border-b border-neutral-200 dark:border-neutral-700 bg-blue-50/50 dark:bg-blue-900/10">
+      <h3 class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase mb-3">Datos del Transportista</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">Razón Social</p>
+          <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.datos_transportista.razon_social }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">RUC</p>
+          <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.datos_transportista.ruc }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">Placa Vehículo</p>
+          <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ guia.datos_transportista.placa_vehiculo }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">Chofer</p>
+          <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.datos_transportista.nombre_chofer }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">DNI</p>
+          <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.datos_transportista.dni_chofer }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">N° Licencia</p>
+          <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.datos_transportista.numero_licencia }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETALLE DE MERCADERÍAS -->
+    <div class="p-6">
+      <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Detalle de Mercaderías</h3>
+
+      <!-- Tabla desktop -->
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-neutral-300 dark:border-neutral-600">
+              <th class="text-left py-2 px-3 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Código</th>
+              <th class="text-left py-2 px-3 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Descripción</th>
+              <th class="text-center py-2 px-3 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Unidad</th>
+              <th class="text-right py-2 px-3 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Cantidad</th>
+              <th class="text-right py-2 px-3 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Peso (kg)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of guia.items" class="border-b border-neutral-100 dark:border-neutral-700">
+              <td class="py-3 px-3 font-mono text-xs text-neutral-600 dark:text-neutral-400">{{ item.codigo }}</td>
+              <td class="py-3 px-3 text-neutral-900 dark:text-white font-medium">{{ item.descripcion }}</td>
+              <td class="py-3 px-3 text-center text-neutral-600 dark:text-neutral-400">{{ item.unidad_medida }}</td>
+              <td class="py-3 px-3 text-right font-semibold text-neutral-900 dark:text-white">{{ item.cantidad }}</td>
+              <td class="py-3 px-3 text-right text-neutral-600 dark:text-neutral-400">{{ item.peso_kg }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="border-t-2 border-neutral-300 dark:border-neutral-600 font-semibold">
+              <td colspan="3" class="py-3 px-3 text-right text-xs uppercase text-neutral-500 dark:text-neutral-400">Totales</td>
+              <td class="py-3 px-3 text-right text-neutral-900 dark:text-white">{{ getTotalCantidad() }}</td>
+              <td class="py-3 px-3 text-right text-neutral-900 dark:text-white">{{ getTotalPeso() }} kg</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Cards mobile -->
+      <div class="block md:hidden space-y-2">
+        <div *ngFor="let item of guia.items; let i = index"
+          class="bg-neutral-50 dark:bg-neutral-700/50 rounded-lg p-3 border border-neutral-200 dark:border-neutral-600">
+          <div class="flex justify-between items-start mb-1">
+            <span class="font-mono text-xs text-blue-600 dark:text-blue-400">{{ item.codigo }}</span>
+            <span class="text-xs font-semibold text-neutral-900 dark:text-white">x{{ item.cantidad }}</span>
+          </div>
+          <p class="text-sm font-medium text-neutral-900 dark:text-white mb-1">{{ item.descripcion }}</p>
+          <div class="flex justify-between text-xs text-neutral-500 dark:text-neutral-400">
+            <span>{{ item.unidad_medida }}</span>
+            <span>{{ item.peso_kg }} kg</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen -->
+      <div class="mt-4 flex justify-end gap-6 text-sm">
+        <div class="text-right">
+          <span class="text-neutral-500 dark:text-neutral-400">Peso total:</span>
+          <span class="ml-2 font-bold text-neutral-900 dark:text-white">{{ guia.peso_total_kg }} kg</span>
+        </div>
+        <div class="text-right">
+          <span class="text-neutral-500 dark:text-neutral-400">Bultos:</span>
+          <span class="ml-2 font-bold text-neutral-900 dark:text-white">{{ guia.num_bultos }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBSERVACIONES -->
+    <div *ngIf="guia.observaciones" class="p-6 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700/30">
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase mb-1">Observaciones</p>
+      <p class="text-sm text-neutral-800 dark:text-neutral-200">{{ guia.observaciones }}</p>
+    </div>
+
+    <!-- MOTIVO -->
+    <div class="p-6 border-t border-neutral-200 dark:border-neutral-700">
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase mb-1">Motivo del traslado</p>
+      <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.motivo_traslado_display }}</p>
+    </div>
+  </div>
+</div>

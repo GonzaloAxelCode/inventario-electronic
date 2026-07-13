@@ -1,0 +1,269 @@
+
+<tui-loader [showLoader]="!!(loading$ | async)?.loadingCreate">
+  <form [formGroup]="compraForm" class="p-4 space-y-3">
+
+    <!-- Fila 1: Tipo + Serie + Correlativo -->
+    <div class="grid grid-cols-3 gap-3">
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Tipo Comprobante</label>
+        <tui-select formControlName="tipo_comprobante" class="w-full" tuiTextfieldSize="m"
+          [tuiTextfieldLabelOutside]="true">
+          <tui-data-list *tuiDataList>
+            <button *ngFor="let tipo of tipoComprobantes" tuiOption [value]="tipo">
+              {{ tipoComprobanteLabels[tipo] }}
+            </button>
+          </tui-data-list>
+        </tui-select>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Serie</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="serie" placeholder="F001" tuiTextfield />
+        </tui-textfield>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Correlativo</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="correlativo" placeholder="0000123" tuiTextfield />
+        </tui-textfield>
+      </div>
+    </div>
+
+    <!-- Fila 2: Fechas + Forma pago -->
+    <div class="grid grid-cols-3 gap-3">
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Fecha Emision</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="fecha_emision" type="date" tuiTextfield />
+        </tui-textfield>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Fecha Vencimiento</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="fecha_vencimiento" type="date" tuiTextfield />
+        </tui-textfield>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Forma de Pago</label>
+        <tui-select formControlName="forma_pago" class="w-full" tuiTextfieldSize="m"
+          [tuiTextfieldLabelOutside]="true">
+          <tui-data-list *tuiDataList>
+            <button *ngFor="let fp of formasPago" tuiOption [value]="fp">
+              {{ formasPagoLabels[fp] }}
+            </button>
+          </tui-data-list>
+        </tui-select>
+      </div>
+    </div>
+
+    <!-- Fila 3: Moneda + Doc.Relacionado + Enlace verificacion -->
+    <div class="grid grid-cols-3 gap-3">
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Moneda</label>
+        <tui-select formControlName="moneda" class="w-full" tuiTextfieldSize="m"
+          [tuiTextfieldLabelOutside]="true">
+          <tui-data-list *tuiDataList>
+            <button *ngFor="let moneda of monedas" tuiOption [value]="moneda">
+              {{ moneda }}
+            </button>
+          </tui-data-list>
+        </tui-select>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Doc. Relacionado</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="documento_relacionado" placeholder="Opcional" tuiTextfield />
+        </tui-textfield>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Enlace Verificacion</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="enlace_verificacion" placeholder="https://..." tuiTextfield />
+        </tui-textfield>
+      </div>
+    </div>
+
+    <!-- Fila 4: Proveedor -->
+    <div class="grid grid-cols-3 gap-3">
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Tipo Doc Proveedor</label>
+        <tui-select formControlName="tipo_documento_proveedor" class="w-full" tuiTextfieldSize="m"
+          [tuiTextfieldLabelOutside]="true">
+          <tui-data-list *tuiDataList>
+            <button *ngFor="let td of tiposDocProveedor" tuiOption [value]="td">
+              {{ tiposDocProveedorLabels[td] }}
+            </button>
+          </tui-data-list>
+        </tui-select>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nro. Documento</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="numero_documento_proveedor" placeholder="DNI/RUC" tuiTextfield />
+        </tui-textfield>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nombre Proveedor</label>
+        <tui-select formControlName="nombre_proveedor" class="w-full" tuiTextfieldSize="m"
+          [tuiTextfieldLabelOutside]="true">
+          <tui-data-list *tuiDataList>
+            <button *ngFor="let prov of proveedores" tuiOption [value]="prov">
+              {{ prov }}
+            </button>
+          </tui-data-list>
+        </tui-select>
+      </div>
+    </div>
+
+    <!-- Fila 5: Observaciones -->
+    <div>
+      <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Observaciones</label>
+      <tui-textfield tuiTextfieldSize="m">
+        <input formControlName="observaciones" placeholder="Notas..." tuiTextfield />
+      </tui-textfield>
+    </div>
+
+    <!-- Fila 6: Archivo XML -->
+    <div>
+      <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Archivo XML</label>
+      <div *ngIf="!archivoFile" class="border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg p-3 text-center cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
+        (click)="archivoInput.click()">
+        <input #archivoInput type="file" accept=".xml" class="hidden" (change)="onArchivoSelected($event)" />
+        <p class="text-xs text-neutral-400">Click para subir XML</p>
+      </div>
+      <div *ngIf="archivoFile" class="flex items-center gap-2 bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3 border border-neutral-200 dark:border-neutral-700">
+        <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <span class="text-sm text-neutral-700 dark:text-neutral-300 truncate flex-1">{{ archivoFile.name }}</span>
+        <button type="button" (click)="sincronizar()" [disabled]="parseando"
+          class="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs font-semibold transition-colors"
+          [class]="parseando
+            ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 cursor-wait'
+            : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'">
+          <svg *ngIf="!parseando" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          <span *ngIf="parseando" class="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+          {{ parseando ? 'Sincronizando...' : 'Sincronizar' }}
+        </button>
+        <button type="button" (click)="archivoFile = null" class="text-red-400 hover:text-red-600 text-sm font-bold">X</button>
+      </div>
+    </div>
+
+    <!-- Productos -->
+    <div>
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <h2 class="text-sm font-semibold text-neutral-900 dark:text-white">
+          Productos ({{ items.length }})
+        </h2>
+        <button iconStart="@tui.plus" tuiButton appearance="primary-grayscale" type="button"
+          (click)="agregarItem()" size="s">
+          Agregar producto
+        </button>
+      </div>
+
+      <div class="space-y-2">
+
+        <div *ngFor="let item of itemsControls; let i = index"
+          [formGroup]="item"
+          class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 border border-neutral-200 dark:border-neutral-700 hover:shadow-sm transition-all">
+
+          <div class="flex items-start gap-2 mb-2">
+            <div class="flex-1">
+              <label class="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 block mb-0.5">Producto</label>
+              <tui-textfield tuiTextfieldSize="m">
+                <input formControlName="producto" placeholder="Nombre del producto" tuiTextfield />
+              </tui-textfield>
+            </div>
+            <button type="button" (click)="eliminarItem(i)"
+              class="mt-5 w-6 h-6 flex items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-500 dark:hover:text-red-400 text-xs font-bold transition-colors shrink-0">
+              &times;
+            </button>
+          </div>
+
+          <div class="grid grid-cols-4 gap-2 items-end">
+            <div>
+              <label class="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 block mb-0.5">Cantidad</label>
+              <tui-textfield tuiTextfieldSize="m">
+                <input formControlName="cantidad" type="number" tuiTextfield [min]="1" />
+              </tui-textfield>
+            </div>
+            <div>
+              <label class="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 block mb-0.5">P.Unitario</label>
+              <tui-textfield tuiTextfieldSize="m">
+                <input formControlName="precio_unitario" prefix="S/." type="number" tuiTextfield [min]="0" />
+              </tui-textfield>
+            </div>
+            <div>
+              <label class="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 block mb-0.5">Descuento</label>
+              <tui-textfield tuiTextfieldSize="m">
+                <input formControlName="descuento" prefix="S/." type="number" tuiTextfield [min]="0" />
+              </tui-textfield>
+            </div>
+            <div class="text-center pb-1">
+              <span class="text-[11px] text-neutral-400 block mb-0.5">Subtotal</span>
+              <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ getItemSubtotal(i) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="items.length === 0"
+          class="text-center py-8 text-neutral-400 dark:text-neutral-300 rounded-xl bg-neutral-50 dark:bg-neutral-800 border-2 border-dashed border-neutral-300 dark:border-neutral-700">
+          <p class="text-sm font-bold mb-1">Sin productos</p>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">Haz clic en "Agregar producto" para comenzar</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Totales solo lectura -->
+    <div class="border-t border-neutral-200 dark:border-neutral-700 pt-3 space-y-2">
+      <div class="flex justify-between items-center">
+        <span class="text-base text-neutral-500 dark:text-neutral-400">Gravadas</span>
+        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.gravadas | number:'1.2-2' }}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-base text-neutral-500 dark:text-neutral-400">Op. Exoneradas</span>
+        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_exoneradas | number:'1.2-2' }}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-base text-neutral-500 dark:text-neutral-400">Op. Inafectas</span>
+        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_inafectas | number:'1.2-2' }}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-base text-neutral-500 dark:text-neutral-400">Op. Gratuitas</span>
+        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_gratuitas | number:'1.2-2' }}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-base text-neutral-500 dark:text-neutral-400">Descuentos</span>
+        <span class="text-base font-bold text-red-600 dark:text-red-400">- S/. {{ totales.dctos_totales | number:'1.2-2' }}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-base text-neutral-500 dark:text-neutral-400">ICBPER</span>
+        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.icbper | number:'1.2-2' }}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-base font-semibold text-neutral-700 dark:text-neutral-300">IGV (18%)</span>
+        <span class="text-lg font-bold text-neutral-900 dark:text-white">S/. {{ totales.igv | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <!-- Total + Botones -->
+    <div class="border-t-2 border-neutral-900 dark:border-white pt-3 pb-6">
+      <div class="flex justify-between items-center mb-3">
+        <span class="text-2xl font-extrabold text-neutral-900 dark:text-white uppercase">Total</span>
+        <span class="text-4xl font-extrabold text-neutral-900 dark:text-white">S/. {{ totales.total | number:'1.2-2' }}</span>
+      </div>
+      <div class="flex gap-2">
+        <button [disabled]="compraForm.invalid || items.length === 0" tuiButton type="button"
+          (click)="registrarCompra()" appearance="primary-grayscale" size="m" class="flex-1">
+          Registrar Comprobante
+        </button>
+        <button tuiButton type="button" (click)="limpiarFormulario()" appearance="flat" size="m">
+          Limpiar
+        </button>
+      </div>
+    </div>
+
+  </form>
+</tui-loader>

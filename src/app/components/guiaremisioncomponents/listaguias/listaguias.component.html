@@ -1,0 +1,267 @@
+<div>
+  <section>
+    <!-- Barra de búsqueda -->
+    <div class="px-4 mb-4 flex gap-2">
+      <div class="flex-1 relative">
+        <input
+          type="text"
+          [(ngModel)]="busqueda"
+          (keyup.enter)="onBuscar()"
+          placeholder="Buscar por correlativo, destinatario, RUC, placa..."
+          class="w-full px-4 py-2 pl-10 rounded-lg border border-neutral-300 dark:border-neutral-600
+                 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white
+                 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+        />
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      <button
+        (click)="onBuscar()"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+        Buscar
+      </button>
+      <button
+        *ngIf="busqueda"
+        (click)="onClearSearch()"
+        class="px-3 py-2 bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600
+               text-neutral-700 dark:text-neutral-200 rounded-lg text-sm transition-colors">
+        Limpiar
+      </button>
+    </div>
+
+    <div *ngIf="guias.length === 0 && !loading else tabla"
+      class="h-[50vh] mx-auto flex flex-col items-center justify-center">
+      <svg class="w-20 h-20 text-neutral-300 dark:text-neutral-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <h2 class="text-xl text-center text-neutral-600 dark:text-neutral-400">No se encontraron guías de remisión</h2>
+      <p class="text-md text-center text-neutral-500 dark:text-neutral-500">Crea tu primera guía de remisión</p>
+    </div>
+
+    <ng-template #tabla>
+      <tui-loader [overlay]="true" [showLoader]="loading">
+
+        <!-- HEADER TABLA DESKTOP -->
+        <div class="hidden lg:grid
+          grid-cols-[80px_100px_120px_1fr_1fr_100px_100px]
+          gap-4
+          px-6 py-3
+          mb-2
+          rounded-xl
+          bg-neutral-100 dark:bg-neutral-800
+          border border-neutral-200 dark:border-neutral-700
+          text-xs font-semibold uppercase tracking-wide
+          text-neutral-500 dark:text-neutral-400">
+
+          <div>ID</div>
+          <div>Serie-Corr.</div>
+          <div>Fecha</div>
+          <div>Destinatario</div>
+          <div>Transportista</div>
+          <div class="text-center">Estado</div>
+          <div class="text-right">Acciones</div>
+        </div>
+
+        <!-- Vista de CARDS para moviles -->
+        <div class="block lg:hidden space-y-3 px-2">
+          <div *ngFor="let guia of guias"
+            class="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-4 border border-neutral-200 dark:border-neutral-700">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">GR #</span>
+                <span class="text-lg font-bold text-neutral-900 dark:text-white">{{ guia.id }}</span>
+              </div>
+              <span class="px-2 py-1 rounded-full text-xs font-semibold"
+                [ngClass]="getEstadoClass(guia.estado)">
+                {{ guia.estado_display }}
+              </span>
+            </div>
+
+            <!-- Serie-Correlativo -->
+            <div class="mb-2">
+              <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Comprobante</div>
+              <span class="text-sm font-semibold text-neutral-900 dark:text-white">
+                {{ guia.serie }}-{{ guia.correlativo }}
+              </span>
+            </div>
+
+            <!-- Fecha -->
+            <div class="mb-2">
+              <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Fecha de traslado</div>
+              <span class="text-sm text-neutral-800 dark:text-neutral-200">{{ formatoCorto(guia.fecha_traslado) }}</span>
+            </div>
+
+            <!-- Destinatario -->
+            <div class="mb-2">
+              <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Destinatario</div>
+              <span class="text-sm text-neutral-800 dark:text-neutral-200">{{ guia.razon_social_destinatario }}</span>
+            </div>
+
+            <!-- Transportista -->
+            <div class="mb-3">
+              <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Transportista</div>
+              <span class="text-sm text-neutral-800 dark:text-neutral-200">{{ guia.datos_transportista.nombre_chofer }}</span>
+              <span class="text-xs text-neutral-500 dark:text-neutral-400 ml-2">({{ guia.datos_transportista.placa_vehiculo }})</span>
+            </div>
+
+            <!-- Items resumen -->
+            <div class="grid grid-cols-3 gap-2 mb-3 pt-3 border-t border-neutral-200 dark:border-neutral-700">
+              <div class="text-xs">
+                <span class="text-neutral-500 dark:text-neutral-400 block">Artículos:</span>
+                <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ guia.items.length }}</span>
+              </div>
+              <div class="text-xs">
+                <span class="text-neutral-500 dark:text-neutral-400 block">Peso:</span>
+                <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ guia.peso_total_kg }} kg</span>
+              </div>
+              <div class="text-xs">
+                <span class="text-neutral-500 dark:text-neutral-400 block">Bultos:</span>
+                <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ guia.num_bultos }}</span>
+              </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="flex gap-2">
+              <button (click)="verDetalle.emit(guia)"
+                class="flex-1 px-3 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400
+                       rounded-lg text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
+                Ver detalle
+              </button>
+              <button (click)="editarGuia.emit(guia)"
+                *ngIf="guia.estado !== 'ANULADA' && guia.estado !== 'ENTREGADA'"
+                class="flex-1 px-3 py-2 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400
+                       rounded-lg text-xs font-medium hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors">
+                Editar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vista de LISTA para desktop -->
+        <div class="hidden lg:block -mx-4 px-4 sm:mx-0 sm:px-0 space-y-2">
+          <div *ngFor="let guia of guias"
+            class="relative overflow-hidden rounded-2xl
+              bg-white dark:bg-neutral-800
+              p-4
+              border border-neutral-200 dark:border-neutral-700
+              hover:shadow-md transition-all duration-300">
+
+            <div class="flex items-center justify-between gap-4">
+
+              <!-- INFO PRINCIPAL -->
+              <div class="flex items-center gap-4 flex-1 min-w-0">
+
+                <!-- ICONO -->
+                <div class="flex flex-col items-center justify-center gap-1 px-3 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+                  <svg class="w-5 h-5 text-neutral-700 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+                    #{{ guia.id }}
+                  </span>
+                </div>
+
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-base font-extrabold text-neutral-900 dark:text-white">
+                      {{ guia.serie }}-{{ guia.correlativo }}
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold"
+                      [ngClass]="getEstadoClass(guia.estado)">
+                      {{ guia.estado_display }}
+                    </span>
+                  </div>
+
+                  <div class="flex items-center gap-3 flex-wrap text-xs text-neutral-500 dark:text-neutral-400">
+                    <span class="flex items-center gap-1">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                      </svg>
+                      {{ formatoCorto(guia.fecha_traslado) }}
+                    </span>
+                    <span class="flex items-center gap-1">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                      </svg>
+                      {{ guia.razon_social_destinatario }}
+                    </span>
+                    <span class="flex items-center gap-1">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                      </svg>
+                      {{ guia.datos_transportista.placa_vehiculo }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- DETALLES NUMÉRICOS -->
+              <div class="flex items-center gap-6 flex-shrink-0">
+                <div class="text-right min-w-[70px]">
+                  <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Peso</p>
+                  <p class="text-sm font-semibold text-neutral-900 dark:text-white whitespace-nowrap">
+                    {{ guia.peso_total_kg }} kg
+                  </p>
+                </div>
+                <div class="text-right min-w-[60px]">
+                  <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Bultos</p>
+                  <p class="text-sm font-semibold text-neutral-900 dark:text-white whitespace-nowrap">
+                    {{ guia.num_bultos }}
+                  </p>
+                </div>
+                <div class="flex gap-2">
+                  <button (click)="verDetalle.emit(guia)"
+                    class="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400
+                           rounded-lg text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
+                    Ver
+                  </button>
+                  <button (click)="editarGuia.emit(guia)"
+                    *ngIf="guia.estado !== 'ANULADA' && guia.estado !== 'ENTREGADA'"
+                    class="px-3 py-1.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400
+                           rounded-lg text-xs font-medium hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors">
+                    Editar
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ITEMS EN DESKTOP -->
+            <div *ngIf="guia.items.length" class="hidden lg:block divide-y divide-neutral-200 dark:divide-neutral-800 mt-3">
+              <div *ngFor="let item of guia.items" class="flex flex-row gap-4 px-1 py-2 items-center text-sm">
+                <div class="flex-1">
+                  <p class="font-medium text-neutral-900 dark:text-neutral-100">{{ item.descripcion }}</p>
+                </div>
+                <div class="text-right text-neutral-600 dark:text-neutral-400 min-w-[100px]">
+                  {{ item.unidad_medida }}
+                </div>
+                <div class="text-right text-neutral-600 dark:text-neutral-400 min-w-[60px]">
+                  x{{ item.cantidad }}
+                </div>
+                <div class="text-right text-neutral-500 dark:text-neutral-500 min-w-[80px]">
+                  {{ item.peso_kg }} kg
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paginacion -->
+        <div class="pt-4 flex justify-center px-2">
+          <tui-pagination
+            [index]="indexPage"
+            [length]="lengthPages"
+            (indexChange)="goToPage($event)"
+            class="w-full overflow-x-auto" />
+        </div>
+      </tui-loader>
+    </ng-template>
+  </section>
+</div>

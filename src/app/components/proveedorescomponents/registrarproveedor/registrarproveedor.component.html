@@ -1,0 +1,84 @@
+<div class="p-4 sm:p-6">
+  <form [formGroup]="proveedorForm" (ngSubmit)="onSubmit()" class="max-w-4xl">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nombre *</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="nombre" placeholder="Nombre del proveedor" tuiTextfield />
+        </tui-textfield>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">RUC</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="ruc" placeholder="20512345678" tuiTextfield />
+        </tui-textfield>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Razon Social</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="razon_social" placeholder="Razon social del proveedor" tuiTextfield />
+        </tui-textfield>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Direccion</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="direccion" placeholder="Av. Principal 123" tuiTextfield />
+        </tui-textfield>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Telefono</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="telefono" placeholder="999888777" tuiTextfield />
+        </tui-textfield>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Email</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="email" placeholder="contacto@proveedor.com" tuiTextfield />
+        </tui-textfield>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Contacto</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="contacto" placeholder="Nombre de persona de contacto" tuiTextfield />
+        </tui-textfield>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Tipo Producto</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="tipo_producto" placeholder="Electronica, Accesorios..." tuiTextfield />
+        </tui-textfield>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Calificacion (0-5)</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="calificacion" type="number" tuiTextfield [min]="0" [max]="5" />
+        </tui-textfield>
+      </div>
+
+    </div>
+
+    <div class="mt-6 flex gap-3">
+      <button tuiButton type="submit" appearance="primary-grayscale" size="m"
+        [disabled]="proveedorForm.invalid || !!(loadingCreate$ | async)">
+        Crear Proveedor
+        <tui-loader size="s" [showLoader]="!!(loadingCreate$ | async)"></tui-loader>
+      </button>
+      <button tuiButton type="button" appearance="flat" size="m"
+        (click)="proveedorForm.reset({ nombre: '', ruc: '', razon_social: '', direccion: '', telefono: '', email: '', contacto: '', tipo_producto: '', calificacion: 0 })">
+        Limpiar
+      </button>
+    </div>
+
+  </form>
+</div>

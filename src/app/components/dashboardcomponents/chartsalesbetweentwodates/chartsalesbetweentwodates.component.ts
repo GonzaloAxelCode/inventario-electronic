@@ -7,7 +7,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiAxes, TuiLineDaysChart } from '@taiga-ui/addon-charts';
-import { TuiTable } from '@taiga-ui/addon-table';
 import type { TuiDayLike, TuiStringHandler } from '@taiga-ui/cdk';
 import { TuiDay, TuiDayRange, TuiMonth, tuiPure } from '@taiga-ui/cdk';
 import { TUI_MONTHS, TuiAppearance, TuiButton } from '@taiga-ui/core';
@@ -23,64 +22,51 @@ import { distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
     CommonModule,
     TuiButton,
     TuiAppearance,
-    TuiTable,
-
     AsyncPipe,
     FormsModule,
     NgIf,
     TuiAxes,
     TuiInputDateRangeModule,
-    TuiLineDaysChart, TuiSkeleton
+    TuiLineDaysChart,
+    TuiSkeleton,
   ],
   templateUrl: './chartsalesbetweentwodates.component.html',
   styleUrls: ['./chartsalesbetweentwodates.component.scss'],
 })
 export class ChartsalesbetweentwodatesComponent implements OnInit {
 
-
-  protected readonly axisYSecondaryLabels = [
-    's/. 300', 's/. 600', 's/. 900', 's/. 1200', 's/. 1500',
-    's/. 1800', 's/. 2100'
-  ];
-
-
   private readonly store = inject(Store<AppState>);
   private readonly months$ = inject(TUI_MONTHS);
 
-  // Rango actual como BehaviorSubject para manejar cambios reactivamente
   private _range = new BehaviorSubject<TuiDayRange>(
     new TuiDayRange(
       new TuiDay(2025, 11, 1),
-      //TuiDay.currentLocal().append({ day: 1 }),
       new TuiDay(2026, 6, 1),
     )
   );
 
-  // Observable público del rango
   range$ = this._range.asObservable();
 
-  // Getter para el valor actual (solo lectura)
   get range(): TuiDayRange {
     return this._range.value;
   }
 
   protected readonly maxLength: TuiDayLike = { month: 12 };
 
-  // Datos reactivos
   protected salesData$ = this.store.select(selectVentaState).pipe(
     map((state: any) => state.salesDateRangePerDay),
-
     distinctUntilChanged()
   );
-  selectVentas$: Observable<VentaState> = this.store.select(selectVentaState)
+
+  selectVentas$: Observable<VentaState> = this.store.select(selectVentaState);
+
   protected readonly xStringify$ = this.months$.pipe(
     map(months => ({ month, day }: TuiDay) => `${months[month]}, ${day}`)
   );
 
   protected readonly yStringify: TuiStringHandler<number> = (y) =>
-    `S/. ${y.toLocaleString('en-US', { maximumFractionDigits: 0, signDisplay: 'exceptZero', style: "decimal", })}`;
+    `S/. ${y.toLocaleString('en-US', { maximumFractionDigits: 0, signDisplay: 'exceptZero', style: 'decimal' })}`;
 
-  // Valor computado reactivo
   protected value$ = combineLatest([this.salesData$, this.range$]).pipe(
     switchMap(([data, range]) =>
       of(this.computeValue(range, this.processData(data)))
@@ -88,42 +74,16 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
     tap()
   );
 
-  // Labels reactivos
   protected labels$ = this.range$.pipe(
     switchMap(range => this.computeLabels$(range))
   );
 
-  ngOnInit() {
+  ngOnInit(): void {}
 
-
-  }
-  allSalesYear() {
-    const fromDate = new Date(2025, 11, 1);
-    const toDate = new Date(2026, 11, 31);
-
-    const newRange: TuiDayRange = new TuiDayRange(
-      new TuiDay(2025, 11, 1),
-      new TuiDay(2026, 11, 31)
-    );
-
-
-    this.store.dispatch(cargarVentasRangoFechasTienda({
-
-      fromDate,
-      toDate
-    }));
-    this._range.next(newRange);
-  }
-
-
-  // Método para actualizar el rango
   onRangeChange(newRange: TuiDayRange): void {
-
     this._range.next(newRange);
 
-
     this.store.dispatch(cargarVentasRangoFechasTienda({
-
       fromDate: new Date(newRange.from.year, newRange.from.month, newRange.from.day),
       toDate: new Date(newRange.to.year, newRange.to.month, newRange.to.day)
     }));

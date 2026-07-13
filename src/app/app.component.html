@@ -1,4 +1,4 @@
-<tui-root [attr.tuiTheme]="!darkMode() ? 'dark' : null" class="relative">
+<tui-root [attr.tuiTheme]="darkMode() ? 'dark' : null" class="relative">
   
   <!-- Si está cargando: loader -->
   <ng-container *ngIf="loading$ | async; else appContent">

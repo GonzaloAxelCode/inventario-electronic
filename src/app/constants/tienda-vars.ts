@@ -1,1 +1,0 @@
-export const TIENDA_ID = 2

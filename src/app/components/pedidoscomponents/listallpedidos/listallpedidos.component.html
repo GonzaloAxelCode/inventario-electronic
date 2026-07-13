@@ -1,0 +1,316 @@
+<div>
+  <section>
+    <!-- FILTROS DE BUSQUEDA -->
+    <search tuiSearch>
+      <!-- Rango de fechas -->
+      <div class="mb-4 w-full">
+        <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range"
+          class="w-full">
+          Escoje buscar los pedidos entre dos fechas
+        </tui-input-date-range>
+      </div>
+
+      <!-- Sección de Resultados y Limpiar -->
+      <fieldset class="mb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3
+            bg-neutral-50 dark:bg-neutral-800/50 rounded-lg py-2">
+
+          <!-- Contador de Resultados -->
+          <div class="flex items-center flex-col gap-2">
+            <span class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
+              Resultados:
+            </span>
+            <span class="text-base font-semibold text-neutral-900 dark:text-white">
+              {{ count }} Pedidos
+            </span>
+          </div>
+
+          <!-- Botón Limpiar -->
+          <button appearance="primary-grayscale" iconStart="@tui.rotate-cw" size="s" tuiButton type="button"
+            (click)="clearFilters()" class="w-full sm:w-auto">
+            <span class="">Limpiar busqueda</span>
+          </button>
+
+          <span class="flex flex-col gap-1">
+            <span>
+              Mas filtros
+            </span>
+            <input tuiSwitch type="checkbox" size="m" [(ngModel)]="expanded" />
+          </span>
+        </div>
+      </fieldset>
+
+      <form [formGroup]="form" (submit)="onSearch()">
+        <tui-expand [expanded]="expanded">
+          <!-- Filtros de Búsqueda -->
+          <div class="space-y-3 pb-3">
+            <div class="flex flex-wrap xl:flex-nowrap gap-3 w-full">
+              <!-- Número Pedido -->
+              <tui-textfield iconStart="@tui.search" class="w-full">
+                <input formControlName="numero_pedido" placeholder="N° Pedido" tuiTextfield size="s" />
+              </tui-textfield>
+
+              <!-- Nombre Cliente -->
+              <tui-textfield iconStart="@tui.search" class="w-full">
+                <input formControlName="nombre_cliente" placeholder="Nombre del cliente" tuiTextfield size="s" />
+              </tui-textfield>
+
+              <!-- Estado -->
+              <tui-select class="w-full" formControlName="estado">
+                <ng-container ngProjectAs="tuiLabel">
+                  <span class="hidden sm:inline">Estado</span>
+                  <span class="sm:hidden">Estado</span>
+                </ng-container>
+                <select placeholder="Estado" size="m" tuiSelect [items]="estados"></select>
+              </tui-select>
+
+              <!-- Método de Pago -->
+              <tui-select class="w-full" formControlName="metodo_pago">
+                <ng-container ngProjectAs="tuiLabel">
+                  <span class="hidden sm:inline">Método de Pago</span>
+                  <span class="sm:hidden">Método</span>
+                </ng-container>
+                <select placeholder="Método pago" size="m" tuiSelect [items]="metodos_pago"></select>
+              </tui-select>
+
+              <!-- Número Documento Cliente -->
+              <tui-textfield iconStart="@tui.search" class="w-full">
+                <input formControlName="numero_documento_cliente" placeholder="DNI o RUC" tuiTextfield size="s" />
+              </tui-textfield>
+            </div>
+
+            <div class="flex flex-row items-center gap-3">
+              <button type="submit" iconStart="@tui.search" tuiButton appearance="textfield"
+                [disabled]="loading" class="col-span-1 w-full flex-1">
+                Buscar
+              </button>
+            </div>
+          </div>
+        </tui-expand>
+      </form>
+    </search>
+
+    <!-- CONTADOR -->
+    <div class="px-4 mb-3" *ngIf="count > 0">
+      <span class="text-sm text-neutral-500 dark:text-neutral-400">{{ count }} pedido(s) encontrado(s)</span>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div *ngIf="pedidos.length === 0 && !loading"
+      class="h-[40vh] mx-auto flex flex-col items-center justify-center">
+      <img alt="sin datos"
+        src="https://concepthousewares.co.uk/assets/images/empty_cart.png"
+        class="object-contain w-56 h-56 text-center" />
+      <h2 class="text-xl text-center">No se encontraron pedidos</h2>
+      <p class="text-md text-center">Ajusta los filtros o crea un nuevo pedido</p>
+    </div>
+
+    <!-- LOADER / LISTA -->
+    <tui-loader [overlay]="true" [showLoader]="loading">
+      <!-- Vista de CARDS para moviles -->
+      <div class="block lg:hidden space-y-3 px-2">
+        <div *ngFor="let pedido of pedidos"
+          class="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-3 border border-neutral-200 dark:border-neutral-700">
+
+          <!-- Header con numero y estado -->
+          <div class="flex items-center justify-between mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Pedido</span>
+              <span class="text-sm font-bold text-neutral-900 dark:text-white">{{pedido.numero_pedido}}</span>
+            </div>
+            <tui-badge [appearance]="getEstadoBadge(pedido.estado)" tuiStatus size="s">
+              {{pedido.estado}}
+            </tui-badge>
+          </div>
+
+          <!-- Cliente -->
+          <div class="mb-3">
+            <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Cliente</div>
+            <span class="text-sm font-semibold text-neutral-900 dark:text-white">
+              {{ getClienteNombre(pedido) }}
+            </span>
+          </div>
+
+          <!-- Metodo de pago -->
+          <div class="mb-3">
+            <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Metodo de pago</div>
+            <span class="text-sm text-neutral-800 dark:text-neutral-200">
+              {{ pedido.metodo_pago }}
+            </span>
+          </div>
+
+          <!-- Fecha y Hora -->
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <div class="text-xs">
+              <span class="text-neutral-500 dark:text-neutral-400 block">Fecha:</span>
+              <span class="text-neutral-800 dark:text-neutral-200 font-medium">
+                {{ formatDate(pedido.fecha_hora) }}
+              </span>
+            </div>
+            <div class="text-xs">
+              <span class="text-neutral-500 dark:text-neutral-400 block">Hora:</span>
+              <span class="text-neutral-800 dark:text-neutral-200 font-medium">
+                {{ formatTime(pedido.fecha_hora) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Totales -->
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <div class="text-xs">
+              <span class="text-neutral-500 dark:text-neutral-400 block">Subtotal:</span>
+              <span class="text-neutral-800 dark:text-neutral-200 font-medium">
+                S/. {{pedido.subtotal}}
+              </span>
+            </div>
+            <div class="text-xs">
+              <span class="text-neutral-500 dark:text-neutral-400 block">IGV:</span>
+              <span class="text-neutral-800 dark:text-neutral-200 font-medium">
+                S/. {{pedido.igv_total}}
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs text-neutral-500 dark:text-neutral-400">Total:</span>
+            <span class="text-lg font-bold text-neutral-900 dark:text-white">
+              S/. {{pedido.total}}
+            </span>
+          </div>
+
+          <!-- Descuento -->
+          <div *ngIf="pedido.descuento_total > 0" class="mb-3">
+            <span class="text-xs text-green-600 dark:text-green-400 font-medium">
+              Descuento: -S/. {{pedido.descuento_total}}
+            </span>
+          </div>
+
+          <!-- Observaciones -->
+          <div *ngIf="pedido.observaciones" class="mb-3">
+            <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Observaciones</div>
+            <span class="text-xs text-neutral-700 dark:text-neutral-300">{{ pedido.observaciones }}</span>
+          </div>
+
+          <!-- Boton cancelar -->
+          <div *ngIf="pedido.estado !== 'CANCELADO' && pedido.estado !== 'REALIZADO'" class="pt-3 border-t border-neutral-200 dark:border-neutral-700">
+            <button (click)="onCancelPedido(pedido.id)"
+              class="w-full px-3 py-2 text-xs font-medium text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+              Cancelar Pedido
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista de LISTA COMPACTA para desktop -->
+      <div class="hidden lg:block -mx-4 px-4 sm:mx-0 sm:px-0 space-y-2">
+        <div *ngFor="let pedido of pedidos"
+          class="relative overflow-hidden rounded-2xl
+            bg-white dark:bg-neutral-800
+            p-4
+            border border-neutral-200 dark:border-neutral-700
+            hover:shadow-md transition-all duration-300">
+
+          <div class="flex items-center justify-between gap-4">
+
+            <!-- INFO PRINCIPAL -->
+            <div class="flex items-center gap-4 flex-1 min-w-0">
+
+              <!-- ICONO -->
+              <div class="flex flex-col items-center justify-center gap-1 px-3 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+                <svg class="w-4 h-4 text-neutral-700 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                  </path>
+                </svg>
+                <tui-badge [appearance]="getEstadoBadge(pedido.estado)" tuiStatus size="s">
+                  {{pedido.estado}}
+                </tui-badge>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <!-- Numero Pedido -->
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-base font-extrabold text-neutral-900 dark:text-white">
+                    {{pedido.numero_pedido}}
+                  </span>
+                </div>
+
+                <!-- Informacion secundaria -->
+                <div class="flex items-center gap-3 flex-wrap text-xs text-neutral-500 dark:text-neutral-400">
+                  <!-- FECHA -->
+                  <span class="flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                      </path>
+                    </svg>
+                    {{ formatDate(pedido.fecha_hora) }} {{ formatTime(pedido.fecha_hora) }}
+                  </span>
+
+                  <!-- CLIENTE -->
+                  <span class="flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                      </path>
+                    </svg>
+                    {{ getClienteNombre(pedido) }}
+                  </span>
+
+                  <!-- METODO PAGO -->
+                  <tui-badge size="m" tuiStatus appearance="neutral">
+                    {{ pedido.metodo_pago }}
+                  </tui-badge>
+                </div>
+              </div>
+            </div>
+
+            <!-- TOTALES -->
+            <div class="flex items-center gap-6 flex-shrink-0">
+              <!-- SUBTOTAL -->
+              <div class="text-right min-w-[80px]">
+                <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Subtotal</p>
+                <p class="text-sm font-semibold text-neutral-900 dark:text-white whitespace-nowrap">
+                  S/. {{pedido.subtotal}}
+                </p>
+              </div>
+
+              <!-- IGV -->
+              <div class="text-right min-w-[80px]">
+                <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">IGV</p>
+                <p class="text-sm font-semibold text-neutral-900 dark:text-white whitespace-nowrap">
+                  S/. {{pedido.igv_total}}
+                </p>
+              </div>
+
+              <!-- TOTAL -->
+              <div class="text-right min-w-[100px]">
+                <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Total</p>
+                <p class="text-lg font-extrabold text-neutral-900 dark:text-white whitespace-nowrap">
+                  S/. {{pedido.total}}
+                </p>
+              </div>
+
+              <!-- ACCIONES -->
+              <div *ngIf="pedido.estado !== 'CANCELADO' && pedido.estado !== 'REALIZADO'">
+                <button (click)="onCancelPedido(pedido.id)"
+                  class="px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paginacion -->
+      <div class="pt-4 flex justify-center px-2" *ngIf="lengthPages > 1">
+        <tui-pagination
+          [index]="indexPage"
+          [length]="lengthPages"
+          (indexChange)="goToPage($event)"
+          class="w-full overflow-x-auto" />
+      </div>
+    </tui-loader>
+  </section>
+</div>

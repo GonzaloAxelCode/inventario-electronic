@@ -7,9 +7,9 @@ import {
     loadProveedores,
     loadProveedoresFail,
     loadProveedoresSuccess,
-    onActiveToggleProveedorAction,
-    onActiveToggleProveedorFail,
-    onActiveToggleProveedorSuccess,
+    toggleProveedorAction,
+    toggleProveedorFail,
+    toggleProveedorSuccess,
     updateProveedorAction,
     updateProveedorFail,
     updateProveedorSuccess
@@ -17,11 +17,11 @@ import {
 
 export interface ProveedorState {
     proveedores: Proveedor[];
-    loadingProveedores?: boolean;
-    errors?: any;
-    loadingCreateProveedor: boolean,
-    loadingUpdateProveedor: boolean,
-    loadingDesactivateProveedor: boolean,
+    loadingProveedores: boolean;
+    errors: any;
+    loadingCreateProveedor: boolean;
+    loadingUpdateProveedor: boolean;
+    loadingToggleProveedor: boolean;
 }
 
 export const initialState: ProveedorState = {
@@ -29,7 +29,7 @@ export const initialState: ProveedorState = {
     loadingProveedores: false,
     loadingCreateProveedor: false,
     loadingUpdateProveedor: false,
-    loadingDesactivateProveedor: false,
+    loadingToggleProveedor: false,
     errors: {}
 };
 
@@ -77,19 +77,20 @@ export const proveedorReducer = createReducer(
         errors: error,
         loadingUpdateProveedor: false
     })),
-    on(onActiveToggleProveedorAction, (state) => ({
+    on(toggleProveedorAction, (state) => ({
         ...state,
-
+        loadingToggleProveedor: true
     })),
-    on(onActiveToggleProveedorSuccess, (state, { proveedor, activo }) => ({
+    on(toggleProveedorSuccess, (state, { response }) => ({
         ...state,
-        proveedores: state.proveedores.map(p => proveedor.id === p.id ? { ...p, activo: activo } : p),
-
-
+        proveedores: state.proveedores.map(p =>
+            p.id === response.id ? { ...p, activo: response.activo, ruc: response.ruc } : p
+        ),
+        loadingToggleProveedor: false
     })),
-    on(onActiveToggleProveedorFail, (state, { error }) => ({
+    on(toggleProveedorFail, (state, { error }) => ({
         ...state,
         errors: error,
-
+        loadingToggleProveedor: false
     }))
 );

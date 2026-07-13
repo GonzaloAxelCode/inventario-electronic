@@ -1,9 +1,12 @@
 :host {
     display: block;
-    
 }
 
 .axes {
-    block-size: 20.5rem;
-    color: #4a9657;
+    block-size: 20rem;
+    inline-size: 100%;
+}
+
+.chart {
+    color: var(--tui-chart-categorical-00, #6366f1);
 }

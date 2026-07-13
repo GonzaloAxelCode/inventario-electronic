@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAppearance, TuiButton, TuiDialogService, TuiDropdown, TuiExpand, TuiGroup, TuiIcon, TuiLink, TuiTextfield, TuiTitle } from '@taiga-ui/core';
@@ -8,11 +8,12 @@ import {
   TuiInputModule
 } from '@taiga-ui/legacy';
 
-
+import { CommonModule, Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 import { ButtonupdateComponent } from "@/app/components/buttonupdate/buttonupdate.component";
 import { DashboardLowStockComponent } from '@/app/components/dashboardcomponents/dashboard-low-stock/dashboard-low-stock.component';
-import { PruebastextComponent } from '@/app/components/pruebastext/pruebastext.component';
+
 import { TableproductComponent } from '@/app/components/Tables/tableproduct/tableproduct.component';
 import { DialogCreateCategoriaService } from '@/app/services/dialogs-services/dialog-create-categoria.service';
 import { DialogCreateProductService } from '@/app/services/dialogs-services/dialog-create-product.service';
@@ -20,11 +21,13 @@ import { PAGE_SIZE_PRODUCTS } from '@/app/services/utils/pages-sizes';
 import { loadProductosAction } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectProducto } from '@/app/state/selectors/producto.selectors';
-import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { TuiRepeatTimes } from '@taiga-ui/cdk';
 import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
 import { TablecategoriesComponent } from "../../components/Tables/tablecategories/tablecategories.component";
+import { SubircsvproductosComponent } from "../../components/productoscomponents/subircsvproductos/subircsvproductos.component";
+import { GraficosProductosComponent } from "../../components/productoscomponents/graficos-productos/graficos-productos.component";
+import { AlertasStockComponent } from "../../components/productoscomponents/alertas-stock/alertas-stock.component";
 
 
 @Component({
@@ -43,13 +46,16 @@ import { TablecategoriesComponent } from "../../components/Tables/tablecategorie
     TuiExpand, TableproductComponent, TablecategoriesComponent,
     TuiGroup,
     TuiHeader,
-    TuiIcon, PruebastextComponent,
+    TuiIcon,
     TuiLink,
     TuiNavigation,
     TuiRepeatTimes, DashboardLowStockComponent,
     TuiTabs,
     TuiTextfield, ButtonupdateComponent,
-    TuiTitle, TuiIcon, TuiAvatar, ButtonupdateComponent],
+    TuiTitle, TuiIcon, TuiAvatar, ButtonupdateComponent,
+    SubircsvproductosComponent,
+    GraficosProductosComponent,
+    AlertasStockComponent],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,23 +64,28 @@ import { TablecategoriesComponent } from "../../components/Tables/tablecategorie
 
 
 })
-export class ProductosComponent {
+export class ProductosComponent implements OnInit {
   private readonly confirm = inject(TuiConfirmService);
 
   private readonly dialogs = inject(TuiDialogService);
-  loading: any = false
-  activeTab:
-    | 'productos'
-    | 'categorias'
-    | 'graficos'
-    | 'calculo-ganancias'
-    | 'reportes'
-    | 'proyeccion'
-    | 'alertas'
-    = 'productos';
+  private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
 
-  setTab(tab: typeof this.activeTab) {
+  loading: any = false;
+
+  validTabs = ['productos', 'categorias', 'graficos', 'alertas', 'excel'] as const;
+  activeTab: 'productos' | 'categorias' | 'graficos' | 'alertas' | 'excel' = 'productos';
+  activeTabIndex = 0;
+
+  onTabChange(index: number) {
+    const tab = this.validTabs[index];
     this.activeTab = tab;
+    this.activeTabIndex = index;
+    this.location.replaceState(`/app/productos#${tab}`);
+  }
+
+  private isValidTab(tab: string): boolean {
+    return (this.validTabs as readonly string[]).includes(tab);
   }
 
   protected value = '';
@@ -83,6 +94,7 @@ export class ProductosComponent {
     this.value = value;
     this.confirm.markAsDirty();
   }
+
   constructor(private store: Store<AppState>) { }
 
   private readonly dialogservicecreatecategoria = inject(DialogCreateCategoriaService);
@@ -97,14 +109,21 @@ export class ProductosComponent {
 
     });
   }
+
   ngOnInit() {
     this.store.select(selectProducto).subscribe((state) => {
-      this.loading = state.loadingProductos || false
-    })
+      this.loading = state.loadingProductos || false;
+    });
 
+    const fragment = this.route.snapshot.fragment;
+    if (fragment && this.isValidTab(fragment)) {
+      this.activeTab = fragment as typeof this.activeTab;
+      this.activeTabIndex = this.validTabs.indexOf(fragment as any);
+    }
   }
+
   clickRefreshProducts() {
-    this.store.dispatch(loadProductosAction({ page: 1, page_size: PAGE_SIZE_PRODUCTS }))
+    this.store.dispatch(loadProductosAction({ page: 1, page_size: PAGE_SIZE_PRODUCTS }));
   }
 
 }

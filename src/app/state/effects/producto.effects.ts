@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map, of } from 'rxjs';
+import { catchError, exhaustMap, map, mergeMap, of } from 'rxjs';
 
 import { ProductoService } from '@/app/services/producto.service';
 import { ProductoSearchService } from '@/app/services/search-services/producto-search.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
+import { forceSyncInventarios } from '../actions/inventario.actions';
 import {
     createProductoAction, createProductoFail, createProductoSuccess,
     deleteProductoAction, deleteProductoFail, deleteProductoSuccess,
@@ -34,7 +35,7 @@ export class ProductoEffects {
             exhaustMap((action) =>
                 this.productoService.fetchLoadProductos(action.page || 1, action.page_size).pipe(
                     map((response) => {
-                        console.log(response)
+
                         return loadProductosSuccess({
                             productos: response.results,
                             next: response.next,
@@ -61,12 +62,15 @@ export class ProductoEffects {
             ofType(createProductoAction),
             exhaustMap(({ producto, }) =>
                 this.productoService.createProducto(producto,).pipe(
-                    map((res: any) => {
+                    mergeMap((res: any) => {
 
                         this.alertService
                             .showSuccess('Producto creado exitosamente. Actualiza la tabla de productos.')
                             .subscribe();
-                        return createProductoSuccess({ producto: res.producto });
+                        return [
+                            createProductoSuccess({ producto: res.producto }),
+                            forceSyncInventarios()
+                        ];
                     }),
                     catchError(error => {
 
@@ -85,12 +89,15 @@ export class ProductoEffects {
             ofType(updateProductoAction),
             exhaustMap(({ producto }) =>
                 this.productoService.updateProducto(producto).pipe(
-                    map((res: any) => {
+                    mergeMap((res: any) => {
 
                         this.alertService
                             .showSuccess('Producto actualizado exitosamente. Actualiza la tabla de productos.')
                             .subscribe();
-                        return updateProductoSuccess({ producto: res.producto });
+                        return [
+                            updateProductoSuccess({ producto: res.producto }),
+                            forceSyncInventarios()
+                        ];
                     }),
                     catchError(error => {
                         this.alertService
@@ -111,7 +118,7 @@ export class ProductoEffects {
             exhaustMap((action: any) =>
                 this.productoService.searchProducts(action.query, action.page || 1, action.page_size || 5).pipe(
                     map(response => {
-                        console.log(response)
+
                         return searchProductoSuccess({
                             productos: response.results,
                             search_products_found: response.search_products_found,

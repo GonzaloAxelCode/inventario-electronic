@@ -1,0 +1,111 @@
+<div class="p-4 sm:p-6 w-full md:hidden">
+  <div class="rounded-2xl" [tuiSkeleton]="!!(proveedoresState$ | async)?.loadingProveedores">
+    <ng-container *ngIf="(proveedoresState$ | async)?.proveedores?.length; else noProveedores">
+      <div class="flex flex-col gap-4 mt-3">
+        <div *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []"
+          class="rounded-2xl border border-gray-300 dark:border-gray-700 shadow-sm p-4 transition-all duration-300">
+
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+                {{ proveedor.nombre }}
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                <strong>RUC:</strong> {{ proveedor.ruc || '—' }}
+              </p>
+            </div>
+            <tui-badge [appearance]="proveedor.activo ? 'positive' : 'negative'" class="text-xs">
+              {{ proveedor.activo ? 'Activo' : 'Inactivo' }}
+            </tui-badge>
+          </div>
+
+          <div class="text-sm text-gray-700 dark:text-gray-300 space-y-0.5 mb-3">
+            <p><strong>Telefono:</strong> {{ proveedor.telefono || '—' }}</p>
+            <p><strong>Email:</strong> {{ proveedor.email || '—' }}</p>
+            <p><strong>Direccion:</strong> {{ proveedor.direccion || '—' }}</p>
+            <p><strong>Contacto:</strong> {{ proveedor.contacto || '—' }}</p>
+            <p><strong>Tipo Producto:</strong> {{ proveedor.tipo_producto || '—' }}</p>
+            <p><strong>Calificacion:</strong> {{ proveedor.calificacion }}</p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-2 mt-3">
+            <button appearance="positive" iconStart="@tui.users" tuiButton type="button" class="w-full sm:w-auto"
+              (click)="showDialogUpdate(proveedor)">
+              Actualizar
+            </button>
+
+            <button [disabled]="!(userPermissions$ | async)?.can_update_proveedor"
+              [appearance]="proveedor.activo ? 'error' : 'secondary'" iconStart="@tui.trash" tuiButton type="button"
+              class="w-full sm:w-auto" (click)="onActiveToggle(proveedor)">
+              {{ proveedor.activo ? 'Desactivar' : 'Activar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #noProveedores>
+      <tui-block-status class="mt-10">
+        <img alt="no-data"
+          src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+          tuiSlot="top" />
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
+          Aun no tienes ningun proveedor
+        </h4>
+        <span class="text-gray-600 dark:text-gray-400">
+          Empieza a crear tus primeros proveedores
+        </span>
+      </tui-block-status>
+    </ng-template>
+  </div>
+</div>
+
+<div class="py-2 hidden md:block">
+  <div class="rounded-lg min-h-[200px]" [tuiSkeleton]="!!(proveedoresState$ | async)?.loadingProveedores">
+
+    <ng-template #tabla>
+      <table tuiTable size="s">
+        <thead>
+          <tr>
+            <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
+            <th tuiTh>Estado</th>
+            <th tuiTh>Acciones</th>
+          </tr>
+        </thead>
+        <tbody tuiTbody *ngIf="(proveedoresState$ | async)?.proveedores?.length">
+          <tr *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []">
+            <td *ngFor="let column of allColumns" tuiTd>{{ getProveedorValue(proveedor, column.key) }}</td>
+            <td tuiTd>
+              <tui-badge [appearance]="proveedor.activo ? 'positive' : 'negative'">
+                {{ proveedor.activo ? 'Activo' : 'Inactivo' }}
+              </tui-badge>
+            </td>
+            <td tuiTd>
+              <div class="flex gap-2">
+                <button appearance="positive" iconStart="@tui.users" tuiButton type="button"
+                  (click)="showDialogUpdate(proveedor)">
+                  Actualizar
+                </button>
+                <button [disabled]="!(userPermissions$ | async)?.can_update_proveedor"
+                  [appearance]="proveedor.activo ? 'error' : 'secondary'" iconStart="@tui.trash" tuiButton type="button"
+                  (click)="onActiveToggle(proveedor)">
+                  {{ proveedor.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-template>
+
+    <tui-block-status
+      *ngIf="(proveedoresState$ | async)?.proveedores?.length === 0 && !(proveedoresState$ | async)?.loadingProveedores else tabla"
+      size="m" class="m-auto">
+      <img alt="no-data"
+        src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+        tuiSlot="top" />
+      <h4>Aun no tienes ningun proveedor</h4>
+      <span>Empieza a crear tus primeros proveedores</span>
+    </tui-block-status>
+  </div>
+</div>

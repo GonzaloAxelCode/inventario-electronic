@@ -1,0 +1,111 @@
+<div class="flex flex-col gap-4 p-4">
+
+  <!-- Header -->
+  <div>
+    <h3 class="text-xl font-bold text-neutral-900 dark:text-white">Sorteo de Clientes</h3>
+    <p class="text-sm text-neutral-500 dark:text-neutral-400">Haz clic en el centro de la ruleta para sortear entre los 10 clientes más frecuentes del mes</p>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="flex flex-col lg:flex-row gap-10 items-center lg:items-center">
+
+    <!-- Ruleta -->
+    <div class="flex flex-col items-center mx-auto lg:mx-0 my-[15px]">
+
+      <!-- Flecha indicadora (arriba) -->
+      <div class="relative mb-0">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-3 z-20">
+          <div class="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[18px] border-t-red-500 drop-shadow-lg sm:border-l-[14px] sm:border-r-[14px] sm:border-t-[24px]">
+          </div>
+        </div>
+
+        <!-- Contenedor de la ruleta -->
+        <div class="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[28rem] lg:h-[28rem]">
+          <!-- Círculo exterior con borde dorado -->
+          <div class="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 shadow-2xl p-2">
+            <div class="w-full h-full rounded-full bg-neutral-800 dark:bg-neutral-900"></div>
+          </div>
+
+          <!-- Ruleta giratoria -->
+          <div class="absolute inset-3 rounded-full overflow-hidden shadow-inner"
+            [style.background]="wheelGradient"
+            [style.transform]="'rotate(' + rotationAngle + 'deg)'"
+            [style.transition]="isSpinning ? 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)' : 'none'">
+
+            <!-- Texto de los clientes -->
+            <div *ngFor="let cliente of clientes; let i = index"
+              class="absolute text-[7px] sm:text-[10px] lg:text-sm font-bold text-white whitespace-nowrap pointer-events-none drop-shadow-md"
+              [ngStyle]="getTextStyle(i)">
+              {{ cliente.nombre.split(' ')[0] }}
+            </div>
+          </div>
+
+          <!-- Centro de la ruleta (clickeable) -->
+          <div class="absolute inset-0 flex items-center justify-center z-10">
+            <button
+              (click)="girarRuleta()"
+              [disabled]="isSpinning"
+              class="w-14 h-14 sm:w-20 sm:h-20 lg:w-28 lg:h-28 rounded-full bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 shadow-xl flex items-center justify-center p-1 cursor-pointer hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              <div class="w-full h-full rounded-full bg-neutral-800 dark:bg-neutral-900 flex items-center justify-center">
+                <span class="text-white text-[10px] sm:text-xs lg:text-lg font-extrabold tracking-wider">
+                  {{ isSpinning ? '...' : 'SORTEO' }}
+                </span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de participantes -->
+    <div class="w-full p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-lg">
+      <h4 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white mb-3">Participantes (Top 10 del mes)</h4>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        <div *ngFor="let cliente of clientes; let i = index"
+          class="flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
+          [class.ring-2]="winner?.id === cliente.id"
+          [class.ring-yellow-400]="winner?.id === cliente.id"
+          [class.dark:ring-yellow-500]="winner?.id === cliente.id">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold text-white shrink-0 shadow-md"
+            [style.background-color]="getColor(i)">
+            {{ i + 1 }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white truncate">{{ cliente.nombre }}</p>
+            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">{{ cliente.compras }} compras</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Nota -->
+  <p class="text-[10px] sm:text-xs text-neutral-400 dark:text-neutral-500 text-center italic">
+    * Este es un ejemplo visual. Próximamente se conectará con el backend para datos reales.
+  </p>
+
+</div>
+
+<!-- Template del modal del ganador -->
+<ng-template #ganadorTpl>
+  <div class="flex flex-col items-center gap-4 py-4 px-2">
+
+    <!-- Animación de celebración -->
+    <div class="relative">
+      <div class="absolute -inset-4 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full opacity-20 animate-pulse"></div>
+      <div class="w-28 h-28 rounded-full bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 flex items-center justify-center shadow-lg">
+        <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-1">¡Tenemos un ganador!</p>
+      <p class="text-3xl font-extrabold text-neutral-900 dark:text-white">{{ winner?.nombre }}</p>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-2">{{ winner?.compras }} compras este mes</p>
+    </div>
+
+  </div>
+</ng-template>

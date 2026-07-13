@@ -1,14 +1,35 @@
 export interface Proveedor {
     id: number;
     nombre: string;
+    ruc: string;
+    razon_social: string;
     direccion: string;
     telefono: string;
     email: string;
     contacto: string;
-    fecha_registro: Date;
-    activo: boolean;
     tipo_producto: string;
-    date_created?: any
     calificacion: number;
+    activo: boolean;
+    tienda: number;
+    date_created: string;
 }
-export type ProveedorCreate = Omit<Proveedor, 'id' | 'contacto' | 'activo' | 'calificacion' | 'email' | 'fecha_registro'>;
+
+export interface ProveedorCreate {
+    nombre: string;
+    ruc?: string;
+    razon_social?: string;
+    direccion?: string;
+    telefono?: string;
+    email?: string;
+    contacto?: string;
+    tipo_producto?: string;
+    calificacion?: number;
+    activo?: boolean;
+}
+
+export interface ToggleProveedorResponse {
+    message: string;
+    id: number;
+    ruc: string;
+    activo: boolean;
+}

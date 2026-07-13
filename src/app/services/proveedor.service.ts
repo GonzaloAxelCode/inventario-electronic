@@ -1,4 +1,4 @@
-import { Proveedor, ProveedorCreate } from '@/app/models/proveedor.models';
+import { Proveedor, ProveedorCreate, ToggleProveedorResponse } from '@/app/models/proveedor.models';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -15,7 +15,7 @@ export class ProveedorService {
 
     fetchProveedores(): Observable<Proveedor[]> {
         return this.http.get<Proveedor[]>(`${this.siteURL}/proveedores/`).pipe(
-            catchError(error => throwError(error))
+            catchError(error => throwError(() => error))
         );
     }
 
@@ -23,7 +23,7 @@ export class ProveedorService {
         return this.http.post<Proveedor>(`${this.siteURL}/proveedores/create/`, { ...proveedor }).pipe(
             catchError(error => {
                 printError(error);
-                return throwError(error);
+                return throwError(() => error);
             })
         );
     }
@@ -32,19 +32,18 @@ export class ProveedorService {
         return this.http.put<Proveedor>(`${this.siteURL}/proveedores/update/${proveedor.id}/`, proveedor).pipe(
             catchError(error => {
                 printError(error);
-                return throwError(error);
+                return throwError(() => error);
             })
         );
     }
 
-    activateOrDesactivateProveedor(proveedor: Proveedor, activo: boolean): Observable<any> {
-        const url = `${this.siteURL}/proveedores/toggleactivate/${proveedor.id}/`
-        return this.http.post(url, { activo }).pipe(
+    activateOrDesactivateProveedor(proveedor: Proveedor, activo: boolean): Observable<ToggleProveedorResponse> {
+        const url = `${this.siteURL}/proveedores/toggle/${proveedor.id}/`;
+        return this.http.put<ToggleProveedorResponse>(url, { activo }).pipe(
             catchError(error => {
                 printError(error);
                 return throwError(() => error);
             })
         );
     }
-
 }

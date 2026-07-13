@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { ProveedorService } from '@/app/services/proveedor.service';
@@ -13,9 +12,9 @@ import {
     loadProveedores,
     loadProveedoresFail,
     loadProveedoresSuccess,
-    onActiveToggleProveedorAction,
-    onActiveToggleProveedorFail,
-    onActiveToggleProveedorSuccess,
+    toggleProveedorAction,
+    toggleProveedorFail,
+    toggleProveedorSuccess,
     updateProveedorAction,
     updateProveedorFail,
     updateProveedorSuccess
@@ -29,10 +28,8 @@ export class ProveedorEffects {
         private actions$: Actions,
         private proveedorService: ProveedorService,
         private store: Store<AppState>,
-        private toastr: ToastrService,
         private alertService: CustomAlertService
     ) { }
-
 
     loadProveedoresEffect = createEffect(() =>
         this.actions$.pipe(
@@ -46,14 +43,13 @@ export class ProveedorEffects {
         )
     );
 
-
     createProveedorEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(createProveedorAction),
             exhaustMap(({ proveedor }) =>
                 this.proveedorService.createProveedor(proveedor).pipe(
                     map(createdProveedor => {
-                        this.alertService.showSuccess('Proveedor creado exitosamente', 'Éxito').subscribe();
+                        this.alertService.showSuccess('Proveedor creado exitosamente', 'Exito').subscribe();
                         return createProveedorSuccess({ proveedor: createdProveedor });
                     }),
                     catchError(error => {
@@ -65,14 +61,13 @@ export class ProveedorEffects {
         )
     );
 
-
     updateProveedorEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(updateProveedorAction),
             exhaustMap(({ proveedor }) =>
                 this.proveedorService.updateProveedor(proveedor).pipe(
                     map(updatedProveedor => {
-                        this.alertService.showSuccess('Proveedor actualizado exitosamente', 'Éxito').subscribe();
+                        this.alertService.showSuccess('Proveedor actualizado exitosamente', 'Exito').subscribe();
                         return updateProveedorSuccess({ proveedor: updatedProveedor });
                     }),
                     catchError(error => {
@@ -84,19 +79,18 @@ export class ProveedorEffects {
         )
     );
 
-
-    deleteProveedorEffect = createEffect(() =>
+    toggleProveedorEffect = createEffect(() =>
         this.actions$.pipe(
-            ofType(onActiveToggleProveedorAction),
+            ofType(toggleProveedorAction),
             exhaustMap(({ proveedor, activo }) =>
                 this.proveedorService.activateOrDesactivateProveedor(proveedor, activo).pipe(
-                    map(() => {
-                        this.alertService.showSuccess('Proveedor activado/desactivado exitosamente', 'Éxito').subscribe();
-                        return onActiveToggleProveedorSuccess({ proveedor, activo });
+                    map(response => {
+                        this.alertService.showSuccess(response.message, 'Exito').subscribe();
+                        return toggleProveedorSuccess({ response });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al activar/desactivar el proveedor', 'Error').subscribe();
-                        return of(onActiveToggleProveedorFail({ error }));
+                        this.alertService.showError('Error al cambiar el estado del proveedor', 'Error').subscribe();
+                        return of(toggleProveedorFail({ error }));
                     })
                 )
             )

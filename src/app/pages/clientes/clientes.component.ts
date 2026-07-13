@@ -1,4 +1,6 @@
 import { TableClientesComponent } from '@/app/components/Tables/tableclientes/tableclientes.component';
+import { EstadisticasClientesComponent } from '@/app/components/clientescomponents/estadisticas-clientes/estadisticas-clientes.component';
+import { SorteosClientesComponent } from '@/app/components/clientescomponents/sorteos-clientes/sorteos-clientes.component';
 import { CommonModule } from '@angular/common';
 
 import { Component } from '@angular/core';
@@ -13,7 +15,7 @@ import {
 
 
 
-import { PruebastextComponent } from '@/app/components/pruebastext/pruebastext.component';
+
 import { TuiRepeatTimes } from '@taiga-ui/cdk';
 import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
 
@@ -22,7 +24,7 @@ import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
 @Component({
   selector: 'app-clientes',
   standalone: true,
-  imports: [CommonModule, TableClientesComponent,
+  imports: [CommonModule, TableClientesComponent, EstadisticasClientesComponent, SorteosClientesComponent,
     ReactiveFormsModule,
     TuiRadio, CommonModule,
     TuiButton, TuiHeader, TuiTitle, TuiNavigation, TuiTab,
@@ -39,7 +41,7 @@ import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
     TuiIcon,
     TuiLink,
     TuiNavigation,
-    TuiRepeatTimes, PruebastextComponent,
+    TuiRepeatTimes,
     TuiTabs,
     TuiTextfield,
     TuiTitle, TuiIcon, TuiAvatar
@@ -52,6 +54,7 @@ export class ClientesComponent {
   activeTab:
     | 'mis-clientes'
     | 'ultimos-agregados'
+    | 'estadisticas'
     | 'sorteos'
     = 'mis-clientes';
 

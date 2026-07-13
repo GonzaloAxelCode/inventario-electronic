@@ -10,7 +10,7 @@ import { UserState } from '@/app/state/reducers/user.reducer';
 import { selectAuth } from '@/app/state/selectors/auth.selectors';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { AsyncPipe, CommonModule, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLinkActive, RouterLinkWithHref, RouterModule } from '@angular/router';
@@ -26,7 +26,8 @@ import {
   TuiIcon,
   TuiPopup,
   TuiTextfield,
-  TuiTitle
+  TuiTitle,
+  TUI_DARK_MODE
 } from '@taiga-ui/core';
 import {
   TuiAvatar,
@@ -71,82 +72,101 @@ import { HeaderComponent } from "../header/header.component";
     TuiPopup, TuiIcon],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidenavComponent implements OnInit {
   isAuthenticated$: Observable<any>;
   userState$!: Observable<UserState>;
-  user!: User
-  tienda!: Tienda
+  user!: User;
+  tienda!: Tienda;
+  userMenuOpen = false;
+  loadingAuthenticated$: Observable<any>;
+  authState$ = this.store.pipe(select(selectAuth));
+  URL_BASE = URL_BASE;
 
-  constructor(private store: Store<AppState>, public router: Router, public sidebarService: SidebarService) {
+  open = this.sidebarService.open;
+  isopenSidebar = this.sidebarService.open;
 
+  constructor(
+    private store: Store<AppState>,
+    public router: Router,
+    public sidebarService: SidebarService
+  ) {
     this.isAuthenticated$ = this.store.select(selectAuth).pipe(
       map(authState => authState.isAuthenticated)
     );
-
-
     this.loadingAuthenticated$ = this.store.select(selectAuth).pipe(
       map(authState => authState.loadingCheckAuthenticated)
     );
     this.userState$ = this.store.select(selectUsersState);
-
-
   }
-
-  loadingAuthenticated$: Observable<any>;
-  authState$ = this.store.pipe(select(selectAuth));
-
-  logout() {
-
-    this.store.dispatch(clearTokensAction())
-
-    this.store.dispatch(clearUserAction())
-    this.onClose();
-    this.router.navigate(['/login']);
-  }
-  isActiveRoute(route: string): boolean {
-    return this.router.url === route;
-  }
-  protected readonly dialogs = inject(TuiDialogService);
-
-
-  open = this.sidebarService.open
-  public onClose(): void {
-    this.open.set(false);
-
-  }
-
-  logout2() {
-    this.store.dispatch(clearTokensAction())
-    this.store.dispatch(clearUserAction())
-    this.store.dispatch(clearInventariosFromCache())
-    this.onClose()
-    this.router.navigate(['/login']);
-
-  }
-
-  //user menu 
-
-  protected readonly itemsMenuUser = ['Edit', 'Download', 'Rename', 'Delete'];
-
-  protected openMenuUser = false;
-
-  protected onClickMenuUser(): void {
-    this.openMenuUser = false;
-  }
-  URL_BASE = URL_BASE
 
   ngOnInit() {
     this.userState$.subscribe(userState => {
       this.user = userState.user;
-      this.tienda = userState.user.tienda_data ?? {} as Tienda
+      this.tienda = userState.user.tienda_data ?? {} as Tienda;
     });
   }
-  isopenSidebar = this.sidebarService.open
-  openSidebar() {
 
-    this.open.set(true);
+  toggleUserMenu() {
+    this.userMenuOpen = !this.userMenuOpen;
   }
 
+  closeUserMenu() {
+    this.userMenuOpen = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.user-menu-container')) {
+      this.userMenuOpen = false;
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey() {
+    this.userMenuOpen = false;
+  }
+
+  navigateTo(path: string) {
+    this.router.navigate([path]);
+    this.userMenuOpen = false;
+    this.onClose();
+  }
+
+  logout() {
+    this.store.dispatch(clearTokensAction());
+    this.store.dispatch(clearUserAction());
+    this.onClose();
+    this.router.navigate(['/login']);
+  }
+
+  logout2() {
+    this.store.dispatch(clearTokensAction());
+    this.store.dispatch(clearUserAction());
+    this.store.dispatch(clearInventariosFromCache());
+    this.onClose();
+    this.router.navigate(['/login']);
+  }
+
+  isActiveRoute(route: string): boolean {
+    return this.router.url === route;
+  }
+
+  protected readonly dialogs = inject(TuiDialogService);
+  private readonly darkMode = inject(TUI_DARK_MODE);
+
+  toggleTheme(event: Event) {
+    event.stopPropagation();
+    this.darkMode.set(!this.darkMode());
+    localStorage.setItem('tui-dark-mode', String(this.darkMode()));
+  }
+
+  public onClose(): void {
+    this.open.set(false);
+  }
+
+  openSidebar() {
+    this.open.set(true);
+  }
 }
