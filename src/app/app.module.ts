@@ -37,6 +37,7 @@ import { TiendaService } from './services/tienda.service';
 import { UserService } from './services/user.service';
 import { VentaService } from './services/venta.service';
 import { AppEffects } from './state/effects/app.effects';
+import { DashboardEffects } from './state/effects/dashboard.effects';
 import { ClienteEffects } from './state/effects/cliente.effects';
 import { InventarioEffects } from './state/effects/inventario.effects';
 import { ProductoEffects } from './state/effects/producto.effects';
@@ -69,6 +70,7 @@ import { GuiaRemisionService } from './services/guia-remision.service';
 		EffectsModule.forRoot([
 			AppEffects,
 			AuthEffects,
+			DashboardEffects,
 			CategoriaEffects,
 			TiendaEffects,
 			UserEffects,

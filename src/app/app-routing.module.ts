@@ -11,99 +11,132 @@ import { AdminlayoutComponent } from './layouts/adminlayout/adminlayout.componen
 import { AuthlayoutComponent } from './layouts/authlayout/authlayout.component';
 import { MainlayoutComponent } from './layouts/mainlayout/mainlayout.component';
 
-import { ComprasComponent } from './pages/compras/compras.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { HacerventaComponent } from './pages/hacerventa/hacerventa.component';
-import { LoginComponent } from './pages/login/login.component';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { PerfilComponent } from './pages/perfil/perfil.component';
-import { ProductosComponent } from './pages/productos/productos.component';
-
-import { TiendasComponent } from './pages/tiendas/tiendas.component';
-import { VentasComponent } from './pages/ventas/ventas.component';
-
-import { MyaccountComponent } from './components/settingscomponents/myaccount/myaccount.component';
-import { PermisossettingsComponent } from './components/settingscomponents/permisossettings/permisossettings.component';
-import { SeguridadComponent } from './components/settingscomponents/seguridad/seguridad.component';
-import { SettingslayoutComponent } from './components/settingscomponents/settingslayout/settingslayout.component';
-import { TemasSettingsComponent } from './components/settingscomponents/temassettings/temassettings.component';
-
-
 import { normalUserGuard } from './guards/appuser.guard';
-import { AdminhistoryComponent } from './pages/admin/adminhistory/adminhistory.component';
-import { AdminhomeComponent } from './pages/admin/adminhome/adminhome.component';
-import { AdminmanagestoreComponent } from './pages/admin/adminmanagestore/adminmanagestore.component';
-import { AdminsettingsComponent } from './pages/admin/adminsettings/adminsettings.component';
-import { AdmintiendadetailComponent } from './pages/admin/admintiendadetail/admintiendadetail.component';
-import { ClientesComponent } from './pages/clientes/clientes.component';
-import { ProveedoresComponent } from './pages/proveedores/proveedores.component';
-import { PedidosComponent } from './pages/pedidos/pedidos.component';
-import { GuiaRemisionComponent } from './pages/guia-remision/guia-remision.component';
 
 const routes: Routes = [
-	// Rutas para USUARIOS NORMALES - Solo accesibles por usuarios no-superusuarios
 	{
 		path: 'app',
 		component: MainlayoutComponent,
 		canActivate: [authGuard, normalUserGuard()],
 		canActivateChild: [authGuard],
 		children: [
-			{ path: '', component: DashboardComponent },
-
-			{ path: 'ventas', component: VentasComponent },
-			{ path: 'ventas/crear', component: HacerventaComponent },
-			{ path: 'productos', component: ProductosComponent },
-
-			{ path: 'perfil', component: PerfilComponent },
-			{ path: 'clientes', component: ClientesComponent },
-			{ path: 'tiendas', component: TiendasComponent },
-			{ path: 'compras', component: ComprasComponent },
-			{ path: 'pedidos', component: PedidosComponent },
-			{ path: 'proveedores', component: ProveedoresComponent },
-			{ path: 'guia-remision', component: GuiaRemisionComponent },
+			{
+				path: '',
+				loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
+			},
+			{
+				path: 'ventas',
+				loadComponent: () => import('./pages/ventas/ventas.component').then(m => m.VentasComponent)
+			},
+			{
+				path: 'ventas/crear',
+				loadComponent: () => import('./pages/hacerventa/hacerventa.component').then(m => m.HacerventaComponent)
+			},
+			{
+				path: 'productos',
+				loadComponent: () => import('./pages/productos/productos.component').then(m => m.ProductosComponent)
+			},
+			{
+				path: 'perfil',
+				loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent)
+			},
+			{
+				path: 'clientes',
+				loadComponent: () => import('./pages/clientes/clientes.component').then(m => m.ClientesComponent)
+			},
+			{
+				path: 'tiendas',
+				loadComponent: () => import('./pages/tiendas/tiendas.component').then(m => m.TiendasComponent)
+			},
+			{
+				path: 'compras',
+				loadComponent: () => import('./pages/compras/compras.component').then(m => m.ComprasComponent)
+			},
+			{
+				path: 'pedidos',
+				loadComponent: () => import('./pages/pedidos/pedidos.component').then(m => m.PedidosComponent)
+			},
+			{
+				path: 'proveedores',
+				loadComponent: () => import('./pages/proveedores/proveedores.component').then(m => m.ProveedoresComponent)
+			},
+			{
+				path: 'guia-remision',
+				loadComponent: () => import('./pages/guia-remision/guia-remision.component').then(m => m.GuiaRemisionComponent)
+			},
 			{
 				path: 'settings',
-				component: SettingslayoutComponent,
+				loadComponent: () => import('./components/settingscomponents/settingslayout/settingslayout.component').then(m => m.SettingslayoutComponent),
 				children: [
 					{ path: '', redirectTo: 'cuenta', pathMatch: 'full' },
-					{ path: 'cuenta', component: MyaccountComponent },
-					{ path: 'seguridad', component: SeguridadComponent },
-					{ path: 'permisos', component: PermisossettingsComponent },
-					{ path: 'temas', component: TemasSettingsComponent },
+					{
+						path: 'cuenta',
+						loadComponent: () => import('./components/settingscomponents/myaccount/myaccount.component').then(m => m.MyaccountComponent)
+					},
+					{
+						path: 'seguridad',
+						loadComponent: () => import('./components/settingscomponents/seguridad/seguridad.component').then(m => m.SeguridadComponent)
+					},
+					{
+						path: 'permisos',
+						loadComponent: () => import('./components/settingscomponents/permisossettings/permisossettings.component').then(m => m.PermisossettingsComponent)
+					},
+					{
+						path: 'temas',
+						loadComponent: () => import('./components/settingscomponents/temassettings/temassettings.component').then(m => m.TemasSettingsComponent)
+					},
 				]
 			},
 		]
 	},
-	// Rutas para SUPERUSUARIOS - Solo accesibles por superusuarios
 	{
 		path: 'admin',
 		component: AdminlayoutComponent,
 		canActivate: [authGuard, superUserGuard()],
 		canActivateChild: [authGuard],
 		children: [
-			{ path: '', component: AdminhomeComponent },
-			{ path: 'history', component: AdminhistoryComponent },
-			{ path: 'config', component: AdminsettingsComponent },
-			{ path: 'store', component: AdminmanagestoreComponent },
-			{ path: 'store/:id', component: AdmintiendadetailComponent },
-
+			{
+				path: '',
+				loadComponent: () => import('./pages/admin/adminhome/adminhome.component').then(m => m.AdminhomeComponent)
+			},
+			{
+				path: 'history',
+				loadComponent: () => import('./pages/admin/adminhistory/adminhistory.component').then(m => m.AdminhistoryComponent)
+			},
+			{
+				path: 'config',
+				loadComponent: () => import('./pages/admin/adminsettings/adminsettings.component').then(m => m.AdminsettingsComponent)
+			},
+			{
+				path: 'store',
+				loadComponent: () => import('./pages/admin/adminmanagestore/adminmanagestore.component').then(m => m.AdminmanagestoreComponent)
+			},
+			{
+				path: 'store/:id',
+				loadComponent: () => import('./pages/admin/admintiendadetail/admintiendadetail.component').then(m => m.AdmintiendadetailComponent)
+			},
 		]
 	},
-	// Ruta de login
 	{
 		path: 'login',
 		component: AuthlayoutComponent,
 		canActivate: [loginGuard],
-		children: [{ path: '', component: LoginComponent }]
+		children: [
+			{
+				path: '',
+				loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
+			}
+		]
 	},
-	// Redirección por defecto basada en rol
 	{
 		path: '',
 		canActivate: [authGuard, roleRedirectGuard()],
 		children: []
 	},
-	// Página 404
-	{ path: '**', component: NotFoundComponent }
+	{
+		path: '**',
+		loadComponent: () => import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent)
+	}
 ];
 
 @NgModule({

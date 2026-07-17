@@ -3,7 +3,11 @@ import { AuthService } from '@/app/services/auth.service';
 import { saveAuthDataToLocalStorage } from '@/app/services/utils/localstorage-functions';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map, of } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { loadTiendasAction } from '../actions/tienda.actions';
+import { loadUserAction } from '../actions/user.actions';
+import { AppState } from '../app.state';
 import {
     checkTokenAction,
     checkTokenActionFail,
@@ -19,7 +23,7 @@ import {
 @Injectable()
 export class AuthEffects {
 
-    constructor(private actions$: Actions, private authService: AuthService) { }
+    constructor(private actions$: Actions, private authService: AuthService, private store: Store<AppState>) { }
 
 
     loginEffect = createEffect(() =>
@@ -91,5 +95,17 @@ export class AuthEffects {
                 )
             )
         )
+    );
+
+    afterAuthSuccess$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(checkTokenActionSuccess),
+                tap(() => {
+                    this.store.dispatch(loadUserAction());
+                    this.store.dispatch(loadTiendasAction());
+                })
+            ),
+        { dispatch: false }
     );
 }
