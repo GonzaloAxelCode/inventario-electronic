@@ -1,10 +1,11 @@
-import { PAGE_SIZE_PRODUCTS } from '@/app/services/utils/pages-sizes';
+import { PAGE_SIZE_PRODUCTS, PAGE_SIZE_VENTAS } from '@/app/services/utils/pages-sizes';
 import { cargarProductosMenorStock, loadInventarios } from '@/app/state/actions/inventario.actions';
 import { loadProductosAction } from '@/app/state/actions/producto.actions';
 import {
     cargarResumenVentas,
     cargarTopProductosVentasHoy,
     cargarVentasRangoFechasTienda,
+    cargarVentasTienda,
     cargarVentasTiendaToday
 } from '@/app/state/actions/venta.actions';
 import { loadUserSuccess } from '@/app/state/actions/user.actions';
@@ -31,6 +32,12 @@ export class DashboardEffects {
                     this.store.dispatch(cargarResumenVentas());
                     this.store.dispatch(cargarTopProductosVentasHoy());
                     this.store.dispatch(cargarVentasTiendaToday());
+                    this.store.dispatch(cargarVentasTienda({
+                        from_date: [this.initialRange.from.year, this.initialRange.from.month, this.initialRange.from.day],
+                        to_date: [this.initialRange.to.year, this.initialRange.to.month, this.initialRange.to.day],
+                        page: 1,
+                        page_size: PAGE_SIZE_VENTAS
+                    }));
                     this.store.dispatch(cargarVentasRangoFechasTienda({
                         fromDate: new Date(
                             this.initialRange.from.year,
