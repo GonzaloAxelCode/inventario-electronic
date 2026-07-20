@@ -10,6 +10,7 @@ import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { normalizeSku } from "@/app/services/search-services/producto-search.service";
 import { URL_BASE } from "@/app/services/utils/endpoints";
 import { updateStockMultiple } from "@/app/state/actions/inventario.actions";
+import { loadClientes } from "@/app/state/actions/cliente.actions";
 import { crearVenta, crearVentaExito } from "@/app/state/actions/venta.actions";
 import { AppState } from '@/app/state/app.state';
 import { selectClienteState } from "@/app/state/selectors/cliente.selectors";
@@ -26,8 +27,8 @@ import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiPlatform } from "@taiga-ui/cdk";
 import { TuiAlertService, TuiAppearance, TuiButton, TuiDropdown, TuiExpand, TuiIcon, TuiLabel, TuiLoader, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
-import { TuiCheckbox, TuiChip, TuiComboBox, TuiDataListWrapper, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiSegmented, TuiStepper, TuiSwitch, TuiTooltip } from '@taiga-ui/kit';
-import { TuiAppBar } from '@taiga-ui/layout';
+import { TuiCheckbox, TuiChip, TuiComboBox, TuiDataListWrapper, TuiFade, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiSegmented, TuiStepper, TuiSwitch, TuiTab, TuiTabs, TuiTooltip } from '@taiga-ui/kit';
+import { TuiAppBar, TuiHeader, TuiNavigation } from '@taiga-ui/layout';
 import { TuiComboBoxModule, TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout } from 'rxjs';
 
@@ -35,14 +36,12 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
   selector: 'app-hacerventa',
   standalone: true,
   imports: [
-    /* Angular */
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     AsyncPipe,
     NgForOf,
     TuiSwitch,
-    /* Taiga UI - Core */
     TuiPlatform,
     TuiButton,
     TuiCheckbox,
@@ -54,8 +53,6 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
     TuiTextfieldDropdownDirective,
     TuiAppearance,
     TuiTooltip,
-
-    /* Taiga UI - Kit */
     TuiChip,
     TuiComboBox,
     TuiDataListWrapper,
@@ -66,26 +63,21 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
     TuiRadio,
     TuiStepper,
     TuiExpand,
-    TuiButton,
-    TuiAppearance,
-    /* Taiga UI - Addon */
     TuiAmountPipe,
     TuiTable,
-
-    /* Taiga UI - Legacy */
     TuiComboBoxModule,
     TuiInputModule,
     TuiSelectModule,
     TuiTextfieldControllerModule,
-
-    /* Layout */
     TuiAppBar,
-
-    /* Componentes propios */
+    TuiHeader,
+    TuiNavigation,
     BarcodeScannerComponent,
     SelectclienteforsaleComponent,
     TuiSegmented,
-
+    TuiTabs,
+    TuiTab,
+    TuiFade,
   ],
   providers: [
     { provide: 'Pythons', useValue: ['Python One', 'Python Two', 'Python Three'] },
@@ -104,6 +96,8 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
 })
 export class HacerventaComponent implements OnInit, OnDestroy {
   vistaActiva: 'buscar' | 'nuevo' | 'nuevo_dni_fisico' = 'buscar';
+  activeTab: 'normal' | 'detallada' = 'normal';
+  activeTabIndex = 0;
   protected expanded = false;
   private destroy$ = new Subject<void>();
   errorClientNotFound = false;
@@ -120,8 +114,12 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   listMetodosPago = [" YAPE", "PLIN", "Transferencia(No disponible)", "Efectivo"]
   tipoComprobantes = ["Boleta", "Factura", "Anonima"]
   formasPago = ["Contado"]
+  monedas = ["PEN - Sol Peruano", "USD - Dolar Americano"]
+  monedaControl = this.fb.control(this.monedas[0]);
   protected readonly options = { updateOn: 'blur' } as const;
   loaderSearchCliente = false;
+  today: string;
+  currentTime: string;
 
   mostrarCaja = true;
 
@@ -180,6 +178,10 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
     docExistenteControl?.updateValueAndValidity();
     docNuevoControl?.updateValueAndValidity();
+  }
+
+  onTabChange(index: number) {
+    this.activeTab = index === 0 ? 'normal' : 'detallada';
   }
   // Detectar click dentro del div
   clickedInside() {
@@ -297,6 +299,9 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
   constructor(private fb: FormBuilder, private consultaService: ConsultaService, private cdr: ChangeDetectorRef, private actions$: Actions) {
+    const now = new Date();
+    this.today = now.toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    this.currentTime = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     this.loadingCreateVenta$ = this.store.select(selectVenta);
     this.showVentaDetailTemporary$ = this.store.select(selectVenta)
     this.store.select(selectUsersState).pipe(
@@ -347,6 +352,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   }
   documents: string[] = []
   ngOnInit() {
+    this.store.dispatch(loadClientes());
 
     this.ventaForm.get('is_send_sunat')?.valueChanges
       .subscribe(value => {
@@ -639,6 +645,50 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   }
 
 
+
+  convertirNumeroALetras(numero: number): string {
+    const unidades = ['', 'UN', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'];
+    const decenas = ['', 'DIEZ', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA', 'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA'];
+    const especiales = ['DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISEIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE'];
+    const centenas = ['', 'CIENTO', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS', 'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS'];
+
+    if (numero === 0) return 'CERO CON 00/100 SOLES';
+    if (numero === 100) return 'CIEN CON 00/100 SOLES';
+
+    const parteEntera = Math.floor(numero);
+    const parteDecimal = Math.round((numero - parteEntera) * 100);
+
+    const convertirGrupo = (n: number): string => {
+      if (n === 0) return '';
+      if (n < 10) return unidades[n];
+      if (n < 20) return especiales[n - 10];
+      if (n < 100) {
+        const d = Math.floor(n / 10);
+        const u = n % 10;
+        return decenas[d] + (u > 0 ? ' Y ' + unidades[u] : '');
+      }
+      if (n < 1000) {
+        const c = Math.floor(n / 100);
+        const resto = n % 100;
+        return centenas[c] + (resto > 0 ? ' ' + convertirGrupo(resto) : '');
+      }
+      if (n < 1000000) {
+        const miles = Math.floor(n / 1000);
+        const resto = n % 1000;
+        return (miles === 1 ? 'MIL' : convertirGrupo(miles) + ' MIL') + (resto > 0 ? ' ' + convertirGrupo(resto) : '');
+      }
+      if (n < 1000000000) {
+        const millones = Math.floor(n / 1000000);
+        const resto = n % 1000000;
+        return (millones === 1 ? 'UN MILLON' : convertirGrupo(millones) + ' MILLONES') + (resto > 0 ? ' ' + convertirGrupo(resto) : '');
+      }
+      return 'NUMERO DEMASIADO GRANDE';
+    };
+
+    const letras = convertirGrupo(parteEntera);
+    const decimal = parteDecimal.toString().padStart(2, '0');
+    return `${letras} CON ${decimal}/100 SOLES`;
+  }
 
   documentoValidator(tipoControl: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

@@ -1,0 +1,28 @@
+:host {
+    display: block;
+}
+
+// Animación sutil para las cards
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Aplicar animación a las cards del grid
+:host ::ng-deep {
+    .group {
+        animation: fadeInUp 0.4s ease-out both;
+
+        @for $i from 1 through 20 {
+            &:nth-child(#{$i}) {
+                animation-delay: #{$i * 0.05}s;
+            }
+        }
+    }
+}

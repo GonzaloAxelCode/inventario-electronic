@@ -5,6 +5,7 @@ import { TiendaState } from '@/app/models/tienda.models';
 import { DialogEditInventarioDetailService } from '@/app/services/dialogs-services/dialog-edit-inventario.service';
 import { QuerySearchInventario } from '@/app/services/inventario.service';
 import { URL_BASE } from '@/app/services/utils/endpoints';
+import { loadCategorias } from '@/app/state/actions/categoria.actions';
 import { clearSearchInventarios, createInventario, eliminarInventarioAction, searchInventarios } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
@@ -24,9 +25,9 @@ import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { tuiCountFilledControls } from '@taiga-ui/cdk';
-import { TuiAppearance, TuiButton, TuiDataList, TuiExpand, TuiTextfield } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiBadge, TuiChip, TuiConfirmData, TuiConfirmService, TuiDataListWrapper, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiSkeleton, TuiStatus, tuiValidationErrorsProvider } from '@taiga-ui/kit';
-import { TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
+import { TuiAppearance, TuiButton, TuiDataList, TuiExpand, TuiIcon, TuiTextfield, TuiTitle } from '@taiga-ui/core';
+import { TUI_CONFIRM, TuiBadge, TuiChip, TuiConfirmData, TuiConfirmService, TuiDataListWrapper, TuiFade, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiSkeleton, TuiStatus, TuiTab, TuiTabs, tuiValidationErrorsProvider } from '@taiga-ui/kit';
+import { TuiBlockStatus, TuiHeader, TuiNavigation, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputModule, TuiInputRangeModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
@@ -60,7 +61,17 @@ import { map, Observable, Subject, takeUntil } from 'rxjs';
     TuiBlockStatus,
     TuiPreview,
     TuiPreviewTitle,
-    TuiPreviewDialogDirective, TuiTextfield, FormsModule, ReactiveFormsModule
+    TuiPreviewDialogDirective,
+    TuiTabs,
+    TuiTab,
+    TuiFade,
+    TuiIcon,
+    TuiTitle,
+    TuiHeader,
+    TuiNavigation,
+    TuiTextfield,
+    FormsModule,
+    ReactiveFormsModule
   ],
   templateUrl: './tableinventario.component.html',
   providers: [
@@ -115,7 +126,6 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
   protected readonly form = new FormGroup({
     nombre: new FormControl(),
     producto_sku: new FormControl(),
-    categoria: new FormControl<any>(null),
     proveedor: new FormControl<any>(null),
     activo: new FormControl(),
     stockRange: new FormControl<[number, number] | null>(null),
@@ -126,6 +136,8 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
   selectCategorias$?: Observable<Categoria[]>;
   tiendaUser!: number
   isTheSearchWasDone: boolean = false
+  selectedCategoriaId: number | null = null
+  activeTabIndex = 0
   compareCategorias = (a: Categoria, b: Categoria) => a && b && a.id === b.id;
 
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
@@ -149,10 +161,28 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
   clearSearch() {
     this.store.dispatch(clearSearchInventarios());
     this.isTheSearchWasDone = false;
+    this.selectedCategoriaId = null;
     // Resetear el scroll infinito a la lista normal
     this.currentIndex = 0;
     this.inventariosSearchToShow = [];
     this.loadInitialBatch();
+  }
+
+  onCategoriaTabChange(categoriaId: number | null) {
+    this.selectedCategoriaId = categoriaId;
+    this.onSubmitSearch();
+  }
+
+  onTabChange(index: number) {
+    if (index === 0) {
+      this.onCategoriaTabChange(null);
+    } else {
+      this.selectCategorias$?.pipe(takeUntil(this.destroy$)).subscribe(cats => {
+        if (cats[index - 1]) {
+          this.onCategoriaTabChange(cats[index - 1].id ?? null);
+        }
+      });
+    }
   }
 
   onSubmitSearch() {
@@ -161,7 +191,7 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
     const searchQuery: Partial<QuerySearchInventario> = {
       nombre: (this.form.value.nombre || "").trim(),
       producto_sku: (this.form.value.producto_sku || "").trim(),
-      categoria: this.form.value?.categoria?.id || 0,
+      categoria: this.selectedCategoriaId || 0,
       stock_min: values.stockRange?.[0] ?? null,
       stock_max: values.stockRange?.[1] ?? null,
       precio_compra_min: values.precioCompraRange?.[0] ?? null,
@@ -236,6 +266,8 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.store.dispatch(loadCategorias());
+
     // Suscribirse al estado del inventario
     this.store.select(selectInventario)
       .pipe(takeUntil(this.destroy$))

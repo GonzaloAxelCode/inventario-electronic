@@ -16,8 +16,7 @@ export class DialogService {
         const options: Partial<TuiDialogOptions<any>> = {
             dismissible: true,
             size: "page",
-
-
+            header: false,
         };
 
         return this.dialogService.open(component, options);

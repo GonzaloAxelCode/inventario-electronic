@@ -7,20 +7,19 @@
             <tui-icon icon="@tui.gitlab" />
             <span tuiFade>Gestión de Inventario</span>
           </div>
-
-          <div tuiSubtitle [style.display]="'flex'" [style.gap.rem]="1">
-            <span>120 Items en inventario</span>
-            <span>- 15 Proveedores registrados</span>
-          </div>
         </div>
       </h2>
     </div>
 
     <!-- PESTAÑAS SIN ROUTER -->
-    <nav tuiTabs class="flex flex-wrap gap-2">
+    <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
       <button tuiTab (click)="setTab('inventario')" 
         [class.active-link]="activeTab === 'inventario'">
         Inventario
+      </button>
+      <button tuiTab (click)="setTab('proveedor')" 
+        [class.active-link]="activeTab === 'proveedor'">
+        Proveedores
       </button>
     </nav>
   </header>
@@ -30,8 +29,8 @@
 
       <!-- TAB: INVENTARIO -->
       <ng-container *ngIf="activeTab === 'inventario'">
-        <div class="flex gap-2">
-          <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button" class="my-5 pr-3"
+        <div class="flex gap-2 pb-4">
+          <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button"
             (click)="showDialog()">
             Crear Inventario
           </button>
@@ -42,7 +41,7 @@
 
       <!-- TAB: PROVEEDORES -->
       <ng-container *ngIf="activeTab === 'proveedor'">
-               <app-tableproveedor></app-tableproveedor>
+        <app-tableproveedor></app-tableproveedor>
       </ng-container>
 
     </div>

@@ -1,37 +1,134 @@
-
 .table {
     inline-size: 100%;
 }
-    
 
 div[tuiCell] {
-        padding-left: 0;
-        padding-right: 0;
-        box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    box-shadow: none;
 }
+
 .input-select-cantidad {
-
-
-// En tu archivo .scss del componente
-::ng-deep tui-select {
-  .t-input {
-    font-size: 18px !important;
-    
-    padding-top: 4px !important;
-    padding-bottom: 8px !important;
-    line-height: 0 !important;
-    
-  
-  }
+    ::ng-deep tui-select {
+        .t-input {
+            font-size: 18px !important;
+            padding-top: 4px !important;
+            padding-bottom: 8px !important;
+            line-height: 0 !important;
+        }
+    }
 }
 
-
-}
-	.full {
+.full {
     inline-size: 100%;
- 
+
     & > * {
         flex: 1;
         min-inline-size: 0;
+    }
+}
+
+// Smooth scrolling for product area
+.overflow-y-auto {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.15);
+        border-radius: 20px;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.25);
+        }
+    }
+}
+
+// Product card hover effects
+.group:hover {
+    .input-select-cantidad {
+        ::ng-deep .t-input-wrapper {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+    }
+}
+
+// Finalizar Venta button animations
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4), 0 4px 20px rgba(16, 185, 129, 0.25);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0), 0 4px 30px rgba(16, 185, 129, 0.35);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+.btn-finalizar {
+    position: relative;
+    overflow: hidden;
+    border-radius: 9999px !important;
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.15) 50%,
+            transparent 100%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 3s ease-in-out infinite;
+        pointer-events: none;
+        border-radius: inherit;
+    }
+
+    &:hover:not(:disabled) {
+        transform: translateY(-2px) scale(1.01);
+        animation: pulse-glow 2s ease-in-out infinite;
+
+        .btn-icon {
+            transform: scale(1.2) rotate(-5deg);
+        }
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0) scale(0.99);
+        animation: none;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        filter: grayscale(0.5);
+    }
+
+    .btn-icon {
+        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 }
