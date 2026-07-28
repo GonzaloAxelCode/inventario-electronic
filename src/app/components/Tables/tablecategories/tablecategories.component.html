@@ -52,12 +52,12 @@
 
                                 <!-- Botones de acción -->
                                 <div class="grid grid-cols-2 gap-2">
-                                    <button appearance="positive" iconStart="@tui.pencil" tuiButton type="button"
-                                        (click)="showDialogUpdate(categoria)"
-                                        [disabled]="!(userPermissions$ | async)?.can_delete_category" size="m"
-                                        class="w-full text-xs">
-                                        Editar
-                                    </button>
+                    <button appearance="positive" iconStart="@tui.pencil" tuiButton type="button"
+                        (click)="showDialogUpdate(categoria)"
+                        [disabled]="!(userPermissions$ | async)?.can_modify_category" size="m"
+                        class="w-full text-xs">
+                        Editar
+                    </button>
 
                                     <button [disabled]="!(userPermissions$ | async)?.can_delete_category"
                                         [appearance]="(userPermissions$ | async)?.can_delete_category ? 'error' : 'secondary-neutralscale'"
@@ -122,12 +122,12 @@
 
                                         <td tuiTd>
                                             <div class="flex flex-col gap-2 justify-center">
-                                                <button appearance="positive" iconStart="@tui.pencil" tuiButton
-                                                    type="button" (click)="showDialogUpdate(categoria)"
-                                                    [disabled]="!(userPermissions$ | async)?.can_delete_category"
-                                                    class="whitespace-nowrap">
-                                                    Editar
-                                                </button>
+                                <button appearance="positive" iconStart="@tui.pencil" tuiButton
+                                    type="button" (click)="showDialogUpdate(categoria)"
+                                    [disabled]="!(userPermissions$ | async)?.can_modify_category"
+                                    class="whitespace-nowrap">
+                                    Editar
+                                </button>
 
                                                 <button [disabled]="!(userPermissions$ | async)?.can_delete_category"
                                                     [appearance]="(userPermissions$ | async)?.can_delete_category ? 'error' : 'secondary-neutralscale'"

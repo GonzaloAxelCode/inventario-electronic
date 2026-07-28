@@ -18,6 +18,7 @@ import { TableproductComponent } from '@/app/components/Tables/tableproduct/tabl
 import { DialogCreateCategoriaService } from '@/app/services/dialogs-services/dialog-create-categoria.service';
 import { DialogCreateProductService } from '@/app/services/dialogs-services/dialog-create-product.service';
 import { PAGE_SIZE_PRODUCTS } from '@/app/services/utils/pages-sizes';
+import { loadCategorias } from '@/app/state/actions/categoria.actions';
 import { loadProductosAction } from '@/app/state/actions/producto.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectProducto } from '@/app/state/selectors/producto.selectors';
@@ -111,6 +112,7 @@ export class ProductosComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.store.dispatch(loadCategorias());
     this.store.select(selectProducto).subscribe((state) => {
       this.loading = state.loadingProductos || false;
     });

@@ -34,7 +34,7 @@ export class TablecategoriesComponent implements OnInit {
   allColumns = [
     { key: 'id', label: 'ID' },
     { key: 'nombre', label: 'Nombre' },
-    { key: 'descripccion', label: 'Descripccion' },
+    { key: 'descripcion', label: 'Descripción' },
     { key: 'siglas_nombre_categoria', label: 'Abre' },
 
   ];
