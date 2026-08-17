@@ -1,5 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import {
@@ -41,6 +42,9 @@ import { RegistrarpedidoComponent } from '@/app/components/pedidoscomponents/reg
 export class PedidosComponent implements OnInit {
 
   private store = inject(Store<AppState>);
+  private route = inject(ActivatedRoute);
+  private location = inject(Location);
+  private cdr = inject(ChangeDetectorRef);
 
   validTabs = ['historial', 'crear'] as const;
   activeTab: 'historial' | 'crear' = 'historial';
@@ -52,10 +56,24 @@ export class PedidosComponent implements OnInit {
     const fromDate = firstDay.toISOString().split('T')[0];
     const toDate = today.toISOString().split('T')[0];
     this.store.dispatch(cargarPedidos({ fromDate, toDate }));
+
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment && this.isValidTab(fragment)) {
+        this.activeTab = fragment as typeof this.activeTab;
+        this.activeTabIndex = this.validTabs.indexOf(fragment as any);
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   onTabChange(index: number) {
-    this.activeTab = this.validTabs[index];
+    const tab = this.validTabs[index];
+    this.activeTab = tab;
     this.activeTabIndex = index;
+    this.location.replaceState(`/app/pedidos#${tab}`);
+  }
+
+  private isValidTab(tab: string): boolean {
+    return (this.validTabs as readonly string[]).includes(tab);
   }
 }

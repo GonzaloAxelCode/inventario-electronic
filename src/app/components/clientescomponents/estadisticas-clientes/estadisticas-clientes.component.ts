@@ -30,14 +30,6 @@ export class EstadisticasClientesComponent {
     { nombre: 'Pedro Sánchez', total: 620.00 },
   ];
 
-  // Datos para gráfico de barras - Nuevos clientes por semana
-  nuevosClientesSemana = [
-    { semana: 'Sem 1', cantidad: 5 },
-    { semana: 'Sem 2', cantidad: 8 },
-    { semana: 'Sem 3', cantidad: 12 },
-    { semana: 'Sem 4', cantidad: 7 },
-  ];
-
   // Datos para gráfico de barras - Nuevos clientes por mes
   nuevosClientesMes = [
     { mes: 'Ene', cantidad: 15 },
@@ -48,11 +40,6 @@ export class EstadisticasClientesComponent {
     { mes: 'Jun', cantidad: 28 },
   ];
 
-  // Valores para el gráfico de barras
-  barValues = [5, 8, 12, 7];
-  barLabels = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
-
   // Total de nuevos clientes
-  totalNuevosClientesSemana = this.nuevosClientesSemana.reduce((sum, item) => sum + item.cantidad, 0);
   totalNuevosClientesMes = this.nuevosClientesMes.reduce((sum, item) => sum + item.cantidad, 0);
 }

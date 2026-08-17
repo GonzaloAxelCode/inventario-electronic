@@ -1,3 +1,2 @@
-
-<app-sidenav></app-sidenav>
-
+<app-sidenav *ngIf="layoutService.isSidebar()"></app-sidenav>
+<app-topnav *ngIf="layoutService.isTopnav()"></app-topnav>

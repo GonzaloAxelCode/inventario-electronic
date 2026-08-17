@@ -45,7 +45,7 @@ export interface Pedido {
 }
 
 export interface CreatePedido {
-    cliente: {
+    cliente?: {
         tipo_documento: string;
         numero: string;
         nombre_completo: string;

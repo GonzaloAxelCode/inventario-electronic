@@ -1,0 +1,208 @@
+<!-- Top Navigation Bar -->
+<header class="topnav-header bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
+  <div class="topnav-container">
+    <!-- Logo -->
+    <div class="topnav-logo">
+      <a routerLink="/app" class="logo-link">
+        <img
+          [src]="tienda.logo_img ? tienda.logo_img : 'https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_500,h_210,g_auto/v1764500497/logofinal_pdsf0v.png'"
+          class="logo-img dark:invert" alt="Logo">
+      </a>
+    </div>
+
+    <!-- Desktop Navigation Links -->
+    <div class="topnav-nav-area hidden md:flex">
+      <nav class="topnav-links" #navContainer>
+        <ng-container *ngFor="let item of visibleItems">
+          <div class="nav-item-dropdown-container">
+            <button
+              (click)="toggleItemDropdown($event, item)"
+              class="nav-link text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white">
+              <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" [attr.d]="item.icon"/>
+              </svg>
+              <span>{{ item.label }}</span>
+              <svg class="chevron-down" [class.open]="activeDropdownItem?.label === item.label" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+          </div>
+        </ng-container>
+      </nav>
+
+      <!-- Overflow "Más" Button + Dropdown -->
+      <div class="overflow-menu-container relative" *ngIf="hiddenItems.length > 0">
+        <button
+          (click)="toggleOverflowMenu(); $event.stopPropagation()"
+          class="nav-link text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white cursor-pointer">
+          <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01"/>
+          </svg>
+          <span>Más</span>
+          <svg class="chevron-down" [class.open]="overflowMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+
+        <!-- Items en "Más": abren dropdown igual -->
+        <div *ngIf="overflowMenuOpen"
+          class="overflow-dropdown bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+          <ng-container *ngFor="let item of hiddenItems">
+            <button
+              (click)="toggleItemDropdown($event, item); closeOverflowMenu()"
+              class="overflow-item text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white">
+              <svg class="overflow-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" [attr.d]="item.icon"/>
+              </svg>
+              <span>{{ item.label }}</span>
+              <svg class="chevron-down-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side: User Menu + Mobile Menu Button -->
+    <div class="topnav-right">
+      <!-- User Menu -->
+      <div class="user-menu-container relative hidden md:block">
+        <button
+          (click)="toggleUserMenu(); $event.stopPropagation()"
+          class="user-menu-trigger hover:bg-neutral-100 dark:hover:bg-neutral-700">
+          <div class="user-avatar">
+            {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+          </div>
+          <div class="user-info">
+            <span class="user-name text-neutral-900 dark:text-white">{{ user.username }}</span>
+            <span class="user-role text-neutral-500 dark:text-neutral-400">{{ user.is_superuser ? 'Administrador' : 'Personal' }}</span>
+          </div>
+          <svg class="chevron-icon text-neutral-400" [class.rotate-180]="userMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+
+        <div *ngIf="userMenuOpen" class="user-dropdown bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+          <div class="dropdown-header">
+            <div class="dropdown-avatar">
+              {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+            </div>
+            <div>
+              <p class="dropdown-name text-neutral-900 dark:text-white">{{ user.first_name }} {{ user.last_name }}</p>
+              <p class="dropdown-email text-neutral-500 dark:text-neutral-400">{{ user.username }}</p>
+            </div>
+          </div>
+          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
+          <button (click)="navigateTo('/app/settings/cuenta')" class="dropdown-item text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
+            <svg class="dropdown-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            Mi Cuenta
+          </button>
+          <button (click)="navigateTo('/app/settings/seguridad')" class="dropdown-item text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
+            <svg class="dropdown-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            Seguridad
+          </button>
+          <button (click)="navigateTo('/app/settings/permisos')" class="dropdown-item text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
+            <svg class="dropdown-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            Mis Permisos
+          </button>
+          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
+          <button (click)="toggleTheme($event)" class="dropdown-item text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
+            <app-darkmode></app-darkmode>
+            <span>Tema</span>
+          </button>
+          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
+          <button (click)="logout2()" class="dropdown-item text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">
+            <svg class="dropdown-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <div class="mobile-menu-container md:hidden">
+        <button (click)="toggleMobileMenu(); $event.stopPropagation()" class="mobile-menu-button">
+          <svg class="w-6 h-6 text-neutral-600 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+
+        <div *ngIf="mobileMenuOpen" class="mobile-dropdown bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+          <div class="mobile-dropdown-header">
+            <div class="dropdown-avatar">{{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}</div>
+            <div>
+              <p class="dropdown-name text-neutral-900 dark:text-white">{{ user.first_name }} {{ user.last_name }}</p>
+              <p class="dropdown-email text-neutral-500 dark:text-neutral-400">{{ user.username }}</p>
+            </div>
+          </div>
+          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
+          <nav class="mobile-nav-links">
+            <ng-container *ngFor="let item of allNavItems">
+              <a *ngIf="!item.superuserOnly || user.is_superuser"
+                [routerLink]="item.route"
+                (click)="closeMobileMenu()"
+                [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+                routerLinkActive="nav-link-active"
+                class="mobile-nav-link text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" [attr.d]="item.icon"/>
+                </svg>
+                {{ item.label }}
+              </a>
+            </ng-container>
+          </nav>
+          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
+          <button (click)="toggleTheme($event)" class="dropdown-item text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
+            <app-darkmode></app-darkmode><span>Tema</span>
+          </button>
+          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
+          <button (click)="logout2()" class="dropdown-item text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">
+            <svg class="dropdown-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Layout -->
+<div class="relative flex flex-col h-screen w-full">
+  <div class="flex-1 relative overflow-auto">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<!-- UNICO dropdown universal para todos los links -->
+<div *ngIf="activeDropdownItem?.subItems"
+  class="item-dropdown bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
+  [style.left.px]="dropdownPosition.x"
+  [style.top.px]="dropdownPosition.y"
+  (mouseenter)="onDropdownEnter()"
+  (mouseleave)="onDropdownLeave()">
+  <div class="item-dropdown-header">
+    <svg class="item-dropdown-header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" [attr.d]="activeDropdownItem!.icon"/>
+    </svg>
+    <span class="item-dropdown-header-label">{{ activeDropdownItem!.label }}</span>
+  </div>
+  <div class="item-dropdown-divider"></div>
+  <div class="item-dropdown-grid">
+    <button *ngFor="let sub of activeDropdownItem!.subItems"
+      (click)="navigateTo(sub.route)"
+      class="item-dropdown-card">
+      <div class="item-dropdown-card-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" [attr.d]="sub.icon"/>
+        </svg>
+      </div>
+      <div class="item-dropdown-card-content">
+        <span class="item-dropdown-card-label">{{ sub.label }}</span>
+        <span class="item-dropdown-card-desc" *ngIf="sub.description">{{ sub.description }}</span>
+      </div>
+      <svg class="item-dropdown-card-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </div>
+</div>

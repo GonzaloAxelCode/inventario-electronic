@@ -15,17 +15,28 @@
                 <div class="rounded-lg overflow-hidden">
                     <div *ngIf="(selectCategorias$ | async)?.categorias?.length || 0 > 0">
 
+                        <!-- Barra de búsqueda -->
+                        <div class="px-2 mb-4">
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    [(ngModel)]="searchTerm"
+                                    placeholder="Buscar por nombre o código..."
+                                    class="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400 transition-all"
+                                />
+                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+
                         <!-- Vista de CARDS para móviles -->
                         <div class="block lg:hidden space-y-3 px-2">
-                            <div *ngFor="let categoria of (selectCategorias$ | async)?.categorias"
+                            <div *ngFor="let categoria of filtrarCategorias((selectCategorias$ | async)?.categorias || [])"
                                 class="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-3 border border-neutral-200 dark:border-neutral-700">
 
                                 <!-- Header con ID y nombre -->
                                 <div class="flex gap-3 mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
-                                    <div class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-sm flex items-center justify-center bg-blue-500">
-                                        <span class="text-white font-bold text-lg">{{ categoria.siglas_nombre_categoria }}</span>
-                                    </div>
-
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center gap-2 mb-1">
                                             <span class="text-xs font-medium text-neutral-500 dark:text-neutral-400">
@@ -84,7 +95,7 @@
                                 </thead>
                                 <tbody>
                                     <tr class="transition-colors"
-                                        *ngFor="let categoria of (selectCategorias$ | async)?.categorias">
+                                        *ngFor="let categoria of filtrarCategorias((selectCategorias$ | async)?.categorias || [])">
 
                                         <td tuiTd class="text-center">
                                             <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">
@@ -93,12 +104,7 @@
                                         </td>
 
                                         <td tuiTd>
-                                            <div class="flex items-center gap-3">
-                                                <div class="w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-md flex items-center justify-center bg-blue-500">
-                                                    <span class="text-white font-bold text-xs">{{ categoria.siglas_nombre_categoria }}</span>
-                                                </div>
-                                                <span class="font-semibold text-sm">{{ categoria.nombre }}</span>
-                                            </div>
+                                            <span class="font-semibold text-sm">{{ categoria.nombre }}</span>
                                         </td>
 
                                         <td tuiTd>

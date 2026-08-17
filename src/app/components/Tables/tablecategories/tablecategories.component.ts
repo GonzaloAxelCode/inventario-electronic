@@ -42,11 +42,22 @@ export class TablecategoriesComponent implements OnInit {
   allColumnKeys = this.allColumns.map(c => c.key);
   displayedColumns = [...this.allColumnKeys];
 
+  searchTerm = '';
+
   constructor(private store: Store<AppState>) { }
 
   ngOnInit() {
     this.selectCategorias$ = this.store.select(selectCategoria);
 
+  }
+
+  filtrarCategorias(categorias: Categoria[]): Categoria[] {
+    if (!this.searchTerm.trim()) return categorias;
+    const term = this.searchTerm.toLowerCase();
+    return categorias.filter(c =>
+      c.nombre?.toLowerCase().includes(term) ||
+      c.siglas_nombre_categoria?.toLowerCase().includes(term)
+    );
   }
   getCategoriaValue(proveedor: Categoria, key: string): any {
     return proveedor[key as keyof Categoria];

@@ -24,21 +24,6 @@
       </div>
     </div>
 
-    <!-- Nuevos esta semana -->
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-          <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-          </svg>
-        </div>
-        <div>
-          <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ totalNuevosClientesSemana }}</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Nuevos esta semana</p>
-        </div>
-      </div>
-    </div>
-
     <!-- Nuevos este mes -->
     <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
       <div class="flex items-center gap-3">
@@ -120,22 +105,6 @@
       </div>
     </div>
 
-  </div>
-
-  <!-- Nuevos clientes por semana (gráfico de barras simple) -->
-  <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-    <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-2">Nuevos Clientes - Últimas 4 Semanas</h4>
-    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Ejemplo de gráfico de barras con Taiga UI</p>
-
-    <div class="flex items-end justify-around gap-4 h-48 px-4">
-      <div *ngFor="let item of nuevosClientesSemana" class="flex flex-col items-center gap-2 flex-1">
-        <span class="text-xs font-bold text-neutral-900 dark:text-white">{{ item.cantidad }}</span>
-        <div class="w-full bg-blue-500 rounded-t-lg transition-all duration-500 hover:bg-blue-600"
-          [style.height.px]="(item.cantidad / 12) * 120">
-        </div>
-        <span class="text-xs text-neutral-500 dark:text-neutral-400">{{ item.semana }}</span>
-      </div>
-    </div>
   </div>
 
   <!-- Nota -->

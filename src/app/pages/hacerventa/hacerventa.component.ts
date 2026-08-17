@@ -18,8 +18,9 @@ import { selectInventario } from '@/app/state/selectors/inventario.selectors';
 import { selectCurrenttUser, selectPermissions, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { AsyncPipe, CommonModule, NgForOf } from '@angular/common';
+import { AsyncPipe, CommonModule, Location, NgForOf } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Actions, ofType } from "@ngrx/effects";
 import { Store } from '@ngrx/store';
@@ -95,9 +96,50 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
 
 })
 export class HacerventaComponent implements OnInit, OnDestroy {
+  private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
   vistaActiva: 'buscar' | 'nuevo' | 'nuevo_dni_fisico' = 'buscar';
-  activeTab: 'normal' | 'detallada' = 'normal';
+  activeTab: 'normal' | 'detallada' | 'pedido' = 'normal';
   activeTabIndex = 0;
+  validTabs = ['normal', 'detallada', 'pedido'] as const;
+
+  pedidoSeleccionado: any = null;
+
+  pedidosEjemplo = [
+    {
+      id: 1001,
+      cliente: 'Carlos Ramirez',
+      documento: '10234567890',
+      fecha: '15/08/2026',
+      hora: '10:30 AM',
+      total: 245.80,
+      cantidadItems: 5,
+      estado: 'Pendiente',
+      metodoPago: 'Efectivo'
+    },
+    {
+      id: 1002,
+      cliente: 'Maria Lopez',
+      documento: '45678912',
+      fecha: '16/08/2026',
+      hora: '02:15 PM',
+      total: 189.50,
+      cantidadItems: 3,
+      estado: 'Pendiente',
+      metodoPago: 'Yape'
+    },
+    {
+      id: 1003,
+      cliente: 'Tienda Express SAC',
+      documento: '20543219876',
+      fecha: '17/08/2026',
+      hora: '09:00 AM',
+      total: 1250.00,
+      cantidadItems: 12,
+      estado: 'Pendiente',
+      metodoPago: 'Transferencia'
+    }
+  ];
   protected expanded = false;
   private destroy$ = new Subject<void>();
   errorClientNotFound = false;
@@ -181,7 +223,14 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(index: number) {
-    this.activeTab = index === 0 ? 'normal' : 'detallada';
+    const tab = this.validTabs[index];
+    this.activeTab = tab;
+    this.activeTabIndex = index;
+    this.location.replaceState(`/app/ventas/crear#${tab}`);
+  }
+
+  private isValidTab(tab: string): boolean {
+    return (this.validTabs as readonly string[]).includes(tab);
   }
   // Detectar click dentro del div
   clickedInside() {
@@ -353,6 +402,14 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   documents: string[] = []
   ngOnInit() {
     this.store.dispatch(loadClientes());
+
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment && this.isValidTab(fragment)) {
+        this.activeTab = fragment as typeof this.activeTab;
+        this.activeTabIndex = this.validTabs.indexOf(fragment as any);
+        this.cdr.markForCheck();
+      }
+    });
 
     this.ventaForm.get('is_send_sunat')?.valueChanges
       .subscribe(value => {

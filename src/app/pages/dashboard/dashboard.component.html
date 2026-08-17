@@ -1,25 +1,90 @@
 <div class="p-6 text-zinc-200">
 
-    <!-- 1. Tarjetas de ventas -->
-    <div class="flex flex-col gap-4 pt-4">
-        <app-dashboard-sales-cards></app-dashboard-sales-cards>
-    </div>
+    <!-- Header con tabs -->
+    <header tuiSubheader class="bg-transparent border-none mb-4">
+        <div class="flex gap-4 items-center">
+            <h2 tuiHeader>
+                <div tuiTitle>
+                    <div tuiNavigationLogo>
+                        <tui-icon icon="@tui.gitlab" />
+                        <span tuiFade>Dashboard</span>
+                    </div>
+                </div>
+            </h2>
+        </div>
 
-    <!-- 2. Estadísticas generales -->
-    <div class="pt-6">
-        <app-graficos-inicio></app-graficos-inicio>
-    </div>
+        <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
+            class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
 
-    <!-- 3. Ventas por rango de fecha -->
-    <div class="flex flex-col gap-4 pt-6">
-        <p class="text-2xl font-bold text-slate-700 dark:text-gray-300">Ventas por rango de fecha</p>
-        <app-chartsalesbetweentwodates></app-chartsalesbetweentwodates>
-    </div>
+            <button tuiTab type="button">
+                General
+            </button>
 
-    <!-- 4. Productos más vendidos hoy -->
-    <div class="flex flex-col gap-4 pt-6">
-        <p class="text-2xl font-bold text-slate-700 dark:text-gray-300">Productos más vendidos Hoy</p>
-        <app-dashboard-products-most-sales></app-dashboard-products-most-sales>
+            <button tuiTab type="button">
+                Resumen del Día
+            </button>
+
+            <button tuiTab type="button">
+                Inventario y Alertas
+            </button>
+
+            <button tuiTab type="button">
+                Comparaciones y Rendimiento
+            </button>
+
+        </nav>
+    </header>
+
+    <div>
+        <div class="py-4">
+
+            <!-- TAB: GENERAL -->
+            <ng-container *ngIf="activeTab === 'general'">
+                <!-- Tarjetas de ventas (día, semana, mes) -->
+                <div class="flex flex-col gap-4">
+                    <app-dashboard-sales-cards></app-dashboard-sales-cards>
+                </div>
+
+                <!-- Tendencia de Ventas + Métodos de Pago + Top Productos + Objetivos -->
+                <div class="flex flex-col gap-4 pt-6">
+                    <app-graficos-inicio [activeTab]="activeTab"></app-graficos-inicio>
+                </div>
+
+                <!-- Ventas por rango de fecha -->
+                <div class="flex flex-col gap-4 pt-6">
+                    <p class="text-2xl font-bold text-slate-700 dark:text-gray-300">Ventas por rango de fecha</p>
+                    <app-chartsalesbetweentwodates></app-chartsalesbetweentwodates>
+                </div>
+
+                <!-- Estadísticas generales por mes -->
+                <div class="pt-6">
+                    <app-dashboard-general-stats></app-dashboard-general-stats>
+                </div>
+            </ng-container>
+
+            <!-- TAB: RESUMEN DEL DÍA -->
+            <ng-container *ngIf="activeTab === 'resumen'">
+                <div class="flex flex-col gap-4">
+                    <p class="text-2xl font-bold text-slate-700 dark:text-gray-300">Resumen del Día</p>
+                </div>
+
+                <!-- Resumen diario completo -->
+                <div class="pt-6">
+                    <app-dashboard-daily-summary></app-dashboard-daily-summary>
+                </div>
+            </ng-container>
+
+            <!-- TAB: INVENTARIO Y ALERTAS -->
+            <ng-container *ngIf="activeTab === 'inventario'">
+                <app-alertas-stock></app-alertas-stock>
+            </ng-container>
+
+            <!-- TAB: COMPARACIONES Y RENDIMIENTO -->
+            <ng-container *ngIf="activeTab === 'comparacion'">
+                <app-graficos-inicio [activeTab]="activeTab"></app-graficos-inicio>
+            </ng-container>
+
+        </div>
     </div>
 
 </div>

@@ -55,8 +55,8 @@
 
     <!-- Ring Chart: Distribución por estado -->
     <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Distribución por Estado</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Productos críticos vs advertencia</p>
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Productos al Límite</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cuántos están casi sin nada vs cuántos aún resisten</p>
 
       <div class="chart-wrapper" *ngIf="totalBajoStock > 0; else emptyRing">
         <tui-ring-chart
@@ -90,8 +90,8 @@
 
     <!-- Pie Chart: Distribución por categoría -->
     <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Por Categoría</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Distribución de alertas por categoría</p>
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">¿Qué categorías necesitan reabastecerse?</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cantidad de productos con bajo stock en cada categoría</p>
 
       <div class="chart-wrapper" *ngIf="pieLabels.length > 0; else emptyPie">
         <tui-pie-chart
@@ -119,23 +119,6 @@
       </ng-template>
     </div>
 
-  </div>
-
-  <!-- Barras: Productos por nivel de stock -->
-  <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-    <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Productos por Nivel de Stock</h4>
-    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cantidad de productos en cada rango</p>
-
-    <div class="flex items-end justify-center gap-6 sm:gap-10 h-40 px-4">
-      <div *ngFor="let level of stockLevels" class="flex flex-col items-center gap-2 flex-1 max-w-[120px]">
-        <span class="text-lg font-extrabold text-neutral-900 dark:text-white">{{ level.count }}</span>
-        <div class="w-full rounded-t-xl transition-all duration-500"
-          [style.height.%]="level.count > 0 ? getBarHeight(level.count) : 5"
-          [style.background-color]="level.color">
-        </div>
-        <span class="text-xs font-medium text-neutral-600 dark:text-neutral-400">{{ level.label }} uds</span>
-      </div>
-    </div>
   </div>
 
   <!-- Tabla de productos con bajo stock -->

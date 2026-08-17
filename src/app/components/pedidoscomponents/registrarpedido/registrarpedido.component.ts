@@ -79,7 +79,8 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
   styleUrl: './registrarpedido.component.scss'
 })
 export class RegistrarpedidoComponent implements OnInit, OnDestroy {
-  vistaActiva: 'buscar' | 'nuevo' = 'buscar';
+  vistaActiva: 'buscar' | 'nuevo' | 'sin_cliente' = 'sin_cliente';
+  currentStep = 1;
   protected expanded = false;
   private destroy$ = new Subject<void>();
   errorClientNotFound = false;
@@ -122,6 +123,14 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
   clienteSelected!: Cliente
   @ViewChild('containerAreaProducts') container!: ElementRef<HTMLDivElement>;
 
+  nextStep() {
+    if (this.currentStep < 3) this.currentStep++;
+  }
+
+  prevStep() {
+    if (this.currentStep > 1) this.currentStep--;
+  }
+
   changeModeClient(valor: any) {
     this.vistaActiva = valor;
 
@@ -137,17 +146,25 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
 
     const docExistenteControl = this.pedidoForm.get('documento_cliente_existente');
     const docNuevoControl = this.pedidoForm.get('documento_cliente');
+    const clienteControl = this.pedidoForm.get('cliente');
 
-    if (this.vistaActiva === 'buscar') {
+    if (this.vistaActiva === 'sin_cliente') {
+      docExistenteControl?.clearValidators();
+      docNuevoControl?.clearValidators();
+      clienteControl?.clearValidators();
+    } else if (this.vistaActiva === 'buscar') {
       docExistenteControl?.setValidators([Validators.required]);
       docNuevoControl?.clearValidators();
+      clienteControl?.setValidators([Validators.required]);
     } else {
       docExistenteControl?.clearValidators();
       docNuevoControl?.setValidators([Validators.required]);
+      clienteControl?.setValidators([Validators.required]);
     }
 
     docExistenteControl?.updateValueAndValidity();
     docNuevoControl?.updateValueAndValidity();
+    clienteControl?.updateValueAndValidity();
   }
 
   clickedInside() {
@@ -268,13 +285,13 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
       usuarioId: [this.userId],
       metodoPago: [this.listMetodosPago[3], Validators.required],
       formaPago: [this.formasPago[0], Validators.required],
-      cliente: [null, Validators.required],
-      documento_cliente: ["", [Validators.required]],
+      cliente: [null],
+      documento_cliente: [""],
       nombre_cliente: ["", Validators.required],
       correo_cliente: [""],
       direccion_cliente: [""],
       telefono_cliente: [""],
-      documento_cliente_existente: ["", this.vistaActiva === "buscar" && Validators.required],
+      documento_cliente_existente: [""],
       productos: this.fb.array([], [Validators.required, Validators.minLength(1)]),
       observaciones: [""],
     });
@@ -479,7 +496,7 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
   registrarPedido() {
     const formValue = this.pedidoForm.value;
     const createPedido: CreatePedido = {
-      cliente: {
+      cliente: this.vistaActiva === 'sin_cliente' ? undefined : {
         tipo_documento: formValue.cliente?.ruc?.length === 11 ? '6' : '1',
         numero: formValue.documento_cliente || formValue.cliente?.numero || '',
         nombre_completo: formValue.nombre_cliente || formValue.cliente?.nombre_completo || '',

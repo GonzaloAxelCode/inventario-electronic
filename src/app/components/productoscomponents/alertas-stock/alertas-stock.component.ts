@@ -59,13 +59,6 @@ export class AlertasStockComponent implements OnInit {
   pieLabels: string[] = [];
   pieActiveIndex = NaN;
 
-  // Bar chart: Productos por nivel de stock
-  stockLevels = [
-    { label: '0-3', count: 0, color: '#EF4444' },
-    { label: '4-6', count: 0, color: '#F97316' },
-    { label: '7-10', count: 0, color: '#F59E0B' },
-  ];
-
   constructor() {}
 
   ngOnInit() {
@@ -91,10 +84,6 @@ export class AlertasStockComponent implements OnInit {
       this.pieLabels = Array.from(categoriaMap.keys());
       this.pieValue = Array.from(categoriaMap.values());
 
-      // Stock levels for bar chart
-      this.stockLevels[0].count = products.filter(p => p.inventario.cantidad <= 3).length;
-      this.stockLevels[1].count = products.filter(p => p.inventario.cantidad > 3 && p.inventario.cantidad <= 6).length;
-      this.stockLevels[2].count = products.filter(p => p.inventario.cantidad > 6 && p.inventario.cantidad <= 10).length;
     });
   }
 
@@ -105,12 +94,6 @@ export class AlertasStockComponent implements OnInit {
       return 'text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20';
     }
     return 'text-green-500 bg-green-50 dark:bg-green-900/20';
-  }
-
-  getBarHeight(cantidad: number): number {
-    if (cantidad <= 3) return 100;
-    if (cantidad <= 6) return 65;
-    return 35;
   }
 
   // Ring Chart methods

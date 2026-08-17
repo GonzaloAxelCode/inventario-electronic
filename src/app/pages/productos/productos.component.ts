@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAppearance, TuiButton, TuiDialogService, TuiDropdown, TuiExpand, TuiGroup, TuiIcon, TuiLink, TuiTextfield, TuiTitle } from '@taiga-ui/core';
@@ -12,7 +12,6 @@ import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
 import { ButtonupdateComponent } from "@/app/components/buttonupdate/buttonupdate.component";
-import { DashboardLowStockComponent } from '@/app/components/dashboardcomponents/dashboard-low-stock/dashboard-low-stock.component';
 
 import { TableproductComponent } from '@/app/components/Tables/tableproduct/tableproduct.component';
 import { DialogCreateCategoriaService } from '@/app/services/dialogs-services/dialog-create-categoria.service';
@@ -28,7 +27,6 @@ import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
 import { TablecategoriesComponent } from "../../components/Tables/tablecategories/tablecategories.component";
 import { SubircsvproductosComponent } from "../../components/productoscomponents/subircsvproductos/subircsvproductos.component";
 import { GraficosProductosComponent } from "../../components/productoscomponents/graficos-productos/graficos-productos.component";
-import { AlertasStockComponent } from "../../components/productoscomponents/alertas-stock/alertas-stock.component";
 
 
 @Component({
@@ -50,13 +48,12 @@ import { AlertasStockComponent } from "../../components/productoscomponents/aler
     TuiIcon,
     TuiLink,
     TuiNavigation,
-    TuiRepeatTimes, DashboardLowStockComponent,
+    TuiRepeatTimes,
     TuiTabs,
     TuiTextfield, ButtonupdateComponent,
     TuiTitle, TuiIcon, TuiAvatar, ButtonupdateComponent,
     SubircsvproductosComponent,
-    GraficosProductosComponent,
-    AlertasStockComponent],
+    GraficosProductosComponent],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -74,8 +71,8 @@ export class ProductosComponent implements OnInit {
 
   loading: any = false;
 
-  validTabs = ['productos', 'categorias', 'graficos', 'alertas', 'excel'] as const;
-  activeTab: 'productos' | 'categorias' | 'graficos' | 'alertas' | 'excel' = 'productos';
+  validTabs = ['productos', 'categorias', 'graficos', 'excel'] as const;
+  activeTab: 'productos' | 'categorias' | 'graficos' | 'excel' = 'productos';
   activeTabIndex = 0;
 
   onTabChange(index: number) {
@@ -96,7 +93,7 @@ export class ProductosComponent implements OnInit {
     this.confirm.markAsDirty();
   }
 
-  constructor(private store: Store<AppState>) { }
+  constructor(private store: Store<AppState>, private cdr: ChangeDetectorRef) { }
 
   private readonly dialogservicecreatecategoria = inject(DialogCreateCategoriaService);
   protected showDialogCreateCategoria(): void {
@@ -117,11 +114,13 @@ export class ProductosComponent implements OnInit {
       this.loading = state.loadingProductos || false;
     });
 
-    const fragment = this.route.snapshot.fragment;
-    if (fragment && this.isValidTab(fragment)) {
-      this.activeTab = fragment as typeof this.activeTab;
-      this.activeTabIndex = this.validTabs.indexOf(fragment as any);
-    }
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment && this.isValidTab(fragment)) {
+        this.activeTab = fragment as typeof this.activeTab;
+        this.activeTabIndex = this.validTabs.indexOf(fragment as any);
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   clickRefreshProducts() {

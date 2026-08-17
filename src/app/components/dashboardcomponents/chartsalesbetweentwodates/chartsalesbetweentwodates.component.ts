@@ -38,10 +38,11 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
   private readonly store = inject(Store<AppState>);
   private readonly months$ = inject(TUI_MONTHS);
 
+  private today = new Date();
   private _range = new BehaviorSubject<TuiDayRange>(
     new TuiDayRange(
-      new TuiDay(2025, 11, 1),
-      new TuiDay(2026, 6, 1),
+      new TuiDay(this.today.getFullYear() - 1, this.today.getMonth(), this.today.getDate()),
+      new TuiDay(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
     )
   );
 
@@ -78,7 +79,9 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
     switchMap(range => this.computeLabels$(range))
   );
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.onRangeChange(this._range.value);
+  }
 
   onRangeChange(newRange: TuiDayRange): void {
     this._range.next(newRange);

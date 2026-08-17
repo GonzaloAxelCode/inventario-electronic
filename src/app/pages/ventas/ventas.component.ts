@@ -1,5 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { Component, ChangeDetectorRef, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import {
   TuiHeader,
@@ -42,7 +43,12 @@ import { TuiIcon } from '@taiga-ui/core';
   templateUrl: './ventas.component.html',
   styleUrls: ['./ventas.component.scss']
 })
-export class VentasComponent {
+export class VentasComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  validTabs = ['historial', 'ventas-hoy', 'ultima-venta', 'anuladas-hoy', 'top-productos-hoy'] as const;
 
   activeTab:
     | 'historial'
@@ -52,7 +58,21 @@ export class VentasComponent {
     | 'top-productos-hoy'
     = 'historial';
 
+  ngOnInit() {
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment && this.isValidTab(fragment)) {
+        this.activeTab = fragment as typeof this.activeTab;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  private isValidTab(tab: string): boolean {
+    return (this.validTabs as readonly string[]).includes(tab);
+  }
+
   setTab(tab: typeof this.activeTab) {
     this.activeTab = tab;
+    this.location.replaceState(`/app/ventas#${tab}`);
   }
 }

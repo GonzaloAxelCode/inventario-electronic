@@ -1,6 +1,6 @@
 <div class="max-w-4xl p-6 space-y-8">
 
-  <!-- Tema Oscuro -->
+  <!-- Apariencia -->
   <section>
     <h2 class="text-xl font-bold dark:text-white mb-1 flex items-center gap-2">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -10,8 +10,9 @@
     </h2>
     <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">Personaliza la apariencia de la interfaz.</p>
 
-    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 space-y-4">
-      <!-- Dark Mode Toggle -->
+    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 space-y-6">
+
+      <!-- Dark Mode Segmented Toggle -->
       <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -26,13 +27,48 @@
           <div>
             <p class="text-sm font-medium dark:text-white">Modo Oscuro</p>
             <p class="text-xs text-neutral-500 dark:text-neutral-400">
-              {{ isDarkMode ? 'Activado - Interfaz oscura' : 'Desactivado - Interfaz clara' }}
+              {{ isDarkMode ? 'Interfaz oscura' : 'Interfaz clara' }}
             </p>
           </div>
         </div>
-        <label tuiSwitch>
-          <input type="checkbox" [ngModel]="isDarkMode" (ngModelChange)="toggleDarkMode()">
-        </label>
+        <div class="segmented-toggle">
+          <button class="segmented-option" [class.active]="!isDarkMode" (click)="!isDarkMode || toggleDarkMode()">
+            Claro
+          </button>
+          <button class="segmented-option" [class.active]="isDarkMode" (click)="isDarkMode || toggleDarkMode()">
+            Oscuro
+          </button>
+        </div>
+      </div>
+
+      <!-- Layout Segmented Toggle -->
+      <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+               [class]="isTopnavLayout ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-blue-100 dark:bg-blue-900/30'">
+            <svg *ngIf="!isTopnavLayout" class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6v12"/>
+            </svg>
+            <svg *ngIf="isTopnavLayout" class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-medium dark:text-white">Barra de Navegación</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+              {{ isTopnavLayout ? 'Navegación superior' : 'Navegación lateral' }}
+            </p>
+          </div>
+        </div>
+        <div class="segmented-toggle">
+          <button class="segmented-option" [class.active]="!isTopnavLayout" (click)="!isTopnavLayout || toggleLayout()">
+            Lateral
+          </button>
+          <button class="segmented-option" [class.active]="isTopnavLayout" (click)="isTopnavLayout || toggleLayout()">
+            Superior
+          </button>
+        </div>
       </div>
 
       <!-- Reset -->

@@ -1,6 +1,6 @@
 import { SatisfaccionResponse, VentaService } from '@/app/services/venta.service';
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiHint } from '@taiga-ui/core';
 import { DashboardPaymentMethodsComponent } from '../dashboard-payment-methods/dashboard-payment-methods.component';
@@ -16,6 +16,7 @@ const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   styleUrl: './graficos-inicio.component.scss'
 })
 export class GraficosInicioComponent implements OnInit {
+  @Input() activeTab: string = 'general';
   Math = Math;
   private readonly ventaService = inject(VentaService);
 
@@ -42,7 +43,6 @@ export class GraficosInicioComponent implements OnInit {
   ngOnInit(): void {
     this.loadSatisfaccion();
     this.loadTopProducts();
-    this.loadSparkline();
   }
 
   onMonthAChange(monthName: string): void {
@@ -117,35 +117,6 @@ export class GraficosInicioComponent implements OnInit {
     });
   }
 
-  loadSparkline(): void {
-    this.loadingSparkline = true;
-    this.ventaService.getDailyTrend(20).subscribe({
-      next: (data) => {
-        this.sparklineData = data.results.map(r => r.total);
-        this.sparklineLabels = data.results.map(r => {
-          const d = new Date(r.fecha + 'T12:00:00');
-          return d.getDate() + '/' + (d.getMonth() + 1);
-        });
-        this.sparklineMax = this.sparklineData.length > 0 ? Math.max(...this.sparklineData) : 0;
-        this.sparklineMin = this.sparklineData.length > 0 ? Math.min(...this.sparklineData) : 0;
-        this.loadingSparkline = false;
-      },
-      error: () => {
-        this.sparklineData = [];
-        this.sparklineLabels = [];
-        this.loadingSparkline = false;
-      },
-    });
-  }
-
-  getSparklinePercentChange(): number {
-    if (this.sparklineData.length < 2) return 0;
-    const first = this.sparklineData[0];
-    const last = this.sparklineData[this.sparklineData.length - 1];
-    if (first === 0) return last > 0 ? 100 : 0;
-    return Math.round(((last - first) / first) * 100);
-  }
-
   // 3. Progress circles - Objetivos
   objectives = [
     { label: 'Ventas', current: 92, target: 120, color: '#10B981' },
@@ -161,31 +132,6 @@ export class GraficosInicioComponent implements OnInit {
   selectedYearTop = this.currentYear;
   topProductsMax = 1;
   topProductsColors = ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16'];
-
-  // 6. Sparkline - Tendencia de ventas
-  sparklineData: number[] = [];
-  sparklineLabels: string[] = [];
-  sparklineMax = 0;
-  sparklineMin = 0;
-  loadingSparkline = true;
-
-  getSparklinePath(): string {
-    if (this.sparklineData.length < 2) return '';
-    const w = 200;
-    const h = 50;
-    const step = w / (this.sparklineData.length - 1);
-    return this.sparklineData.map((v, i) => {
-      const x = i * step;
-      const range = this.sparklineMax - this.sparklineMin;
-      const y = range === 0 ? h / 2 : h - ((v - this.sparklineMin) / range) * (h - 10) - 5;
-      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-    }).join(' ');
-  }
-
-  getSparklineArea(): string {
-    if (this.sparklineData.length < 2) return '';
-    return this.getSparklinePath() + ' L 200 50 L 0 50 Z';
-  }
 
   getGaugeDash(): string {
     const circumference = 2 * Math.PI * 45;

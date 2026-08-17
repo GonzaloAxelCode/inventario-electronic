@@ -1,10 +1,14 @@
 import { TableClientesComponent } from '@/app/components/Tables/tableclientes/tableclientes.component';
 import { EstadisticasClientesComponent } from '@/app/components/clientescomponents/estadisticas-clientes/estadisticas-clientes.component';
 import { SorteosClientesComponent } from '@/app/components/clientescomponents/sorteos-clientes/sorteos-clientes.component';
-import { CommonModule } from '@angular/common';
+import { loadClientes } from '@/app/state/actions/cliente.actions';
+import { AppState } from '@/app/state/app.state';
+import { CommonModule, Location } from '@angular/common';
 
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAppearance, TuiButton, TuiDropdown, TuiExpand, TuiGroup, TuiIcon, TuiLink, TuiTextfield, TuiTitle } from '@taiga-ui/core';
 import { TuiAvatar, TuiBlock, TuiFade, TuiItemsWithMore, TuiRadio, TuiTab, TuiTabs, TuiTabsWithMore } from '@taiga-ui/kit';
@@ -50,7 +54,14 @@ import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
   templateUrl: './clientes.component.html',
   styleUrl: './clientes.component.scss'
 })
-export class ClientesComponent {
+export class ClientesComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private location = inject(Location);
+  private cdr = inject(ChangeDetectorRef);
+  private store = inject(Store<AppState>);
+
+  validTabs = ['mis-clientes', 'estadisticas', 'sorteos'] as const;
+
   activeTab:
     | 'mis-clientes'
     | 'ultimos-agregados'
@@ -58,7 +69,22 @@ export class ClientesComponent {
     | 'sorteos'
     = 'mis-clientes';
 
+  ngOnInit() {
+    this.store.dispatch(loadClientes());
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment && this.isValidTab(fragment)) {
+        this.activeTab = fragment as typeof this.activeTab;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
   setTab(tab: typeof this.activeTab) {
     this.activeTab = tab;
+    this.location.replaceState(`/app/clientes#${tab}`);
+  }
+
+  private isValidTab(tab: string): boolean {
+    return (this.validTabs as readonly string[]).includes(tab);
   }
 }

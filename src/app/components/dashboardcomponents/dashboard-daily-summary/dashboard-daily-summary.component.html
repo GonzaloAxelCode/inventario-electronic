@@ -1,0 +1,310 @@
+<div class="flex flex-col gap-6">
+
+  <!-- ==================== MÉTRICAS PRINCIPALES ==================== -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Total Ventas Hoy</p>
+      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">S/ {{ totalVentas | number:'1.2-2' }}</p>
+      <p class="text-[11px] font-semibold mt-1" [ngClass]="getComparisonClass(vsAyer.ventas)">
+        {{ vsAyer.ventas >= 0 ? '+' : '' }}{{ vsAyer.ventas }}% vs ayer
+      </p>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Transacciones</p>
+      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">{{ totalTransacciones }}</p>
+      <p class="text-[11px] font-semibold mt-1" [ngClass]="getComparisonClass(vsAyer.transacciones)">
+        {{ vsAyer.transacciones >= 0 ? '+' : '' }}{{ vsAyer.transacciones }} vs ayer
+      </p>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Ticket Promedio</p>
+      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">S/ {{ ticketPromedio | number:'1.2-2' }}</p>
+      <p class="text-[11px] font-semibold mt-1" [ngClass]="getComparisonClass(vsAyer.ticket)">
+        {{ vsAyer.ticket >= 0 ? '+' : '' }}{{ vsAyer.ticket }}% vs ayer
+      </p>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Clientes Atendidos</p>
+      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">{{ clientesAtendidos }}</p>
+      <p class="text-[11px] font-semibold mt-1" [ngClass]="getComparisonClass(vsAyer.clientes)">
+        {{ vsAyer.clientes >= 0 ? '+' : '' }}{{ vsAyer.clientes }} vs ayer
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== MÉTODOS DE PAGO + HORA PICO ==================== -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Métodos de pago - Dona -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Métodos de Pago de Hoy</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cantidad de transacciones por método</p>
+
+      <div class="flex flex-col items-center gap-4">
+        <tui-pie-chart
+          [value]="donaValue"
+          [(activeItemIndex)]="donaActiveIndex">
+        </tui-pie-chart>
+
+        <div class="flex flex-wrap justify-center gap-x-4 gap-y-2">
+          <div *ngFor="let label of donaLabels; let i = index" class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full" [style.background-color]="donaColores[i]"></span>
+            <span class="text-xs text-neutral-700 dark:text-neutral-300">{{ label }}</span>
+            <span class="text-xs font-bold text-neutral-900 dark:text-white">{{ donaValue[i] }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hora pico de ventas -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Hora Pico de Ventas</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cuándo se realizan más ventas</p>
+      <div class="flex items-end justify-between gap-1 h-32">
+        <div *ngFor="let h of horasPico" class="flex flex-col items-center gap-1 flex-1">
+          <div class="w-full rounded-t-lg transition-all duration-500"
+            [style.height.%]="getBarHeight(h.ventas)"
+            [ngClass]="h.ventas >= 12 ? 'bg-violet-500' : h.ventas >= 8 ? 'bg-violet-300 dark:bg-violet-400' : 'bg-neutral-200 dark:bg-neutral-600'">
+          </div>
+          <span class="text-[9px] text-neutral-400 dark:text-neutral-500">{{ h.hora }}</span>
+        </div>
+      </div>
+      <div class="flex justify-between mt-2">
+        <span class="text-[10px] text-neutral-400">Menos vendido</span>
+        <span class="text-[10px] font-bold text-violet-600 dark:text-violet-400">Hora pico: 12pm</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VENTAS POR CATEGORÍA + ALERTAS ==================== -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Ventas por categoría -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Ventas por Categoría</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Qué categorías generan más ingresos</p>
+      <div class="space-y-3">
+        <div *ngFor="let cat of ventasPorCategoria" class="flex items-center gap-3">
+          <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300 w-20 shrink-0">{{ cat.nombre }}</span>
+          <div class="flex-1">
+            <div class="h-4 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+              <div class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-700"
+                [style.width.%]="(cat.monto / 680) * 100">
+              </div>
+            </div>
+          </div>
+          <div class="text-right w-24">
+            <span class="text-xs font-bold text-neutral-900 dark:text-white">{{ cat.cantidad }} uds</span>
+            <span class="text-[10px] text-neutral-400 block">S/ {{ cat.monto | number:'1.0-0' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen de alertas -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Estado del Inventario Hoy</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Alertas que necesitan atención</p>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="flex flex-col items-center p-3 bg-red-50 dark:bg-red-900/20 rounded-xl">
+          <span class="text-3xl font-extrabold text-red-600 dark:text-red-400">{{ alertas.criticas }}</span>
+          <span class="text-[10px] font-semibold text-red-600 dark:text-red-400 mt-1">Críticas</span>
+        </div>
+        <div class="flex flex-col items-center p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+          <span class="text-3xl font-extrabold text-yellow-600 dark:text-yellow-400">{{ alertas.advertencias }}</span>
+          <span class="text-[10px] font-semibold text-yellow-600 dark:text-yellow-400 mt-1">Advertencia</span>
+        </div>
+        <div class="flex flex-col items-center p-3 bg-neutral-50 dark:bg-neutral-700 rounded-xl">
+          <span class="text-3xl font-extrabold text-neutral-600 dark:text-neutral-300">{{ alertas.sinStock }}</span>
+          <span class="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 mt-1">Sin Stock</span>
+        </div>
+      </div>
+      <div class="mt-4 p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-xl">
+        <p class="text-xs text-neutral-500 dark:text-neutral-400">
+          <span class="font-bold text-neutral-700 dark:text-neutral-300">{{ productosBajoStock.length }}</span> productos necesitan reabastecimiento urgente
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOP PRODUCTOS + ÚLTIMAS VENTAS ==================== -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Top 5 productos más vendidos -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Top 5 Productos Más Vendidos</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Los que más salieron hoy</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs">
+          <thead>
+            <tr class="border-b border-neutral-200 dark:border-neutral-600">
+              <th class="text-left py-2 text-neutral-500 dark:text-neutral-400 font-semibold">#</th>
+              <th class="text-left py-2 text-neutral-500 dark:text-neutral-400 font-semibold">Producto</th>
+              <th class="text-center py-2 text-neutral-500 dark:text-neutral-400 font-semibold">Cant.</th>
+              <th class="text-right py-2 text-neutral-500 dark:text-neutral-400 font-semibold">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let prod of topProductos; let i = index" class="border-b border-neutral-100 dark:border-neutral-700 last:border-0">
+              <td class="py-2 font-bold text-neutral-900 dark:text-white">{{ i + 1 }}</td>
+              <td class="py-2 text-neutral-700 dark:text-neutral-300 font-medium">{{ prod.nombre }}</td>
+              <td class="py-2 text-center text-neutral-600 dark:text-neutral-400">{{ prod.cantidad }}</td>
+              <td class="py-2 text-right font-bold text-neutral-900 dark:text-white">S/ {{ prod.total | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Últimas ventas realizadas -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Últimas Ventas Realizadas</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Las 5 ventas más recientes</p>
+      <div class="space-y-2">
+        <div *ngFor="let venta of ultimasVentas" class="flex items-center justify-between p-2.5 bg-neutral-50 dark:bg-neutral-700/50 rounded-xl">
+          <div class="flex items-center gap-3">
+            <span class="text-[10px] font-bold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/30 px-2 py-0.5 rounded-full">{{ venta.id }}</span>
+            <div>
+              <p class="text-xs font-medium text-neutral-900 dark:text-white">{{ venta.cliente }}</p>
+              <p class="text-[10px] text-neutral-400">{{ venta.hora }} · {{ venta.metodo }}</p>
+            </div>
+          </div>
+          <span class="text-sm font-extrabold text-neutral-900 dark:text-white">S/ {{ venta.total | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MARGEN + ANULADAS ==================== -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Margen de ganancia del día -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Margen de Ganancia del Día</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cuánto ganaste realmente</p>
+
+      <div class="grid grid-cols-3 gap-3 mb-4">
+        <div class="text-center p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
+          <p class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">S/ {{ margenData.ingresos | number:'1.0-0' }}</p>
+          <p class="text-[10px] text-emerald-600 dark:text-emerald-400">Ingresos</p>
+        </div>
+        <div class="text-center p-2 bg-red-50 dark:bg-red-900/20 rounded-xl">
+          <p class="text-lg font-extrabold text-red-500 dark:text-red-400">S/ {{ margenData.costoProductos | number:'1.0-0' }}</p>
+          <p class="text-[10px] text-red-500 dark:text-red-400">Costo</p>
+        </div>
+        <div class="text-center p-2 bg-violet-50 dark:bg-violet-900/20 rounded-xl">
+          <p class="text-lg font-extrabold text-violet-600 dark:text-violet-400">S/ {{ margenData.gananciaBruta | number:'1.0-0' }}</p>
+          <p class="text-[10px] text-violet-600 dark:text-violet-400">Ganancia</p>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="flex justify-between mb-1">
+          <span class="text-[10px] text-neutral-500">Margen total</span>
+          <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">{{ margenData.porcentajeMargen }}%</span>
+        </div>
+        <div class="h-2 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full"
+            [style.width.%]="margenData.porcentajeMargen"></div>
+        </div>
+      </div>
+
+      <div class="space-y-1.5">
+        <div *ngFor="let cat of margenPorCategoria" class="flex items-center justify-between text-[11px]">
+          <span class="text-neutral-600 dark:text-neutral-400">{{ cat.nombre }}</span>
+          <span class="font-bold" [ngClass]="cat.margen >= 45 ? 'text-emerald-600 dark:text-emerald-400' : 'text-yellow-600 dark:text-yellow-400'">
+            {{ cat.margen }}%
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ventas anuladas hoy -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Ventas Anuladas Hoy</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Comprobantes cancelados</p>
+
+      <div class="flex gap-3 mb-4">
+        <div class="flex-1 text-center p-3 bg-red-50 dark:bg-red-900/20 rounded-xl">
+          <p class="text-2xl font-extrabold text-red-600 dark:text-red-400">{{ cantidadAnuladas }}</p>
+          <p class="text-[10px] text-red-600 dark:text-red-400">Anuladas</p>
+        </div>
+        <div class="flex-1 text-center p-3 bg-neutral-50 dark:bg-neutral-700 rounded-xl">
+          <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">S/ {{ totalAnuladas | number:'1.2-2' }}</p>
+          <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Monto perdido</p>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <div *ngFor="let v of ventasAnuladas" class="p-2.5 bg-red-50/50 dark:bg-red-900/10 rounded-xl border border-red-100 dark:border-red-900/30">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30 px-2 py-0.5 rounded-full">{{ v.id }}</span>
+              <span class="text-xs font-medium text-neutral-900 dark:text-white">{{ v.cliente }}</span>
+            </div>
+            <span class="text-xs font-bold text-red-600 dark:text-red-400">-S/ {{ v.total | number:'1.2-2' }}</span>
+          </div>
+          <p class="text-[10px] text-neutral-400 ml-8">{{ v.hora }} · {{ v.motivo }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CLIENTES + DESCUENTOS ==================== -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Clientes nuevos vs recurrentes -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Clientes Nuevos vs Recurrentes</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Quiénes compraron hoy</p>
+
+      <div class="flex flex-col items-center gap-4">
+        <tui-pie-chart
+          [value]="donaClientesValue"
+          [(activeItemIndex)]="donaClientesActiveIndex">
+        </tui-pie-chart>
+
+        <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+          <div *ngFor="let label of donaClientesLabels; let i = index" class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full" [style.background-color]="donaClientesColores[i]"></span>
+            <span class="text-xs text-neutral-700 dark:text-neutral-300">{{ label }}</span>
+            <span class="text-xs font-bold text-neutral-900 dark:text-white">{{ donaClientesValue[i] }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-xl text-center">
+        <p class="text-xs text-neutral-500 dark:text-neutral-400">
+          Retención: <span class="font-bold text-violet-600 dark:text-violet-400">71%</span> de clientes son recurrentes
+        </p>
+      </div>
+    </div>
+
+    <!-- Top productos con más descuento -->
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Productos con Más Descuento</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Descuentos aplicados hoy</p>
+
+      <div class="space-y-2.5">
+        <div *ngFor="let prod of productosDescuento" class="flex items-center justify-between p-2.5 bg-yellow-50/50 dark:bg-yellow-900/10 rounded-xl border border-yellow-100 dark:border-yellow-900/30">
+          <div class="flex-1">
+            <p class="text-xs font-medium text-neutral-900 dark:text-white">{{ prod.nombre }}</p>
+            <div class="flex items-center gap-2 mt-0.5">
+              <span class="text-[10px] text-neutral-400 line-through">S/ {{ prod.precioOriginal | number:'1.2-2' }}</span>
+              <span class="text-[10px] font-bold text-yellow-600 dark:text-yellow-400">-{{ prod.descuento }}%</span>
+              <span class="text-[10px] font-bold text-neutral-900 dark:text-white">S/ {{ prod.precioFinal | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          <span class="text-[10px] text-neutral-400">{{ prod.cantidad }} uds</span>
+        </div>
+      </div>
+
+      <div class="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/10 rounded-xl text-center">
+        <p class="text-xs text-neutral-500 dark:text-neutral-400">
+          Total en descuentos: <span class="font-bold text-yellow-600 dark:text-yellow-400">-S/ {{ totalDescuentoOtorgado | number:'1.2-2' }}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>

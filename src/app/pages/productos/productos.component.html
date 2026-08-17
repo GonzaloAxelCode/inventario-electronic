@@ -33,10 +33,6 @@
             </button>
 
             <button tuiTab type="button">
-                Alertas de Stock
-            </button>
-
-            <button tuiTab type="button">
                 Agregar productos por Excel
             </button>
 
@@ -77,12 +73,6 @@
 
             <ng-container *ngIf="activeTab === 'graficos'">
                 <app-graficos-productos></app-graficos-productos>
-            </ng-container>
-
-                 
-
-                  <ng-container *ngIf="activeTab === 'alertas'">
-                    <app-alertas-stock></app-alertas-stock>
             </ng-container>
 
             <ng-container *ngIf="activeTab === 'excel'">

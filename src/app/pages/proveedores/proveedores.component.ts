@@ -1,8 +1,7 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Location } from '@angular/common';
 
 import {
   TuiHeader,
@@ -45,6 +44,7 @@ export class ProveedoresComponent implements OnInit {
   private store = inject(Store<AppState>);
   private route = inject(ActivatedRoute);
   private location = inject(Location);
+  private cdr = inject(ChangeDetectorRef);
 
   validTabs = ['listado', 'registrar'] as const;
   activeTab: 'listado' | 'registrar' = 'listado';
@@ -53,11 +53,13 @@ export class ProveedoresComponent implements OnInit {
   ngOnInit() {
     this.store.dispatch(loadProveedores());
 
-    const fragment = this.route.snapshot.fragment;
-    if (fragment && this.isValidTab(fragment)) {
-      this.activeTab = fragment as typeof this.activeTab;
-      this.activeTabIndex = this.validTabs.indexOf(fragment as any);
-    }
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment && this.isValidTab(fragment)) {
+        this.activeTab = fragment as typeof this.activeTab;
+        this.activeTabIndex = this.validTabs.indexOf(fragment as any);
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   onTabChange(index: number) {
@@ -68,6 +70,6 @@ export class ProveedoresComponent implements OnInit {
   }
 
   private isValidTab(tab: string): boolean {
-    return this.validTabs.includes(tab as any);
+    return (this.validTabs as readonly string[]).includes(tab);
   }
 }
