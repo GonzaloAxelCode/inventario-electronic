@@ -65,6 +65,10 @@ const routes: Routes = [
 				loadComponent: () => import('./pages/guia-remision/guia-remision.component').then(m => m.GuiaRemisionComponent)
 			},
 			{
+				path: 'tiktok',
+				loadComponent: () => import('./pages/tiktok/tiktok.component').then(m => m.TiktokComponent)
+			},
+			{
 				path: 'settings',
 				loadComponent: () => import('./components/settingscomponents/settingslayout/settingslayout.component').then(m => m.SettingslayoutComponent),
 				children: [
@@ -72,10 +76,6 @@ const routes: Routes = [
 					{
 						path: 'cuenta',
 						loadComponent: () => import('./components/settingscomponents/myaccount/myaccount.component').then(m => m.MyaccountComponent)
-					},
-					{
-						path: 'seguridad',
-						loadComponent: () => import('./components/settingscomponents/seguridad/seguridad.component').then(m => m.SeguridadComponent)
 					},
 					{
 						path: 'permisos',

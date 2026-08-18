@@ -1,37 +1,118 @@
-<div class="form-container">
-	<form [formGroup]="proveedorForm" (ngSubmit)="onSubmit()">
+<div class="form-container p-1">
+  <form [formGroup]="proveedorForm" (ngSubmit)="onSubmit()">
 
-		<div class="grid w-full grid-cols-1 md:grid-cols-2 gap-3">
-			<div class="flex flex-col gap-3">
+    <!-- Datos Generales -->
+    <div class="mb-5">
+      <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Datos Generales</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-				<tui-input formControlName="nombre">
-					Nombre
-					<input placeholder="Ingrese el nombre del proveedor" tuiTextfieldLegacy type="text" />
-				</tui-input>
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nombre *</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="nombre" placeholder="Nombre del proveedor" tuiTextfield />
+          </tui-textfield>
+          <p *ngIf="proveedorForm.get('nombre')?.invalid && proveedorForm.get('nombre')?.touched" class="text-xs text-red-500 mt-1">
+            El nombre es obligatorio (max. 100 caracteres)
+          </p>
+        </div>
 
-				<tui-input class="full-width" formControlName="direccion" placeholder="Ingrese la dirección">
-					Dirección
-				</tui-input>
-			</div>
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Razon Social</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="razon_social" placeholder="Razon social del proveedor" tuiTextfield />
+          </tui-textfield>
+        </div>
 
-						<div class="flex flex-col gap-3">
-				<tui-input class="full-width" formControlName="telefono" placeholder="Ingrese el teléfono" type="tel">
-					Teléfono
-				</tui-input>
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">RUC</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="ruc" placeholder="20512345678" tuiTextfield />
+          </tui-textfield>
+          <p *ngIf="proveedorForm.get('ruc')?.invalid && proveedorForm.get('ruc')?.touched" class="text-xs text-red-500 mt-1">
+            RUC invalido (max. 50 caracteres)
+          </p>
+        </div>
 
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Tipo de Producto</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="tipo_producto" placeholder="Electronica, Accesorios..." tuiTextfield />
+          </tui-textfield>
+        </div>
 
-				<tui-input class="full-width" formControlName="tipo_producto" placeholder="Ingrese el tipo de producto">
-					Tipo de Producto
-				</tui-input>
-			</div>
-		</div>
+      </div>
+    </div>
 
+    <!-- Contacto -->
+    <div class="mb-5">
+      <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Contacto</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-			<button class="w-full mt-5" appearance="textfield" tuiButton size="m" type="submit"  [disabled]="proveedorForm.invalid || !!(loadingCreateProveedor$ | async) ">
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Persona de Contacto</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="contacto" placeholder="Nombre de persona de contacto" tuiTextfield />
+          </tui-textfield>
+        </div>
 
-				Crear
-				<tui-loader size="s" [showLoader]="!!(loadingCreateProveedor$ | async)"></tui-loader>
-			</button>
-			
-	</form>
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Telefono</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="telefono" placeholder="999888777" tuiTextfield />
+          </tui-textfield>
+          <p *ngIf="proveedorForm.get('telefono')?.invalid && proveedorForm.get('telefono')?.touched" class="text-xs text-red-500 mt-1">
+            Telefono invalido (7-15 digitos)
+          </p>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Email</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="email" placeholder="contacto@proveedor.com" tuiTextfield />
+          </tui-textfield>
+          <p *ngIf="proveedorForm.get('email')?.invalid && proveedorForm.get('email')?.touched" class="text-xs text-red-500 mt-1">
+            Ingresa un email valido
+          </p>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Direccion</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="direccion" placeholder="Av. Principal 123" tuiTextfield />
+          </tui-textfield>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Calificacion -->
+    <div class="mb-6">
+      <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Calificacion</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Calificacion (0-5)</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="calificacion" type="number" tuiTextfield [min]="0" [max]="5" placeholder="0" />
+          </tui-textfield>
+          <p *ngIf="proveedorForm.get('calificacion')?.invalid && proveedorForm.get('calificacion')?.touched" class="text-xs text-red-500 mt-1">
+            La calificacion debe ser entre 0 y 5
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex gap-3">
+      <button tuiButton type="submit" appearance="primary-grayscale" size="m"
+        [disabled]="proveedorForm.invalid || !!(loadingCreateProveedor$ | async)">
+        Crear Proveedor
+        <tui-loader size="s" [showLoader]="!!(loadingCreateProveedor$ | async)"></tui-loader>
+      </button>
+      <button tuiButton type="button" appearance="flat" size="m"
+        (click)="proveedorForm.reset({ nombre: '', ruc: '', razon_social: '', direccion: '', telefono: '', email: '', contacto: '', tipo_producto: '', calificacion: 0 })">
+        Limpiar
+      </button>
+    </div>
+
+  </form>
 </div>

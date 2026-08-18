@@ -11,30 +11,13 @@
       </h2>
     </div>
 
-    <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
-      class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
-
+    <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
       <button tuiTab type="button">
         Listado de Proveedores
       </button>
-
-      <button tuiTab type="button">
-        Registrar Proveedor
-      </button>
-
     </nav>
   </header>
   <div class="py-2">
-
-    <!-- TAB: LISTADO DE PROVEEDORES -->
-    <ng-container *ngIf="activeTab === 'listado'">
-      <app-listallproveedores></app-listallproveedores>
-    </ng-container>
-
-    <!-- TAB: REGISTRAR PROVEEDOR -->
-    <ng-container *ngIf="activeTab === 'registrar'">
-      <app-registrarproveedor></app-registrarproveedor>
-    </ng-container>
-
+    <app-listallproveedores></app-listallproveedores>
   </div>
 </main>

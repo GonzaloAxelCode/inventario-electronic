@@ -1,114 +1,154 @@
-<div *ngIf="user.permissions" class="w-full min-h-screen py-3">
-  
-  <!-- Header -->
-  <div class="max-w-7xl mb-8">
-    <h2 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100 mb-1">Permisos de Usuario</h2>
-    <p class="text-sm text-neutral-500 dark:text-neutral-400">Administra los permisos y accesos del usuario</p>
+<div *ngIf="user.permissions" class="w-full min-h-screen py-6 px-4 sm:px-6">
+  <div class="max-w-3xl">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-neutral-900 dark:text-white mb-1">Permisos de Usuario</h2>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400">Accesos y permisos asignados a tu cuenta</p>
+    </div>
+
+    <!-- Card unica minimalista -->
+    <div class="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700/60 divide-y divide-neutral-100 dark:divide-neutral-700/40 overflow-hidden">
+
+      <!-- Seccion: Ventas -->
+      <section class="p-5 sm:p-6">
+        <h3 class="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-4">Ventas</h3>
+        <div class="space-y-4">
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-neutral-700 dark:text-neutral-300">Realizar ventas</span>
+            <span class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0"
+              [class]="user.permissions.can_make_sale ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-600'">
+              <span class="absolute left-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
+                [class]="user.permissions.can_make_sale ? 'translate-x-6 text-emerald-500' : 'translate-x-0 text-neutral-500 dark:text-neutral-300'">
+                {{ user.permissions.can_make_sale ? '\u2713' : '\u2715' }}
+              </span>
+            </span>
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-neutral-700 dark:text-neutral-300">Cancelar ventas</span>
+            <span class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0"
+              [class]="user.permissions.can_cancel_sale ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-600'">
+              <span class="absolute left-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
+                [class]="user.permissions.can_cancel_sale ? 'translate-x-6 text-emerald-500' : 'translate-x-0 text-neutral-500 dark:text-neutral-300'">
+                {{ user.permissions.can_cancel_sale ? '\u2713' : '\u2715' }}
+              </span>
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Seccion: Inventario -->
+      <section class="p-5 sm:p-6">
+        <h3 class="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-4">Inventario</h3>
+        <div class="space-y-4">
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-neutral-700 dark:text-neutral-300">Crear inventario</span>
+            <span class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0"
+              [class]="user.permissions.can_create_inventory ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-600'">
+              <span class="absolute left-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
+                [class]="user.permissions.can_create_inventory ? 'translate-x-6 text-emerald-500' : 'translate-x-0 text-neutral-500 dark:text-neutral-300'">
+                {{ user.permissions.can_create_inventory ? '\u2713' : '\u2715' }}
+              </span>
+            </span>
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-neutral-700 dark:text-neutral-300">Modificar inventario</span>
+            <span class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0"
+              [class]="user.permissions.can_modify_inventory ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-600'">
+              <span class="absolute left-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
+                [class]="user.permissions.can_modify_inventory ? 'translate-x-6 text-emerald-500' : 'translate-x-0 text-neutral-500 dark:text-neutral-300'">
+                {{ user.permissions.can_modify_inventory ? '\u2713' : '\u2715' }}
+              </span>
+            </span>
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-neutral-700 dark:text-neutral-300">Eliminar inventario</span>
+            <span class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0"
+              [class]="user.permissions.can_delete_inventory ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-600'">
+              <span class="absolute left-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
+                [class]="user.permissions.can_delete_inventory ? 'translate-x-6 text-emerald-500' : 'translate-x-0 text-neutral-500 dark:text-neutral-300'">
+                {{ user.permissions.can_delete_inventory ? '\u2713' : '\u2715' }}
+              </span>
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Seccion: Productos -->
+      <section class="p-5 sm:p-6">
+        <h3 class="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-4">Productos</h3>
+        <div class="space-y-4">
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-neutral-700 dark:text-neutral-300">Crear productos</span>
+            <span class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0"
+              [class]="user.permissions.can_create_product ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-600'">
+              <span class="absolute left-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
+                [class]="user.permissions.can_create_product ? 'translate-x-6 text-emerald-500' : 'translate-x-0 text-neutral-500 dark:text-neutral-300'">
+                {{ user.permissions.can_create_product ? '\u2713' : '\u2715' }}
+              </span>
+            </span>
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-neutral-700 dark:text-neutral-300">Actualizar productos</span>
+            <span class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0"
+              [class]="user.permissions.can_update_product ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-600'">
+              <span class="absolute left-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
+                [class]="user.permissions.can_update_product ? 'translate-x-6 text-emerald-500' : 'translate-x-0 text-neutral-500 dark:text-neutral-300'">
+                {{ user.permissions.can_update_product ? '\u2713' : '\u2715' }}
+              </span>
+            </span>
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-neutral-700 dark:text-neutral-300">Eliminar productos</span>
+            <span class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0"
+              [class]="user.permissions.can_delete_product ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-600'">
+              <span class="absolute left-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
+                [class]="user.permissions.can_delete_product ? 'translate-x-6 text-emerald-500' : 'translate-x-0 text-neutral-500 dark:text-neutral-300'">
+                {{ user.permissions.can_delete_product ? '\u2713' : '\u2715' }}
+              </span>
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Seccion: Categorias -->
+      <section class="p-5 sm:p-6">
+        <h3 class="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-4">Categorias</h3>
+        <div class="space-y-4">
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-neutral-700 dark:text-neutral-300">Crear categorias</span>
+            <span class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0"
+              [class]="user.permissions.can_create_category ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-600'">
+              <span class="absolute left-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
+                [class]="user.permissions.can_create_category ? 'translate-x-6 text-emerald-500' : 'translate-x-0 text-neutral-500 dark:text-neutral-300'">
+                {{ user.permissions.can_create_category ? '\u2713' : '\u2715' }}
+              </span>
+            </span>
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-neutral-700 dark:text-neutral-300">Modificar categorias</span>
+            <span class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0"
+              [class]="user.permissions.can_modify_category ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-600'">
+              <span class="absolute left-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
+                [class]="user.permissions.can_modify_category ? 'translate-x-6 text-emerald-500' : 'translate-x-0 text-neutral-500 dark:text-neutral-300'">
+                {{ user.permissions.can_modify_category ? '\u2713' : '\u2715' }}
+              </span>
+            </span>
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-neutral-700 dark:text-neutral-300">Eliminar categorias</span>
+            <span class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0"
+              [class]="user.permissions.can_delete_category ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-600'">
+              <span class="absolute left-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
+                [class]="user.permissions.can_delete_category ? 'translate-x-6 text-emerald-500' : 'translate-x-0 text-neutral-500 dark:text-neutral-300'">
+                {{ user.permissions.can_delete_category ? '\u2713' : '\u2715' }}
+              </span>
+            </span>
+          </label>
+        </div>
+      </section>
+
+    </div>
+
   </div>
-
-  <!-- Grid de Secciones -->
-  <div class="max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    
-    <!-- Sección: Ventas -->
-    <div class="bg-white dark:bg-neutral-900/30 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700/60">
-      <div class="flex items-center space-x-3 mb-6">
-        <div class="w-10 h-10 bg-blue-50 dark:bg-blue-950 rounded-lg flex items-center justify-center">
-          <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-          </svg>
-        </div>
-        <h2 class="text-lg font-medium text-neutral-800 dark:text-neutral-100">Ventas</h2>
-      </div>
-      <div class="space-y-3">
-        <label class="flex items-center justify-between cursor-pointer">
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">Realizar ventas</span>
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_make_sale" (click)="$event.preventDefault()" />
-        </label>
-        <label class="flex items-center justify-between cursor-pointer">
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">Cancelar ventas</span>
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_cancel_sale" (click)="$event.preventDefault()" />
-        </label>
-      </div>
-    </div>
-
-    <!-- Sección: Inventario -->
-    <div class="bg-white  dark:bg-neutral-900/30 rounded-xl  p-6 border border-neutral-200  dark:border-neutral-700/60">
-      <div class="flex items-center space-x-3 mb-6">
-        <div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-950 rounded-lg flex items-center justify-center">
-          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-          </svg>
-        </div>
-        <h2 class="text-lg font-medium text-neutral-800 dark:text-neutral-100">Inventario</h2>
-      </div>
-      <div class="space-y-3">
-        <label class="flex items-center justify-between cursor-pointer">
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">Crear inventario</span>
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_inventory" (click)="$event.preventDefault()" />
-        </label>
-        <label class="flex items-center justify-between cursor-pointer">
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">Modificar inventario</span>
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_inventory" (click)="$event.preventDefault()" />
-        </label>
-        <label class="flex items-center justify-between cursor-pointer">
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">Eliminar inventario</span>
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_inventory" (click)="$event.preventDefault()" />
-        </label>
-      </div>
-    </div>
-
-    <!-- Sección: Productos -->
-    <div class="bg-white  dark:bg-neutral-900/30 rounded-xl  p-6 border border-neutral-200  dark:border-neutral-700/60">
-      <div class="flex items-center space-x-3 mb-6">
-        <div class="w-10 h-10 bg-violet-50 dark:bg-violet-950 rounded-lg flex items-center justify-center">
-          <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-          </svg>
-        </div>
-        <h2 class="text-lg font-medium text-neutral-800 dark:text-neutral-100">Productos</h2>
-      </div>
-      <div class="space-y-3">
-        <label class="flex items-center justify-between cursor-pointer">
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">Crear productos</span>
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_product" (click)="$event.preventDefault()" />
-        </label>
-        <label class="flex items-center justify-between cursor-pointer">
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">Actualizar productos</span>
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_update_product" (click)="$event.preventDefault()" />
-        </label>
-        <label class="flex items-center justify-between cursor-pointer">
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">Eliminar productos</span>
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_product" (click)="$event.preventDefault()" />
-        </label>
-      </div>
-    </div>
-
-    <!-- Sección: Categorías -->
-    <div class="bg-white  dark:bg-neutral-900/30 rounded-xl  p-6 border border-neutral-200  dark:border-neutral-700/60">
-      <div class="flex items-center space-x-3 mb-6">
-        <div class="w-10 h-10 bg-amber-50 dark:bg-amber-950 rounded-lg flex items-center justify-center">
-          <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-          </svg>
-        </div>
-        <h2 class="text-lg font-medium text-neutral-800 dark:text-neutral-100">Categorías</h2>
-      </div>
-      <div class="space-y-3">
-        <label class="flex items-center justify-between cursor-pointer">
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">Crear categorías</span>
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_create_category" (click)="$event.preventDefault()" />
-        </label>
-        <label class="flex items-center justify-between cursor-pointer">
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">Modificar categorías</span>
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_modify_category" (click)="$event.preventDefault()" />
-        </label>
-        <label class="flex items-center justify-between cursor-pointer">
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">Eliminar categorías</span>
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.permissions.can_delete_category" (click)="$event.preventDefault()" />
-        </label>
-      </div>
-    </div>
-
-   </div>
-
 </div>

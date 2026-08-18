@@ -3,14 +3,13 @@ import { AppState } from '@/app/state/app.state';
 import { ProveedorState } from '@/app/state/reducers/proveedor.reducer';
 import { selectProveedorState } from '@/app/state/selectors/proveedor.selectors';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiInputModule } from '@taiga-ui/legacy';
+import { TuiAlertService, TuiButton, TuiDataList, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
-
 
 @Component({
   selector: 'app-formproveedor',
@@ -19,10 +18,14 @@ import { map, Observable, Subject, takeUntil } from 'rxjs';
     CommonModule,
     ReactiveFormsModule,
     TuiTextfield,
-    TuiInputModule, TuiLoader,
-
-
-    TuiButton],
+    TuiInputModule,
+    TuiSelectModule,
+    TuiTextfieldControllerModule,
+    TuiLoader,
+    TuiButton,
+    TuiDataList,
+    TuiIcon,
+  ],
   templateUrl: './formproveedor.component.html',
   styleUrl: './formproveedor.component.scss'
 })
@@ -30,27 +33,30 @@ export class FormproveedorComponent implements OnInit, OnDestroy {
 
   @Output() closeDialogCreateProveedor = new EventEmitter<any>();
   private destroy$ = new Subject<void>();
+  private alerts = inject(TuiAlertService);
 
   proveedorForm: FormGroup;
   loadingCreateProveedor$!: Observable<boolean>
-  constructor(private store: Store<AppState>, private fb: FormBuilder, private actions$: Actions   // 👈 importante
-  ) {
+
+  constructor(private store: Store<AppState>, private fb: FormBuilder, private actions$: Actions) {
     this.proveedorForm = this.fb.group({
-      nombre: ['', Validators.required],
-      direccion: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{7,15}$/)]],
-      tipo_producto: ['', Validators.required]
+      nombre: ['', [Validators.required, Validators.maxLength(100)]],
+      ruc: ['', [Validators.maxLength(50)]],
+      razon_social: ['', [Validators.maxLength(255)]],
+      direccion: [''],
+      telefono: ['', [Validators.pattern(/^\d{7,15}$/)]],
+      email: ['', [Validators.email]],
+      contacto: ['', [Validators.maxLength(100)]],
+      tipo_producto: ['', [Validators.maxLength(100)]],
+      calificacion: [0, [Validators.min(0), Validators.max(5)]],
     });
   }
+
   ngOnInit() {
     this.loadingCreateProveedor$ = this.store.select(selectProveedorState).pipe(
-      map((state: ProveedorState) => {
-
-        return state.loadingCreateProveedor
-      })
+      map((state: ProveedorState) => state.loadingCreateProveedor)
     );
 
-    // escuchamos solo cuando ocurre la acción proveedorCreateSuccess
     this.actions$.pipe(
       ofType(createProveedorSuccess, createProveedorFail),
       takeUntil(this.destroy$)
@@ -63,8 +69,14 @@ export class FormproveedorComponent implements OnInit, OnDestroy {
     if (this.proveedorForm.valid) {
       const newProveedor = this.proveedorForm.value;
       this.store.dispatch(createProveedorAction({ proveedor: newProveedor }));
+    } else {
+      this.alerts.open('Completa los campos obligatorios', {
+        label: 'Formulario incompleto',
+        appearance: 'warning',
+      }).subscribe();
     }
   }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();

@@ -104,6 +104,8 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   validTabs = ['normal', 'detallada', 'pedido'] as const;
 
   pedidoSeleccionado: any = null;
+  pedidoFlowStep = 0;
+  private readonly placeholderImg = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
 
   pedidosEjemplo = [
     {
@@ -115,7 +117,34 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       total: 245.80,
       cantidadItems: 5,
       estado: 'Pendiente',
-      metodoPago: 'Efectivo'
+      metodoPago: 'Efectivo',
+      tipoComprobante: 'Boleta',
+      productos: [
+        {
+          inventarioId: 1,
+          productoId: 1,
+          producto_nombre: 'Polo Sublimado Cuello Redondo',
+          producto_sku: 'POLO-0001',
+          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
+          nombre_categoria: 'Ropa',
+          cantidad: 3,
+          costo_original: 45.00,
+          descuento: 0,
+          stock_actual: 50
+        },
+        {
+          inventarioId: 2,
+          productoId: 2,
+          producto_nombre: 'Gorra Sublimada',
+          producto_sku: 'GORRA-0001',
+          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
+          nombre_categoria: 'Accesorios',
+          cantidad: 2,
+          costo_original: 28.50,
+          descuento: 0,
+          stock_actual: 30
+        }
+      ]
     },
     {
       id: 1002,
@@ -126,7 +155,34 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       total: 189.50,
       cantidadItems: 3,
       estado: 'Pendiente',
-      metodoPago: 'Yape'
+      metodoPago: 'Yape',
+      tipoComprobante: 'Boleta',
+      productos: [
+        {
+          inventarioId: 3,
+          productoId: 3,
+          producto_nombre: 'Taza Magica 11oz',
+          producto_sku: 'TAZA-0001',
+          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
+          nombre_categoria: 'Hogar',
+          cantidad: 4,
+          costo_original: 22.00,
+          descuento: 0,
+          stock_actual: 40
+        },
+        {
+          inventarioId: 4,
+          productoId: 4,
+          producto_nombre: 'Llavero Acrilico',
+          producto_sku: 'LLAVE-0001',
+          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
+          nombre_categoria: 'Accesorios',
+          cantidad: 5,
+          costo_original: 8.00,
+          descuento: 0,
+          stock_actual: 100
+        }
+      ]
     },
     {
       id: 1003,
@@ -137,7 +193,46 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       total: 1250.00,
       cantidadItems: 12,
       estado: 'Pendiente',
-      metodoPago: 'Transferencia'
+      metodoPago: 'Transferencia',
+      tipoComprobante: 'Factura',
+      productos: [
+        {
+          inventarioId: 1,
+          productoId: 1,
+          producto_nombre: 'Polo Sublimado Cuello Redondo',
+          producto_sku: 'POLO-0001',
+          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
+          nombre_categoria: 'Ropa',
+          cantidad: 12,
+          costo_original: 45.00,
+          descuento: 0,
+          stock_actual: 50
+        },
+        {
+          inventarioId: 2,
+          productoId: 2,
+          producto_nombre: 'Gorra Sublimada',
+          producto_sku: 'GORRA-0001',
+          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
+          nombre_categoria: 'Accesorios',
+          cantidad: 6,
+          costo_original: 28.50,
+          descuento: 0,
+          stock_actual: 30
+        },
+        {
+          inventarioId: 3,
+          productoId: 3,
+          producto_nombre: 'Taza Magica 11oz',
+          producto_sku: 'TAZA-0001',
+          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
+          nombre_categoria: 'Hogar',
+          cantidad: 10,
+          costo_original: 22.00,
+          descuento: 0,
+          stock_actual: 40
+        }
+      ]
     }
   ];
   protected expanded = false;
@@ -650,6 +745,75 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       documento_cliente_existente: ""
 
     });
+  }
+
+  continuarConPedido() {
+    if (!this.pedidoSeleccionado) return;
+
+    while (this.productosFormArray.length) {
+      this.productosFormArray.removeAt(0);
+    }
+
+    (this.pedidoSeleccionado.productos || []).forEach((prod: any) => {
+      const nuevoProducto = this.fb.group({
+        inventarioId: [prod.inventarioId],
+        cantidad_final: [String(prod.cantidad), [Validators.required]],
+        producto_nombre: [prod.producto_nombre],
+        producto_sku: [prod.producto_sku],
+        imagen_producto: [prod.imagen_producto || this.placeholderImg],
+        nombre_categoria: [prod.nombre_categoria],
+        costo_venta: [prod.costo_original],
+        productoId: [prod.productoId],
+        stock_actual: [prod.stock_actual],
+        descuento: [prod.descuento || 0],
+        costo_original: [prod.costo_original],
+      });
+
+      this.productosFormArray.push(nuevoProducto);
+      nuevoProducto.get('descuento')!.valueChanges.subscribe((desc: any) => {
+        this.actualizarCostoTotal(nuevoProducto, desc);
+      });
+    });
+
+    this.ventaForm.get('tipoComprobante')?.setValue(this.pedidoSeleccionado.tipoComprobante || 'Boleta');
+    this.ventaForm.get('metodoPago')?.setValue(this.pedidoSeleccionado.metodoPago || this.listMetodosPago[3]);
+    this.calcularTotales();
+    this.pedidoFlowStep = 1;
+  }
+
+  nextPedidoStep() {
+    if (this.pedidoFlowStep < 3) this.pedidoFlowStep++;
+  }
+
+  prevPedidoStep() {
+    if (this.pedidoFlowStep > 0) this.pedidoFlowStep--;
+  }
+
+  volverSeleccionPedido() {
+    this.pedidoFlowStep = 0;
+    this.pedidoSeleccionado = null;
+    while (this.productosFormArray.length) {
+      this.productosFormArray.removeAt(0);
+    }
+    this.calcularTotales();
+  }
+
+  confirmarVentaPedido() {
+    if (!this.pedidoSeleccionado) return;
+    const total = this.salesTotals.total;
+
+    this.alerts.open('Venta realizada', {
+      label: `Pedido #${this.pedidoSeleccionado.id} procesado como venta correctamente por S/. ${total.toFixed(2)}`,
+      appearance: "success"
+    }).subscribe();
+
+    while (this.productosFormArray.length) {
+      this.productosFormArray.removeAt(0);
+    }
+    this.pedidoSeleccionado = null;
+    this.pedidoFlowStep = 0;
+    this.borrarCliente();
+    this.calcularTotales();
   }
 
 

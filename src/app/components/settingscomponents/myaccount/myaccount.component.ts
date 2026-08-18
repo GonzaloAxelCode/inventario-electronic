@@ -30,4 +30,29 @@ export class MyaccountComponent implements OnInit {
       this.tienda = userState.user?.tienda_data || {} as Tienda;
     });
   }
+
+  get fullName(): string {
+    return [this.user.first_name, this.user.last_name].filter(Boolean).join(' ') || 'Sin nombre';
+  }
+
+  get initials(): string {
+    return `${this.user.first_name?.charAt(0) || 'U'}${this.user.last_name?.charAt(0) || ''}`;
+  }
+
+  get roleLabel(): string {
+    if (this.user.is_superuser) return 'Administrador';
+    if (this.user.is_staff) return 'Staff';
+    return 'Personal';
+  }
+
+  get activePermissionsCount(): number {
+    if (!this.user?.permissions) return 0;
+    return Object.values(this.user.permissions).filter(Boolean).length;
+  }
+
+  get accountAgeDays(): number {
+    if (!this.user.date_joined) return 0;
+    const joined = new Date(this.user.date_joined).getTime();
+    return Math.max(0, Math.floor((Date.now() - joined) / 86400000));
+  }
 }

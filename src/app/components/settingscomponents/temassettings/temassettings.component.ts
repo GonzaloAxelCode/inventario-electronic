@@ -5,6 +5,7 @@ import { WA_LOCAL_STORAGE, WA_WINDOW } from '@ng-web-apis/common';
 import { TUI_DARK_MODE, TUI_DARK_MODE_KEY, TuiAppearance, TuiIcon, TuiLabel, TuiTitle } from '@taiga-ui/core';
 import { TuiSwitch, tuiSwitchOptionsProvider } from '@taiga-ui/kit';
 import { LayoutService, LayoutMode } from '@/app/services/ui/layout-service.service';
+import { FeatureFlagsService } from '@/app/services/ui/feature-flags.service';
 
 @Component({
   selector: 'app-temassettings',
@@ -21,7 +22,10 @@ export class TemasSettingsComponent implements OnInit {
   private readonly media = inject(WA_WINDOW).matchMedia('(prefers-color-scheme: dark)');
   protected readonly darkMode = inject(TUI_DARK_MODE);
   
-  constructor(public layoutService: LayoutService) {}
+  constructor(
+    public layoutService: LayoutService,
+    public featureFlags: FeatureFlagsService
+  ) {}
 
   isDarkMode = false;
   isTopnavLayout = false;
@@ -50,9 +54,11 @@ export class TemasSettingsComponent implements OnInit {
     this.layoutService.setLayout(mode);
   }
 
-  resetTheme(): void {
-    this.isDarkMode = this.media.matches;
-    this.darkMode.set(this.isDarkMode);
-    this.storage.removeItem(this.key);
+  toggleGuiasRemision(): void {
+    this.featureFlags.toggleGuiasRemision();
+  }
+
+  toggleTiktok(): void {
+    this.featureFlags.toggleTiktok();
   }
 }

@@ -1,6 +1,7 @@
 import { Tienda } from '@/app/models/tienda.models';
 import { User } from '@/app/models/user.models';
 import { SidebarService } from '@/app/services/ui/sidebar-service.service';
+import { FeatureFlagsService } from '@/app/services/ui/feature-flags.service';
 import { URL_BASE } from '@/app/services/utils/endpoints';
 import { clearTokensAction } from '@/app/state/actions/auth.actions';
 import { clearInventariosFromCache } from '@/app/state/actions/inventario.actions';
@@ -89,7 +90,8 @@ export class SidenavComponent implements OnInit {
   constructor(
     private store: Store<AppState>,
     public router: Router,
-    public sidebarService: SidebarService
+    public sidebarService: SidebarService,
+    public featureFlags: FeatureFlagsService
   ) {
     this.isAuthenticated$ = this.store.select(selectAuth).pipe(
       map(authState => authState.isAuthenticated)

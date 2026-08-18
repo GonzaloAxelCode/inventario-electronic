@@ -1,42 +1,86 @@
 <div class="p-4 sm:p-6 w-full md:hidden">
   <div class="rounded-2xl" [tuiSkeleton]="!!(proveedoresState$ | async)?.loadingProveedores">
     <ng-container *ngIf="(proveedoresState$ | async)?.proveedores?.length; else noProveedores">
-      <div class="flex flex-col gap-4 mt-3">
-        <div *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []"
-          class="rounded-2xl border border-gray-300 dark:border-gray-700 shadow-sm p-4 transition-all duration-300">
+      <!-- Boton nuevo proveedor -->
+      <button tuiButton iconStart="@tui.plus" type="button" appearance="textfield" tuiButtonVertical class="w-full mb-3"
+        (click)="showDialogCreate()">
+        Nuevo Proveedor
+      </button>
 
-          <div class="flex items-start justify-between mb-3">
-            <div>
-              <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+      <!-- Barra de busqueda -->
+      <div class="relative mt-3">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Buscar proveedor por nombre, RUC, email..."
+          class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 transition-all"
+        />
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+
+      <div *ngIf="filtrarProveedores((proveedoresState$ | async)?.proveedores ?? []).length === 0"
+        class="text-center py-8 text-sm text-gray-500 dark:text-gray-400">
+        No se encontraron proveedores para "{{ searchTerm }}"
+      </div>
+
+      <div class="flex flex-col gap-4 mt-3">
+        <div *ngFor="let proveedor of filtrarProveedores((proveedoresState$ | async)?.proveedores ?? [])"
+          class="rounded-2xl border border-gray-300 dark:border-gray-700 shadow-sm p-5 transition-all duration-300">
+
+          <!-- Header: nombre + badge -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 truncate">
                 {{ proveedor.nombre }}
               </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                <strong>RUC:</strong> {{ proveedor.ruc || '—' }}
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                RUC: {{ proveedor.ruc || '—' }}
               </p>
             </div>
-            <tui-badge [appearance]="proveedor.activo ? 'positive' : 'negative'" class="text-xs">
+            <tui-badge [appearance]="proveedor.activo ? 'positive' : 'negative'" class="text-xs ml-2 shrink-0">
               {{ proveedor.activo ? 'Activo' : 'Inactivo' }}
             </tui-badge>
           </div>
 
-          <div class="text-sm text-gray-700 dark:text-gray-300 space-y-0.5 mb-3">
-            <p><strong>Telefono:</strong> {{ proveedor.telefono || '—' }}</p>
-            <p><strong>Email:</strong> {{ proveedor.email || '—' }}</p>
-            <p><strong>Direccion:</strong> {{ proveedor.direccion || '—' }}</p>
-            <p><strong>Contacto:</strong> {{ proveedor.contacto || '—' }}</p>
-            <p><strong>Tipo Producto:</strong> {{ proveedor.tipo_producto || '—' }}</p>
-            <p><strong>Calificacion:</strong> {{ proveedor.calificacion }}</p>
+          <!-- Info grid 2 columnas -->
+          <div class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm mb-4">
+            <div>
+              <span class="text-xs text-gray-400 dark:text-gray-500 block">Telefono</span>
+              <p class="text-gray-900 dark:text-gray-100">{{ proveedor.telefono || '—' }}</p>
+            </div>
+            <div>
+              <span class="text-xs text-gray-400 dark:text-gray-500 block">Email</span>
+              <p class="text-gray-900 dark:text-gray-100 truncate">{{ proveedor.email || '—' }}</p>
+            </div>
+            <div>
+              <span class="text-xs text-gray-400 dark:text-gray-500 block">Direccion</span>
+              <p class="text-gray-900 dark:text-gray-100">{{ proveedor.direccion || '—' }}</p>
+            </div>
+            <div>
+              <span class="text-xs text-gray-400 dark:text-gray-500 block">Contacto</span>
+              <p class="text-gray-900 dark:text-gray-100">{{ proveedor.contacto || '—' }}</p>
+            </div>
+            <div>
+              <span class="text-xs text-gray-400 dark:text-gray-500 block">Tipo Producto</span>
+              <p class="text-gray-900 dark:text-gray-100">{{ proveedor.tipo_producto || '—' }}</p>
+            </div>
+            <div>
+              <span class="text-xs text-gray-400 dark:text-gray-500 block">Calificacion</span>
+              <p class="text-gray-900 dark:text-gray-100">{{ proveedor.calificacion }}</p>
+            </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row gap-2 mt-3">
-            <button appearance="positive" iconStart="@tui.users" tuiButton type="button" class="w-full sm:w-auto"
+          <!-- Acciones -->
+          <div class="flex gap-2 pt-3 border-t border-gray-100 dark:border-gray-700/50">
+            <button appearance="positive" iconStart="@tui.users" tuiButton type="button" class="flex-1"
               (click)="showDialogUpdate(proveedor)">
               Actualizar
             </button>
-
             <button [disabled]="!(userPermissions$ | async)?.can_update_proveedor"
               [appearance]="proveedor.activo ? 'error' : 'secondary'" iconStart="@tui.trash" tuiButton type="button"
-              class="w-full sm:w-auto" (click)="onActiveToggle(proveedor)">
+              class="flex-1" (click)="onActiveToggle(proveedor)">
               {{ proveedor.activo ? 'Desactivar' : 'Activar' }}
             </button>
           </div>
@@ -45,7 +89,7 @@
     </ng-container>
 
     <ng-template #noProveedores>
-      <tui-block-status class="mt-10">
+      <tui-block-status class="mt-10 px-4">
         <img alt="no-data"
           src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
           tuiSlot="top" />
@@ -64,16 +108,37 @@
   <div class="rounded-lg min-h-[200px]" [tuiSkeleton]="!!(proveedoresState$ | async)?.loadingProveedores">
 
     <ng-template #tabla>
-      <table tuiTable size="s">
+      <!-- Boton nuevo proveedor -->
+      <div class="flex justify-between items-center mb-4">
+        <button tuiButton iconStart="@tui.plus" type="button" appearance="textfield" tuiButtonVertical
+          (click)="showDialogCreate()">
+          Nuevo Proveedor
+        </button>
+      </div>
+
+      <!-- Barra de busqueda -->
+      <div class="relative mb-4">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Buscar proveedor por nombre, RUC, email..."
+          class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 transition-all"
+        />
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+
+      <table tuiTable size="m" class="w-full">
         <thead>
           <tr>
-            <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
+            <th *ngFor="let column of allColumns" tuiTh [style.min-width]="column.key === 'nombre' ? '180px' : column.key === 'email' ? '200px' : '120px'">{{ column.label }}</th>
             <th tuiTh>Estado</th>
             <th tuiTh>Acciones</th>
           </tr>
         </thead>
-        <tbody tuiTbody *ngIf="(proveedoresState$ | async)?.proveedores?.length">
-          <tr *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []">
+        <tbody tuiTbody *ngIf="filtrarProveedores((proveedoresState$ | async)?.proveedores ?? []).length">
+          <tr *ngFor="let proveedor of filtrarProveedores((proveedoresState$ | async)?.proveedores ?? [])">
             <td *ngFor="let column of allColumns" tuiTd>{{ getProveedorValue(proveedor, column.key) }}</td>
             <td tuiTd>
               <tui-badge [appearance]="proveedor.activo ? 'positive' : 'negative'">
