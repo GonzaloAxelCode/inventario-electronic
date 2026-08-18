@@ -1,0 +1,21 @@
+<div class="w-full">
+  <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">{{ live.fecha }} {{ live.hora }} - {{ live.duracion }}</p>
+  <div class="grid grid-cols-2 gap-3">
+    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 text-center">
+      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">{{ live.ventas }}</p>
+      <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Ventas</p>
+    </div>
+    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 text-center">
+      <p class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">S/ {{ live.ingresos.toFixed(2) }}</p>
+      <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Ingresos</p>
+    </div>
+    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 text-center">
+      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">{{ live.espectadores }}</p>
+      <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Espectadores</p>
+    </div>
+    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 text-center">
+      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">{{ live.duracion }}</p>
+      <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Duracion</p>
+    </div>
+  </div>
+</div>

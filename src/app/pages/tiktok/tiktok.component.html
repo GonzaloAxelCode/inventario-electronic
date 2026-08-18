@@ -1,0 +1,355 @@
+<main tuiNavigationMain>
+  <header tuiSubheader>
+    <div class="flex gap-4 pt-4 items-center">
+      <h2 tuiHeader>
+        <div tuiTitle>
+          <div tuiNavigationLogo>
+            <tui-icon icon="@tui.play" />
+            <span tuiFade>TikTok</span>
+          </div>
+        </div>
+      </h2>
+    </div>
+
+    <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
+      class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
+      <button tuiTab type="button">Lives</button>
+      <button tuiTab type="button">Pedidos por TikTok</button>
+      <button tuiTab type="button">Envios Pendientes</button>
+      <button tuiTab type="button">Estadisticas</button>
+      <button tuiTab type="button">Mis Clientes TikTok</button>
+    </nav>
+  </header>
+
+  <div class="py-4 px-4 sm:px-6">
+
+    <!-- TAB: Lives -->
+    <ng-container *ngIf="activeTab === 'lives'">
+      <div class="max-w-5xl">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Lives</h3>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400">Gestiona tus transmisiones en vivo</p>
+          </div>
+          <button tuiButton iconStart="@tui.plus" appearance="primary-grayscale" type="button">
+            Nuevo Live
+          </button>
+        </div>
+
+        <!-- Live activo -->
+        <div *ngFor="let live of livesActivos" (click)="openLiveDialog(live)"
+          class="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-5 cursor-pointer hover:shadow-lg transition-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <span class="relative flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+              </span>
+              <h4 class="font-semibold text-red-700 dark:text-red-400">{{ live.titulo }}</h4>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-500 text-white animate-pulse">EN VIVO</span>
+          </div>
+          <div class="flex flex-wrap gap-6 text-sm text-neutral-600 dark:text-neutral-400">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              <span>{{ live.espectadores }} espectadores</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>{{ live.hora }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historial de lives -->
+        <div class="mb-4">
+          <h4 class="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-3">Historial de Lives</h4>
+        </div>
+        <div class="space-y-3">
+          <div *ngFor="let live of livesFinalizados" (click)="openLiveDialog(live)"
+            class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <h4 class="font-medium text-neutral-900 dark:text-white truncate">{{ live.titulo }}</h4>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold shrink-0" [ngClass]="getEstadoClass(live.estado)">
+                  {{ getEstadoLabel(live.estado) }}
+                </span>
+              </div>
+              <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ live.fecha }} {{ live.hora }} - {{ live.duracion }}</p>
+            </div>
+            <div class="flex items-center gap-4 text-sm shrink-0">
+              <div class="text-center">
+                <p class="font-semibold text-neutral-900 dark:text-white">{{ live.espectadores }}</p>
+                <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Espectadores</p>
+              </div>
+              <div class="text-center">
+                <p class="font-semibold text-neutral-900 dark:text-white">{{ live.ventas }}</p>
+                <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Ventas</p>
+              </div>
+              <div class="text-center">
+                <p class="font-semibold text-emerald-600 dark:text-emerald-400">S/ {{ live.ingresos.toFixed(2) }}</p>
+                <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Ingresos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- TAB: Pedidos por TikTok -->
+    <ng-container *ngIf="activeTab === 'pedidos'">
+      <div class="max-w-5xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <div>
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Pedidos por TikTok</h3>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ pedidos.length }} pedidos en total</p>
+          </div>
+          <input tuiTextfield type="text" placeholder="Buscar pedido..." [(ngModel)]="searchTerm"
+            class="w-full sm:w-64 !bg-neutral-100 dark:!bg-neutral-700 !rounded-xl !border-none !text-sm" />
+        </div>
+
+        <!-- Resumen rapido -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div class="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3 text-center">
+            <p class="text-lg font-bold text-amber-600 dark:text-amber-400">{{ pedidosPendientes.length }}</p>
+            <p class="text-[10px] text-amber-600 dark:text-amber-400">Pendientes</p>
+          </div>
+          <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-3 text-center">
+            <p class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ contarPorEstado(pedidos, 'enviado') }}</p>
+            <p class="text-[10px] text-blue-600 dark:text-blue-400">Enviados</p>
+          </div>
+          <div class="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-3 text-center">
+            <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400">{{ contarPorEstado(pedidos, 'entregado') }}</p>
+            <p class="text-[10px] text-emerald-600 dark:text-emerald-400">Entregados</p>
+          </div>
+          <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 text-center">
+            <p class="text-lg font-bold text-neutral-900 dark:text-white">{{ pedidos.length }}</p>
+            <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Total</p>
+          </div>
+        </div>
+
+        <!-- Lista de pedidos -->
+        <div class="space-y-3">
+          <div *ngFor="let pedido of filtrar(pedidos, searchTerm)" class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-mono text-xs font-bold text-neutral-500 dark:text-neutral-400">{{ pedido.id }}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold" [ngClass]="getEstadoClass(pedido.estado)">
+                    {{ getEstadoLabel(pedido.estado) }}
+                  </span>
+                </div>
+                <p class="font-medium text-neutral-900 dark:text-white text-sm">{{ pedido.producto }}</p>
+                <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{{ pedido.cliente }} - DNI: {{ pedido.dni }}</p>
+                <p class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-0.5">Live: {{ pedido.live }}</p>
+              </div>
+              <div class="flex items-center gap-4 text-sm shrink-0">
+                <div class="text-center">
+                  <p class="font-semibold text-neutral-900 dark:text-white">x{{ pedido.cantidad }}</p>
+                  <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Cant.</p>
+                </div>
+                <div class="text-center">
+                  <p class="font-semibold text-neutral-900 dark:text-white">S/ {{ pedido.total.toFixed(2) }}</p>
+                  <p class="text-[10px] text-neutral-500 dark:text-neutral-400">{{ pedido.fecha }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- TAB: Envios Pendientes -->
+    <ng-container *ngIf="activeTab === 'envios'">
+      <div class="max-w-5xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <div>
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Envios Pendientes</h3>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400">Envios de TikTok pendientes de despacho via Shalom</p>
+          </div>
+          <input tuiTextfield type="text" placeholder="Buscar envio..." [(ngModel)]="searchTerm"
+            class="w-full sm:w-64 !bg-neutral-100 dark:!bg-neutral-700 !rounded-xl !border-none !text-sm" />
+        </div>
+
+        <!-- Resumen rapido -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
+          <div class="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3 text-center">
+            <p class="text-lg font-bold text-amber-600 dark:text-amber-400">{{ enviosPendientes.length }}</p>
+            <p class="text-[10px] text-amber-600 dark:text-amber-400">Pendientes</p>
+          </div>
+          <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-3 text-center">
+            <p class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ enviosEnCamino.length }}</p>
+            <p class="text-[10px] text-blue-600 dark:text-blue-400">En Camino</p>
+          </div>
+          <div class="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-3 text-center">
+            <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400">{{ contarPorEstado(envios, 'entregado') }}</p>
+            <p class="text-[10px] text-emerald-600 dark:text-emerald-400">Entregados</p>
+          </div>
+        </div>
+
+        <!-- Lista de envios -->
+        <div class="space-y-3">
+          <div *ngFor="let envio of filtrar(envios, searchTerm)" class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4">
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-mono text-xs font-bold text-neutral-500 dark:text-neutral-400">{{ envio.id }}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold" [ngClass]="getEstadoClass(envio.estado)">
+                    {{ getEstadoLabel(envio.estado) }}
+                  </span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                    {{ envio.transportista }}
+                  </span>
+                </div>
+                <p class="font-medium text-neutral-900 dark:text-white text-sm">{{ envio.cliente }}</p>
+                <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{{ envio.destino }}</p>
+                <div class="flex items-center gap-3 mt-1">
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300">
+                    {{ envio.distrito }}, {{ envio.provincia }}
+                  </span>
+                  <span class="text-[10px] text-neutral-400 dark:text-neutral-500">Pedido: {{ envio.pedido }}</span>
+                </div>
+              </div>
+              <div class="text-right shrink-0">
+                <p class="text-xs text-neutral-500 dark:text-neutral-400" *ngIf="envio.tracking">Tracking: {{ envio.tracking }}</p>
+                <p class="text-xs text-neutral-500 dark:text-neutral-400" *ngIf="envio.fechaEnvio">Envio: {{ envio.fechaEnvio }}</p>
+                <p class="text-xs font-medium text-neutral-700 dark:text-neutral-300">Est: {{ envio.fechaEstimada }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- TAB: Estadisticas -->
+    <ng-container *ngIf="activeTab === 'estadisticas'">
+      <div class="max-w-5xl">
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Estadisticas</h3>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">Resumen de rendimiento en TikTok</p>
+        </div>
+
+        <!-- KPIs principales -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ stats.ventasTotales }}</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Ventas Totales</p>
+          </div>
+          <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">S/ {{ stats.ingresosTotales.toFixed(2) }}</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Ingresos Totales</p>
+          </div>
+          <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ stats.livesRealizados }}</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Lives Realizados</p>
+          </div>
+          <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ stats.clientesNuevos }}</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Clientes Nuevos</p>
+          </div>
+        </div>
+
+        <!-- KPIs secundarios -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-5">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-neutral-900 dark:text-white">Crecimiento Mensual</p>
+                <p class="text-xs text-neutral-500 dark:text-neutral-400">vs mes anterior</p>
+              </div>
+            </div>
+            <p class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">+{{ stats.crecimientoMensual }}%</p>
+          </div>
+          <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-5">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-neutral-900 dark:text-white">Tasa de Conversion</p>
+                <p class="text-xs text-neutral-5000 dark:text-neutral-400">espectadores a compradores</p>
+              </div>
+            </div>
+            <p class="text-3xl font-bold text-purple-600 dark:text-purple-400">{{ stats.tasaConversion }}%</p>
+          </div>
+        </div>
+
+        <!-- Top productos -->
+        <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-5">
+          <h4 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Producto mas vendido</h4>
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+              <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            </div>
+            <div>
+              <p class="font-semibold text-neutral-900 dark:text-white">{{ stats.productoMasVendido }}</p>
+              <p class="text-xs text-neutral-500 dark:text-neutral-400">Promedio de venta: S/ {{ stats.promedioVenta.toFixed(2) }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- TAB: Mis Clientes TikTok -->
+    <ng-container *ngIf="activeTab === 'clientes'">
+      <div class="max-w-5xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <div>
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Mis Clientes TikTok</h3>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ clientes.length }} clientes que te han comprado</p>
+          </div>
+          <input tuiTextfield type="text" placeholder="Buscar cliente..." [(ngModel)]="searchTerm"
+            class="w-full sm:w-64 !bg-neutral-100 dark:!bg-neutral-700 !rounded-xl !border-none !text-sm" />
+        </div>
+
+        <!-- Stats resumen -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
+          <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 text-center">
+            <p class="text-lg font-bold text-neutral-900 dark:text-white">{{ clientes.length }}</p>
+            <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Total Clientes</p>
+          </div>
+          <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 text-center">
+            <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400">S/ {{ sumarCampo(clientes, 'totalGastado').toFixed(2) }}</p>
+            <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Total Facturado</p>
+          </div>
+          <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 text-center">
+            <p class="text-lg font-bold text-neutral-900 dark:text-white">{{ promedioCampo(clientes, 'compras') }}</p>
+            <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Prom. Compras</p>
+          </div>
+        </div>
+
+        <!-- Lista de clientes -->
+        <div class="space-y-3">
+          <div *ngFor="let cliente of filtrar(clientes, searchTerm)" class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                {{ cliente.nombre.charAt(0) }}{{ cliente.nombre.split(' ')[1]?.charAt(0) || '' }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <h4 class="font-medium text-neutral-900 dark:text-white text-sm">{{ cliente.nombre }}</h4>
+                  <span class="text-xs text-neutral-400 dark:text-neutral-500">{{ cliente.tiktok }}</span>
+                </div>
+                <div class="flex items-center gap-3 mt-0.5">
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300">
+                    {{ cliente.distrito }}
+                  </span>
+                  <span class="text-[10px] text-neutral-400 dark:text-neutral-500">{{ cliente.telefono }}</span>
+                </div>
+              </div>
+              <div class="text-right shrink-0">
+                <p class="font-semibold text-neutral-900 dark:text-white text-sm">{{ cliente.compras }} compras</p>
+                <p class="text-xs text-emerald-600 dark:text-emerald-400">S/ {{ cliente.totalGastado.toFixed(2) }}</p>
+                <p class="text-[10px] text-neutral-400 dark:text-neutral-500">{{ cliente.ultimaCompra }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+  </div>
+</main>
