@@ -47,6 +47,21 @@ export enum VentaActionTypes {
     SEARCH_VENTA_FAIL = "SEARCH_VENTA FAIL",
     CLEAR_VENTA_SEARCH = "CLEAR_VENTA_SEARCH",
 
+    CARGAR_REPORTE_MENSUAL = '[Venta] Cargar Reporte Mensual',
+    CARGAR_REPORTE_MENSUAL_EXITO = '[Venta] Cargar Reporte Mensual Éxito',
+    CARGAR_REPORTE_MENSUAL_ERROR = '[Venta] Cargar Reporte Mensual Error',
+
+    CARGAR_METODOS_PAGO_RANGO = '[Venta] Cargar Métodos de Pago por Rango',
+    CARGAR_METODOS_PAGO_RANGO_EXITO = '[Venta] Cargar Métodos de Pago por Rango Éxito',
+    CARGAR_METODOS_PAGO_RANGO_ERROR = '[Venta] Cargar Métodos de Pago por Rango Error',
+
+    CARGAR_TOP_PRODUCTOS_MES = '[Venta] Cargar Top Productos del Mes',
+    CARGAR_TOP_PRODUCTOS_MES_EXITO = '[Venta] Cargar Top Productos del Mes Éxito',
+    CARGAR_TOP_PRODUCTOS_MES_ERROR = '[Venta] Cargar Top Productos del Mes Error',
+
+    CARGAR_TOP_CATEGORIAS_MES = '[Venta] Cargar Top Categorías del Mes',
+    CARGAR_TOP_CATEGORIAS_MES_EXITO = '[Venta] Cargar Top Categorías del Mes Éxito',
+    CARGAR_TOP_CATEGORIAS_MES_ERROR = '[Venta] Cargar Top Categorías del Mes Error',
 
 }
 export const cargarResumenVentasByDate = createAction(
@@ -243,5 +258,82 @@ export const anularVentaExito = createAction(
 
 export const anularVentaError = createAction(
     VentaActionTypes.ANULAR_VENTA_ERROR,
+    props<{ error: any }>()
+);
+
+
+export const cargarReporteMensual = createAction(
+    VentaActionTypes.CARGAR_REPORTE_MENSUAL,
+    props<{ month: number, year: number }>()
+);
+
+export const cargarReporteMensualExito = createAction(
+    VentaActionTypes.CARGAR_REPORTE_MENSUAL_EXITO,
+    props<{
+        total_ventas: number,
+        total_ventas_mes_anterior: number,
+        porcentaje_vs_mes_anterior: number,
+        num_comprobantes: number,
+        clientes_atendidos: number
+    }>()
+);
+
+export const cargarReporteMensualError = createAction(
+    VentaActionTypes.CARGAR_REPORTE_MENSUAL_ERROR,
+    props<{ error: any }>()
+);
+
+export const cargarMetodosPagoRango = createAction(
+    VentaActionTypes.CARGAR_METODOS_PAGO_RANGO,
+    props<{ fromDate: [number, number, number], toDate: [number, number, number] }>()
+);
+
+export const cargarMetodosPagoRangoExito = createAction(
+    VentaActionTypes.CARGAR_METODOS_PAGO_RANGO_EXITO,
+    props<{
+        total_general: number,
+        total_ventas: number,
+        metodos_pago: { metodo_pago: string; num_ventas: number; total_soles: number; porcentaje: number }[]
+    }>()
+);
+
+export const cargarMetodosPagoRangoError = createAction(
+    VentaActionTypes.CARGAR_METODOS_PAGO_RANGO_ERROR,
+    props<{ error: any }>()
+);
+
+export const cargarTopProductosMes = createAction(
+    VentaActionTypes.CARGAR_TOP_PRODUCTOS_MES,
+    props<{ month: number, year: number }>()
+);
+
+export const cargarTopProductosMesExito = createAction(
+    VentaActionTypes.CARGAR_TOP_PRODUCTOS_MES_EXITO,
+    props<{
+        total_productos: number,
+        productos: { producto_id: number; nombre: string; sku: string; total_unidades: number; total_ingresos: number }[]
+    }>()
+);
+
+export const cargarTopProductosMesError = createAction(
+    VentaActionTypes.CARGAR_TOP_PRODUCTOS_MES_ERROR,
+    props<{ error: any }>()
+);
+
+export const cargarTopCategoriasMes = createAction(
+    VentaActionTypes.CARGAR_TOP_CATEGORIAS_MES,
+    props<{ month: number, year: number }>()
+);
+
+export const cargarTopCategoriasMesExito = createAction(
+    VentaActionTypes.CARGAR_TOP_CATEGORIAS_MES_EXITO,
+    props<{
+        total_categorias: number,
+        categorias: { categoria_id: number; nombre: string; codigo: string; total_unidades: number; total_ingresos: number }[]
+    }>()
+);
+
+export const cargarTopCategoriasMesError = createAction(
+    VentaActionTypes.CARGAR_TOP_CATEGORIAS_MES_ERROR,
     props<{ error: any }>()
 );

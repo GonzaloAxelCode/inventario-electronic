@@ -1,6 +1,7 @@
 import { ChartsalesbetweentwodatesComponent } from '@/app/components/dashboardcomponents/chartsalesbetweentwodates/chartsalesbetweentwodates.component';
 import { DashboardDailySummaryComponent } from "@/app/components/dashboardcomponents/dashboard-daily-summary/dashboard-daily-summary.component";
 import { DashboardGeneralStatsComponent } from "@/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component";
+import { DashboardMargenGananciasComponent } from "@/app/components/dashboardcomponents/dashboard-margen-ganancias/dashboard-margen-ganancias.component";
 import { DashboardProductsMostSalesComponent } from "@/app/components/dashboardcomponents/dashboard-products-most-sales/dashboard-products-most-sales.component";
 import { GraficosInicioComponent } from "@/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component";
 import { AlertasStockComponent } from "@/app/components/productoscomponents/alertas-stock/alertas-stock.component";
@@ -22,6 +23,7 @@ import { DashboardSalesCardsComponent } from "../../components/dashboardcomponen
     DashboardSalesCardsComponent,
     DashboardDailySummaryComponent,
     DashboardGeneralStatsComponent,
+    DashboardMargenGananciasComponent,
     DashboardProductsMostSalesComponent,
     GraficosInicioComponent,
     AlertasStockComponent,
@@ -36,8 +38,8 @@ export class DashboardComponent implements OnInit {
   private location = inject(Location);
   private cdr = inject(ChangeDetectorRef);
 
-  validTabs = ['general', 'resumen', 'inventario', 'comparacion'] as const;
-  activeTab: 'general' | 'resumen' | 'inventario' | 'comparacion' = 'general';
+  validTabs = ['general', 'resumen', 'margen', 'inventario', 'comparacion'] as const;
+  activeTab: 'general' | 'resumen' | 'margen' | 'inventario' | 'comparacion' = 'general';
   activeTabIndex = 0;
 
   ngOnInit() {

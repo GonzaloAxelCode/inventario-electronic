@@ -48,6 +48,45 @@ export interface SatisfaccionResponse {
     variacion: number;
 }
 
+export interface MetodosPagoRangoResponse {
+    from_date: [number, number, number];
+    to_date: [number, number, number];
+    total_general: number;
+    total_ventas: number;
+    metodos_pago: {
+        metodo_pago: string;
+        num_ventas: number;
+        total_soles: number;
+        porcentaje: number;
+    }[];
+}
+
+export interface TopProductosMesResponse {
+    month: number;
+    year: number;
+    total_productos: number;
+    productos: {
+        producto_id: number;
+        nombre: string;
+        sku: string;
+        total_unidades: number;
+        total_ingresos: number;
+    }[];
+}
+
+export interface TopCategoriasMesResponse {
+    month: number;
+    year: number;
+    total_categorias: number;
+    categorias: {
+        categoria_id: number;
+        nombre: string;
+        codigo: string;
+        total_unidades: number;
+        total_ingresos: number;
+    }[];
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -264,6 +303,18 @@ export class VentaService {
         );
     }
 
+    getMetodosPagoPorRango(fromDate: [number, number, number], toDate: [number, number, number]): Observable<MetodosPagoRangoResponse> {
+        return this.http.post<MetodosPagoRangoResponse>(
+            `${this.siteURL}/reports/payment-methods/`,
+            { from_date: fromDate, to_date: toDate }
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener métodos de pago por rango', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
     getSatisfaccion(yearA: number, monthA: number, yearB: number, monthB: number): Observable<SatisfaccionResponse> {
         const body = {
             year_a: yearA,
@@ -307,4 +358,49 @@ export class VentaService {
         );
     }
 
+    getReporteMensual(month: number, year: number): Observable<ReporteMensualResponse> {
+        return this.http.post<ReporteMensualResponse>(
+            `${this.siteURL}/reports/monthly/`,
+            { month, year }
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener reporte mensual', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    getTopProductosMes(month: number, year: number): Observable<TopProductosMesResponse> {
+        return this.http.post<TopProductosMesResponse>(
+            `${this.siteURL}/reports/top-products/`,
+            { month, year }
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener top productos del mes', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    getTopCategoriasMes(month: number, year: number): Observable<TopCategoriasMesResponse> {
+        return this.http.post<TopCategoriasMesResponse>(
+            `${this.siteURL}/reports/top-categories/`,
+            { month, year }
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener top categorías del mes', error);
+                return throwError(() => error);
+            })
+        );
+    }
+}
+
+export interface ReporteMensualResponse {
+    month: number;
+    year: number;
+    total_ventas: number;
+    total_ventas_mes_anterior: number;
+    porcentaje_vs_mes_anterior: number;
+    num_comprobantes: number;
+    clientes_atendidos: number;
 }

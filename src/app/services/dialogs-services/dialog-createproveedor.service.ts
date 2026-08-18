@@ -20,7 +20,7 @@ export class DialogCreateProveedorService {
         const options: Partial<any> = {
             label: 'Crear Proveedor',
             dismissible: true,
-            size: "auto",
+            size: "m",
 
         };
 

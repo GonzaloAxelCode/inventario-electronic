@@ -100,31 +100,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Resumen de alertas -->
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Estado del Inventario Hoy</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Alertas que necesitan atención</p>
-      <div class="grid grid-cols-3 gap-3">
-        <div class="flex flex-col items-center p-3 bg-red-50 dark:bg-red-900/20 rounded-xl">
-          <span class="text-3xl font-extrabold text-red-600 dark:text-red-400">{{ alertas.criticas }}</span>
-          <span class="text-[10px] font-semibold text-red-600 dark:text-red-400 mt-1">Críticas</span>
-        </div>
-        <div class="flex flex-col items-center p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
-          <span class="text-3xl font-extrabold text-yellow-600 dark:text-yellow-400">{{ alertas.advertencias }}</span>
-          <span class="text-[10px] font-semibold text-yellow-600 dark:text-yellow-400 mt-1">Advertencia</span>
-        </div>
-        <div class="flex flex-col items-center p-3 bg-neutral-50 dark:bg-neutral-700 rounded-xl">
-          <span class="text-3xl font-extrabold text-neutral-600 dark:text-neutral-300">{{ alertas.sinStock }}</span>
-          <span class="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 mt-1">Sin Stock</span>
-        </div>
-      </div>
-      <div class="mt-4 p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-xl">
-        <p class="text-xs text-neutral-500 dark:text-neutral-400">
-          <span class="font-bold text-neutral-700 dark:text-neutral-300">{{ productosBajoStock.length }}</span> productos necesitan reabastecimiento urgente
-        </p>
-      </div>
-    </div>
   </div>
 
   <!-- ==================== TOP PRODUCTOS + ÚLTIMAS VENTAS ==================== -->

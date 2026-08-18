@@ -136,35 +136,6 @@
         </p>
       </div>
     </div>
-
-    <!-- Margen de Ganancia por Categoría -->
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Margen de Ganancia por Categoría</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Comparativa costo vs precio de venta</p>
-
-      <div class="space-y-3">
-        <div *ngFor="let cat of margenes" class="p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-xl">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-neutral-900 dark:text-white">{{ cat.nombre }}</span>
-            <span class="text-xs font-bold px-2 py-0.5 rounded-full"
-              [ngClass]="getMargenClass(cat.margen)">
-              {{ cat.margen }}%
-            </span>
-          </div>
-          <div class="flex items-center gap-2 text-[10px]">
-            <span class="text-neutral-500">Costo: <span class="font-bold text-red-500">S/ {{ cat.costo | number:'1.0-0' }}</span></span>
-            <span class="text-neutral-300">→</span>
-            <span class="text-neutral-500">Venta: <span class="font-bold text-emerald-600 dark:text-emerald-400">S/ {{ cat.venta | number:'1.0-0' }}</span></span>
-          </div>
-          <div class="mt-2 h-2 bg-neutral-200 dark:bg-neutral-600 rounded-full overflow-hidden">
-            <div class="h-full rounded-full transition-all duration-700"
-              [ngClass]="cat.margen >= 50 ? 'bg-emerald-500' : cat.margen >= 40 ? 'bg-yellow-500' : 'bg-red-400'"
-              [style.width.%]="cat.margen">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- Top Productos en Inventario por costo de Compra -->

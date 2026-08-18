@@ -25,16 +25,8 @@
         Ventas Hoy
       </button>
 
-      <button tuiTab (click)="setTab('ultima-venta')" [class.active-link]="activeTab === 'ultima-venta'">
-        Ver última venta realizada
-      </button>
-
       <button tuiTab (click)="setTab('anuladas-hoy')" [class.active-link]="activeTab === 'anuladas-hoy'">
         Ventas Anuladas Hoy
-      </button>
-
-      <button tuiTab (click)="setTab('top-productos-hoy')" [class.active-link]="activeTab === 'top-productos-hoy'">
-        Productos más vendidos Hoy
       </button>
 
     </nav>
@@ -56,15 +48,6 @@
           <app-todaysalestable></app-todaysalestable>
         </div>
       </ng-container>
-      <ng-container *ngIf="activeTab === 'ultima-venta'">
-
-        <div>
-          <h2 class="text-xl font-bold mb-3">Última venta realizada</h2>
-          <div>
-            <app-todaysale></app-todaysale>
-          </div>
-        </div>
-      </ng-container>
 
 
       <!-- TAB: VENTAS ANULADAS HOY -->
@@ -73,16 +56,6 @@
         <div>
           <h2 class="text-xl font-bold mb-3">Ventas Anuladas Hoy</h2>
           <app-canceledsales></app-canceledsales>
-        </div>
-      </ng-container>
-
-
-      <!-- TAB: PRODUCTOS MÁS VENDIDOS HOY -->
-      <ng-container *ngIf="activeTab === 'top-productos-hoy'">
-        <!-- CONTENIDO: Top productos del día -->
-        <div>
-          <h2 class="text-xl font-bold mb-3">Productos más vendidos Hoy</h2>
-          <app-mostsalesproducts></app-mostsalesproducts>
         </div>
       </ng-container>
 

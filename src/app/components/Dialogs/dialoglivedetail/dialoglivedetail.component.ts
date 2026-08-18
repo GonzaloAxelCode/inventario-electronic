@@ -89,6 +89,7 @@ export class DialoglivedetailComponent implements OnInit, OnDestroy {
   });
 
   busquedaCliente = '';
+  busquedaSorteo = '';
   clienteSeleccionado: { nombre: string; telefono: string } | null = null;
 
   clientes: { nombre: string; telefono: string }[] = [
@@ -115,8 +116,8 @@ export class DialoglivedetailComponent implements OnInit, OnDestroy {
     },
   ];
 
-  listMetodosPago = ['YAPE', 'PLIN'];
-  listFormasPago = ['Contraentrega', 'Adelanto', 'Pago 100%'];
+  listMetodosPago = ['YAPE', 'PLIN', 'Transferencia BCP', 'Transferencia Interbank', 'Efectivo', 'Tarjeta'];
+  listFormasPago = ['Contraentrega', 'Adelanto 50%', 'Pago 100%', 'Reserva'];
   arrayCantidades = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
   ventaForm: FormGroup = this.fb.group({
@@ -135,14 +136,22 @@ export class DialoglivedetailComponent implements OnInit, OnDestroy {
   isSpinning = false;
   winner: { nombre: string; telefono: string } | null = null;
   rotationAngle = 0;
+  sorteoSeleccionados: Set<string> = new Set();
+  sorteoListo = false;
+
+  get sorteoParticipants(): { nombre: string; telefono: string }[] {
+    return this.clientes.filter(c => this.sorteoSeleccionados.has(c.nombre));
+  }
 
   get sectorAngle(): number {
-    return 360 / this.clientes.length;
+    const count = this.sorteoListo ? this.sorteoParticipants.length : this.clientes.length;
+    return count > 0 ? 360 / count : 360;
   }
 
   get wheelGradient(): string {
+    const participants = this.sorteoListo ? this.sorteoParticipants : this.clientes;
     const stops: string[] = [];
-    for (let i = 0; i < this.clientes.length; i++) {
+    for (let i = 0; i < participants.length; i++) {
       const start = i * this.sectorAngle;
       const end = start + this.sectorAngle;
       stops.push(`${this.colores[i % this.colores.length]} ${start}deg ${end}deg`);
@@ -163,12 +172,51 @@ export class DialoglivedetailComponent implements OnInit, OnDestroy {
     };
   }
 
+  toggleSorteoUsuario(nombre: string) {
+    if (this.sorteoListo) return;
+    if (this.sorteoSeleccionados.has(nombre)) {
+      this.sorteoSeleccionados.delete(nombre);
+    } else {
+      this.sorteoSeleccionados.add(nombre);
+    }
+    this.sorteoSeleccionados = new Set(this.sorteoSeleccionados);
+  }
+
+  isSorteoSeleccionado(nombre: string): boolean {
+    return this.sorteoSeleccionados.has(nombre);
+  }
+
+  toggleTodosSorteo() {
+    if (this.sorteoListo) return;
+    if (this.sorteoSeleccionados.size === this.clientes.length) {
+      this.sorteoSeleccionados.clear();
+    } else {
+      this.clientes.forEach(c => this.sorteoSeleccionados.add(c.nombre));
+    }
+    this.sorteoSeleccionados = new Set(this.sorteoSeleccionados);
+  }
+
+  confirmarSorteo() {
+    if (this.sorteoParticipants.length < 2) return;
+    this.sorteoListo = true;
+    this.winner = null;
+    this.rotationAngle = 0;
+  }
+
+  editarSorteo() {
+    this.sorteoListo = false;
+    this.winner = null;
+    this.rotationAngle = 0;
+    this.isSpinning = false;
+  }
+
   girarRuleta() {
-    if (this.isSpinning || this.clientes.length === 0) return;
+    const participants = this.sorteoListo ? this.sorteoParticipants : this.clientes;
+    if (this.isSpinning || participants.length === 0) return;
     this.isSpinning = true;
     this.winner = null;
 
-    const winnerIndex = Math.floor(Math.random() * this.clientes.length);
+    const winnerIndex = Math.floor(Math.random() * participants.length);
     const sectorCenter = winnerIndex * this.sectorAngle + this.sectorAngle / 2;
     const extraDegrees = (360 - sectorCenter + 360) % 360;
     const totalRotation = 360 * 5 + extraDegrees;
@@ -176,7 +224,7 @@ export class DialoglivedetailComponent implements OnInit, OnDestroy {
     this.rotationAngle += totalRotation;
 
     setTimeout(() => {
-      this.winner = this.clientes[winnerIndex];
+      this.winner = participants[winnerIndex];
       this.isSpinning = false;
       this.mostrarGanador();
     }, 4200);
@@ -311,6 +359,14 @@ export class DialoglivedetailComponent implements OnInit, OnDestroy {
   get clientesFiltrados() {
     if (!this.busquedaCliente.trim()) return this.clientes;
     const t = this.busquedaCliente.toLowerCase();
+    return this.clientes.filter(c =>
+      c.nombre.toLowerCase().includes(t) || c.telefono.includes(t)
+    );
+  }
+
+  get clientesSorteoFiltrados() {
+    if (!this.busquedaSorteo.trim()) return this.clientes;
+    const t = this.busquedaSorteo.toLowerCase();
     return this.clientes.filter(c =>
       c.nombre.toLowerCase().includes(t) || c.telefono.includes(t)
     );

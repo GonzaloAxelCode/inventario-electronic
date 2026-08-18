@@ -17,6 +17,12 @@ import {
     cancelarVenta,
     cancelarVentaError,
     cancelarVentaExito,
+    cargarMetodosPagoRango,
+    cargarMetodosPagoRangoExito,
+    cargarMetodosPagoRangoError,
+    cargarReporteMensual,
+    cargarReporteMensualExito,
+    cargarReporteMensualError,
     cargarResumenVentas,
     cargarResumenVentasByDate,
     cargarResumenVentasByDateError,
@@ -29,6 +35,15 @@ import {
     cargarTopProductosVentasHoyError,
 
     cargarTopProductosVentasHoyExito,
+
+    cargarTopProductosMes,
+    cargarTopProductosMesExito,
+    cargarTopProductosMesError,
+
+    cargarTopCategoriasMes,
+    cargarTopCategoriasMesExito,
+    cargarTopCategoriasMesError,
+
     cargarVentasRangoFechasTienda,
     cargarVentasRangoFechasTiendaError,
     cargarVentasRangoFechasTiendaExito,
@@ -349,5 +364,76 @@ export class VentaEffects {
         )
     );
 
+    loadReporteMensualEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(cargarReporteMensual),
+            exhaustMap(({ month, year }) =>
+                this.ventaService.getReporteMensual(month, year).pipe(
+                    map(response => {
+                        return cargarReporteMensualExito({
+                            total_ventas: response.total_ventas,
+                            total_ventas_mes_anterior: response.total_ventas_mes_anterior,
+                            porcentaje_vs_mes_anterior: response.porcentaje_vs_mes_anterior,
+                            num_comprobantes: response.num_comprobantes,
+                            clientes_atendidos: response.clientes_atendidos
+                        });
+                    }),
+                    catchError(error => of(cargarReporteMensualError({ error })))
+                )
+            )
+        )
+    );
+
+    loadMetodosPagoRangoEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(cargarMetodosPagoRango),
+            exhaustMap(({ fromDate, toDate }) =>
+                this.ventaService.getMetodosPagoPorRango(fromDate, toDate).pipe(
+                    map(response => {
+                        return cargarMetodosPagoRangoExito({
+                            total_general: response.total_general,
+                            total_ventas: response.total_ventas,
+                            metodos_pago: response.metodos_pago
+                        });
+                    }),
+                    catchError(error => of(cargarMetodosPagoRangoError({ error })))
+                )
+            )
+        )
+    );
+
+    loadTopProductosMesEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(cargarTopProductosMes),
+            exhaustMap(({ month, year }) =>
+                this.ventaService.getTopProductosMes(month, year).pipe(
+                    map(response => {
+                        return cargarTopProductosMesExito({
+                            total_productos: response.total_productos,
+                            productos: response.productos
+                        });
+                    }),
+                    catchError(error => of(cargarTopProductosMesError({ error })))
+                )
+            )
+        )
+    );
+
+    loadTopCategoriasMesEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(cargarTopCategoriasMes),
+            exhaustMap(({ month, year }) =>
+                this.ventaService.getTopCategoriasMes(month, year).pipe(
+                    map(response => {
+                        return cargarTopCategoriasMesExito({
+                            total_categorias: response.total_categorias,
+                            categorias: response.categorias
+                        });
+                    }),
+                    catchError(error => of(cargarTopCategoriasMesError({ error })))
+                )
+            )
+        )
+    );
 
 }

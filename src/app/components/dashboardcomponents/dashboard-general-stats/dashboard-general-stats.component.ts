@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { AppState } from '@/app/state/app.state';
+import { cargarReporteMensual, cargarMetodosPagoRango, cargarTopProductosMes, cargarTopCategoriasMes } from '@/app/state/actions/venta.actions';
+import { selectReporteMensual, selectLoadingReporteMensual, selectMetodosPagoRango, selectLoadingMetodosPagoRango, selectTopProductosMes, selectLoadingTopProductosMes, selectTopCategoriasMes, selectLoadingTopCategoriasMes } from '@/app/state/selectors/venta.selectors';
+import { Subject, takeUntil } from 'rxjs';
 
 const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -12,7 +17,9 @@ const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   templateUrl: './dashboard-general-stats.component.html',
   styleUrl: './dashboard-general-stats.component.scss'
 })
-export class DashboardGeneralStatsComponent {
+export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
+  private store = inject(Store<AppState>);
+  private destroy$ = new Subject<void>();
 
   monthNames = MONTH_NAMES;
   currentYear = new Date().getFullYear();
@@ -20,11 +27,10 @@ export class DashboardGeneralStatsComponent {
   dayNumbers = Array.from({ length: 31 }, (_, i) => i + 1);
 
   // Selectores por sección
-  // Secciones de MES: Resumen ventas, Compras, Top productos, Categorías, Tendencia semanal
   selectedMonth = MONTH_NAMES[new Date().getMonth()];
   selectedYear = this.currentYear;
 
-  // Secciones de RANGO: Métodos de pago, Rendimiento por empleado
+  // Secciones de RANGO: Métodos de pago
   rangeStartDay = 1;
   rangeStartMonth = MONTH_NAMES[new Date().getMonth()];
   rangeStartYear = this.currentYear;
@@ -32,22 +38,17 @@ export class DashboardGeneralStatsComponent {
   rangeEndMonth = MONTH_NAMES[new Date().getMonth()];
   rangeEndYear = this.currentYear;
 
-  // Sección de COMPARATIVA: Dos meses
-  compMonthA = MONTH_NAMES[new Date().getMonth() === 0 ? 11 : new Date().getMonth() - 1];
-  compYearA = new Date().getMonth() === 0 ? this.currentYear - 1 : this.currentYear;
-  compMonthB = MONTH_NAMES[new Date().getMonth()];
-  compYearB = this.currentYear;
-
-  // 1. Resumen de ventas por mes
+  // Reporte mensual desde API
   resumenVentas = {
-    totalVentas: 45280.00,
-    totalTransacciones: 534,
-    ticketPromedio: 84.80,
-    clientesAtendidos: 412,
-    vsMesAnterior: 8.3,
+    totalVentas: 0,
+    totalTransacciones: 0,
+    ticketPromedio: 0,
+    clientesAtendidos: 0,
+    vsMesAnterior: 0,
   };
+  loadingReporteMensual = false;
 
-  // 2. Compras del mes
+  // Compras del mes
   comprasMes = [
     { proveedor: 'Distribuidora Lima SAC', total: 12500.00, items: 45, fecha: '05/08/2026' },
     { proveedor: 'Mayorista Central', total: 8900.00, items: 32, fecha: '12/08/2026' },
@@ -55,7 +56,7 @@ export class DashboardGeneralStatsComponent {
   ];
   totalComprasMes = 27000.00;
 
-  // 3. Top productos por mes
+  // Top productos por mes
   topProductosMes = [
     { nombre: 'Gaseosa 600ml', cantidad: 156, ingresos: 546.00 },
     { nombre: 'Pan integral', cantidad: 132, ingresos: 369.60 },
@@ -63,57 +64,163 @@ export class DashboardGeneralStatsComponent {
     { nombre: 'Papa Lay\'s', cantidad: 98, ingresos: 294.00 },
     { nombre: 'Jabón líquido', cantidad: 87, ingresos: 739.50 },
   ];
+  loadingTopProductosMes = false;
 
-  // 4. Métodos de pago por rango
+  // Métodos de pago por rango
   metodosPagoRango = [
     { nombre: 'Efectivo', cantidad: 245, monto: 19600.00, porcentaje: 43.3 },
     { nombre: 'Yape', cantidad: 168, monto: 14280.00, porcentaje: 31.5 },
     { nombre: 'Plin', cantidad: 78, monto: 6240.00, porcentaje: 13.8 },
     { nombre: 'Transferencia', cantidad: 43, monto: 5160.00, porcentaje: 11.4 },
   ];
+  loadingMetodosPagoRango = false;
 
-  // 5. Rendimiento por empleado por rango
-  empleados = [
-    { nombre: 'María López', ventas: 145, total: 12890.00, color: '#8B5CF6' },
-    { nombre: 'Carlos Ruiz', ventas: 132, total: 11540.00, color: '#3B82F6' },
-    { nombre: 'Ana García', ventas: 118, total: 10230.00, color: '#10B981' },
-    { nombre: 'Luis Torres', ventas: 98, total: 8420.00, color: '#F59E0B' },
-  ];
-  maxEmpleadoVentas = 145;
-
-  // 6. Categorías más vendidas por mes
+  // Categorías más vendidas por mes
   categoriasMes = [
-    { nombre: 'Bebidas', cantidad: 312, ingresos: 12480.00, margen: 45 },
-    { nombre: 'Snacks', cantidad: 245, ingresos: 7350.00, margen: 52 },
-    { nombre: 'Lácteos', cantidad: 198, ingresos: 7920.00, margen: 38 },
-    { nombre: 'Panadería', cantidad: 167, ingresos: 5010.00, margen: 55 },
-    { nombre: 'Limpieza', cantidad: 134, ingresos: 8040.00, margen: 42 },
-    { nombre: 'Higiene', cantidad: 112, ingresos: 5600.00, margen: 48 },
+    { nombre: 'Bebidas', cantidad: 312, ingresos: 12480.00 },
+    { nombre: 'Snacks', cantidad: 245, ingresos: 7350.00 },
+    { nombre: 'Lácteos', cantidad: 198, ingresos: 7920.00 },
+    { nombre: 'Panadería', cantidad: 167, ingresos: 5010.00 },
+    { nombre: 'Limpieza', cantidad: 134, ingresos: 8040.00 },
+    { nombre: 'Higiene', cantidad: 112, ingresos: 5600.00 },
   ];
+  loadingTopCategoriasMes = false;
 
-  // 7. Comparativa de dos meses
-  mesA = { nombre: 'Julio', ventas: 41800.00, transacciones: 498, ticket: 83.94 };
-  mesB = { nombre: 'Agosto', ventas: 45280.00, transacciones: 534, ticket: 84.80 };
+  ngOnInit(): void {
+    // Suscribirse al reporte mensual
+    this.store.select(selectReporteMensual)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(reporte => {
+        if (reporte) {
+          this.resumenVentas = {
+            totalVentas: reporte.total_ventas,
+            totalTransacciones: reporte.num_comprobantes,
+            ticketPromedio: reporte.num_comprobantes > 0 ? reporte.total_ventas / reporte.num_comprobantes : 0,
+            clientesAtendidos: reporte.clientes_atendidos,
+            vsMesAnterior: reporte.porcentaje_vs_mes_anterior,
+          };
+        }
+      });
 
-  // Handlers de cambio
+    // Suscribirse al loading
+    this.store.select(selectLoadingReporteMensual)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(loading => this.loadingReporteMensual = loading);
+
+    // Suscribirse a métodos de pago por rango
+    this.store.select(selectMetodosPagoRango)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(data => {
+        if (data && data.metodos_pago.length > 0) {
+          this.metodosPagoRango = data.metodos_pago.map(m => ({
+            nombre: m.metodo_pago,
+            cantidad: m.num_ventas,
+            monto: m.total_soles,
+            porcentaje: m.porcentaje
+          }));
+        }
+      });
+
+    // Suscribirse al loading de métodos de pago
+    this.store.select(selectLoadingMetodosPagoRango)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(loading => this.loadingMetodosPagoRango = loading);
+
+    // Suscribirse a top productos del mes
+    this.store.select(selectTopProductosMes)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(data => {
+        if (data && data.productos.length > 0) {
+          this.topProductosMes = data.productos.map(p => ({
+            nombre: p.nombre,
+            cantidad: p.total_unidades,
+            ingresos: p.total_ingresos
+          }));
+        }
+      });
+
+    // Suscribirse al loading de top productos
+    this.store.select(selectLoadingTopProductosMes)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(loading => this.loadingTopProductosMes = loading);
+
+    // Suscribirse a top categorías del mes
+    this.store.select(selectTopCategoriasMes)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(data => {
+        if (data && data.categorias.length > 0) {
+          this.categoriasMes = data.categorias.map(c => ({
+            nombre: c.nombre,
+            cantidad: c.total_unidades,
+            ingresos: c.total_ingresos
+          }));
+        }
+      });
+
+    // Suscribirse al loading de top categorías
+    this.store.select(selectLoadingTopCategoriasMes)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(loading => this.loadingTopCategoriasMes = loading);
+
+    // Cargar reporte del mes actual
+    this.loadReporteMensual();
+
+    // Cargar métodos de pago por rango
+    this.loadMetodosPagoRango();
+
+    // Cargar top productos del mes
+    this.loadTopProductosMes();
+
+    // Cargar top categorías del mes
+    this.loadTopCategoriasMes();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadReporteMensual(): void {
+    const monthIndex = this.monthNames.indexOf(this.selectedMonth);
+    this.store.dispatch(cargarReporteMensual({ month: monthIndex, year: this.selectedYear }));
+  }
+
+  loadMetodosPagoRango(): void {
+    const startMonthIndex = this.monthNames.indexOf(this.rangeStartMonth) + 1;
+    const endMonthIndex = this.monthNames.indexOf(this.rangeEndMonth) + 1;
+    const fromDate: [number, number, number] = [this.rangeStartDay, startMonthIndex, this.rangeStartYear];
+    const toDate: [number, number, number] = [this.rangeEndDay, endMonthIndex, this.rangeEndYear];
+    this.store.dispatch(cargarMetodosPagoRango({ fromDate, toDate }));
+  }
+
+  loadTopProductosMes(): void {
+    const monthIndex = this.monthNames.indexOf(this.selectedMonth);
+    this.store.dispatch(cargarTopProductosMes({ month: monthIndex, year: this.selectedYear }));
+  }
+
+  loadTopCategoriasMes(): void {
+    const monthIndex = this.monthNames.indexOf(this.selectedMonth);
+    this.store.dispatch(cargarTopCategoriasMes({ month: monthIndex, year: this.selectedYear }));
+  }
+
   onMonthChange(): void {
-    // this.store.dispatch(...)
+    this.loadReporteMensual();
+    this.loadTopProductosMes();
+    this.loadTopCategoriasMes();
   }
 
   onYearChange(): void {
-    // this.store.dispatch(...)
+    this.loadReporteMensual();
+    this.loadTopProductosMes();
+    this.loadTopCategoriasMes();
   }
 
   onRangeChange(): void {
-    // this.store.dispatch(...)
-  }
-
-  onCompMonthChange(): void {
-    // this.store.dispatch(...)
+    this.loadMetodosPagoRango();
   }
 
   getEmpleadoBarHeight(ventas: number): number {
-    return this.maxEmpleadoVentas > 0 ? (ventas / this.maxEmpleadoVentas) * 100 : 0;
+    return 0;
   }
 
   getComparisonClass(value: number): string {

@@ -1,0 +1,76 @@
+<div class="flex flex-col gap-6">
+
+  <!-- ==================== MARGEN DE GANANCIA DEL DÍA ==================== -->
+  <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+    <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Margen de Ganancia del Día</h4>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cuánto ganaste realmente</p>
+
+    <div class="grid grid-cols-3 gap-3 mb-4">
+      <div class="text-center p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
+        <p class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">S/ {{ margenData.ingresos | number:'1.0-0' }}</p>
+        <p class="text-[10px] text-emerald-600 dark:text-emerald-400">Ingresos</p>
+      </div>
+      <div class="text-center p-2 bg-red-50 dark:bg-red-900/20 rounded-xl">
+        <p class="text-lg font-extrabold text-red-500 dark:text-red-400">S/ {{ margenData.costoProductos | number:'1.0-0' }}</p>
+        <p class="text-[10px] text-red-500 dark:text-red-400">Costo</p>
+      </div>
+      <div class="text-center p-2 bg-violet-50 dark:bg-violet-900/20 rounded-xl">
+        <p class="text-lg font-extrabold text-violet-600 dark:text-violet-400">S/ {{ margenData.gananciaBruta | number:'1.0-0' }}</p>
+        <p class="text-[10px] text-violet-600 dark:text-violet-400">Ganancia</p>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <div class="flex justify-between mb-1">
+        <span class="text-[10px] text-neutral-500">Margen total</span>
+        <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">{{ margenData.porcentajeMargen }}%</span>
+      </div>
+      <div class="h-2 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full"
+          [style.width.%]="margenData.porcentajeMargen"></div>
+      </div>
+    </div>
+
+    <div class="space-y-1.5">
+      <div *ngFor="let cat of margenPorCategoria" class="flex items-center justify-between text-[11px]">
+        <span class="text-neutral-600 dark:text-neutral-400">{{ cat.nombre }}</span>
+        <span class="font-bold" [ngClass]="cat.margen >= 45 ? 'text-emerald-600 dark:text-emerald-400' : 'text-yellow-600 dark:text-yellow-400'">
+          {{ cat.margen }}%
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DETALLE POR CATEGORÍA ==================== -->
+  <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+    <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Detalle por Categoría</h4>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Ingresos, costos y ganancia por categoría</p>
+
+    <div class="space-y-3">
+      <div *ngFor="let cat of margenPorCategoria" class="p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-xl">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-neutral-900 dark:text-white">{{ cat.nombre }}</span>
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+            [ngClass]="cat.margen >= 45 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'">
+            {{ cat.margen }}% margen
+          </span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div>
+            <p class="text-[10px] text-neutral-400">Ingresos</p>
+            <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400">S/ {{ cat.ingresos | number:'1.0-0' }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] text-neutral-400">Costo</p>
+            <p class="text-sm font-bold text-red-500 dark:text-red-400">S/ {{ cat.costo | number:'1.0-0' }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] text-neutral-400">Ganancia</p>
+            <p class="text-sm font-bold text-violet-600 dark:text-violet-400">S/ {{ cat.ganancia | number:'1.0-0' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

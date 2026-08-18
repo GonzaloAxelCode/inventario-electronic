@@ -7,6 +7,12 @@ import {
     cancelarVenta,
     cancelarVentaError,
     cancelarVentaExito,
+    cargarMetodosPagoRango,
+    cargarMetodosPagoRangoExito,
+    cargarMetodosPagoRangoError,
+    cargarReporteMensual,
+    cargarReporteMensualExito,
+    cargarReporteMensualError,
     cargarResumenVentas,
     cargarResumenVentasByDate,
     cargarResumenVentasByDateError,
@@ -19,6 +25,14 @@ import {
     cargarTopProductosVentasHoyError,
 
     cargarTopProductosVentasHoyExito,
+
+    cargarTopProductosMes,
+    cargarTopProductosMesExito,
+    cargarTopProductosMesError,
+
+    cargarTopCategoriasMes,
+    cargarTopCategoriasMesExito,
+    cargarTopCategoriasMesError,
 
     cargarVentasRangoFechasTienda,
     cargarVentasRangoFechasTiendaError,
@@ -64,6 +78,37 @@ export interface VentaState {
     showVentaDetailTemporary: boolean
     temporaryVenta: Venta
 
+    // Reporte mensual
+    reporteMensual: {
+        total_ventas: number;
+        total_ventas_mes_anterior: number;
+        porcentaje_vs_mes_anterior: number;
+        num_comprobantes: number;
+        clientes_atendidos: number;
+    };
+    loadingReporteMensual: boolean;
+
+    // Métodos de pago por rango
+    metodosPagoRango: {
+        total_general: number;
+        total_ventas: number;
+        metodos_pago: { metodo_pago: string; num_ventas: number; total_soles: number; porcentaje: number }[];
+    };
+    loadingMetodosPagoRango: boolean;
+
+    // Top productos del mes
+    topProductosMes: {
+        total_productos: number;
+        productos: { producto_id: number; nombre: string; sku: string; total_unidades: number; total_ingresos: number }[];
+    };
+    loadingTopProductosMes: boolean;
+
+    // Top categorías del mes
+    topCategoriasMes: {
+        total_categorias: number;
+        categorias: { categoria_id: number; nombre: string; codigo: string; total_unidades: number; total_ingresos: number }[];
+    };
+    loadingTopCategoriasMes: boolean;
 
     search_ventas_found: string;
     count: number;
@@ -107,7 +152,31 @@ export const initialState: VentaState = {
     length_pages: null,
     loadingSearch: false,
     ventas_search: [],
-    loadingVentasToday: false
+    loadingVentasToday: false,
+    reporteMensual: {
+        total_ventas: 0,
+        total_ventas_mes_anterior: 0,
+        porcentaje_vs_mes_anterior: 0,
+        num_comprobantes: 0,
+        clientes_atendidos: 0
+    },
+    loadingReporteMensual: false,
+    metodosPagoRango: {
+        total_general: 0,
+        total_ventas: 0,
+        metodos_pago: []
+    },
+    loadingMetodosPagoRango: false,
+    topProductosMes: {
+        total_productos: 0,
+        productos: []
+    },
+    loadingTopProductosMes: false,
+    topCategoriasMes: {
+        total_categorias: 0,
+        categorias: []
+    },
+    loadingTopCategoriasMes: false
 };
 
 export const ventaReducer = createReducer(
@@ -347,5 +416,89 @@ export const ventaReducer = createReducer(
         ...state,
         loadingNotaCredito: false,
         errors: error
+    })),
+
+    // Reporte mensual
+    on(cargarReporteMensual, (state) => ({
+        ...state,
+        loadingReporteMensual: true,
+        error: null
+    })),
+    on(cargarReporteMensualExito, (state, { total_ventas, total_ventas_mes_anterior, porcentaje_vs_mes_anterior, num_comprobantes, clientes_atendidos }) => ({
+        ...state,
+        loadingReporteMensual: false,
+        reporteMensual: {
+            total_ventas,
+            total_ventas_mes_anterior,
+            porcentaje_vs_mes_anterior,
+            num_comprobantes,
+            clientes_atendidos
+        }
+    })),
+    on(cargarReporteMensualError, (state, { error }) => ({
+        ...state,
+        loadingReporteMensual: false,
+        error
+    })),
+
+    // Métodos de pago por rango
+    on(cargarMetodosPagoRango, (state) => ({
+        ...state,
+        loadingMetodosPagoRango: true,
+        error: null
+    })),
+    on(cargarMetodosPagoRangoExito, (state, { total_general, total_ventas, metodos_pago }) => ({
+        ...state,
+        loadingMetodosPagoRango: false,
+        metodosPagoRango: {
+            total_general,
+            total_ventas,
+            metodos_pago
+        }
+    })),
+    on(cargarMetodosPagoRangoError, (state, { error }) => ({
+        ...state,
+        loadingMetodosPagoRango: false,
+        error
+    })),
+
+    // Top productos del mes
+    on(cargarTopProductosMes, (state) => ({
+        ...state,
+        loadingTopProductosMes: true,
+        error: null
+    })),
+    on(cargarTopProductosMesExito, (state, { total_productos, productos }) => ({
+        ...state,
+        loadingTopProductosMes: false,
+        topProductosMes: {
+            total_productos,
+            productos
+        }
+    })),
+    on(cargarTopProductosMesError, (state, { error }) => ({
+        ...state,
+        loadingTopProductosMes: false,
+        error
+    })),
+
+    // Top categorías del mes
+    on(cargarTopCategoriasMes, (state) => ({
+        ...state,
+        loadingTopCategoriasMes: true,
+        error: null
+    })),
+    on(cargarTopCategoriasMesExito, (state, { total_categorias, categorias }) => ({
+        ...state,
+        loadingTopCategoriasMes: false,
+        topCategoriasMes: {
+            total_categorias,
+            categorias
+        }
+    })),
+    on(cargarTopCategoriasMesError, (state, { error }) => ({
+        ...state,
+        loadingTopCategoriasMes: false,
+        error
     }))
 );
