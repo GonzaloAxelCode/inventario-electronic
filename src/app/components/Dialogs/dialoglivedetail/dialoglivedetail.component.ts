@@ -7,13 +7,13 @@ import { QuerySearchInventario } from '@/app/services/inventario.service';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { URL_BASE } from '@/app/services/utils/endpoints';
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { TuiAlertService, TuiButton, TuiDataList, TuiDialogContext, TuiTextfield } from '@taiga-ui/core';
+import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiDialogContext, TuiDialogService, TuiTextfield, TuiTitle } from '@taiga-ui/core';
 import { TuiChip, TuiDataListWrapper, TuiSelect } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { map, Observable, Subject, takeUntil } from 'rxjs';
 
 export interface Live {
   id: number;
@@ -49,6 +49,8 @@ export interface VentaLive {
     TuiDataList,
     TuiDataListWrapper,
     TuiChip,
+    TuiAppearance,
+    TuiTitle,
   ],
   templateUrl: './dialoglivedetail.component.html',
   styleUrl: './dialoglivedetail.component.scss',
@@ -61,10 +63,13 @@ export class DialoglivedetailComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private alerts = inject(TuiAlertService);
   private dialogService = inject(DialogService);
+  private dialogs = inject(TuiDialogService);
+
+  @ViewChild('ganadorTpl', { static: true }) ganadorTpl!: TemplateRef<any>;
 
   URL_BASE = URL_BASE;
 
-  vistaActiva: 'usuarios' | 'venta' = 'usuarios';
+  vistaActiva: 'usuarios' | 'venta' | 'sorteos' | 'pedidosHoy' = 'usuarios';
 
   inventariosState$?: Observable<any>;
   selectCategorias$?: Observable<any>;
@@ -101,7 +106,7 @@ export class DialoglivedetailComponent implements OnInit, OnDestroy {
       productos: [{ nombre: 'Funda iPhone 15 Pro Max', cantidad: 2, precio: 45.00 }],
     },
     {
-      id: 'TK-V002', cliente: '@carlosram_dev', total: 54.00, metodoPago: 'Efectivo', estado: 'pagado', hora: '20:12',
+      id: 'TK-V002', cliente: '@carlosram_dev', total: 54.00, metodoPago: 'PLIN', estado: 'pagado', hora: '20:12',
       productos: [{ nombre: 'Mica Templada iPhone 15', cantidad: 3, precio: 18.00 }],
     },
     {
@@ -125,6 +130,80 @@ export class DialoglivedetailComponent implements OnInit, OnDestroy {
 
   salesTotals = { total: 0 };
 
+  // ==================== SORTEOS ====================
+  colores = ['#FF0000', '#FF7F00', '#FFD700', '#00CC00', '#00CED1', '#0000FF', '#4B0082', '#9400D3', '#FF1493', '#FF69B4'];
+  isSpinning = false;
+  winner: { nombre: string; telefono: string } | null = null;
+  rotationAngle = 0;
+
+  get sectorAngle(): number {
+    return 360 / this.clientes.length;
+  }
+
+  get wheelGradient(): string {
+    const stops: string[] = [];
+    for (let i = 0; i < this.clientes.length; i++) {
+      const start = i * this.sectorAngle;
+      const end = start + this.sectorAngle;
+      stops.push(`${this.colores[i % this.colores.length]} ${start}deg ${end}deg`);
+    }
+    return `conic-gradient(from 0deg, ${stops.join(', ')})`;
+  }
+
+  getTextStyle(index: number): { [key: string]: string } {
+    const midAngle = index * this.sectorAngle + this.sectorAngle / 2;
+    const radians = (midAngle - 90) * (Math.PI / 180);
+    const radius = 36;
+    const x = 50 + radius * Math.cos(radians);
+    const y = 50 + radius * Math.sin(radians);
+    return {
+      'left': `${x}%`,
+      'top': `${y}%`,
+      'transform': `translate(-50%, -50%) rotate(${midAngle}deg)`,
+    };
+  }
+
+  girarRuleta() {
+    if (this.isSpinning || this.clientes.length === 0) return;
+    this.isSpinning = true;
+    this.winner = null;
+
+    const winnerIndex = Math.floor(Math.random() * this.clientes.length);
+    const sectorCenter = winnerIndex * this.sectorAngle + this.sectorAngle / 2;
+    const extraDegrees = (360 - sectorCenter + 360) % 360;
+    const totalRotation = 360 * 5 + extraDegrees;
+
+    this.rotationAngle += totalRotation;
+
+    setTimeout(() => {
+      this.winner = this.clientes[winnerIndex];
+      this.isSpinning = false;
+      this.mostrarGanador();
+    }, 4200);
+  }
+
+  mostrarGanador() {
+    this.dialogs
+      .open(this.ganadorTpl, {
+        dismissible: true,
+        label: 'Sorteo TikTok Live',
+        size: 's',
+        closeable: true,
+      })
+      .pipe(map(() => {}))
+      .subscribe();
+  }
+
+  getColor(index: number): string {
+    return this.colores[index % this.colores.length];
+  }
+
+  // ==================== PEDIDOS HOY ====================
+  get pedidosDeHoy(): VentaLive[] {
+    return this.ventas;
+  }
+
+  // ==================== INIT ====================
   ngOnInit() {
     this.store.dispatch(loadCategorias());
     this.inventariosState$ = this.store.select(selectInventario);

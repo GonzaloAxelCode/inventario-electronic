@@ -175,3 +175,17 @@
     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
 }
+
+/* Sorteo winner pulse */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
