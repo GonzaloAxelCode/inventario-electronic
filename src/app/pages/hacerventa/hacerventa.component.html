@@ -1,31 +1,19 @@
-<div>
+<div class="p-4 sm:p-6">
 
-    <!-- Header estilo Gestion de Productos -->
-    <header tuiSubheader class="px-4 sm:px-6 py-3">
-        <div class="flex gap-4 items-center">
-            <h2 tuiHeader>
-                <div tuiTitle>
-                    <div tuiNavigationLogo>
-                        <tui-icon icon="@tui.gitlab" />
-                        <span tuiFade>Hacer ventas</span>
-                    </div>
-                </div>
-            </h2>
-        </div>
+    <header tuiSubheader class="p-0 mb-4">
+        <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Hacer Venta</h2>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Punto de venta y registro de comprobantes</p>
 
         <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
-            class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
-            <button tuiTab type="button">
-                Venta Normal
-            </button>
-            <button tuiTab type="button">
-                Venta Detallada
-            </button>
-            <button tuiTab type="button">
-                Vender por pedido
-            </button>
+            class="flex gap-2 overflow-x-auto whitespace-nowrap">
+            <button tuiTab type="button">Venta Normal</button>
+            <button tuiTab type="button">Venta Detallada</button>
+            <button tuiTab type="button">Vender por pedido</button>
         </nav>
     </header>
+
+    <div class="p-6 pt-0 pb-12">
+        <div class="py-4 pb-8">
 
     <tui-loader [showLoader]="loaderSearchCliente || (loadingCreateVenta$ | async)?.loadingCreateVenta"
         [overlay]="true">

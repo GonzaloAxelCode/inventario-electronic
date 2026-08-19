@@ -1,49 +1,25 @@
-<main tuiNavigationMain>
-  <header tuiSubheader>
-    <div class="flex gap-4 pt-4 items-center">
-      <h2 tuiHeader>
-        <div tuiTitle>
-          <div tuiNavigationLogo>
-            <tui-icon icon="@tui.gitlab" />
-            <span tuiFade>Guías de Remisión</span>
-          </div>
-        </div>
-      </h2>
-    </div>
+<main tuiNavigationMain class="p-4 sm:p-6">
+    <header tuiSubheader class="p-0 mb-4">
+        <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Guías de Remisión</h2>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Gestiona guías de remisión electrónicas</p>
 
-    <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
-      class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
+        <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
+            class="flex gap-2 overflow-x-auto whitespace-nowrap">
+            <button tuiTab type="button">Guías Registradas</button>
+            <button tuiTab type="button">Nueva Guía</button>
+        </nav>
+    </header>
 
-      <button tuiTab type="button">
-        Guías Registradas
-      </button>
-
-      <button tuiTab type="button">
-        Nueva Guía
-      </button>
-
-    </nav>
-  </header>
-
-  <div class="py-2">
-
-    <!-- TAB: LISTA DE GUÍAS -->
     <ng-container *ngIf="activeTab === 'lista' && !guiaSeleccionada">
-      <app-listaguias (verDetalle)="onVerDetalle($event)" (editarGuia)="onEditarGuia($event)">
-      </app-listaguias>
+        <app-listaguias (verDetalle)="onVerDetalle($event)" (editarGuia)="onEditarGuia($event)"></app-listaguias>
     </ng-container>
 
-    <!-- TAB: DETALLE DE GUÍA -->
     <ng-container *ngIf="activeTab === 'lista' && guiaSeleccionada">
-      <app-detalleguia [guia]="guiaSeleccionada" (cerrar)="onCerrarDetalle()">
-      </app-detalleguia>
+        <app-detalleguia [guia]="guiaSeleccionada" (cerrar)="onCerrarDetalle()"></app-detalleguia>
     </ng-container>
 
-    <!-- TAB: REGISTRAR NUEVA GUÍA -->
     <ng-container *ngIf="activeTab === 'registrar'">
-      <app-formguia (cancelar)="onCancelarForm()">
-      </app-formguia>
+        <app-formguia (cancelar)="onCancelarForm()"></app-formguia>
     </ng-container>
 
-  </div>
 </main>

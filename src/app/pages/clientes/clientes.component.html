@@ -1,66 +1,29 @@
-<div tuiNavigationMain class="pl-4 bg-neutral-50 dark:bg-neutral-800"
+<div tuiNavigationMain class="p-4 sm:p-6 bg-neutral-50 dark:bg-neutral-800"
      [class.h-screen]="activeTab === 'mis-clientes'"
      [class.overflow-hidden]="activeTab === 'mis-clientes'"
      [class.min-h-screen]="activeTab !== 'mis-clientes'">
-    <header tuiSubheader class="bg-transparent border-none">
-        <div class="flex gap-4 items-center">
-            <h2 tuiHeader>
-                <div tuiTitle>
-                    <div tuiNavigationLogo>
-                        <tui-icon icon="@tui.gitlab" />
-                        <span tuiFade>Gestion de Clientes</span>
-                    </div>
 
-                  
-                </div>
-            </h2>
-        </div>
+    <header tuiSubheader class="bg-transparent border-none p-0 mb-4">
+        <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Gestión de Clientes</h2>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Administra tu cartera de clientes y estadísticas</p>
 
-
-
-
-<nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
-
-    <button tuiTab 
-        (click)="setTab('mis-clientes')" 
-        [class.active-link]="activeTab === 'mis-clientes'">
-       Clientes registrados
-    </button>
-
-    <button tuiTab 
-        (click)="setTab('estadisticas')" 
-        [class.active-link]="activeTab === 'estadisticas'">
-       Estadísticas
-    </button>
-
-    <button tuiTab 
-        (click)="setTab('sorteos')" 
-        [class.active-link]="activeTab === 'sorteos'">
-       Sorteos
-    </button>
-
-</nav>
-
-
+        <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap">
+            <button tuiTab (click)="setTab('mis-clientes')" [class.active-link]="activeTab === 'mis-clientes'">Clientes registrados</button>
+            <button tuiTab (click)="setTab('estadisticas')" [class.active-link]="activeTab === 'estadisticas'">Estadísticas</button>
+            <button tuiTab (click)="setTab('sorteos')" [class.active-link]="activeTab === 'sorteos'">Sorteos</button>
+        </nav>
     </header>
 
+    <ng-container *ngIf="activeTab === 'mis-clientes'">
+        <app-tableclientes></app-tableclientes>
+    </ng-container>
 
-    <div>
-        <div class="pt-4">
-            
-            <ng-container *ngIf="activeTab === 'mis-clientes'">
-                               <app-tableclientes></app-tableclientes>
-            </ng-container>
+    <ng-container *ngIf="activeTab === 'estadisticas'">
+        <app-estadisticas-clientes></app-estadisticas-clientes>
+    </ng-container>
 
-            <ng-container *ngIf="activeTab === 'estadisticas'">
-                <app-estadisticas-clientes></app-estadisticas-clientes>
-            </ng-container>
-
-            <ng-container *ngIf="activeTab === 'sorteos'">
-                <app-sorteos-clientes></app-sorteos-clientes>
-            </ng-container>
-
-        </div>
-    </div>
+    <ng-container *ngIf="activeTab === 'sorteos'">
+        <app-sorteos-clientes></app-sorteos-clientes>
+    </ng-container>
 
 </div>

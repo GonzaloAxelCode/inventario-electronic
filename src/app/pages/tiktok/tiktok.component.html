@@ -1,18 +1,10 @@
-<main tuiNavigationMain>
-  <header tuiSubheader>
-    <div class="flex gap-4 pt-4 items-center">
-      <h2 tuiHeader>
-        <div tuiTitle>
-          <div tuiNavigationLogo>
-            <tui-icon icon="@tui.play" />
-            <span tuiFade>TikTok</span>
-          </div>
-        </div>
-      </h2>
-    </div>
+<main tuiNavigationMain class="p-4 sm:p-6">
+  <header tuiSubheader class="p-0 mb-4">
+    <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">TikTok Shop</h2>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Gestiona ventas, pedidos y envíos desde TikTok</p>
 
     <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
-      class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
+      class="flex gap-2 overflow-x-auto whitespace-nowrap">
       <button tuiTab type="button">Lives</button>
       <button tuiTab type="button">Pedidos por TikTok</button>
       <button tuiTab type="button">Envios Pendientes</button>
@@ -21,7 +13,8 @@
     </nav>
   </header>
 
-  <div class="py-4 px-4 sm:px-6">
+  <div class="p-6 pt-0 pb-12">
+    <div class="py-4 pb-8">
 
     <!-- TAB: Lives -->
     <ng-container *ngIf="activeTab === 'lives'">
@@ -351,5 +344,6 @@
       </div>
     </ng-container>
 
+    </div>
   </div>
 </main>

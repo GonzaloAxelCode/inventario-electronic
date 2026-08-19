@@ -4,46 +4,49 @@
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
     <!-- Total bajo stock -->
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-          <svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+    <div class="p-5 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/20 rounded-2xl border border-orange-200 dark:border-orange-700/50 shadow-sm">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 dark:bg-orange-400/20 flex items-center justify-center">
+          <svg class="w-7 h-7 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
         </div>
         <div>
-          <p class="text-3xl font-extrabold text-neutral-900 dark:text-white">{{ totalBajoStock }}</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Total bajo stock</p>
+          <p class="text-4xl font-extrabold text-orange-800 dark:text-orange-200">{{ totalBajoStock }}</p>
+          <p class="text-sm font-semibold text-orange-600 dark:text-orange-400">Total bajo stock</p>
+          <p class="text-[11px] text-orange-500/70 dark:text-orange-400/60 mt-0.5">Productos por reabastecer</p>
         </div>
       </div>
     </div>
 
     <!-- Crítico -->
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-          <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.618 5.984A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016zM12 9v2m0 4h.01" />
+    <div class="p-5 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/30 dark:to-red-800/20 rounded-2xl border border-red-200 dark:border-red-700/50 shadow-sm">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-red-500/20 dark:bg-red-400/20 flex items-center justify-center">
+          <svg class="w-7 h-7 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
         <div>
-          <p class="text-3xl font-extrabold text-red-600 dark:text-red-400">{{ critico }}</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Crítico (0-3 uds)</p>
+          <p class="text-4xl font-extrabold text-red-700 dark:text-red-300">{{ critico }}</p>
+          <p class="text-sm font-semibold text-red-600 dark:text-red-400">Crítico</p>
+          <p class="text-[11px] text-red-500/70 dark:text-red-400/60 mt-0.5">0 - 3 unidades</p>
         </div>
       </div>
     </div>
 
     <!-- Advertencia -->
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
-          <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="p-5 bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/30 dark:to-yellow-800/20 rounded-2xl border border-yellow-200 dark:border-yellow-700/50 shadow-sm">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-yellow-500/20 dark:bg-yellow-400/20 flex items-center justify-center">
+          <svg class="w-7 h-7 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
         <div>
-          <p class="text-3xl font-extrabold text-yellow-600 dark:text-yellow-400">{{ advertencia }}</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Advertencia (4-10 uds)</p>
+          <p class="text-4xl font-extrabold text-yellow-700 dark:text-yellow-300">{{ advertencia }}</p>
+          <p class="text-sm font-semibold text-yellow-600 dark:text-yellow-400">Advertencia</p>
+          <p class="text-[11px] text-yellow-500/70 dark:text-yellow-400/60 mt-0.5">4 - 10 unidades</p>
         </div>
       </div>
     </div>

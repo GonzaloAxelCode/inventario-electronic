@@ -1,106 +1,56 @@
-<div class="p-6 pb-12 text-zinc-200">
+<div class="p-4 sm:p-6">
 
-    <!-- Header con tabs -->
-    <header tuiSubheader class="sticky top-0 z-10 bg-white dark:bg-neutral-800 mb-4">
-        <div class="flex gap-4 items-center">
-            <h2 tuiHeader>
-                <div tuiTitle>
-                    <div tuiNavigationLogo>
-                        <tui-icon icon="@tui.gitlab" />
-                        <span tuiFade>Dashboard</span>
-                    </div>
-                </div>
-            </h2>
-        </div>
+    <header tuiSubheader class="p-0 mb-4">
+        <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Estadísticas de la tienda</h2>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Resumen de ventas, inventario y rendimiento</p>
 
         <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
-            class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
-
-            <button tuiTab type="button">
-                General
-            </button>
-
-            <button tuiTab type="button">
-                Resumen del Día
-            </button>
-
-            <button tuiTab type="button">
-                Margen de Ganancias
-            </button>
-
-            <button tuiTab type="button">
-                Inventario y Alertas
-            </button>
-
-            <button tuiTab type="button">
-                Comparaciones y Rendimiento
-            </button>
-
+            class="flex gap-2 overflow-x-auto whitespace-nowrap">
+            <button tuiTab type="button">General</button>
+            <button tuiTab type="button">Resumen del Día</button>
+            <button tuiTab type="button">Margen de Ganancias</button>
+            <button tuiTab type="button">Inventario y Alertas</button>
+            <button tuiTab type="button">Comparaciones y Rendimiento</button>
         </nav>
     </header>
 
-    <div>
-        <div class="py-4 pb-8">
-
-            <!-- TAB: GENERAL -->
-            <ng-container *ngIf="activeTab === 'general'">
-                <!-- Tarjetas de ventas (día, semana, mes) -->
-                <div class="flex flex-col gap-4">
-                    <app-dashboard-sales-cards></app-dashboard-sales-cards>
-                </div>
-
-                <!-- Tendencia de Ventas + Métodos de Pago + Top Productos + Objetivos -->
-                <div class="flex flex-col gap-4 pt-6">
-                    <app-graficos-inicio [activeTab]="activeTab"></app-graficos-inicio>
-                </div>
-
-                <!-- Ventas por rango de fecha -->
-                <div class="flex flex-col gap-4 pt-6">
-                    <p class="text-2xl font-bold text-slate-700 dark:text-gray-300">Ventas por rango de fecha</p>
-                    <app-chartsalesbetweentwodates></app-chartsalesbetweentwodates>
-                </div>
-
-                <!-- Estadísticas generales por mes -->
-                <div class="pt-6">
-                    <app-dashboard-general-stats></app-dashboard-general-stats>
-                </div>
-            </ng-container>
-
-            <!-- TAB: RESUMEN DEL DÍA -->
-            <ng-container *ngIf="activeTab === 'resumen'">
-                <div class="flex flex-col gap-4">
-                    <p class="text-2xl font-bold text-slate-700 dark:text-gray-300">Resumen del Día</p>
-                </div>
-
-                <!-- Resumen diario completo -->
-                <div class="pt-6">
-                    <app-dashboard-daily-summary></app-dashboard-daily-summary>
-                </div>
-            </ng-container>
-
-            <!-- TAB: MARGEN DE GANANCIAS -->
-            <ng-container *ngIf="activeTab === 'margen'">
-                <div class="flex flex-col gap-4">
-                    <p class="text-2xl font-bold text-slate-700 dark:text-gray-300">Margen de Ganancias</p>
-                </div>
-
-                <!-- Margen de ganancias -->
-                <div class="pt-6">
-                    <app-dashboard-margen-ganancias></app-dashboard-margen-ganancias>
-                </div>
-            </ng-container>
-
-            <!-- TAB: INVENTARIO Y ALERTAS -->
-            <ng-container *ngIf="activeTab === 'inventario'">
-                <app-alertas-stock></app-alertas-stock>
-            </ng-container>
-
-            <!-- TAB: COMPARACIONES Y RENDIMIENTO -->
-            <ng-container *ngIf="activeTab === 'comparacion'">
-                <app-graficos-inicio [activeTab]="activeTab"></app-graficos-inicio>
-            </ng-container>
-
+    <!-- TAB: GENERAL -->
+    <ng-container *ngIf="activeTab === 'general'">
+        <div class="flex flex-col gap-6">
+            <app-dashboard-sales-cards></app-dashboard-sales-cards>
+            <app-graficos-inicio [activeTab]="activeTab"></app-graficos-inicio>
+            <div>
+                <p class="text-2xl font-bold text-slate-700 dark:text-gray-300 mb-4">Ventas por rango de fecha</p>
+                <app-chartsalesbetweentwodates></app-chartsalesbetweentwodates>
+            </div>
+            <app-dashboard-general-stats></app-dashboard-general-stats>
         </div>
-    </div>
+    </ng-container>
+
+    <!-- TAB: RESUMEN DEL DÍA -->
+    <ng-container *ngIf="activeTab === 'resumen'">
+        <div class="flex flex-col gap-6">
+            <p class="text-2xl font-bold text-slate-700 dark:text-gray-300">Resumen del Día</p>
+            <app-dashboard-daily-summary></app-dashboard-daily-summary>
+        </div>
+    </ng-container>
+
+    <!-- TAB: MARGEN DE GANANCIAS -->
+    <ng-container *ngIf="activeTab === 'margen'">
+        <div class="flex flex-col gap-6">
+            <p class="text-2xl font-bold text-slate-700 dark:text-gray-300">Margen de Ganancias</p>
+            <app-dashboard-margen-ganancias></app-dashboard-margen-ganancias>
+        </div>
+    </ng-container>
+
+    <!-- TAB: INVENTARIO Y ALERTAS -->
+    <ng-container *ngIf="activeTab === 'inventario'">
+        <app-alertas-stock></app-alertas-stock>
+    </ng-container>
+
+    <!-- TAB: COMPARACIONES Y RENDIMIENTO -->
+    <ng-container *ngIf="activeTab === 'comparacion'">
+        <app-graficos-inicio [activeTab]="activeTab"></app-graficos-inicio>
+    </ng-container>
 
 </div>

@@ -2,33 +2,56 @@
 
   <!-- ==================== MÉTRICAS PRINCIPALES ==================== -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Total Ventas Hoy</p>
-      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">S/ {{ totalVentas | number:'1.2-2' }}</p>
-      <p class="text-[11px] font-semibold mt-1" [ngClass]="getComparisonClass(vsAyer.ventas)">
-        {{ vsAyer.ventas >= 0 ? '+' : '' }}{{ vsAyer.ventas }}% vs ayer
-      </p>
+    <!-- Total Ventas Hoy -->
+    <div class="p-4 bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-800/20 rounded-2xl border border-emerald-200 dark:border-emerald-700/50 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-8 h-8 rounded-xl bg-emerald-500/20 dark:bg-emerald-400/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <p class="text-xs font-semibold text-emerald-700 dark:text-emerald-300">Total Ventas Hoy</p>
+      </div>
+      <p class="text-2xl font-extrabold text-emerald-900 dark:text-emerald-100">S/ {{ totalVentas | number:'1.2-2' }}</p>
     </div>
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Transacciones</p>
-      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">{{ totalTransacciones }}</p>
-      <p class="text-[11px] font-semibold mt-1" [ngClass]="getComparisonClass(vsAyer.transacciones)">
-        {{ vsAyer.transacciones >= 0 ? '+' : '' }}{{ vsAyer.transacciones }} vs ayer
-      </p>
+
+    <!-- Transacciones -->
+    <div class="p-4 bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-900/30 dark:to-violet-800/20 rounded-2xl border border-violet-200 dark:border-violet-700/50 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-8 h-8 rounded-xl bg-violet-500/20 dark:bg-violet-400/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <p class="text-xs font-semibold text-violet-700 dark:text-violet-300">Comprobantes emitidos hoy</p>
+      </div>
+      <p class="text-2xl font-extrabold text-violet-900 dark:text-violet-100">{{ totalTransacciones }}</p>
     </div>
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Ticket Promedio</p>
-      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">S/ {{ ticketPromedio | number:'1.2-2' }}</p>
-      <p class="text-[11px] font-semibold mt-1" [ngClass]="getComparisonClass(vsAyer.ticket)">
-        {{ vsAyer.ticket >= 0 ? '+' : '' }}{{ vsAyer.ticket }}% vs ayer
-      </p>
+
+    <!-- Facturación Hoy -->
+    <div class="p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 rounded-2xl border border-blue-200 dark:border-blue-700/50 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-8 h-8 rounded-xl bg-blue-500/20 dark:bg-blue-400/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <p class="text-xs font-semibold text-blue-700 dark:text-blue-300">Facturación Hoy</p>
+      </div>
+      <p class="text-2xl font-extrabold text-blue-900 dark:text-blue-100">S/ {{ totalVentas | number:'1.2-2' }}</p>
     </div>
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Clientes Atendidos</p>
-      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">{{ clientesAtendidos }}</p>
-      <p class="text-[11px] font-semibold mt-1" [ngClass]="getComparisonClass(vsAyer.clientes)">
-        {{ vsAyer.clientes >= 0 ? '+' : '' }}{{ vsAyer.clientes }} vs ayer
-      </p>
+
+    <!-- Clientes Atendidos -->
+    <div class="p-4 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/30 dark:to-amber-800/20 rounded-2xl border border-amber-200 dark:border-amber-700/50 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-8 h-8 rounded-xl bg-amber-500/20 dark:bg-amber-400/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+        </div>
+        <p class="text-xs font-semibold text-amber-700 dark:text-amber-300">Clientes Atendidos</p>
+      </div>
+      <p class="text-2xl font-extrabold text-amber-900 dark:text-amber-100">{{ clientesAtendidos }}</p>
     </div>
   </div>
 
@@ -59,19 +82,40 @@
     <!-- Hora pico de ventas -->
     <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
       <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Hora Pico de Ventas</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cuándo se realizan más ventas</p>
-      <div class="flex items-end justify-between gap-1 h-32">
-        <div *ngFor="let h of horasPico" class="flex flex-col items-center gap-1 flex-1">
-          <div class="w-full rounded-t-lg transition-all duration-500"
-            [style.height.%]="getBarHeight(h.ventas)"
-            [ngClass]="h.ventas >= 12 ? 'bg-violet-500' : h.ventas >= 8 ? 'bg-violet-300 dark:bg-violet-400' : 'bg-neutral-200 dark:bg-neutral-600'">
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Ventas en soles por hora (9:00 - 20:00)</p>
+      
+      <div class="flex items-end justify-between gap-1" style="height: 128px;">
+        <div *ngFor="let h of horasPico" class="flex flex-col items-center gap-1 flex-1 group relative h-full justify-end">
+          <div class="w-full rounded-t-lg transition-all duration-500 cursor-pointer"
+            [style.height.px]="getBarHeight(h.monto)"
+            [ngClass]="h.monto === maxHoras ? 'bg-violet-500' : h.monto >= maxHoras * 0.7 ? 'bg-violet-400 dark:bg-violet-500' : h.monto >= maxHoras * 0.4 ? 'bg-violet-300 dark:bg-violet-400' : 'bg-neutral-200 dark:bg-neutral-600'">
           </div>
-          <span class="text-[9px] text-neutral-400 dark:text-neutral-500">{{ h.hora }}</span>
+          <span class="text-[9px] text-neutral-400 dark:text-neutral-500 shrink-0">{{ h.hora }}</span>
+          
+          <!-- Tooltip -->
+          <div class="absolute bottom-full mb-2 hidden group-hover:block z-10">
+            <div class="bg-neutral-900 dark:bg-neutral-700 text-white text-[10px] px-2 py-1 rounded-lg shadow-lg whitespace-nowrap">
+              <p class="font-bold">S/ {{ h.monto | number:'1.0-0' }}</p>
+              <p class="text-neutral-400">{{ h.hora }}</p>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="flex justify-between mt-2">
-        <span class="text-[10px] text-neutral-400">Menos vendido</span>
-        <span class="text-[10px] font-bold text-violet-600 dark:text-violet-400">Hora pico: 12pm</span>
+      
+      <div class="flex justify-between mt-3">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-sm bg-neutral-200 dark:bg-neutral-600"></div>
+          <span class="text-[10px] text-neutral-400">Bajo</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-sm bg-violet-300 dark:bg-violet-400"></div>
+          <span class="text-[10px] text-neutral-400">Medio</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-sm bg-violet-500"></div>
+          <span class="text-[10px] text-neutral-400">Alto</span>
+        </div>
+        <span class="text-[10px] font-bold text-violet-600 dark:text-violet-400">Hora pico: {{ horaPicoLabel }}</span>
       </div>
     </div>
   </div>
@@ -82,14 +126,15 @@
     <!-- Ventas por categoría -->
     <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
       <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Ventas por Categoría</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Qué categorías generan más ingresos</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Qué categorías generan más ingresos hoy</p>
       <div class="space-y-3">
         <div *ngFor="let cat of ventasPorCategoria" class="flex items-center gap-3">
-          <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300 w-20 shrink-0">{{ cat.nombre }}</span>
+          <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300 w-24 shrink-0">{{ cat.nombre }}</span>
           <div class="flex-1">
             <div class="h-4 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
-              <div class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-700"
-                [style.width.%]="(cat.monto / 680) * 100">
+              <div class="h-full rounded-full transition-all duration-700"
+                [style.width.%]="maxCategoriaMonto > 0 ? (cat.monto / maxCategoriaMonto) * 100 : 0"
+                [style.background-color]="cat.color">
               </div>
             </div>
           </div>
@@ -105,9 +150,9 @@
   <!-- ==================== TOP PRODUCTOS + ÚLTIMAS VENTAS ==================== -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    <!-- Top 5 productos más vendidos -->
+    <!-- Top 10 productos más vendidos -->
     <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Top 5 Productos Más Vendidos</h4>
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Top 10 Productos Más Vendidos</h4>
       <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Los que más salieron hoy</p>
       <div class="overflow-x-auto">
         <table class="w-full text-xs">
@@ -150,81 +195,6 @@
     </div>
   </div>
 
-  <!-- ==================== MARGEN + ANULADAS ==================== -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-    <!-- Margen de ganancia del día -->
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Margen de Ganancia del Día</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cuánto ganaste realmente</p>
-
-      <div class="grid grid-cols-3 gap-3 mb-4">
-        <div class="text-center p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
-          <p class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">S/ {{ margenData.ingresos | number:'1.0-0' }}</p>
-          <p class="text-[10px] text-emerald-600 dark:text-emerald-400">Ingresos</p>
-        </div>
-        <div class="text-center p-2 bg-red-50 dark:bg-red-900/20 rounded-xl">
-          <p class="text-lg font-extrabold text-red-500 dark:text-red-400">S/ {{ margenData.costoProductos | number:'1.0-0' }}</p>
-          <p class="text-[10px] text-red-500 dark:text-red-400">Costo</p>
-        </div>
-        <div class="text-center p-2 bg-violet-50 dark:bg-violet-900/20 rounded-xl">
-          <p class="text-lg font-extrabold text-violet-600 dark:text-violet-400">S/ {{ margenData.gananciaBruta | number:'1.0-0' }}</p>
-          <p class="text-[10px] text-violet-600 dark:text-violet-400">Ganancia</p>
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <div class="flex justify-between mb-1">
-          <span class="text-[10px] text-neutral-500">Margen total</span>
-          <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">{{ margenData.porcentajeMargen }}%</span>
-        </div>
-        <div class="h-2 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
-          <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full"
-            [style.width.%]="margenData.porcentajeMargen"></div>
-        </div>
-      </div>
-
-      <div class="space-y-1.5">
-        <div *ngFor="let cat of margenPorCategoria" class="flex items-center justify-between text-[11px]">
-          <span class="text-neutral-600 dark:text-neutral-400">{{ cat.nombre }}</span>
-          <span class="font-bold" [ngClass]="cat.margen >= 45 ? 'text-emerald-600 dark:text-emerald-400' : 'text-yellow-600 dark:text-yellow-400'">
-            {{ cat.margen }}%
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Ventas anuladas hoy -->
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Ventas Anuladas Hoy</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Comprobantes cancelados</p>
-
-      <div class="flex gap-3 mb-4">
-        <div class="flex-1 text-center p-3 bg-red-50 dark:bg-red-900/20 rounded-xl">
-          <p class="text-2xl font-extrabold text-red-600 dark:text-red-400">{{ cantidadAnuladas }}</p>
-          <p class="text-[10px] text-red-600 dark:text-red-400">Anuladas</p>
-        </div>
-        <div class="flex-1 text-center p-3 bg-neutral-50 dark:bg-neutral-700 rounded-xl">
-          <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">S/ {{ totalAnuladas | number:'1.2-2' }}</p>
-          <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Monto perdido</p>
-        </div>
-      </div>
-
-      <div class="space-y-2">
-        <div *ngFor="let v of ventasAnuladas" class="p-2.5 bg-red-50/50 dark:bg-red-900/10 rounded-xl border border-red-100 dark:border-red-900/30">
-          <div class="flex items-center justify-between mb-1">
-            <div class="flex items-center gap-2">
-              <span class="text-[10px] font-bold text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30 px-2 py-0.5 rounded-full">{{ v.id }}</span>
-              <span class="text-xs font-medium text-neutral-900 dark:text-white">{{ v.cliente }}</span>
-            </div>
-            <span class="text-xs font-bold text-red-600 dark:text-red-400">-S/ {{ v.total | number:'1.2-2' }}</span>
-          </div>
-          <p class="text-[10px] text-neutral-400 ml-8">{{ v.hora }} · {{ v.motivo }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ==================== CLIENTES + DESCUENTOS ==================== -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -257,7 +227,10 @@
 
     <!-- Top productos con más descuento -->
     <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Productos con Más Descuento</h4>
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1 flex items-center gap-2">
+        Productos con Más Descuento
+        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Próximamente</span>
+      </h4>
       <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Descuentos aplicados hoy</p>
 
       <div class="space-y-2.5">

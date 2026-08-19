@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { TuiLegendItem, TuiPieChart } from '@taiga-ui/addon-charts';
 import { TuiHovered } from '@taiga-ui/cdk';
+import { VentaService } from '@/app/services/venta.service';
 
 @Component({
   selector: 'app-dashboard-daily-summary',
@@ -10,19 +11,21 @@ import { TuiHovered } from '@taiga-ui/cdk';
   templateUrl: './dashboard-daily-summary.component.html',
   styleUrl: './dashboard-daily-summary.component.scss'
 })
-export class DashboardDailySummaryComponent {
+export class DashboardDailySummaryComponent implements OnInit {
+
+  private ventaService = inject(VentaService);
 
   // Dona: Métodos de pago por cantidad
   donaActiveIndex = NaN;
-  donaValue = [15, 10, 6, 3];
-  donaLabels = ['Efectivo', 'Yape', 'Plin', 'Tarjeta'];
+  donaValue: number[] = [];
+  donaLabels: string[] = [];
   donaColores = ['#10B981', '#8B5CF6', '#3B82F6', '#F59E0B'];
 
   // 1. Métricas principales
-  totalVentas = 2847.50;
-  totalTransacciones = 34;
-  ticketPromedio = 83.75;
-  clientesAtendidos = 28;
+  totalVentas = 0;
+  totalTransacciones = 0;
+  ticketPromedio = 0;
+  clientesAtendidos = 0;
 
   // 2. Comparación con ayer
   vsAyer = {
@@ -41,48 +44,19 @@ export class DashboardDailySummaryComponent {
   ];
 
   // 4. Hora pico de ventas (datos de las últimas 12 horas)
-  horasPico = [
-    { hora: '8am', ventas: 3 },
-    { hora: '9am', ventas: 5 },
-    { hora: '10am', ventas: 8 },
-    { hora: '11am', ventas: 12 },
-    { hora: '12pm', ventas: 15 },
-    { hora: '1pm', ventas: 11 },
-    { hora: '2pm', ventas: 9 },
-    { hora: '3pm', ventas: 6 },
-    { hora: '4pm', ventas: 4 },
-    { hora: '5pm', ventas: 7 },
-    { hora: '6pm', ventas: 10 },
-    { hora: '7pm', ventas: 6 },
-  ];
-  maxHoras = 15;
+  horasPico: { hora: string; monto: number }[] = [];
+  maxHoras = 0;
+  horaPicoLabel = '--:--';
 
   // 5. Ventas por categoría
-  ventasPorCategoria = [
-    { nombre: 'Bebidas', cantidad: 12, monto: 680.00 },
-    { nombre: 'Snacks', cantidad: 9, monto: 320.00 },
-    { nombre: 'Lácteos', cantidad: 6, monto: 245.50 },
-    { nombre: 'Panadería', cantidad: 4, monto: 180.00 },
-    { nombre: 'Limpieza', cantidad: 3, monto: 420.00 },
-  ];
+  ventasPorCategoria: { nombre: string; cantidad: number; monto: number; color: string }[] = [];
+  maxCategoriaMonto = 0;
 
-  // 6. Top 5 productos más vendidos (tabla)
-  topProductos = [
-    { nombre: 'Gaseosa 600ml', cantidad: 8, precio: 3.50, total: 28.00 },
-    { nombre: 'Pan integral', cantidad: 6, precio: 2.80, total: 16.80 },
-    { nombre: 'Leche 1L', cantidad: 5, precio: 4.20, total: 21.00 },
-    { nombre: "Papa Lay's", cantidad: 5, precio: 3.00, total: 15.00 },
-    { nombre: 'Jabón líquido', cantidad: 4, precio: 8.50, total: 34.00 },
-  ];
+  // 6. Top productos más vendidos (tabla)
+  topProductos: { nombre: string; cantidad: number; total: number }[] = [];
 
   // 7. Últimas ventas realizadas
-  ultimasVentas = [
-    { id: '#0034', hora: '6:45 pm', cliente: 'María López', total: 42.50, metodo: 'Yape' },
-    { id: '#0033', hora: '6:32 pm', cliente: 'Carlos Ruiz', total: 18.00, metodo: 'Efectivo' },
-    { id: '#0032', hora: '6:15 pm', cliente: 'Ana García', total: 67.30, metodo: 'Plin' },
-    { id: '#0031', hora: '5:58 pm', cliente: 'Luis Torres', total: 25.00, metodo: 'Efectivo' },
-    { id: '#0030', hora: '5:40 pm', cliente: 'Rosa Martínez', total: 89.90, metodo: 'Tarjeta' },
-  ];
+  ultimasVentas: { id: string; hora: string; cliente: string; total: number; metodo: string }[] = [];
 
   // 8. Productos con bajo stock hoy
   productosBajoStock = [
@@ -109,10 +83,11 @@ export class DashboardDailySummaryComponent {
   cantidadAnuladas = 3;
 
   // 11. Clientes nuevos vs recurrentes
-  clientesNuevos = 8;
-  clientesRecurrentes = 20;
+  clientesNuevos = 0;
+  clientesRecurrentes = 0;
+  tasaRetencion = 0;
   donaClientesActiveIndex = NaN;
-  donaClientesValue = [8, 20];
+  donaClientesValue: number[] = [];
   donaClientesLabels = ['Nuevos', 'Recurrentes'];
   donaClientesColores = ['#8B5CF6', '#10B981'];
 
@@ -141,8 +116,9 @@ export class DashboardDailySummaryComponent {
     { nombre: 'Limpieza', ingresos: 420, costo: 252, ganancia: 168, margen: 40.0 },
   ];
 
-  getBarHeight(ventas: number): number {
-    return this.maxHoras > 0 ? (ventas / this.maxHoras) * 100 : 0;
+  getBarHeight(monto: number): number {
+    const maxHeight = 110;
+    return this.maxHoras > 0 ? (monto / this.maxHoras) * maxHeight : 0;
   }
 
   getComparisonClass(value: number): string {
@@ -163,5 +139,122 @@ export class DashboardDailySummaryComponent {
 
   onDonaClientesHover(index: number, hovered: boolean): void {
     this.donaClientesActiveIndex = hovered ? index : NaN;
+  }
+
+  ngOnInit(): void {
+    this.loadDailySummary();
+    this.loadDailyPaymentMethods();
+    this.loadDailyPeakHours();
+    this.loadDailyTopProducts();
+    this.loadDailyTopCategories();
+    this.loadDailyRecentSales();
+    this.loadDailyCustomers();
+  }
+
+  loadDailySummary(): void {
+    this.ventaService.getDailySummary().subscribe({
+      next: (data) => {
+        this.totalVentas = data.total_ventas;
+        this.totalTransacciones = data.comprobantes_emitidos;
+        this.clientesAtendidos = data.clientes_atendidos;
+        this.ticketPromedio = data.comprobantes_emitidos > 0 
+          ? data.total_ventas / data.comprobantes_emitidos 
+          : 0;
+      },
+      error: (error) => {
+        console.error('Error al cargar resumen del día:', error);
+      }
+    });
+  }
+
+  loadDailyPaymentMethods(): void {
+    this.ventaService.getDailyPaymentMethods().subscribe({
+      next: (data) => {
+        this.donaLabels = data.metodos_pago.map(m => m.metodo_pago);
+        this.donaValue = data.metodos_pago.map(m => m.cantidad_transacciones);
+      },
+      error: (error) => {
+        console.error('Error al cargar métodos de pago:', error);
+      }
+    });
+  }
+
+  loadDailyPeakHours(): void {
+    this.ventaService.getDailyPeakHours().subscribe({
+      next: (data) => {
+        this.horasPico = data.horas.map(h => ({
+          hora: h.label,
+          monto: h.total_soles
+        }));
+        this.maxHoras = Math.max(...this.horasPico.map(h => h.monto), 1);
+        this.horaPicoLabel = data.hora_pico_ventas.label;
+      },
+      error: (error) => {
+        console.error('Error al cargar horas pico:', error);
+      }
+    });
+  }
+
+  loadDailyTopProducts(): void {
+    this.ventaService.getDailyTopProducts().subscribe({
+      next: (data) => {
+        this.topProductos = data.productos.map(p => ({
+          nombre: p.nombre,
+          cantidad: p.cantidad_vendida,
+          total: p.total_neto
+        }));
+      },
+      error: (error) => {
+        console.error('Error al cargar top productos:', error);
+      }
+    });
+  }
+
+  loadDailyTopCategories(): void {
+    this.ventaService.getDailyTopCategories().subscribe({
+      next: (data) => {
+        this.ventasPorCategoria = data.categorias.map(c => ({
+          nombre: c.nombre,
+          cantidad: c.total_unidades,
+          monto: c.ingreso_neto,
+          color: c.color
+        }));
+        this.maxCategoriaMonto = Math.max(...this.ventasPorCategoria.map(c => c.monto), 1);
+      },
+      error: (error) => {
+        console.error('Error al cargar categorías:', error);
+      }
+    });
+  }
+
+  loadDailyRecentSales(): void {
+    this.ventaService.getDailyRecentSales().subscribe({
+      next: (data) => {
+        this.ultimasVentas = data.ventas_recientes.map(v => ({
+          id: v.numero_comprobante,
+          hora: v.hora,
+          cliente: v.cliente,
+          total: v.monto,
+          metodo: v.metodo_pago
+        }));
+      },
+      error: (error) => {
+        console.error('Error al cargar ventas recientes:', error);
+      }
+    });
+  }
+
+  loadDailyCustomers(): void {
+    this.ventaService.getDailyCustomers().subscribe({
+      next: (data) => {
+        this.clientesNuevos = data.clientes_nuevos;
+        this.clientesRecurrentes = data.clientes_recurrentes;
+        this.tasaRetencion = data.tasa_retencion;
+        this.donaClientesValue = [data.clientes_nuevos, data.clientes_recurrentes];
+      },
+      error: (error) => {
+        console.error('Error al cargar clientes:', error);
+      }
+    });
   }
 }

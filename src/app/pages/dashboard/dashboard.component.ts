@@ -13,6 +13,11 @@ import { TuiAppearance, TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiFade, TuiSegmented, TuiTab, TuiTabs } from '@taiga-ui/kit';
 import { TuiCardMedium, TuiNavigation } from '@taiga-ui/layout';
 import { DashboardSalesCardsComponent } from "../../components/dashboardcomponents/dashboard-sales-cards/dashboard-sales-cards.component";
+import { Store } from '@ngrx/store';
+import { AppState } from '@/app/state/app.state';
+import { selectUsersState } from '@/app/state/selectors/user.selectors';
+import { User } from '@/app/models/user.models';
+import { initialStateUser } from '@/app/state/reducers/user.reducer';
 
 @Component({
   selector: 'app-dashboard',
@@ -37,12 +42,21 @@ export class DashboardComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private location = inject(Location);
   private cdr = inject(ChangeDetectorRef);
+  private store = inject(Store<AppState>);
+
+  user: User = initialStateUser.user;
+  tiendaNombre = '';
 
   validTabs = ['general', 'resumen', 'margen', 'inventario', 'comparacion'] as const;
   activeTab: 'general' | 'resumen' | 'margen' | 'inventario' | 'comparacion' = 'general';
   activeTabIndex = 0;
 
   ngOnInit() {
+    this.store.select(selectUsersState).subscribe(userState => {
+      this.user = userState.user;
+      this.tiendaNombre = this.user.tienda_nombre || 'Mi Tienda';
+    });
+
     this.route.fragment.subscribe((fragment) => {
       if (fragment && this.isValidTab(fragment)) {
         this.activeTab = fragment as typeof this.activeTab;

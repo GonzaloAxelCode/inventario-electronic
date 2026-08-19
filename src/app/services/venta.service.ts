@@ -393,6 +393,95 @@ export class VentaService {
             })
         );
     }
+
+    getDailySummary(): Observable<DailySummaryResponse> {
+        return this.http.get<DailySummaryResponse>(
+            `${this.siteURL}/reports/daily-summary/`
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener resumen del día', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    getDailyPaymentMethods(): Observable<DailyPaymentMethodsResponse> {
+        return this.http.get<DailyPaymentMethodsResponse>(
+            `${this.siteURL}/reports/daily-payment-methods/`
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener métodos de pago del día', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    getDailyPeakHours(): Observable<DailyPeakHoursResponse> {
+        return this.http.get<DailyPeakHoursResponse>(
+            `${this.siteURL}/reports/daily-peak-hours/`
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener horas pico del día', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    getDailyTopProducts(): Observable<DailyTopProductsResponse> {
+        return this.http.get<DailyTopProductsResponse>(
+            `${this.siteURL}/reports/daily-top-products/`
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener top productos del día', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    getDailyTopCategories(): Observable<DailyTopCategoriesResponse> {
+        return this.http.get<DailyTopCategoriesResponse>(
+            `${this.siteURL}/reports/daily-top-categories/`
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener top categorías del día', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    getDailyRecentSales(): Observable<DailyRecentSalesResponse> {
+        return this.http.get<DailyRecentSalesResponse>(
+            `${this.siteURL}/reports/daily-recent-sales/`
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener ventas recientes del día', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    getDailyCustomers(): Observable<DailyCustomersResponse> {
+        return this.http.get<DailyCustomersResponse>(
+            `${this.siteURL}/reports/daily-customers/`
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener clientes del día', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    getMonthlyCustomers(month: number, year: number): Observable<MonthlyCustomersResponse> {
+        return this.http.post<MonthlyCustomersResponse>(
+            `${this.siteURL}/reports/monthly-customers/`,
+            { month, year }
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener clientes del mes', error);
+                return throwError(() => error);
+            })
+        );
+    }
 }
 
 export interface ReporteMensualResponse {
@@ -403,4 +492,107 @@ export interface ReporteMensualResponse {
     porcentaje_vs_mes_anterior: number;
     num_comprobantes: number;
     clientes_atendidos: number;
+}
+
+export interface DailySummaryResponse {
+    fecha: string;
+    total_ventas: number;
+    comprobantes_emitidos: number;
+    clientes_atendidos: number;
+}
+
+export interface DailyPaymentMethod {
+    metodo_pago: string;
+    cantidad_transacciones: number;
+    total_soles: number;
+    porcentaje_transacciones: number;
+    porcentaje_monto: number;
+}
+
+export interface DailyPaymentMethodsResponse {
+    fecha: string;
+    total_transacciones: number;
+    total_general_soles: number;
+    metodos_pago: DailyPaymentMethod[];
+}
+
+export interface PeakHour {
+    hora: number;
+    label: string;
+    cantidad_ventas: number;
+    total_soles: number;
+}
+
+export interface DailyPeakHoursResponse {
+    fecha: string;
+    hora_pico_ventas: PeakHour;
+    hora_pico_monto: PeakHour;
+    horas: PeakHour[];
+}
+
+export interface TopProduct {
+    posicion: number;
+    producto_id: number;
+    nombre: string;
+    sku: string;
+    cantidad_vendida: number;
+    total_neto: number;
+}
+
+export interface DailyTopProductsResponse {
+    fecha: string;
+    total_productos: number;
+    productos: TopProduct[];
+}
+
+export interface TopCategoria {
+    posicion: number;
+    categoria_id: number;
+    nombre: string;
+    codigo: string;
+    color: string;
+    total_unidades: number;
+    ingreso_neto: number;
+}
+
+export interface DailyTopCategoriesResponse {
+    fecha: string;
+    total_categorias: number;
+    categorias: TopCategoria[];
+}
+
+export interface RecentSale {
+    venta_id: number;
+    numero_comprobante: string;
+    cliente: string;
+    hora: string;
+    monto: number;
+    cantidad_productos: number;
+    metodo_pago: string;
+}
+
+export interface DailyRecentSalesResponse {
+    fecha: string;
+    ventas_recientes: RecentSale[];
+}
+
+export interface DailyCustomersResponse {
+    fecha: string;
+    total_clientes: number;
+    clientes_nuevos: number;
+    clientes_recurrentes: number;
+    porcentaje_nuevos: number;
+    porcentaje_recurrentes: number;
+    tasa_retencion: number;
+}
+
+export interface MonthlyCustomersResponse {
+    year: number;
+    month: number;
+    total_clientes: number;
+    clientes_nuevos: number;
+    clientes_recurrentes: number;
+    porcentaje_nuevos: number;
+    porcentaje_recurrentes: number;
+    tasa_retencion: number;
 }

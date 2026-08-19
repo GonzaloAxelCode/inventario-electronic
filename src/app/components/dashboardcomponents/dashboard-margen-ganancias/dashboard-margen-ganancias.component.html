@@ -2,7 +2,10 @@
 
   <!-- ==================== MARGEN DE GANANCIA DEL DÍA ==================== -->
   <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-    <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Margen de Ganancia del Día</h4>
+    <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1 flex items-center gap-2">
+      Margen de Ganancia del Día
+      <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Próximamente</span>
+    </h4>
     <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cuánto ganaste realmente</p>
 
     <div class="grid grid-cols-3 gap-3 mb-4">
@@ -37,38 +40,6 @@
         <span class="font-bold" [ngClass]="cat.margen >= 45 ? 'text-emerald-600 dark:text-emerald-400' : 'text-yellow-600 dark:text-yellow-400'">
           {{ cat.margen }}%
         </span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== DETALLE POR CATEGORÍA ==================== -->
-  <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-    <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Detalle por Categoría</h4>
-    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Ingresos, costos y ganancia por categoría</p>
-
-    <div class="space-y-3">
-      <div *ngFor="let cat of margenPorCategoria" class="p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-xl">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold text-neutral-900 dark:text-white">{{ cat.nombre }}</span>
-          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-            [ngClass]="cat.margen >= 45 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'">
-            {{ cat.margen }}% margen
-          </span>
-        </div>
-        <div class="grid grid-cols-3 gap-2 text-center">
-          <div>
-            <p class="text-[10px] text-neutral-400">Ingresos</p>
-            <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400">S/ {{ cat.ingresos | number:'1.0-0' }}</p>
-          </div>
-          <div>
-            <p class="text-[10px] text-neutral-400">Costo</p>
-            <p class="text-sm font-bold text-red-500 dark:text-red-400">S/ {{ cat.costo | number:'1.0-0' }}</p>
-          </div>
-          <div>
-            <p class="text-[10px] text-neutral-400">Ganancia</p>
-            <p class="text-sm font-bold text-violet-600 dark:text-violet-400">S/ {{ cat.ganancia | number:'1.0-0' }}</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
