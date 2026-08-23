@@ -1,4 +1,4 @@
-import { Inventario } from '@/app/models/inventario.models';
+import { DistribucionStockResponse, Inventario, PorRangoPreciosResponse, TopCategoriasCompraResponse, ValorizacionInventarioResponse } from '@/app/models/inventario.models';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -127,6 +127,30 @@ export class InventarioService {
                 console.error('Error al obtener productos con menor stock', error);
                 return throwError(error);
             })
+        );
+    }
+
+    fetchDistribucionStock(): Observable<DistribucionStockResponse> {
+        return this.http.get<DistribucionStockResponse>(`${this.siteURL}/inventarios/distribucion-stock/`).pipe(
+            catchError(error => throwError(() => error))
+        );
+    }
+
+    fetchPorRangoPrecios(): Observable<PorRangoPreciosResponse> {
+        return this.http.get<PorRangoPreciosResponse>(`${this.siteURL}/inventarios/por-rango-precios/`).pipe(
+            catchError(error => throwError(() => error))
+        );
+    }
+
+    fetchValorizacionInventario(): Observable<ValorizacionInventarioResponse> {
+        return this.http.get<ValorizacionInventarioResponse>(`${this.siteURL}/inventarios/valorizacion/`).pipe(
+            catchError(error => throwError(() => error))
+        );
+    }
+
+    fetchTopCategoriasCompra(): Observable<TopCategoriasCompraResponse> {
+        return this.http.get<TopCategoriasCompraResponse>(`${this.siteURL}/inventarios/top-categorias-compra/`).pipe(
+            catchError(error => throwError(() => error))
         );
     }
 

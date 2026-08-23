@@ -9,6 +9,7 @@ import {
     createCategoriaAction, createCategoriaFail, createCategoriaSuccess,
     deleteCategoriaAction, deleteCategoriaFail, deleteCategoriaSuccess,
     loadCategorias, loadCategoriasFail, loadCategoriasSuccess,
+    loadPorcentajeCategoria, loadPorcentajeCategoriaFail, loadPorcentajeCategoriaSuccess,
     updateCategoriaAction, updateCategoriaFail, updateCategoriaSuccess
 } from '../actions/categoria.actions';
 import { AppState } from '../app.state';
@@ -108,6 +109,18 @@ export class CategoriaEffects {
                             .subscribe();
                         return of(deleteCategoriaFail({ error }));
                     })
+                )
+            )
+        )
+    );
+
+    loadPorcentajeCategoriaEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadPorcentajeCategoria),
+            exhaustMap(() =>
+                this.categoriaService.fetchPorcentajePorCategoria().pipe(
+                    map(response => loadPorcentajeCategoriaSuccess({ porcentajes: response.categorias })),
+                    catchError(error => of(loadPorcentajeCategoriaFail({ error })))
                 )
             )
         )

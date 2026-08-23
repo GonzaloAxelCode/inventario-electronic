@@ -7,11 +7,18 @@ import {
     crearCompra,
     crearCompraExito,
     crearCompraError,
+    searchCompras,
+    searchComprasExito,
+    searchComprasError,
+    clearSearchCompras,
 } from '../actions/compra.actions';
 
 export interface CompraState {
     comprobantes: ComprobanteCompra[];
+    comprobantes_search: ComprobanteCompra[];
+    search_found: boolean;
     loading: boolean;
+    loadingSearch: boolean;
     error: any;
     count: number;
     next: any;
@@ -23,7 +30,10 @@ export interface CompraState {
 
 export const initialState: CompraState = {
     comprobantes: [],
+    comprobantes_search: [],
+    search_found: false,
     loading: false,
+    loadingSearch: false,
     error: null,
     count: 0,
     next: null,
@@ -67,5 +77,30 @@ export const compraReducer = createReducer(
         ...state,
         error,
         loadingCreate: false,
+    })),
+    on(searchCompras, (state) => ({
+        ...state,
+        loadingSearch: true,
+    })),
+    on(searchComprasExito, (state, { comprobantes, count, next, previous, index_page, length_pages }) => ({
+        ...state,
+        comprobantes_search: comprobantes,
+        search_found: true,
+        count,
+        next,
+        previous,
+        index_page,
+        length_pages,
+        loadingSearch: false,
+    })),
+    on(searchComprasError, (state, { error }) => ({
+        ...state,
+        error,
+        loadingSearch: false,
+    })),
+    on(clearSearchCompras, (state) => ({
+        ...state,
+        comprobantes_search: [],
+        search_found: false,
     })),
 );

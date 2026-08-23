@@ -8,7 +8,7 @@
             <button tuiTab type="button">Productos</button>
             <button tuiTab type="button">Categorías</button>
             <button tuiTab type="button">Gráficos</button>
-            <button tuiTab type="button">Agregar productos por Excel</button>
+            <button tuiTab type="button">Agregar productos por Excel <span class="ml-1 text-[10px] font-bold text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/30 px-1.5 py-0.5 rounded-full">BETA</span></button>
         </nav>
     </header>
 
@@ -38,7 +38,18 @@
     </ng-container>
 
     <ng-container *ngIf="activeTab === 'excel'">
-        <app-subircsvproductos></app-subircsvproductos>
+        <div class="flex flex-col items-center justify-center py-16 px-4">
+            <div class="text-center">
+                <span class="text-6xl mb-4 block">🚧</span>
+                <h3 class="text-xl font-bold text-neutral-900 dark:text-white mb-2">Próximamente</h3>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400 max-w-md">
+                    La funcionalidad de agregar productos por Excel está en desarrollo. Estará disponible pronto.
+                </p>
+                <span class="inline-block mt-4 text-xs font-bold text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/30 px-3 py-1.5 rounded-full">
+                    BETA
+                </span>
+            </div>
+        </div>
     </ng-container>
 
 </main>

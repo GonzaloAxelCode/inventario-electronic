@@ -1,4 +1,4 @@
-import { Cliente } from '@/app/models/cliente.models';
+import { Cliente, ClienteFrecuente, ResumenClientes, TopClienteCompra } from '@/app/models/cliente.models';
 import { createReducer, on } from '@ngrx/store';
 import {
     clearSearchClientes,
@@ -18,6 +18,15 @@ import {
     loadClientes,
     loadClientesFail,
     loadClientesSuccess,
+    loadResumenClientes,
+    loadResumenClientesSuccess,
+    loadResumenClientesFail,
+    loadClientesFrecuentes,
+    loadClientesFrecuentesSuccess,
+    loadClientesFrecuentesFail,
+    loadTopClientesCompra,
+    loadTopClientesCompraSuccess,
+    loadTopClientesCompraFail,
     searchClientes,
     searchClientesFail,
     searchClientesSuccess,
@@ -43,16 +52,22 @@ export interface ClienteState {
     loadingSearch: boolean;
     errors?: any;
     clientes_search: Cliente[];
+    resumenClientes: ResumenClientes;
+    loadingResumen: boolean;
+    clientesFrecuentes: ClienteFrecuente[];
+    loadingClientesFrecuentes: boolean;
+    topClientesCompra: TopClienteCompra[];
+    loadingTopClientes: boolean;
 }
 
 export const initialState: ClienteState = {
     clientes: [],
     clientes_search: [],
-    search_found: false,  // Inicializa como string vacío si es que no hay un valor predeterminado
+    search_found: false,
     count: 0,
     next: null,
     previous: null,
-    errors: {},  // Inicializa como un objeto vacío
+    errors: {},
     index_page: null,
     length_pages: null,
     loadingSearch: false,
@@ -62,7 +77,12 @@ export const initialState: ClienteState = {
     loadingUpdateCliente: false,
     loadingDesactivateCliente: false,
     loadingGetCliente: false,
-
+    resumenClientes: { total_clientes: 0, nuevos_hoy: 0, nuevos_semana: 0, nuevos_mes: 0 },
+    loadingResumen: false,
+    clientesFrecuentes: [],
+    loadingClientesFrecuentes: false,
+    topClientesCompra: [],
+    loadingTopClientes: false,
 };
 
 export const clienteReducer = createReducer(
@@ -194,5 +214,59 @@ export const clienteReducer = createReducer(
         loadingSearch: false,
         clientes_search: [],
         search_found: false
+    })),
+
+    on(loadResumenClientes, (state) => {
+        console.log('[ClienteReducer] loadResumenClientes');
+        return {
+            ...state,
+            loadingResumen: true,
+        };
+    }),
+    on(loadResumenClientesSuccess, (state, { resumen }) => {
+        console.log('[ClienteReducer] loadResumenClientesSuccess:', resumen);
+        return {
+            ...state,
+            resumenClientes: resumen,
+            loadingResumen: false,
+        };
+    }),
+    on(loadResumenClientesFail, (state, { error }) => {
+        console.error('[ClienteReducer] loadResumenClientesFail:', error);
+        return {
+            ...state,
+            errors: error,
+            loadingResumen: false,
+        };
+    }),
+
+    on(loadClientesFrecuentes, (state) => ({
+        ...state,
+        loadingClientesFrecuentes: true,
+    })),
+    on(loadClientesFrecuentesSuccess, (state, { clientesFrecuentes }) => ({
+        ...state,
+        clientesFrecuentes,
+        loadingClientesFrecuentes: false,
+    })),
+    on(loadClientesFrecuentesFail, (state, { error }) => ({
+        ...state,
+        errors: error,
+        loadingClientesFrecuentes: false,
+    })),
+
+    on(loadTopClientesCompra, (state) => ({
+        ...state,
+        loadingTopClientes: true,
+    })),
+    on(loadTopClientesCompraSuccess, (state, { topClientes }) => ({
+        ...state,
+        topClientesCompra: topClientes,
+        loadingTopClientes: false,
+    })),
+    on(loadTopClientesCompraFail, (state, { error }) => ({
+        ...state,
+        errors: error,
+        loadingTopClientes: false,
     })),
 );

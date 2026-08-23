@@ -202,6 +202,32 @@
         </div>
       </div>
 
+      <!-- Compras -->
+      <div class="flex items-center justify-between py-3 border-t border-neutral-200 dark:border-neutral-700">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+               [class]="featureFlags.comprasEnabled() ? 'bg-violet-100 dark:bg-violet-900/30' : 'bg-neutral-200 dark:bg-neutral-700'">
+            <svg class="w-5 h-5" [class]="featureFlags.comprasEnabled() ? 'text-violet-600 dark:text-violet-400' : 'text-neutral-500 dark:text-neutral-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-medium dark:text-white">Compras</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+              {{ featureFlags.comprasEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
+            </p>
+          </div>
+        </div>
+        <div class="segmented-toggle">
+          <button class="segmented-option" [class.active]="!featureFlags.comprasEnabled()" (click)="featureFlags.comprasEnabled() && toggleCompras()">
+            No
+          </button>
+          <button class="segmented-option" [class.active]="featureFlags.comprasEnabled()" (click)="!featureFlags.comprasEnabled() && toggleCompras()">
+            Si
+          </button>
+        </div>
+      </div>
+
     </div>
   </section>
 

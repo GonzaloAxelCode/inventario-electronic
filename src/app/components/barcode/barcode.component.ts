@@ -21,10 +21,10 @@ export class BarcodeComponent {
     JsBarcode(`#barcode-${valor}`, valor, {
       format: 'CODE128',
       lineColor: '#000',
-      width: 2,
-      height: 60,
+      width: 1.5,
+      height: 40,
       displayValue: true,
-      fontSize: 12
+      fontSize: 10
     });
   }
 }

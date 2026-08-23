@@ -44,6 +44,15 @@ import {
     loadInventariosFail,
     loadInventariosFromCache,
     loadInventariosSuccess,
+    loadDistribucionStock,
+    loadDistribucionStockFail,
+    loadDistribucionStockSuccess,
+    loadValorizacion,
+    loadValorizacionFail,
+    loadValorizacionSuccess,
+    loadTopCategoriasCompra,
+    loadTopCategoriasCompraFail,
+    loadTopCategoriasCompraSuccess,
     searchInventarios,
 
     searchInventarioSuccess,
@@ -247,6 +256,42 @@ export class InventarioEffects {
                     catchError((error) =>
                         of(cargarProductosMenorStockFailure({ error }))
                     )
+                )
+            )
+        )
+    );
+
+    loadDistribucionStockEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadDistribucionStock),
+            exhaustMap(() =>
+                this.inventarioService.fetchDistribucionStock().pipe(
+                    map(response => loadDistribucionStockSuccess({ distribucion: response.distribucion })),
+                    catchError(error => of(loadDistribucionStockFail({ error })))
+                )
+            )
+        )
+    );
+
+    loadValorizacionEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadValorizacion),
+            exhaustMap(() =>
+                this.inventarioService.fetchValorizacionInventario().pipe(
+                    map(response => loadValorizacionSuccess({ valorizacion: response.valorizacion })),
+                    catchError(error => of(loadValorizacionFail({ error })))
+                )
+            )
+        )
+    );
+
+    loadTopCategoriasCompraEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadTopCategoriasCompra),
+            exhaustMap(() =>
+                this.inventarioService.fetchTopCategoriasCompra().pipe(
+                    map(response => loadTopCategoriasCompraSuccess({ topCategorias: response.top_categorias_compra })),
+                    catchError(error => of(loadTopCategoriasCompraFail({ error })))
                 )
             )
         )

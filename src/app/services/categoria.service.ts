@@ -1,4 +1,4 @@
-import { Categoria, CategoriaCreate, CategoriaUpdate } from '@/app/models/categoria.models';
+import { Categoria, CategoriaCreate, CategoriaUpdate, PorcentajeCategoriaResponse } from '@/app/models/categoria.models';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -45,6 +45,12 @@ export class CategoriaService {
         printError(error)
         return throwError(error)
       })
+    );
+  }
+
+  fetchPorcentajePorCategoria(): Observable<PorcentajeCategoriaResponse> {
+    return this.http.get<PorcentajeCategoriaResponse>(`${this.siteURL}/inventarios/porcentaje-por-categoria/`).pipe(
+      catchError(error => throwError(error))
     );
   }
 }

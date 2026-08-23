@@ -1,6 +1,6 @@
-import { Categoria } from '@/app/models/categoria.models';
+import { Categoria, PorcentajeCategoria } from '@/app/models/categoria.models';
 import { createReducer, on } from '@ngrx/store';
-import { createCategoriaAction, createCategoriaFail, createCategoriaSuccess, deleteCategoriaAction, deleteCategoriaFail, deleteCategoriaSuccess, loadCategorias, loadCategoriasFail, loadCategoriasSuccess, updateCategoriaAction, updateCategoriaFail, updateCategoriaSuccess } from '../actions/categoria.actions';
+import { createCategoriaAction, createCategoriaFail, createCategoriaSuccess, deleteCategoriaAction, deleteCategoriaFail, deleteCategoriaSuccess, loadCategorias, loadCategoriasFail, loadCategoriasSuccess, loadPorcentajeCategoria, loadPorcentajeCategoriaFail, loadPorcentajeCategoriaSuccess, updateCategoriaAction, updateCategoriaFail, updateCategoriaSuccess } from '../actions/categoria.actions';
 
 
 
@@ -11,7 +11,8 @@ export interface CategoriaState {
   loadingCreateCategoria: boolean
   loadingDesactivateCategoria: boolean
   loadingUpdateCategoria: boolean
-
+  porcentajes: PorcentajeCategoria[];
+  loadingPorcentaje: boolean;
 }
 
 export const initialState: CategoriaState = {
@@ -20,7 +21,9 @@ export const initialState: CategoriaState = {
   loadingCreateCategoria: false,
   loadingDesactivateCategoria: false,
   loadingUpdateCategoria: false,
-  errors: {}
+  errors: {},
+  porcentajes: [],
+  loadingPorcentaje: false,
 };
 
 export const categoriaReducer = createReducer(
@@ -81,5 +84,19 @@ export const categoriaReducer = createReducer(
     ...state,
     categorias: state.categorias.filter(cat => cat.id !== id),
     loadingDesactivateCategoria: false
+  })),
+  on(loadPorcentajeCategoria, (state) => ({
+    ...state,
+    loadingPorcentaje: true
+  })),
+  on(loadPorcentajeCategoriaSuccess, (state, { porcentajes }) => ({
+    ...state,
+    porcentajes,
+    loadingPorcentaje: false
+  })),
+  on(loadPorcentajeCategoriaFail, (state, { error }) => ({
+    ...state,
+    errors: error,
+    loadingPorcentaje: false
   }))
 );

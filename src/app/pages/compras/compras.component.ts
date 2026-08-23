@@ -21,7 +21,6 @@ import { cargarCompras } from '@/app/state/actions/compra.actions';
 import { PAGE_SIZE_COMPRAS } from '@/app/services/utils/pages-sizes';
 import { ListallcomprasComponent } from '@/app/components/comprascomponents/listallcompras/listallcompras.component';
 import { RegistrarcompraComponent } from '@/app/components/comprascomponents/registrarcompra/registrarcompra.component';
-import { SubirexcelComponent } from '@/app/components/comprascomponents/subirexcel/subirexcel.component';
 
 @Component({
   selector: 'app-compras',
@@ -37,7 +36,6 @@ import { SubirexcelComponent } from '@/app/components/comprascomponents/subirexc
     TuiIcon,
     ListallcomprasComponent,
     RegistrarcompraComponent,
-    SubirexcelComponent,
   ],
   templateUrl: './compras.component.html',
   styleUrls: ['./compras.component.scss']
@@ -49,8 +47,8 @@ export class ComprasComponent implements OnInit {
   private location = inject(Location);
   private cdr = inject(ChangeDetectorRef);
 
-  validTabs = ['historial', 'comprobantes', 'excel'] as const;
-  activeTab: 'historial' | 'comprobantes' | 'excel' = 'historial';
+  validTabs = ['historial', 'comprobantes', 'graficos'] as const;
+  activeTab: 'historial' | 'comprobantes' | 'graficos' = 'historial';
   activeTabIndex = 0;
 
   ngOnInit() {

@@ -134,7 +134,7 @@
           <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
           <nav class="mobile-nav-links">
             <ng-container *ngFor="let item of allNavItems">
-              <a *ngIf="(!item.superuserOnly || user.is_superuser) && (!item.featureFlag || (item.featureFlag === 'guiasRemision' && featureFlags.guiasRemisionEnabled()) || (item.featureFlag === 'tiktok' && featureFlags.tiktokEnabled()))"
+              <a *ngIf="(!item.superuserOnly || user.is_superuser) && (!item.featureFlag || (item.featureFlag === 'guiasRemision' && featureFlags.guiasRemisionEnabled()) || (item.featureFlag === 'tiktok' && featureFlags.tiktokEnabled()) || (item.featureFlag === 'compras' && featureFlags.comprasEnabled()))"
                 [routerLink]="item.route"
                 (click)="closeMobileMenu()"
                 [routerLinkActiveOptions]="{ exact: item.exact ?? false }"

@@ -32,3 +32,45 @@ export type InventarioCreate = Omit<Inventario, 'id' |
     'estado' | 'responsable' |
     'lote'>;
 
+export interface DistribucionStock {
+    sin_stock: number;
+    critico: number;
+    bajo: number;
+    normal: number;
+}
+
+export interface DistribucionStockResponse {
+    distribucion: DistribucionStock;
+}
+
+export interface RangoPrecio {
+    rango: string;
+    cantidad: number;
+}
+
+export interface PorRangoPreciosResponse {
+    por_precio_compra: RangoPrecio[];
+    por_precio_venta: RangoPrecio[];
+}
+
+export interface ValorizacionCategoria {
+    categoria: string;
+    cantidad_productos: number;
+    total_compra: number;
+    total_venta: number;
+}
+
+export interface ValorizacionInventarioResponse {
+    valorizacion: ValorizacionCategoria[];
+}
+
+export interface TopCategoriaCompra {
+    categoria: string;
+    total_unidades: number;
+    total_gastado: number;
+}
+
+export interface TopCategoriasCompraResponse {
+    top_categorias_compra: TopCategoriaCompra[];
+}
+

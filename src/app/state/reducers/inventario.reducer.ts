@@ -1,4 +1,4 @@
-import { Inventario } from '@/app/models/inventario.models';
+import { DistribucionStock, Inventario, TopCategoriaCompra, ValorizacionCategoria } from '@/app/models/inventario.models';
 import { Producto } from '@/app/models/producto.models';
 import { createReducer, on } from '@ngrx/store';
 import {
@@ -19,6 +19,15 @@ import {
     loadInventarios,
     loadInventariosFail,
     loadInventariosSuccess,
+    loadDistribucionStock,
+    loadDistribucionStockFail,
+    loadDistribucionStockSuccess,
+    loadValorizacion,
+    loadValorizacionFail,
+    loadValorizacionSuccess,
+    loadTopCategoriasCompra,
+    loadTopCategoriasCompraFail,
+    loadTopCategoriasCompraSuccess,
     searchInventarioFail,
     searchInventarios,
     searchInventarioSuccess,
@@ -53,6 +62,12 @@ export interface InventarioState {
     inventarios_search: Inventario[];
     lowStockProducts: InventarioLowStock[],
     loadingLowStock: boolean
+    distribucionStock: DistribucionStock;
+    loadingDistribucionStock: boolean;
+    valorizacion: ValorizacionCategoria[];
+    loadingValorizacion: boolean;
+    topCategoriasCompra: TopCategoriaCompra[];
+    loadingTopCategoriasCompra: boolean;
 }
 
 const initialState: InventarioState = {
@@ -74,7 +89,13 @@ const initialState: InventarioState = {
 
     lowStockProducts: [] as unknown as InventarioLowStock[],
     loadingLowStock: false,
-    inventarios_search: []  // Inicializa como un array vacío
+    inventarios_search: [],  // Inicializa como un array vacío
+    distribucionStock: { sin_stock: 0, critico: 0, bajo: 0, normal: 0 },
+    loadingDistribucionStock: false,
+    valorizacion: [],
+    loadingValorizacion: false,
+    topCategoriasCompra: [],
+    loadingTopCategoriasCompra: false,
 };
 export const inventarioReducer = createReducer(
     initialState,
@@ -237,6 +258,51 @@ export const inventarioReducer = createReducer(
         ...state,
         errorLowStock: error,
         loadingLowStock: false,
+    })),
+
+    on(loadDistribucionStock, (state) => ({
+        ...state,
+        loadingDistribucionStock: true,
+    })),
+    on(loadDistribucionStockSuccess, (state, { distribucion }) => ({
+        ...state,
+        distribucionStock: distribucion,
+        loadingDistribucionStock: false,
+    })),
+    on(loadDistribucionStockFail, (state, { error }) => ({
+        ...state,
+        errors: error,
+        loadingDistribucionStock: false,
+    })),
+
+    on(loadValorizacion, (state) => ({
+        ...state,
+        loadingValorizacion: true,
+    })),
+    on(loadValorizacionSuccess, (state, { valorizacion }) => ({
+        ...state,
+        valorizacion,
+        loadingValorizacion: false,
+    })),
+    on(loadValorizacionFail, (state, { error }) => ({
+        ...state,
+        errors: error,
+        loadingValorizacion: false,
+    })),
+
+    on(loadTopCategoriasCompra, (state) => ({
+        ...state,
+        loadingTopCategoriasCompra: true,
+    })),
+    on(loadTopCategoriasCompraSuccess, (state, { topCategorias }) => ({
+        ...state,
+        topCategoriasCompra: topCategorias,
+        loadingTopCategoriasCompra: false,
+    })),
+    on(loadTopCategoriasCompraFail, (state, { error }) => ({
+        ...state,
+        errors: error,
+        loadingTopCategoriasCompra: false,
     })),
 
     //externos

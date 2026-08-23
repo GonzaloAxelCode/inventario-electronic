@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { catchError, exhaustMap, map, of, switchMap } from 'rxjs';
 
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
@@ -13,6 +12,9 @@ import {
     crearCompra,
     crearCompraExito,
     crearCompraError,
+    searchCompras,
+    searchComprasExito,
+    searchComprasError,
 } from '../actions/compra.actions';
 import { AppState } from '../app.state';
 
@@ -60,6 +62,27 @@ export class CompraEffects {
                         this.alertService.showError('Error al registrar el comprobante', 'Error').subscribe();
                         return of(crearCompraError({ error }));
                     })
+                )
+            )
+        )
+    );
+
+    searchComprasEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(searchCompras),
+            switchMap(({ query, page, page_size }) =>
+                this.compraService.searchComprobantes(query, page, page_size).pipe(
+                    map((response) =>
+                        searchComprasExito({
+                            comprobantes: response.results,
+                            count: response.count,
+                            next: response.next,
+                            previous: response.previous,
+                            index_page: response.index_page,
+                            length_pages: response.length_pages,
+                        })
+                    ),
+                    catchError((error) => of(searchComprasError({ error })))
                 )
             )
         )

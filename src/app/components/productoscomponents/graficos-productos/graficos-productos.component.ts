@@ -1,7 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { TuiPieChart, TuiLegendItem } from '@taiga-ui/addon-charts';
 import { TuiHovered } from '@taiga-ui/cdk';
+import { TuiSkeleton } from '@taiga-ui/kit';
+import { AppState } from '@/app/state/app.state';
+import { loadPorcentajeCategoria } from '@/app/state/actions/categoria.actions';
+import { selectPorcentajeCategoria, selectLoadingPorcentaje } from '@/app/state/selectors/categoria.selectors';
+import { loadDistribucionStock, loadValorizacion, loadTopCategoriasCompra } from '@/app/state/actions/inventario.actions';
+import { selectDistribucionStock, selectLoadingDistribucionStock, selectValorizacion, selectLoadingValorizacion, selectTopCategoriasCompra, selectLoadingTopCategoriasCompra } from '@/app/state/selectors/inventario.selectors';
 
 @Component({
   selector: 'app-graficos-productos',
@@ -11,66 +18,104 @@ import { TuiHovered } from '@taiga-ui/cdk';
     TuiPieChart,
     TuiLegendItem,
     TuiHovered,
+    TuiSkeleton,
   ],
   templateUrl: './graficos-productos.component.html',
   styleUrl: './graficos-productos.component.scss'
 })
-export class GraficosProductosComponent {
+export class GraficosProductosComponent implements OnInit {
+  private readonly store = inject(Store<AppState>);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   // ====== 1. Pie Chart: Distribución por categoría ======
-  pieValue = [35, 25, 20, 12, 8];
-  pieLabels = ['Electrónica', 'Accesorios', 'Periféricos', 'Almacenamiento', 'Redes'];
+  pieValue: number[] = [];
+  pieLabels: string[] = [];
   pieActiveIndex = NaN;
+  loadingCategoria = true;
 
-  // ====== 2. Top Productos en Inventario por costo de Compra ======
-  inventarioData = [
-    { nombre: 'Laptop HP', unidades: 12, costoUnitario: 2800, costoTotal: 33600 },
-    { nombre: 'Monitor LG 24"', unidades: 8, costoUnitario: 1550, costoTotal: 12400 },
-    { nombre: 'Teclado Mecánico', unidades: 25, costoUnitario: 356, costoTotal: 8900 },
-    { nombre: 'Mouse Logitech', unidades: 40, costoUnitario: 155, costoTotal: 6200 },
-    { nombre: 'Audífonos Bluetooth', unidades: 30, costoUnitario: 150, costoTotal: 4500 },
-  ];
-  inventarioMax = Math.max(...this.inventarioData.map(d => d.costoTotal));
+  // ====== 2. Top Categorias en Inventario por costo de Compra ======
+  inventarioData: { nombre: string; unidades: number; costoTotal: number }[] = [];
+  inventarioMax = 0;
+  loadingTopCompra = true;
 
   // ====== 3. Estado del Stock (Dona) ======
-  stockStatusValue = [45, 28, 15, 12];
+  stockStatusValue: number[] = [];
   stockStatusLabels = ['Normal', 'Bajo', 'Crítico', 'Sin Stock'];
   stockStatusActiveIndex = NaN;
+  loadingStock = true;
 
   // ====== 4. Productos por Rango de Precio ======
-  precioRangos = [
-    { rango: 'S/ 0 - 50', cantidad: 120, color: '#10B981' },
-    { rango: 'S/ 50 - 150', cantidad: 85, color: '#3B82F6' },
-    { rango: 'S/ 150 - 500', cantidad: 52, color: '#8B5CF6' },
-    { rango: 'S/ 500 - 1000', cantidad: 28, color: '#F59E0B' },
-    { rango: 'S/ 1000+', cantidad: 12, color: '#EF4444' },
-  ];
-  precioMax = 120;
+  precioRangos: { rango: string; cantidad: number; color: string }[] = [];
+  precioMax = 0;
+  loadingPrecioRango = true;
 
   // ====== 5. Valorización del Inventario por Categoría ======
-  valorizacion = [
-    { nombre: 'Electrónica', valorTotal: 125000, productos: 45 },
-    { nombre: 'Accesorios', valorTotal: 42000, productos: 80 },
-    { nombre: 'Periféricos', valorTotal: 38500, productos: 65 },
-    { nombre: 'Almacenamiento', valorTotal: 22000, productos: 35 },
-    { nombre: 'Redes', valorTotal: 15500, productos: 22 },
-  ];
-  valorizacionMax = 125000;
+  valorizacion: { nombre: string; valorTotal: number; productos: number }[] = [];
+  valorizacionMax = 0;
+  loadingValorizacion = true;
 
-  // ====== 6. Productos por Estado (Dona) ======
-  estadoValue = [180, 42];
-  estadoLabels = ['Activos', 'Inactivos'];
-  estadoActiveIndex = NaN;
+  ngOnInit(): void {
+    this.store.dispatch(loadPorcentajeCategoria());
+    this.store.dispatch(loadDistribucionStock());
+    this.store.dispatch(loadValorizacion());
+    this.store.dispatch(loadTopCategoriasCompra());
 
-  // ====== 7. Margen de Ganancia por Categoría ======
-  margenes = [
-    { nombre: 'Electrónica', costo: 85000, venta: 125000, margen: 32 },
-    { nombre: 'Accesorios', costo: 18000, venta: 42000, margen: 57 },
-    { nombre: 'Periféricos', costo: 22000, venta: 38500, margen: 42.9 },
-    { nombre: 'Almacenamiento', costo: 14000, venta: 22000, margen: 36.4 },
-    { nombre: 'Redes', costo: 9500, venta: 15500, margen: 38.7 },
-  ];
-  margenMax = 57;
+    this.store.select(selectPorcentajeCategoria).subscribe(porcentajes => {
+      this.pieLabels = porcentajes.map(p => p.categoria);
+      this.pieValue = porcentajes.map(p => p.porcentaje);
+      this.cdr.markForCheck();
+    });
+
+    this.store.select(selectLoadingPorcentaje).subscribe(loading => {
+      this.loadingCategoria = loading;
+      this.cdr.markForCheck();
+    });
+
+    this.store.select(selectDistribucionStock).subscribe(distribucion => {
+      this.stockStatusValue = [
+        distribucion.normal,
+        distribucion.bajo,
+        distribucion.critico,
+        distribucion.sin_stock
+      ];
+      this.cdr.markForCheck();
+    });
+
+    this.store.select(selectLoadingDistribucionStock).subscribe(loading => {
+      this.loadingStock = loading;
+      this.cdr.markForCheck();
+    });
+
+    this.store.select(selectValorizacion).subscribe(valorizacion => {
+      this.valorizacion = valorizacion.map(v => ({
+        nombre: v.categoria,
+        valorTotal: v.total_compra,
+        productos: v.cantidad_productos
+      }));
+      this.valorizacionMax = Math.max(...this.valorizacion.map(v => v.valorTotal), 1);
+      this.cdr.markForCheck();
+    });
+
+    this.store.select(selectLoadingValorizacion).subscribe(loading => {
+      this.loadingValorizacion = loading;
+      this.cdr.markForCheck();
+    });
+
+    this.store.select(selectTopCategoriasCompra).subscribe(topCategorias => {
+      this.inventarioData = topCategorias.map(c => ({
+        nombre: c.categoria,
+        unidades: c.total_unidades,
+        costoTotal: c.total_gastado
+      }));
+      this.inventarioMax = Math.max(...this.inventarioData.map(d => d.costoTotal), 1);
+      this.cdr.markForCheck();
+    });
+
+    this.store.select(selectLoadingTopCategoriasCompra).subscribe(loading => {
+      this.loadingTopCompra = loading;
+      this.cdr.markForCheck();
+    });
+  }
 
   // Métodos
   isPieActive(index: number): boolean {
@@ -87,19 +132,5 @@ export class GraficosProductosComponent {
 
   onStockStatusHover(index: number, hovered: boolean): void {
     this.stockStatusActiveIndex = hovered ? index : NaN;
-  }
-
-  isEstadoActive(index: number): boolean {
-    return this.estadoActiveIndex === index;
-  }
-
-  onEstadoHover(index: number, hovered: boolean): void {
-    this.estadoActiveIndex = hovered ? index : NaN;
-  }
-
-  getMargenClass(margen: number): string {
-    if (margen >= 50) return 'text-emerald-600 dark:text-emerald-400';
-    if (margen >= 40) return 'text-yellow-600 dark:text-yellow-400';
-    return 'text-red-500 dark:text-red-400';
   }
 }

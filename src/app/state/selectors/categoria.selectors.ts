@@ -12,3 +12,13 @@ export const selectCategoria = createSelector(
     (state: CategoriaState) => state
 );
 
+export const selectPorcentajeCategoria = createSelector(
+    selectCategoriaState,
+    (state: CategoriaState) => state.porcentajes
+);
+
+export const selectLoadingPorcentaje = createSelector(
+    selectCategoriaState,
+    (state: CategoriaState) => state.loadingPorcentaje
+);
+

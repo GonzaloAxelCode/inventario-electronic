@@ -1,4 +1,4 @@
-import { Categoria, CategoriaCreate, CategoriaUpdate } from '@/app/models/categoria.models';
+import { Categoria, CategoriaCreate, CategoriaUpdate, PorcentajeCategoria } from '@/app/models/categoria.models';
 import { createAction, props } from '@ngrx/store';
 
 export enum CategoriaActionTypes {
@@ -13,7 +13,10 @@ export enum CategoriaActionTypes {
     UPDATE_CATEGORIA_FAIL = '[Categoria] Update Categoria Fail',
     DELETE_CATEGORIA = '[Categoria] Delete Categoria',
     DELETE_CATEGORIA_SUCCESS = '[Categoria] Delete Categoria Success',
-    DELETE_CATEGORIA_FAIL = '[Categoria] Delete Categoria Fail'
+    DELETE_CATEGORIA_FAIL = '[Categoria] Delete Categoria Fail',
+    LOAD_PORCENTAJE_CATEGORIA = '[Categoria] Load Porcentaje Categoria',
+    LOAD_PORCENTAJE_CATEGORIA_SUCCESS = '[Categoria] Load Porcentaje Categoria Success',
+    LOAD_PORCENTAJE_CATEGORIA_FAIL = '[Categoria] Load Porcentaje Categoria Fail',
 }
 
 export const loadCategorias = createAction(CategoriaActionTypes.LOAD_CATEGORIAS);
@@ -62,5 +65,17 @@ export const deleteCategoriaSuccess = createAction(
 );
 export const deleteCategoriaFail = createAction(
     CategoriaActionTypes.DELETE_CATEGORIA_FAIL,
+    props<{ error: any }>()
+);
+
+export const loadPorcentajeCategoria = createAction(
+    CategoriaActionTypes.LOAD_PORCENTAJE_CATEGORIA
+);
+export const loadPorcentajeCategoriaSuccess = createAction(
+    CategoriaActionTypes.LOAD_PORCENTAJE_CATEGORIA_SUCCESS,
+    props<{ porcentajes: PorcentajeCategoria[] }>()
+);
+export const loadPorcentajeCategoriaFail = createAction(
+    CategoriaActionTypes.LOAD_PORCENTAJE_CATEGORIA_FAIL,
     props<{ error: any }>()
 );

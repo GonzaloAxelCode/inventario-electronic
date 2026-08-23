@@ -1,11 +1,13 @@
-
 <tui-loader [showLoader]="!!(loading$ | async)?.loadingCreate">
-  <form [formGroup]="compraForm" class="p-4 space-y-3">
+  <form [formGroup]="compraForm" class="p-4 space-y-4">
 
     <!-- Fila 1: Tipo + Serie + Correlativo -->
-    <div class="grid grid-cols-3 gap-3">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <!-- Tipo Comprobante -->
       <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Tipo Comprobante</label>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
+          Tipo Comprobante <span class="text-red-500">*</span>
+        </label>
         <tui-select formControlName="tipo_comprobante" class="w-full" tuiTextfieldSize="m"
           [tuiTextfieldLabelOutside]="true">
           <tui-data-list *tuiDataList>
@@ -14,37 +16,88 @@
             </button>
           </tui-data-list>
         </tui-select>
+        <p class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-1">
+          {{ f['tipo_comprobante'].value === '01' ? 'Proveedor debe tener RUC' : 'Proveedor puede tener DNI o RUC' }}
+        </p>
       </div>
+
+      <!-- Serie -->
       <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Serie</label>
-        <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="serie" placeholder="F001" tuiTextfield />
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
+          Serie <span class="text-red-500">*</span>
+        </label>
+        <tui-textfield tuiTextfieldSize="m"
+          [class.!border-red-500]="isFieldInvalid('serie')">
+          <input formControlName="serie" [placeholder]="f['tipo_comprobante'].value === '01' ? 'F001' : 'B001'" tuiTextfield
+            (blur)="f['serie'].markAsTouched()" />
         </tui-textfield>
+        <p *ngIf="getSerieError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          {{ getSerieError() }}
+        </p>
       </div>
+
+      <!-- Correlativo -->
       <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Correlativo</label>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
+          Correlativo <span class="text-red-500">*</span>
+        </label>
         <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="correlativo" placeholder="0000123" tuiTextfield />
+          <input formControlName="correlativo" placeholder="0000123" tuiTextfield
+            (blur)="f['correlativo'].markAsTouched()" />
         </tui-textfield>
+        <p *ngIf="getCorrelativoError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          {{ getCorrelativoError() }}
+        </p>
       </div>
     </div>
 
     <!-- Fila 2: Fechas + Forma pago -->
-    <div class="grid grid-cols-3 gap-3">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <!-- Fecha Emision -->
       <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Fecha Emision</label>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
+          Fecha Emision <span class="text-red-500">*</span>
+        </label>
         <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="fecha_emision" type="date" tuiTextfield />
+          <input formControlName="fecha_emision" type="date" tuiTextfield
+            (blur)="f['fecha_emision'].markAsTouched()" />
         </tui-textfield>
+        <p *ngIf="getFechaEmisionError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          {{ getFechaEmisionError() }}
+        </p>
       </div>
+
+      <!-- Fecha Vencimiento -->
       <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Fecha Vencimiento</label>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
+          Fecha Vencimiento
+        </label>
         <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="fecha_vencimiento" type="date" tuiTextfield />
+          <input formControlName="fecha_vencimiento" type="date" tuiTextfield
+            (blur)="f['fecha_vencimiento'].markAsTouched()" />
         </tui-textfield>
+        <p *ngIf="getVencimientoGroupError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          {{ getVencimientoGroupError() }}
+        </p>
       </div>
+
+      <!-- Forma de Pago -->
       <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Forma de Pago</label>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
+          Forma de Pago <span class="text-red-500">*</span>
+        </label>
         <tui-select formControlName="forma_pago" class="w-full" tuiTextfieldSize="m"
           [tuiTextfieldLabelOutside]="true">
           <tui-data-list *tuiDataList>
@@ -53,11 +106,18 @@
             </button>
           </tui-data-list>
         </tui-select>
+        <p *ngIf="getFormaPagoError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          {{ getFormaPagoError() }}
+        </p>
       </div>
     </div>
 
     <!-- Fila 3: Moneda + Doc.Relacionado + Enlace verificacion -->
-    <div class="grid grid-cols-3 gap-3">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <!-- Moneda -->
       <div>
         <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Moneda</label>
         <tui-select formControlName="moneda" class="w-full" tuiTextfieldSize="m"
@@ -69,147 +129,233 @@
           </tui-data-list>
         </tui-select>
       </div>
+
+      <!-- Doc. Relacionado -->
       <div>
         <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Doc. Relacionado</label>
         <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="documento_relacionado" placeholder="Opcional" tuiTextfield />
+          <input formControlName="documento_relacionado" placeholder="OC-2026-001" tuiTextfield />
         </tui-textfield>
       </div>
+
+      <!-- Enlace Verificacion -->
       <div>
         <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Enlace Verificacion</label>
         <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="enlace_verificacion" placeholder="https://..." tuiTextfield />
+          <input formControlName="enlace_verificacion" placeholder="https://..." tuiTextfield
+            (blur)="f['enlace_verificacion'].markAsTouched()" />
         </tui-textfield>
+        <p *ngIf="getEnlaceVerificacionError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          {{ getEnlaceVerificacionError() }}
+        </p>
       </div>
     </div>
 
     <!-- Fila 4: Proveedor -->
-    <div class="grid grid-cols-3 gap-3">
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Tipo Doc Proveedor</label>
-        <tui-select formControlName="tipo_documento_proveedor" class="w-full" tuiTextfieldSize="m"
-          [tuiTextfieldLabelOutside]="true">
-          <tui-data-list *tuiDataList>
-            <button *ngFor="let td of tiposDocProveedor" tuiOption [value]="td">
-              {{ tiposDocProveedorLabels[td] }}
-            </button>
-          </tui-data-list>
-        </tui-select>
+    <div class="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl p-4 border border-neutral-200 dark:border-neutral-700">
+      <div class="flex items-center gap-2 mb-3">
+        <svg class="w-4 h-4 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        </svg>
+        <span class="text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider">Datos del Proveedor</span>
+        <span class="text-[10px] text-neutral-400 dark:text-neutral-500">(Opcional)</span>
       </div>
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nro. Documento</label>
-        <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="numero_documento_proveedor" placeholder="DNI/RUC" tuiTextfield />
-        </tui-textfield>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <!-- Tipo Doc Proveedor -->
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Tipo Documento</label>
+          <tui-select formControlName="tipo_documento_proveedor" class="w-full" tuiTextfieldSize="m"
+            [tuiTextfieldLabelOutside]="true">
+            <tui-data-list *tuiDataList>
+              <button *ngFor="let td of tiposDocProveedor" tuiOption [value]="td"
+                [disabled]="!tiposDocProveedorPermitidos[f['tipo_comprobante'].value]?.includes(td)">
+                {{ tiposDocProveedorLabels[td] }}
+                <span *ngIf="!tiposDocProveedorPermitidos[f['tipo_comprobante'].value]?.includes(td)"
+                  class="text-[9px] text-neutral-400 ml-1">(No disponible)</span>
+              </button>
+            </tui-data-list>
+          </tui-select>
+        </div>
+
+        <!-- Nro. Documento -->
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nro. Documento</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="numero_documento_proveedor"
+              [placeholder]="f['tipo_documento_proveedor'].value ? longitudesDocProveedor[f['tipo_documento_proveedor'].value]?.label : 'Seleccione tipo'"
+              tuiTextfield
+              (blur)="f['numero_documento_proveedor'].markAsTouched()" />
+          </tui-textfield>
+          <p *ngIf="getNroDocProveedorError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+            <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+            {{ getNroDocProveedorError() }}
+          </p>
+        </div>
+
+        <!-- Nombre Proveedor -->
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nombre / Razon Social</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="nombre_proveedor" placeholder="Nombre del proveedor" tuiTextfield
+              (blur)="f['nombre_proveedor'].markAsTouched()" />
+          </tui-textfield>
+        </div>
       </div>
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nombre Proveedor</label>
-        <tui-select formControlName="nombre_proveedor" class="w-full" tuiTextfieldSize="m"
-          [tuiTextfieldLabelOutside]="true">
-          <tui-data-list *tuiDataList>
-            <button *ngFor="let prov of proveedores" tuiOption [value]="prov">
-              {{ prov }}
-            </button>
-          </tui-data-list>
-        </tui-select>
-      </div>
+
+      <!-- Error general del proveedor -->
+      <p *ngIf="getProveedorGroupError()" class="text-[11px] text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        {{ getProveedorGroupError() }}
+      </p>
     </div>
 
     <!-- Fila 5: Observaciones -->
     <div>
       <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Observaciones</label>
       <tui-textfield tuiTextfieldSize="m">
-        <input formControlName="observaciones" placeholder="Notas..." tuiTextfield />
+        <input formControlName="observaciones" placeholder="Notas adicionales sobre la compra..." tuiTextfield />
       </tui-textfield>
     </div>
 
     <!-- Fila 6: Archivo XML -->
     <div>
       <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Archivo XML</label>
-      <div *ngIf="!archivoFile" class="border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg p-3 text-center cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
+      <div *ngIf="!archivoFile"
+        class="border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg p-4 text-center cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
         (click)="archivoInput.click()">
         <input #archivoInput type="file" accept=".xml" class="hidden" (change)="onArchivoSelected($event)" />
-        <p class="text-xs text-neutral-400">Click para subir XML</p>
-      </div>
-      <div *ngIf="archivoFile" class="flex items-center gap-2 bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3 border border-neutral-200 dark:border-neutral-700">
-        <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        <svg class="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
         </svg>
-        <span class="text-sm text-neutral-700 dark:text-neutral-300 truncate flex-1">{{ archivoFile.name }}</span>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400">Click para subir XML</p>
+        <p class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-1">El XML se parseara automaticamente</p>
+      </div>
+      <div *ngIf="archivoFile"
+        class="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3 border border-emerald-200 dark:border-emerald-700">
+        <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <span class="text-sm text-emerald-700 dark:text-emerald-300 truncate flex-1">{{ archivoFile.name }}</span>
         <button type="button" (click)="sincronizar()" [disabled]="parseando"
           class="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs font-semibold transition-colors"
           [class]="parseando
             ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 cursor-wait'
             : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'">
           <svg *ngIf="!parseando" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
           <span *ngIf="parseando" class="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
           {{ parseando ? 'Sincronizando...' : 'Sincronizar' }}
         </button>
-        <button type="button" (click)="archivoFile = null" class="text-red-400 hover:text-red-600 text-sm font-bold">X</button>
+        <button type="button" (click)="archivoFile = null"
+          class="text-red-400 hover:text-red-600 text-sm font-bold p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
       </div>
     </div>
 
     <!-- Productos -->
     <div>
-      <div class="flex items-center justify-between gap-2 mb-2">
-        <h2 class="text-sm font-semibold text-neutral-900 dark:text-white">
-          Productos ({{ items.length }})
-        </h2>
+      <div class="flex items-center justify-between gap-2 mb-3">
+        <div>
+          <h2 class="text-sm font-semibold text-neutral-900 dark:text-white">
+            Productos ({{ items.length }})
+          </h2>
+          <p *ngIf="items.length === 0 && submitted" class="text-[11px] text-red-500 dark:text-red-400">
+            Agrega al menos un producto
+          </p>
+        </div>
         <button iconStart="@tui.plus" tuiButton appearance="primary-grayscale" type="button"
           (click)="agregarItem()" size="s">
           Agregar producto
         </button>
       </div>
 
-      <div class="space-y-2">
+      <div class="space-y-3">
+        <div *ngFor="let item of itemsControls; let i = index" [formGroup]="item"
+          class="bg-white dark:bg-neutral-800 rounded-xl p-4 border border-neutral-200 dark:border-neutral-700 hover:shadow-sm transition-all">
 
-        <div *ngFor="let item of itemsControls; let i = index"
-          [formGroup]="item"
-          class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 border border-neutral-200 dark:border-neutral-700 hover:shadow-sm transition-all">
-
-          <div class="flex items-start gap-2 mb-2">
+          <div class="flex items-start gap-2 mb-3">
             <div class="flex-1">
-              <label class="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 block mb-0.5">Producto</label>
+              <label class="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 block mb-1">
+                Producto <span class="text-red-500">*</span>
+              </label>
               <tui-textfield tuiTextfieldSize="m">
-                <input formControlName="producto" placeholder="Nombre del producto" tuiTextfield />
+                <input formControlName="producto" placeholder="Nombre del producto" tuiTextfield
+                  (blur)="item.get('producto')?.markAsTouched()" />
               </tui-textfield>
+              <p *ngIf="getItemError(i, 'producto')" class="text-[11px] text-red-500 dark:text-red-400 mt-1">
+                {{ getItemError(i, 'producto') }}
+              </p>
             </div>
             <button type="button" (click)="eliminarItem(i)"
-              class="mt-5 w-6 h-6 flex items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-500 dark:hover:text-red-400 text-xs font-bold transition-colors shrink-0">
-              &times;
+              class="mt-6 w-7 h-7 flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-500 dark:hover:text-red-400 transition-colors shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
             </button>
           </div>
 
-          <div class="grid grid-cols-4 gap-2 items-end">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
+            <!-- Cantidad -->
             <div>
-              <label class="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 block mb-0.5">Cantidad</label>
+              <label class="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 block mb-1">
+                Cantidad <span class="text-red-500">*</span>
+              </label>
               <tui-textfield tuiTextfieldSize="m">
-                <input formControlName="cantidad" type="number" tuiTextfield [min]="1" />
+                <input formControlName="cantidad" type="number" tuiTextfield [min]="1"
+                  (blur)="item.get('cantidad')?.markAsTouched()" />
               </tui-textfield>
+              <p *ngIf="getItemError(i, 'cantidad')" class="text-[11px] text-red-500 dark:text-red-400 mt-1">
+                {{ getItemError(i, 'cantidad') }}
+              </p>
             </div>
+
+            <!-- P.Unitario -->
             <div>
-              <label class="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 block mb-0.5">P.Unitario</label>
+              <label class="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 block mb-1">
+                P.Unitario <span class="text-red-500">*</span>
+              </label>
               <tui-textfield tuiTextfieldSize="m">
-                <input formControlName="precio_unitario" prefix="S/." type="number" tuiTextfield [min]="0" />
+                <input formControlName="precio_unitario" prefix="S/." type="number" tuiTextfield [min]="0"
+                  (blur)="item.get('precio_unitario')?.markAsTouched()" />
               </tui-textfield>
+              <p *ngIf="getItemError(i, 'precio_unitario')" class="text-[11px] text-red-500 dark:text-red-400 mt-1">
+                {{ getItemError(i, 'precio_unitario') }}
+              </p>
             </div>
+
+            <!-- Descuento -->
             <div>
-              <label class="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 block mb-0.5">Descuento</label>
+              <label class="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 block mb-1">Descuento</label>
               <tui-textfield tuiTextfieldSize="m">
                 <input formControlName="descuento" prefix="S/." type="number" tuiTextfield [min]="0" />
               </tui-textfield>
             </div>
+
+            <!-- Subtotal -->
             <div class="text-center pb-1">
-              <span class="text-[11px] text-neutral-400 block mb-0.5">Subtotal</span>
-              <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ getItemSubtotal(i) }}</span>
+              <span class="text-[11px] text-neutral-400 block mb-1">Subtotal</span>
+              <span class="text-lg font-bold text-neutral-900 dark:text-white">S/. {{ getItemSubtotal(i) | number:'1.2-2' }}</span>
             </div>
           </div>
         </div>
 
         <div *ngIf="items.length === 0"
-          class="text-center py-8 text-neutral-400 dark:text-neutral-300 rounded-xl bg-neutral-50 dark:bg-neutral-800 border-2 border-dashed border-neutral-300 dark:border-neutral-700">
+          class="text-center py-10 text-neutral-400 dark:text-neutral-300 rounded-xl bg-neutral-50 dark:bg-neutral-800/50 border-2 border-dashed border-neutral-300 dark:border-neutral-700">
+          <svg class="w-10 h-10 mx-auto mb-3 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
           <p class="text-sm font-bold mb-1">Sin productos</p>
           <p class="text-xs text-neutral-500 dark:text-neutral-400">Haz clic en "Agregar producto" para comenzar</p>
         </div>
@@ -217,47 +363,52 @@
     </div>
 
     <!-- Totales solo lectura -->
-    <div class="border-t border-neutral-200 dark:border-neutral-700 pt-3 space-y-2">
+    <div class="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl p-4 border border-neutral-200 dark:border-neutral-700 space-y-2">
+      <h3 class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">Resumen de montos</h3>
       <div class="flex justify-between items-center">
-        <span class="text-base text-neutral-500 dark:text-neutral-400">Gravadas</span>
-        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.gravadas | number:'1.2-2' }}</span>
+        <span class="text-sm text-neutral-600 dark:text-neutral-400">Gravadas</span>
+        <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ totales.gravadas | number:'1.2-2' }}</span>
       </div>
       <div class="flex justify-between items-center">
-        <span class="text-base text-neutral-500 dark:text-neutral-400">Op. Exoneradas</span>
-        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_exoneradas | number:'1.2-2' }}</span>
+        <span class="text-sm text-neutral-600 dark:text-neutral-400">Op. Exoneradas</span>
+        <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_exoneradas | number:'1.2-2' }}</span>
       </div>
       <div class="flex justify-between items-center">
-        <span class="text-base text-neutral-500 dark:text-neutral-400">Op. Inafectas</span>
-        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_inafectas | number:'1.2-2' }}</span>
+        <span class="text-sm text-neutral-600 dark:text-neutral-400">Op. Inafectas</span>
+        <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_inafectas | number:'1.2-2' }}</span>
       </div>
       <div class="flex justify-between items-center">
-        <span class="text-base text-neutral-500 dark:text-neutral-400">Op. Gratuitas</span>
-        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_gratuitas | number:'1.2-2' }}</span>
+        <span class="text-sm text-neutral-600 dark:text-neutral-400">Op. Gratuitas</span>
+        <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_gratuitas | number:'1.2-2' }}</span>
       </div>
       <div class="flex justify-between items-center">
-        <span class="text-base text-neutral-500 dark:text-neutral-400">Descuentos</span>
-        <span class="text-base font-bold text-red-600 dark:text-red-400">- S/. {{ totales.dctos_totales | number:'1.2-2' }}</span>
+        <span class="text-sm text-neutral-600 dark:text-neutral-400">Descuentos</span>
+        <span class="text-sm font-bold text-red-600 dark:text-red-400">- S/. {{ totales.dctos_totales | number:'1.2-2' }}</span>
       </div>
       <div class="flex justify-between items-center">
-        <span class="text-base text-neutral-500 dark:text-neutral-400">ICBPER</span>
-        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.icbper | number:'1.2-2' }}</span>
+        <span class="text-sm text-neutral-600 dark:text-neutral-400">ICBPER</span>
+        <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ totales.icbper | number:'1.2-2' }}</span>
       </div>
-      <div class="flex justify-between items-center">
-        <span class="text-base font-semibold text-neutral-700 dark:text-neutral-300">IGV (18%)</span>
-        <span class="text-lg font-bold text-neutral-900 dark:text-white">S/. {{ totales.igv | number:'1.2-2' }}</span>
+      <div class="flex justify-between items-center pt-2 border-t border-neutral-200 dark:border-neutral-600">
+        <span class="text-sm font-semibold text-neutral-700 dark:text-neutral-300">IGV (18%)</span>
+        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.igv | number:'1.2-2' }}</span>
       </div>
     </div>
 
     <!-- Total + Botones -->
-    <div class="border-t-2 border-neutral-900 dark:border-white pt-3 pb-6">
-      <div class="flex justify-between items-center mb-3">
-        <span class="text-2xl font-extrabold text-neutral-900 dark:text-white uppercase">Total</span>
-        <span class="text-4xl font-extrabold text-neutral-900 dark:text-white">S/. {{ totales.total | number:'1.2-2' }}</span>
+    <div class="bg-gradient-to-br from-neutral-900 to-neutral-800 dark:from-neutral-700 dark:to-neutral-800 rounded-xl p-5 text-white">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-lg font-bold uppercase tracking-wider">Total</span>
+        <span class="text-3xl font-extrabold">S/. {{ totales.total | number:'1.2-2' }}</span>
       </div>
       <div class="flex gap-2">
-        <button [disabled]="compraForm.invalid || items.length === 0" tuiButton type="button"
-          (click)="registrarCompra()" appearance="primary-grayscale" size="m" class="flex-1">
-          Registrar Comprobante
+        <button tuiButton type="button" (click)="registrarCompra()" appearance="primary-grayscale" size="m" class="flex-1">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Registrar Comprobante
+          </span>
         </button>
         <button tuiButton type="button" (click)="limpiarFormulario()" appearance="flat" size="m">
           Limpiar

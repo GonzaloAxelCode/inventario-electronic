@@ -1,8 +1,8 @@
-import { Cliente, ClienteCreate, ClienteUpdate } from '@/app/models/cliente.models';
+import { Cliente, ClienteCreate, ClienteUpdate, ResumenClientes, ClientesFrecuentesResponse, TopClientesCompraResponse } from '@/app/models/cliente.models';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { URL_BASE } from './utils/endpoints';
 import { getAuthDataFromLocalStorage } from './utils/localstorage-functions';
 export interface QuerySearchCliente {
@@ -79,10 +79,46 @@ export class ClienteService {
         );
     }
 
-    // 🔹 Eliminar cliente (si tu backend soporta DELETE)
     deleteCliente(dni: string): Observable<any> {
         const headers = this.getAuthHeaders();
         return this.http.delete(`${this.siteURL}/clientes/${dni}/`, { headers }).pipe(
+            catchError(error => {
+                console.error(error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    fetchResumenClientes(): Observable<ResumenClientes> {
+        const headers = this.getAuthHeaders();
+        return this.http.get<ResumenClientes>(`${this.siteURL}/clientes/resumen/`, { headers }).pipe(
+            tap(response => console.log('[ClienteService] Resumen response:', response)),
+            catchError(error => {
+                console.error('[ClienteService] Resumen error:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    fetchClientesFrecuentes(anio: number, mes: number): Observable<ClientesFrecuentesResponse> {
+        const headers = this.getAuthHeaders();
+        return this.http.get<ClientesFrecuentesResponse>(`${this.siteURL}/sales/clientes-frecuentes/`, {
+            headers,
+            params: { anio: anio.toString(), mes: mes.toString() }
+        }).pipe(
+            catchError(error => {
+                console.error(error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    fetchTopClientesCompra(anio: number, mes: number): Observable<TopClientesCompraResponse> {
+        const headers = this.getAuthHeaders();
+        return this.http.get<TopClientesCompraResponse>(`${this.siteURL}/sales/top-clientes-compra/`, {
+            headers,
+            params: { anio: anio.toString(), mes: mes.toString() }
+        }).pipe(
             catchError(error => {
                 console.error(error);
                 return throwError(() => error);

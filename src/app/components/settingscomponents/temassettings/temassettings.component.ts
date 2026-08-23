@@ -61,4 +61,8 @@ export class TemasSettingsComponent implements OnInit {
   toggleTiktok(): void {
     this.featureFlags.toggleTiktok();
   }
+
+  toggleCompras(): void {
+    this.featureFlags.toggleCompras();
+  }
 }

@@ -1,4 +1,4 @@
-import { Inventario, InventarioCreate } from '@/app/models/inventario.models';
+import { DistribucionStock, Inventario, InventarioCreate, RangoPrecio, TopCategoriaCompra, ValorizacionCategoria } from '@/app/models/inventario.models';
 import { QuerySearchInventario } from '@/app/services/inventario.service';
 import { createAction, props } from '@ngrx/store';
 import { InventarioLowStock } from '../reducers/inventario.reducer';
@@ -36,6 +36,22 @@ export enum InventarioActionTypes {
     SEARCH_INVENTARIOS_SUCCESS = 'SEARCH_INVENTARIOS_SUCCESS',
     SEARCH_INVENTARIOS_FAIL = 'SEARCH_INVENTARIOS_FAIL',
     CLEAR_SEARCH_INVENTARIOS = 'CLEAR_INVENTARIOS_PRODUCTOS',
+
+    LOAD_DISTRIBUCION_STOCK = '[Inventario] Load Distribucion Stock',
+    LOAD_DISTRIBUCION_STOCK_SUCCESS = '[Inventario] Load Distribucion Stock Success',
+    LOAD_DISTRIBUCION_STOCK_FAIL = '[Inventario] Load Distribucion Stock Fail',
+
+    LOAD_POR_RANGO_PRECIOS = '[Inventario] Load Por Rango Precios',
+    LOAD_POR_RANGO_PRECIOS_SUCCESS = '[Inventario] Load Por Rango Precios Success',
+    LOAD_POR_RANGO_PRECIOS_FAIL = '[Inventario] Load Por Rango Precios Fail',
+
+    LOAD_VALORIZACION = '[Inventario] Load Valorizacion',
+    LOAD_VALORIZACION_SUCCESS = '[Inventario] Load Valorizacion Success',
+    LOAD_VALORIZACION_FAIL = '[Inventario] Load Valorizacion Fail',
+
+    LOAD_TOP_CATEGORIAS_COMPRA = '[Inventario] Load Top Categorias Compra',
+    LOAD_TOP_CATEGORIAS_COMPRA_SUCCESS = '[Inventario] Load Top Categorias Compra Success',
+    LOAD_TOP_CATEGORIAS_COMPRA_FAIL = '[Inventario] Load Top Categorias Compra Fail',
 
 
 }
@@ -170,5 +186,41 @@ export const cargarProductosMenorStockSuccess = createAction(
 
 export const cargarProductosMenorStockFailure = createAction(
     InventarioActionTypes.CARGAR_PRODUCTOS_MENOR_STOCK_FAILURE,
+    props<{ error: any }>()
+);
+
+export const loadDistribucionStock = createAction(
+    InventarioActionTypes.LOAD_DISTRIBUCION_STOCK
+);
+export const loadDistribucionStockSuccess = createAction(
+    InventarioActionTypes.LOAD_DISTRIBUCION_STOCK_SUCCESS,
+    props<{ distribucion: DistribucionStock }>()
+);
+export const loadDistribucionStockFail = createAction(
+    InventarioActionTypes.LOAD_DISTRIBUCION_STOCK_FAIL,
+    props<{ error: any }>()
+);
+
+export const loadValorizacion = createAction(
+    InventarioActionTypes.LOAD_VALORIZACION
+);
+export const loadValorizacionSuccess = createAction(
+    InventarioActionTypes.LOAD_VALORIZACION_SUCCESS,
+    props<{ valorizacion: ValorizacionCategoria[] }>()
+);
+export const loadValorizacionFail = createAction(
+    InventarioActionTypes.LOAD_VALORIZACION_FAIL,
+    props<{ error: any }>()
+);
+
+export const loadTopCategoriasCompra = createAction(
+    InventarioActionTypes.LOAD_TOP_CATEGORIAS_COMPRA
+);
+export const loadTopCategoriasCompraSuccess = createAction(
+    InventarioActionTypes.LOAD_TOP_CATEGORIAS_COMPRA_SUCCESS,
+    props<{ topCategorias: TopCategoriaCompra[] }>()
+);
+export const loadTopCategoriasCompraFail = createAction(
+    InventarioActionTypes.LOAD_TOP_CATEGORIAS_COMPRA_FAIL,
     props<{ error: any }>()
 );

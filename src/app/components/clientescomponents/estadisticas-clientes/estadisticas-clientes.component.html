@@ -1,15 +1,12 @@
 <div class="flex flex-col gap-6 p-4">
 
-  <!-- Header -->
   <div>
     <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Estadísticas de Clientes</h3>
-    <p class="text-sm text-neutral-500 dark:text-neutral-400">Datos de ejemplo - Próximamente se conectará con el backend</p>
+    <p class="text-sm text-neutral-500 dark:text-neutral-400">Resumen y análisis de clientes</p>
   </div>
 
-  <!-- Tarjetas resumen -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-    <!-- Total Clientes -->
     <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
@@ -18,13 +15,40 @@
           </svg>
         </div>
         <div>
-          <p class="text-2xl font-bold text-neutral-900 dark:text-white">156</p>
+          <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ resumen.total_clientes }}</p>
           <p class="text-xs text-neutral-500 dark:text-neutral-400">Total Clientes</p>
         </div>
       </div>
     </div>
 
-    <!-- Nuevos este mes -->
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+          <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ resumen.nuevos_hoy }}</p>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">Nuevos Hoy</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+          <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ resumen.nuevos_semana }}</p>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">Nuevos esta Semana</p>
+        </div>
+      </div>
+    </div>
+
     <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
@@ -33,83 +57,118 @@
           </svg>
         </div>
         <div>
-          <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ totalNuevosClientesMes }}</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Nuevos este mes</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Promedio compras -->
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-          <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-        </div>
-        <div>
-          <p class="text-2xl font-bold text-neutral-900 dark:text-white">S/ 892</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Promedio por cliente</p>
+          <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ resumen.nuevos_mes }}</p>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">Nuevos este Mes</p>
         </div>
       </div>
     </div>
 
   </div>
 
-  <!-- Gráficos -->
+  <div class="flex items-center gap-2">
+    <span class="text-xs text-neutral-500 dark:text-neutral-400">Período:</span>
+    <select
+      class="text-xs px-2 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+      [ngModel]="selectedMonth"
+      (ngModelChange)="onMonthChange($event)">
+      <option *ngFor="let m of monthNames; let i = index" [ngValue]="i + 1">{{ m }}</option>
+    </select>
+    <select
+      class="text-xs px-2 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+      [ngModel]="selectedYear"
+      (ngModelChange)="onYearChange($event)">
+      <option *ngFor="let y of yearNumbers" [ngValue]="y">{{ y }}</option>
+    </select>
+  </div>
+
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-    <!-- Clientes más frecuentes (por número de compras) -->
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-4">Clientes Más Frecuentes</h4>
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Clientes Más Frecuentes</h4>
       <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Por número de compras realizadas</p>
 
-      <div class="space-y-3">
-        <div *ngFor="let cliente of clientesFrecuentes; let i = index" class="flex items-center gap-3">
-          <span class="text-xs font-bold text-neutral-400 w-4">{{ i + 1 }}</span>
-          <div class="flex-1">
-            <div class="flex justify-between items-center mb-1">
-              <span class="text-sm font-medium text-neutral-900 dark:text-white">{{ cliente.nombre }}</span>
-              <span class="text-sm font-bold text-neutral-600 dark:text-neutral-300">{{ cliente.compras }} compras</span>
-            </div>
-            <div class="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
-              <div class="bg-blue-500 h-2 rounded-full transition-all duration-500"
-                [style.width.%]="(cliente.compras / clientesFrecuentes[0].compras) * 100">
+      <div *ngIf="loadingFrecuentes">
+        <div class="space-y-3">
+          <div *ngFor="let i of [1, 2, 3, 4, 5]" class="flex items-center gap-3">
+            <div class="w-4 h-3 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
+            <div class="flex-1">
+              <div class="flex justify-between mb-1">
+                <div class="h-3 w-24 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
+                <div class="h-3 w-16 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
               </div>
+              <div class="h-2 bg-neutral-200 dark:bg-neutral-600 rounded-full animate-pulse"></div>
             </div>
           </div>
         </div>
       </div>
+      <ng-template [ngIf]="!loadingFrecuentes">
+        <div *ngIf="clientesFrecuentes.length > 0; else emptyFrecuentes" class="space-y-3">
+          <div *ngFor="let cliente of clientesFrecuentes; let i = index" class="flex items-center gap-3">
+            <span class="text-xs font-bold text-neutral-400 w-4">{{ i + 1 }}</span>
+            <div class="flex-1">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-sm font-medium text-neutral-900 dark:text-white">{{ cliente.nombre }}</span>
+                <span class="text-sm font-bold text-neutral-600 dark:text-neutral-300">{{ cliente.total_compras }} compras</span>
+              </div>
+              <div class="w-full bg-neutral-100 dark:bg-neutral-700 rounded-full h-2">
+                <div class="bg-blue-500 h-2 rounded-full transition-all duration-700"
+                  [style.width.%]="(cliente.total_compras / maxCompras) * 100">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #emptyFrecuentes>
+        <div class="flex items-center justify-center h-28 text-neutral-400 text-sm">
+          No hay datos de clientes frecuentes para este período
+        </div>
+      </ng-template>
     </div>
 
-    <!-- Clientes que más compraron (por monto total) -->
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-4">Clientes Que Más Compraron</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Por monto total en soles</p>
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Clientes Que Más Compraron</h4>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Por monto total gastado en soles</p>
 
-      <div class="space-y-3">
-        <div *ngFor="let cliente of clientesMonto; let i = index" class="flex items-center gap-3">
-          <span class="text-xs font-bold text-neutral-400 w-4">{{ i + 1 }}</span>
-          <div class="flex-1">
-            <div class="flex justify-between items-center mb-1">
-              <span class="text-sm font-medium text-neutral-900 dark:text-white">{{ cliente.nombre }}</span>
-              <span class="text-sm font-bold text-green-600 dark:text-green-400">S/ {{ cliente.total | number:'1.2-2' }}</span>
-            </div>
-            <div class="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
-              <div class="bg-green-500 h-2 rounded-full transition-all duration-500"
-                [style.width.%]="(cliente.total / clientesMonto[0].total) * 100">
+      <div *ngIf="loadingTop">
+        <div class="space-y-3">
+          <div *ngFor="let i of [1, 2, 3, 4, 5]" class="flex items-center gap-3">
+            <div class="w-4 h-3 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
+            <div class="flex-1">
+              <div class="flex justify-between mb-1">
+                <div class="h-3 w-24 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
+                <div class="h-3 w-20 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
               </div>
+              <div class="h-2 bg-neutral-200 dark:bg-neutral-600 rounded-full animate-pulse"></div>
             </div>
           </div>
         </div>
       </div>
+      <ng-template [ngIf]="!loadingTop">
+        <div *ngIf="topClientes.length > 0; else emptyTop" class="space-y-3">
+          <div *ngFor="let cliente of topClientes; let i = index" class="flex items-center gap-3">
+            <span class="text-xs font-bold text-neutral-400 w-4">{{ i + 1 }}</span>
+            <div class="flex-1">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-sm font-medium text-neutral-900 dark:text-white">{{ cliente.nombre }}</span>
+                <span class="text-sm font-bold text-green-600 dark:text-green-400">S/ {{ cliente.total_gastado | number:'1.2-2' }}</span>
+              </div>
+              <div class="w-full bg-neutral-100 dark:bg-neutral-700 rounded-full h-2">
+                <div class="bg-green-500 h-2 rounded-full transition-all duration-700"
+                  [style.width.%]="(cliente.total_gastado / maxGastado) * 100">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #emptyTop>
+        <div class="flex items-center justify-center h-28 text-neutral-400 text-sm">
+          No hay datos de compras para este período
+        </div>
+      </ng-template>
     </div>
 
   </div>
-
-  <!-- Nota -->
-  <p class="text-xs text-neutral-400 dark:text-neutral-500 text-center italic">
-    * Estos son datos de ejemplo. Próximamente se conectarán con el backend para mostrar datos reales.
-  </p>
 
 </div>

@@ -144,34 +144,6 @@
           </p>
         </ng-template>
       </div>
-
-      <!-- Progress Circles - Objetivos -->
-      <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-        <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1 flex items-center gap-2">
-          Objetivos del Mes
-          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-sm shadow-violet-500/30">
-            Próximamente
-          </span>
-        </h4>
-        <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Progreso hacia metas</p>
-        <div class="grid grid-cols-2 gap-3">
-          <div *ngFor="let obj of objectives" class="flex flex-col items-center">
-            <div class="relative w-16 h-16">
-              <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
-                <circle cx="18" cy="18" r="14" fill="none" stroke="#E5E7EB" stroke-width="3" />
-                <circle cx="18" cy="18" r="14" fill="none"
-                  [attr.stroke]="obj.color" stroke-width="3"
-                  [attr.stroke-dasharray]="getCircleProgress(obj.current, obj.target)"
-                  stroke-linecap="round" />
-              </svg>
-              <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-[10px] font-bold text-neutral-900 dark:text-white">{{ obj.current }}%</span>
-              </div>
-            </div>
-            <p class="text-[10px] text-neutral-500 dark:text-neutral-400 text-center mt-1 leading-tight">{{ obj.label }}</p>
-          </div>
-        </div>
-      </div>
     </div>
 
   </ng-container>

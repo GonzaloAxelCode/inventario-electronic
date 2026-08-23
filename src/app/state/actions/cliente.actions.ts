@@ -1,4 +1,4 @@
-import { Cliente, ClienteCreate, ClienteUpdate } from '@/app/models/cliente.models';
+import { Cliente, ClienteCreate, ClienteUpdate, ResumenClientes, ClienteFrecuente, TopClienteCompra } from '@/app/models/cliente.models';
 import { QuerySearchCliente } from '@/app/services/cliente.service';
 import { createAction, props } from '@ngrx/store';
 
@@ -138,4 +138,42 @@ export const searchClientesFail = createAction(
 );
 export const clearSearchClientes = createAction(
     ClienteActionTypes.CLEAR_SEARCH_CLIENTES,
+);
+
+export const loadResumenClientes = createAction(
+    '[Cliente] Load Resumen Clientes'
+);
+export const loadResumenClientesSuccess = createAction(
+    '[Cliente] Load Resumen Clientes Success',
+    props<{ resumen: ResumenClientes }>()
+);
+export const loadResumenClientesFail = createAction(
+    '[Cliente] Load Resumen Clientes Fail',
+    props<{ error: any }>()
+);
+
+export const loadClientesFrecuentes = createAction(
+    '[Cliente] Load Clientes Frecuentes',
+    props<{ anio: number; mes: number }>()
+);
+export const loadClientesFrecuentesSuccess = createAction(
+    '[Cliente] Load Clientes Frecuentes Success',
+    props<{ clientesFrecuentes: ClienteFrecuente[] }>()
+);
+export const loadClientesFrecuentesFail = createAction(
+    '[Cliente] Load Clientes Frecuentes Fail',
+    props<{ error: any }>()
+);
+
+export const loadTopClientesCompra = createAction(
+    '[Cliente] Load Top Clientes Compra',
+    props<{ anio: number; mes: number }>()
+);
+export const loadTopClientesCompraSuccess = createAction(
+    '[Cliente] Load Top Clientes Compra Success',
+    props<{ topClientes: TopClienteCompra[] }>()
+);
+export const loadTopClientesCompraFail = createAction(
+    '[Cliente] Load Top Clientes Compra Fail',
+    props<{ error: any }>()
 );

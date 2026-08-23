@@ -22,6 +22,15 @@ import {
     loadClientes,
     loadClientesFail,
     loadClientesSuccess,
+    loadResumenClientes,
+    loadResumenClientesSuccess,
+    loadResumenClientesFail,
+    loadClientesFrecuentes,
+    loadClientesFrecuentesSuccess,
+    loadClientesFrecuentesFail,
+    loadTopClientesCompra,
+    loadTopClientesCompraSuccess,
+    loadTopClientesCompraFail,
     searchClientes,
     searchClientesSuccess,
     updateClienteAction,
@@ -163,6 +172,47 @@ export class ClienteEffects {
                     search_found: resultados.found
                 });
             })
+        )
+    );
+
+    loadResumenClientes$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadResumenClientes),
+            tap(() => console.log('[ClienteEffects] loadResumenClientes dispatched')),
+            exhaustMap(() =>
+                this.clienteService.fetchResumenClientes().pipe(
+                    tap(response => console.log('[ClienteEffects] Resumen success:', response)),
+                    map(response => loadResumenClientesSuccess({ resumen: response })),
+                    catchError(error => {
+                        console.error('[ClienteEffects] Resumen error:', error);
+                        return of(loadResumenClientesFail({ error }));
+                    })
+                )
+            )
+        )
+    );
+
+    loadClientesFrecuentes$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadClientesFrecuentes),
+            exhaustMap(({ anio, mes }) =>
+                this.clienteService.fetchClientesFrecuentes(anio, mes).pipe(
+                    map(response => loadClientesFrecuentesSuccess({ clientesFrecuentes: response.clientes_frecuentes })),
+                    catchError(error => of(loadClientesFrecuentesFail({ error })))
+                )
+            )
+        )
+    );
+
+    loadTopClientesCompra$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadTopClientesCompra),
+            exhaustMap(({ anio, mes }) =>
+                this.clienteService.fetchTopClientesCompra(anio, mes).pipe(
+                    map(response => loadTopClientesCompraSuccess({ topClientes: response.top_clientes })),
+                    catchError(error => of(loadTopClientesCompraFail({ error })))
+                )
+            )
         )
     );
 

@@ -20,3 +20,12 @@ export interface Categoria {
 export type CategoriaCreate = Omit<Categoria, 'id' | 'fechaCreacion' | 'fechaActualizacion' | 'parent' | 'destacado' | 'color'>;
 export type CategoriaUpdate = Omit<Categoria, 'imagen' | 'activo' | 'orden' | 'color' | 'fechaCreacion' | 'fechaActualizacion' | 'parent' | 'destacado' | 'color'>;
 
+export interface PorcentajeCategoria {
+    categoria: string;
+    porcentaje: number;
+}
+
+export interface PorcentajeCategoriaResponse {
+    categorias: PorcentajeCategoria[];
+}
+

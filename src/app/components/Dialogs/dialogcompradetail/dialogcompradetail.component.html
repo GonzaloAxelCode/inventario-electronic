@@ -1,0 +1,219 @@
+<div class="flex flex-col max-h-[85vh] w-full">
+
+  <div class="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+        <svg class="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h3 class="text-lg font-extrabold text-neutral-900 dark:text-white">
+            {{ compra.serie }}-{{ compra.correlativo }}
+          </h3>
+          <tui-badge [appearance]="compra.tipo_comprobante === '01' ? 'info' : 'positive'" size="s">
+            {{ getTipoComprobante(compra.tipo_comprobante) }}
+          </tui-badge>
+        </div>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400">
+          Compra #{{ compra.id }} · Registrada el {{ formatDate(compra.date_created) }}
+        </p>
+      </div>
+    </div>
+    <button tuiButton appearance="flat" size="s" (click)="close()">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-4 space-y-5">
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Tipo</p>
+        <tui-badge [appearance]="compra.tipo_comprobante === '01' ? 'info' : 'positive'" size="s">
+          {{ getTipoComprobante(compra.tipo_comprobante) }}
+        </tui-badge>
+      </div>
+      <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Forma Pago</p>
+        <tui-badge [appearance]="compra.forma_pago === 'CONTADO' ? 'success' : 'warning'" size="s">
+          {{ compra.forma_pago || '-' }}
+        </tui-badge>
+      </div>
+      <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Moneda</p>
+        <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ compra.moneda === 'PEN' ? 'Soles (S/)' : compra.moneda === 'USD' ? 'Dólares ($)' : compra.moneda }}</p>
+      </div>
+      <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Fecha Emisión</p>
+        <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ formatDate(compra.fecha_emision) }}</p>
+      </div>
+    </div>
+
+    <div class="p-4 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+      <div class="flex items-center gap-2 mb-3">
+        <svg class="w-4 h-4 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        </svg>
+        <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Proveedor</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-sm font-bold text-violet-700 dark:text-violet-300">
+          {{ getProveedorNombre().charAt(0) }}
+        </div>
+        <div>
+          <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ getProveedorNombre() }}</p>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">
+            {{ compra.tipo_documento_proveedor || 'RUC' }}: {{ getProveedorRuc() }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="compra.fecha_vencimiento || compra.documento_relacionado || compra.enlace_verificacion" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div *ngIf="compra.fecha_vencimiento" class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Vencimiento</p>
+        <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ formatDate(compra.fecha_vencimiento) }}</p>
+      </div>
+      <div *ngIf="compra.documento_relacionado" class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Doc. Relacionado</p>
+        <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ compra.documento_relacionado }}</p>
+      </div>
+      <div *ngIf="compra.enlace_verificacion" class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Verificación SUNAT</p>
+        <a [href]="compra.enlace_verificacion" target="_blank" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline break-all">
+          Ver enlace
+        </a>
+      </div>
+    </div>
+
+    <div *ngIf="compra.items?.length" class="space-y-2">
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+        </svg>
+        <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+          Detalle de Productos ({{ compra.items.length }} items)
+        </p>
+      </div>
+      <div class="border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
+        <table class="w-full text-xs">
+          <thead class="bg-neutral-100 dark:bg-neutral-700">
+            <tr>
+              <th class="text-left px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">#</th>
+              <th class="text-left px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Producto</th>
+              <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Cant.</th>
+              <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">P. Unit.</th>
+              <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Dcto.</th>
+              <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of compra.items; let i = index" class="border-t border-neutral-200 dark:border-neutral-700">
+              <td class="px-3 py-2 text-neutral-500 dark:text-neutral-400">{{ i + 1 }}</td>
+              <td class="px-3 py-2 font-medium text-neutral-900 dark:text-white">{{ item.producto }}</td>
+              <td class="px-3 py-2 text-right text-neutral-700 dark:text-neutral-300">{{ item.cantidad }}</td>
+              <td class="px-3 py-2 text-right text-neutral-700 dark:text-neutral-300">S/ {{ item.precio_unitario | number:'1.2-2' }}</td>
+              <td class="px-3 py-2 text-right text-red-500 dark:text-red-400">
+                {{ item.descuento ? '- S/ ' + (item.descuento | number:'1.2-2') : '-' }}
+              </td>
+              <td class="px-3 py-2 text-right font-bold text-neutral-900 dark:text-white">
+                S/ {{ getItemSubtotal(item) | number:'1.2-2' }}
+              </td>
+            </tr>
+          </tbody>
+          <tfoot class="bg-neutral-50 dark:bg-neutral-700/50 border-t-2 border-neutral-300 dark:border-neutral-600">
+            <tr>
+              <td colspan="5" class="px-3 py-2 text-right font-semibold text-neutral-600 dark:text-neutral-300">Total Items:</td>
+              <td class="px-3 py-2 text-right font-bold text-neutral-900 dark:text-white">
+                S/ {{ getItemsTotal() | number:'1.2-2' }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div class="space-y-2">
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+        <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Resumen de Montos</p>
+      </div>
+      <div class="bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700 divide-y divide-neutral-200 dark:divide-neutral-700">
+        <div class="flex justify-between items-center px-4 py-2.5">
+          <span class="text-xs text-neutral-600 dark:text-neutral-400">Gravadas (Base Imponible)</span>
+          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ compra.gravadas | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between items-center px-4 py-2.5">
+          <span class="text-xs text-neutral-600 dark:text-neutral-400">IGV (18%)</span>
+          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ compra.igv | number:'1.2-2' }}</span>
+        </div>
+        <div *ngIf="compra.op_exoneradas" class="flex justify-between items-center px-4 py-2.5">
+          <span class="text-xs text-neutral-600 dark:text-neutral-400">Operaciones Exoneradas</span>
+          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ compra.op_exoneradas | number:'1.2-2' }}</span>
+        </div>
+        <div *ngIf="compra.op_inafectas" class="flex justify-between items-center px-4 py-2.5">
+          <span class="text-xs text-neutral-600 dark:text-neutral-400">Operaciones Inafectas</span>
+          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ compra.op_inafectas | number:'1.2-2' }}</span>
+        </div>
+        <div *ngIf="compra.op_gratuitas" class="flex justify-between items-center px-4 py-2.5">
+          <span class="text-xs text-neutral-600 dark:text-neutral-400">Operaciones Gratuitas</span>
+          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ compra.op_gratuitas | number:'1.2-2' }}</span>
+        </div>
+        <div *ngIf="compra.dctos_totales" class="flex justify-between items-center px-4 py-2.5">
+          <span class="text-xs text-neutral-600 dark:text-neutral-400">Descuentos Totales</span>
+          <span class="text-sm font-semibold text-red-600 dark:text-red-400">- S/ {{ compra.dctos_totales | number:'1.2-2' }}</span>
+        </div>
+        <div *ngIf="compra.icbper" class="flex justify-between items-center px-4 py-2.5">
+          <span class="text-xs text-neutral-600 dark:text-neutral-400">ICBPER (Bolsas)</span>
+          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ compra.icbper | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 rounded-xl border-2 border-violet-200 dark:border-violet-800">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider">Total Comprobante</p>
+          <p class="text-[10px] text-violet-500 dark:text-violet-500">{{ compra.moneda === 'PEN' ? 'Soles' : 'Dólares' }} · {{ compra.forma_pago || 'Contado' }}</p>
+        </div>
+        <p class="text-2xl font-extrabold text-violet-700 dark:text-violet-300">
+          {{ compra.moneda === 'USD' ? '$' : 'S/' }} {{ compra.total | number:'1.2-2' }}
+        </p>
+      </div>
+    </div>
+
+    <div *ngIf="compra.observaciones" class="p-4 bg-amber-50 dark:bg-amber-900/10 rounded-xl border border-amber-200 dark:border-amber-800">
+      <div class="flex items-center gap-2 mb-2">
+        <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+        </svg>
+        <p class="text-xs font-semibold text-amber-700 dark:text-amber-400">Observaciones</p>
+      </div>
+      <p class="text-sm text-amber-800 dark:text-amber-300">{{ compra.observaciones }}</p>
+    </div>
+
+    <div *ngIf="compra.archivo_xml || compra.archivo_pdf" class="flex flex-wrap gap-2">
+      <a *ngIf="compra.archivo_xml" [href]="compra.archivo_xml" target="_blank"
+        class="flex items-center gap-2 px-4 py-2.5 bg-blue-100 dark:bg-blue-900/30 rounded-xl text-xs font-bold text-blue-700 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+        </svg>
+        Descargar XML
+      </a>
+      <a *ngIf="compra.archivo_pdf" [href]="compra.archivo_pdf" target="_blank"
+        class="flex items-center gap-2 px-4 py-2.5 bg-red-100 dark:bg-red-900/30 rounded-xl text-xs font-bold text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+        Descargar PDF
+      </a>
+    </div>
+
+  </div>
+</div>
