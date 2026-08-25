@@ -253,6 +253,38 @@
                             <tui-data-list-wrapper *tuiTextfieldDropdown new
                                 [items]="documents | tuiFilterByInput" />
                         </tui-textfield>
+
+                        <!-- Cliente seleccionado - info editable -->
+                        <div *ngIf="pedidoForm.get('cliente')?.value" class="mt-4 space-y-3">
+                            <div class="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-3.5 border border-emerald-200/50 dark:border-emerald-700/30">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
+                                        <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                                        </svg>
+                                    </div>
+                                    <p class="font-bold text-sm text-neutral-900 dark:text-white truncate">
+                                        {{ pedidoForm.get('nombre_cliente')?.value }}
+                                    </p>
+                                    <span class="text-xs text-neutral-500 dark:text-neutral-400 ml-auto">
+                                        {{ pedidoForm.get('documento_cliente_existente')?.value }}
+                                    </span>
+                                </div>
+                            </div>
+                            <tui-textfield class="w-full">
+                                <input tuiTextfield size="s" formControlName="telefono_cliente"
+                                    placeholder="Telefono" class="text-sm" />
+                            </tui-textfield>
+                            <tui-textfield class="w-full">
+                                <input tuiTextfield size="s" type="email"
+                                    formControlName="correo_cliente" placeholder="Correo electronico"
+                                    class="text-sm" />
+                            </tui-textfield>
+                            <tui-textfield class="w-full">
+                                <input tuiTextfield size="s" formControlName="direccion_cliente"
+                                    placeholder="Direccion" class="text-sm" />
+                            </tui-textfield>
+                        </div>
                     </div>
 
                     <!-- Nuevo cliente -->
@@ -278,8 +310,8 @@
                         </div>
 
                         <!-- Cliente encontrado -->
-                        <div *ngIf="pedidoForm.get('cliente')?.value" class="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-3.5 border border-emerald-200/50 dark:border-emerald-700/30">
-                            <div class="flex items-start justify-between mb-2">
+                        <div *ngIf="pedidoForm.get('cliente')?.value" class="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-3.5 border border-emerald-200/50 dark:border-emerald-700/30 mb-4">
+                            <div class="flex items-start justify-between">
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2 mb-1">
                                         <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
@@ -300,29 +332,23 @@
                                     class="!text-neutral-400 hover:!text-red-500">
                                 </button>
                             </div>
-                            <button tuiButton size="s" type="button" appearance="primary-grayscale"
-                                (click)="expanded = !expanded" class="w-full !rounded-full !text-xs">
-                                {{ expanded ? 'Ocultar detalles' : 'Mas detalles' }}
-                            </button>
                         </div>
 
-                        <!-- Detalles expandibles -->
-                        <div [@expandCollapse]="expanded ? 'open' : 'closed'" class="overflow-hidden">
-                            <div class="space-y-2 pt-3">
-                                <tui-textfield class="w-full">
-                                    <input tuiTextfield size="s" formControlName="direccion_cliente"
-                                        placeholder="Direccion" class="text-sm" />
-                                </tui-textfield>
-                                <tui-textfield class="w-full">
-                                    <input tuiTextfield size="s" type="email"
-                                        formControlName="correo_cliente" placeholder="Correo electronico"
-                                        class="text-sm" />
-                                </tui-textfield>
-                                <tui-textfield class="w-full">
-                                    <input tuiTextfield size="s" formControlName="telefono_cliente"
-                                        placeholder="Telefono" class="text-sm" />
-                                </tui-textfield>
-                            </div>
+                        <!-- Campos de contacto siempre visibles -->
+                        <div class="space-y-3">
+                            <tui-textfield class="w-full">
+                                <input tuiTextfield size="s" formControlName="telefono_cliente"
+                                    placeholder="Telefono (opcional)" class="text-sm" />
+                            </tui-textfield>
+                            <tui-textfield class="w-full">
+                                <input tuiTextfield size="s" type="email"
+                                    formControlName="correo_cliente" placeholder="Correo electronico (opcional)"
+                                    class="text-sm" />
+                            </tui-textfield>
+                            <tui-textfield class="w-full">
+                                <input tuiTextfield size="s" formControlName="direccion_cliente"
+                                    placeholder="Direccion (opcional)" class="text-sm" />
+                            </tui-textfield>
                         </div>
 
                         <span *ngIf="errorClientNotFound" class="text-red-500 text-xs block mt-2 bg-red-50 dark:bg-red-900/20 rounded-lg px-3 py-2">
@@ -461,6 +487,72 @@
                                 placeholder="Notas adicionales del pedido..." class="text-sm resize-none">
                             </textarea>
                         </tui-textfield>
+                    </div>
+
+                    <!-- Detalles del Pedido -->
+                    <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-100 dark:border-neutral-700/50">
+                        <div class="flex items-center gap-2.5 mb-4">
+                            <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
+                            </svg>
+                            <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">
+                                Detalles del Pedido
+                            </h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                            <tui-select formControlName="tipo_pedido" class="w-full">
+                                Tipo de pedido
+                                <tui-data-list *tuiDataList>
+                                    <button *ngFor="let tipo of listTipoPedido" tuiOption [value]="tipo">
+                                        {{ tipo }}
+                                    </button>
+                                </tui-data-list>
+                            </tui-select>
+                            <tui-select formControlName="canal_venta" class="w-full">
+                                Canal de venta
+                                <tui-data-list *tuiDataList>
+                                    <button *ngFor="let canal of listCanalVenta" tuiOption [value]="canal">
+                                        {{ canal }}
+                                    </button>
+                                </tui-data-list>
+                            </tui-select>
+                            <tui-select formControlName="prioridad" class="w-full">
+                                Prioridad
+                                <tui-data-list *tuiDataList>
+                                    <button *ngFor="let prio of listPrioridad" tuiOption [value]="prio">
+                                        {{ prio }}
+                                    </button>
+                                </tui-data-list>
+                            </tui-select>
+                        </div>
+
+                        <div class="space-y-3">
+                            <tui-textfield class="w-full">
+                                <input tuiTextfield size="s" formControlName="direccion_envio"
+                                    placeholder="Direccion de envio" class="text-sm" />
+                            </tui-textfield>
+                            <tui-textfield class="w-full">
+                                <input tuiTextfield size="s" formControlName="referencia_ubicacion"
+                                    placeholder="Referencia de ubicacion" class="text-sm" />
+                            </tui-textfield>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <tui-textfield class="w-full">
+                                    <label tuiLabel class="text-[11px]">Costo de envio</label>
+                                    <input formControlName="costo_envio" prefix="S/. " tuiInputNumber
+                                        [min]="0" [step]="1" class="text-sm" />
+                                </tui-textfield>
+                                <tui-textfield class="w-full">
+                                    <input tuiTextfield size="s" formControlName="referencia_externa"
+                                        placeholder="Referencia externa (ej: WA-001)" class="text-sm" />
+                                </tui-textfield>
+                            </div>
+                            <tui-textfield class="w-full">
+                                <textarea tuiTextfield formControlName="notas_internas" rows="2"
+                                    placeholder="Notas internas (no se muestran al cliente)..." class="text-sm resize-none">
+                                </textarea>
+                            </tui-textfield>
+                        </div>
                     </div>
 
                     <!-- Resumen de totales -->

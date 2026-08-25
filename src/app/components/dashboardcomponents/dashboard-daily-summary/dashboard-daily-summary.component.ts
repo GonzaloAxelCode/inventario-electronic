@@ -3,6 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { TuiLegendItem, TuiPieChart } from '@taiga-ui/addon-charts';
 import { TuiHovered } from '@taiga-ui/cdk';
 import { VentaService } from '@/app/services/venta.service';
+import { timeout, catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard-daily-summary',
@@ -14,6 +15,15 @@ import { VentaService } from '@/app/services/venta.service';
 export class DashboardDailySummaryComponent implements OnInit {
 
   private ventaService = inject(VentaService);
+
+  // Loading states
+  loadingSummary = true;
+  loadingMetodos = true;
+  loadingHoras = true;
+  loadingCategorias = true;
+  loadingProductos = true;
+  loadingVentas = true;
+  loadingClientes = true;
 
   // Dona: Métodos de pago por cantidad
   donaActiveIndex = NaN;
@@ -27,62 +37,25 @@ export class DashboardDailySummaryComponent implements OnInit {
   ticketPromedio = 0;
   clientesAtendidos = 0;
 
-  // 2. Comparación con ayer
-  vsAyer = {
-    ventas: 12.5,
-    transacciones: -3,
-    ticket: 8.2,
-    clientes: 5,
-  };
+  // 2. Métodos de pago de hoy
+  metodosPago: { nombre: string; monto: number; porcentaje: number; color: string }[] = [];
 
-  // 3. Métodos de pago de hoy
-  metodosPago = [
-    { nombre: 'Efectivo', monto: 1250.00, porcentaje: 43.9, color: '#10B981' },
-    { nombre: 'Yape', monto: 890.50, porcentaje: 31.3, color: '#8B5CF6' },
-    { nombre: 'Plin', monto: 420.00, porcentaje: 14.7, color: '#3B82F6' },
-    { nombre: 'Tarjeta', monto: 287.00, porcentaje: 10.1, color: '#F59E0B' },
-  ];
-
-  // 4. Hora pico de ventas (datos de las últimas 12 horas)
+  // 3. Hora pico de ventas
   horasPico: { hora: string; monto: number }[] = [];
   maxHoras = 0;
   horaPicoLabel = '--:--';
 
-  // 5. Ventas por categoría
+  // 4. Ventas por categoría
   ventasPorCategoria: { nombre: string; cantidad: number; monto: number; color: string }[] = [];
   maxCategoriaMonto = 0;
 
-  // 6. Top productos más vendidos (tabla)
+  // 5. Top productos más vendidos
   topProductos: { nombre: string; cantidad: number; total: number }[] = [];
 
-  // 7. Últimas ventas realizadas
+  // 6. Últimas ventas realizadas
   ultimasVentas: { id: string; hora: string; cliente: string; total: number; metodo: string }[] = [];
 
-  // 8. Productos con bajo stock hoy
-  productosBajoStock = [
-    { nombre: 'Aceite vegetal', stock: 2, minimo: 5 },
-    { nombre: 'Arroz 1kg', stock: 3, minimo: 8 },
-    { nombre: 'Azúcar 1kg', stock: 1, minimo: 5 },
-    { nombre: 'Huevos (docena)', stock: 4, minimo: 6 },
-  ];
-
-  // 9. Resumen de alertas
-  alertas = {
-    criticas: 3,
-    advertencias: 5,
-    sinStock: 1,
-  };
-
-  // 10. Ventas anuladas hoy
-  ventasAnuladas = [
-    { id: '#0028', hora: '3:15 pm', cliente: 'Pedro Sánchez', total: 56.00, motivo: 'Cliente se arrepintió' },
-    { id: '#0025', hora: '1:40 pm', cliente: 'Lucía Fernández', total: 32.50, motivo: 'Error en precio' },
-    { id: '#0019', hora: '10:20 am', cliente: 'Jorge Mendoza', total: 18.00, motivo: 'Producto dañado' },
-  ];
-  totalAnuladas = 106.50;
-  cantidadAnuladas = 3;
-
-  // 11. Clientes nuevos vs recurrentes
+  // 7. Clientes nuevos vs recurrentes
   clientesNuevos = 0;
   clientesRecurrentes = 0;
   tasaRetencion = 0;
@@ -90,31 +63,6 @@ export class DashboardDailySummaryComponent implements OnInit {
   donaClientesValue: number[] = [];
   donaClientesLabels = ['Nuevos', 'Recurrentes'];
   donaClientesColores = ['#8B5CF6', '#10B981'];
-
-  // 12. Top productos con más descuento
-  productosDescuento = [
-    { nombre: 'Audífonos Bluetooth', precioOriginal: 89.90, descuento: 25, precioFinal: 67.43, cantidad: 3 },
-    { nombre: 'Camiseta deportiva', precioOriginal: 45.00, descuento: 20, precioFinal: 36.00, cantidad: 5 },
-    { nombre: 'Crema hidratante', precioOriginal: 32.50, descuento: 15, precioFinal: 27.63, cantidad: 4 },
-    { nombre: 'Funda celular', precioOriginal: 28.00, descuento: 10, precioFinal: 25.20, cantidad: 6 },
-    { nombre: 'Lápiz labial', precioOriginal: 22.00, descuento: 10, precioFinal: 19.80, cantidad: 8 },
-  ];
-  totalDescuentoOtorgado = 62.47;
-
-  // 13. Margen de ganancia del día
-  margenData = {
-    ingresos: 2847.50,
-    costoProductos: 1652.00,
-    gananciaBruta: 1195.50,
-    porcentajeMargen: 41.9,
-  };
-  margenPorCategoria = [
-    { nombre: 'Bebidas', ingresos: 680, costo: 340, ganancia: 340, margen: 50.0 },
-    { nombre: 'Snacks', ingresos: 320, costo: 160, ganancia: 160, margen: 50.0 },
-    { nombre: 'Lácteos', ingresos: 245.50, costo: 157.00, ganancia: 88.50, margen: 36.1 },
-    { nombre: 'Panadería', ingresos: 180, costo: 90, ganancia: 90, margen: 50.0 },
-    { nombre: 'Limpieza', ingresos: 420, costo: 252, ganancia: 168, margen: 40.0 },
-  ];
 
   getBarHeight(monto: number): number {
     const maxHeight = 110;
@@ -152,108 +100,166 @@ export class DashboardDailySummaryComponent implements OnInit {
   }
 
   loadDailySummary(): void {
-    this.ventaService.getDailySummary().subscribe({
+    this.loadingSummary = true;
+    this.ventaService.getDailySummary().pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Error al cargar resumen del día:', error);
+        return of({ total_ventas: 0, comprobantes_emitidos: 0, clientes_atendidos: 0 });
+      })
+    ).subscribe({
       next: (data) => {
         this.totalVentas = data.total_ventas;
         this.totalTransacciones = data.comprobantes_emitidos;
         this.clientesAtendidos = data.clientes_atendidos;
-        this.ticketPromedio = data.comprobantes_emitidos > 0 
-          ? data.total_ventas / data.comprobantes_emitidos 
+        this.ticketPromedio = data.comprobantes_emitidos > 0
+          ? data.total_ventas / data.comprobantes_emitidos
           : 0;
+        this.loadingSummary = false;
       },
-      error: (error) => {
-        console.error('Error al cargar resumen del día:', error);
+      error: () => {
+        this.loadingSummary = false;
       }
     });
   }
 
   loadDailyPaymentMethods(): void {
-    this.ventaService.getDailyPaymentMethods().subscribe({
-      next: (data) => {
-        this.donaLabels = data.metodos_pago.map(m => m.metodo_pago);
-        this.donaValue = data.metodos_pago.map(m => m.cantidad_transacciones);
-      },
-      error: (error) => {
+    this.loadingMetodos = true;
+    this.ventaService.getDailyPaymentMethods().pipe(
+      timeout(10000),
+      catchError(error => {
         console.error('Error al cargar métodos de pago:', error);
+        return of({ metodos_pago: [] });
+      })
+    ).subscribe({
+      next: (data) => {
+        this.donaLabels = (data.metodos_pago || []).map(m => m.metodo_pago);
+        this.donaValue = (data.metodos_pago || []).map(m => m.cantidad_transacciones);
+        this.loadingMetodos = false;
+      },
+      error: () => {
+        this.loadingMetodos = false;
       }
     });
   }
 
   loadDailyPeakHours(): void {
-    this.ventaService.getDailyPeakHours().subscribe({
+    this.loadingHoras = true;
+    this.ventaService.getDailyPeakHours().pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Error al cargar horas pico:', error);
+        return of({ horas: [], hora_pico_ventas: { label: '--:--' } });
+      })
+    ).subscribe({
       next: (data) => {
-        this.horasPico = data.horas.map(h => ({
+        this.horasPico = (data.horas || []).map(h => ({
           hora: h.label,
           monto: h.total_soles
         }));
         this.maxHoras = Math.max(...this.horasPico.map(h => h.monto), 1);
-        this.horaPicoLabel = data.hora_pico_ventas.label;
+        this.horaPicoLabel = data.hora_pico_ventas?.label || '--:--';
+        this.loadingHoras = false;
       },
-      error: (error) => {
-        console.error('Error al cargar horas pico:', error);
+      error: () => {
+        this.loadingHoras = false;
       }
     });
   }
 
   loadDailyTopProducts(): void {
-    this.ventaService.getDailyTopProducts().subscribe({
+    this.loadingProductos = true;
+    this.ventaService.getDailyTopProducts().pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Error al cargar top productos:', error);
+        return of({ productos: [] });
+      })
+    ).subscribe({
       next: (data) => {
-        this.topProductos = data.productos.map(p => ({
+        this.topProductos = (data.productos || []).map(p => ({
           nombre: p.nombre,
           cantidad: p.cantidad_vendida,
           total: p.total_neto
         }));
+        this.loadingProductos = false;
       },
-      error: (error) => {
-        console.error('Error al cargar top productos:', error);
+      error: () => {
+        this.loadingProductos = false;
       }
     });
   }
 
   loadDailyTopCategories(): void {
-    this.ventaService.getDailyTopCategories().subscribe({
+    this.loadingCategorias = true;
+    this.ventaService.getDailyTopCategories().pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Error al cargar categorías:', error);
+        return of({ categorias: [] });
+      })
+    ).subscribe({
       next: (data) => {
-        this.ventasPorCategoria = data.categorias.map(c => ({
+        this.ventasPorCategoria = (data.categorias || []).map(c => ({
           nombre: c.nombre,
           cantidad: c.total_unidades,
           monto: c.ingreso_neto,
           color: c.color
         }));
         this.maxCategoriaMonto = Math.max(...this.ventasPorCategoria.map(c => c.monto), 1);
+        this.loadingCategorias = false;
       },
-      error: (error) => {
-        console.error('Error al cargar categorías:', error);
+      error: () => {
+        this.loadingCategorias = false;
       }
     });
   }
 
   loadDailyRecentSales(): void {
-    this.ventaService.getDailyRecentSales().subscribe({
+    this.loadingVentas = true;
+    this.ventaService.getDailyRecentSales().pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Error al cargar ventas recientes:', error);
+        return of({ ventas_recientes: [] });
+      })
+    ).subscribe({
       next: (data) => {
-        this.ultimasVentas = data.ventas_recientes.map(v => ({
+        this.ultimasVentas = (data.ventas_recientes || []).map(v => ({
           id: v.numero_comprobante,
           hora: v.hora,
           cliente: v.cliente,
           total: v.monto,
           metodo: v.metodo_pago
         }));
+        this.loadingVentas = false;
       },
-      error: (error) => {
-        console.error('Error al cargar ventas recientes:', error);
+      error: () => {
+        this.loadingVentas = false;
       }
     });
   }
 
   loadDailyCustomers(): void {
-    this.ventaService.getDailyCustomers().subscribe({
+    this.loadingClientes = true;
+    this.ventaService.getDailyCustomers().pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Error al cargar clientes:', error);
+        return of({ clientes_nuevos: 0, clientes_recurrentes: 0, tasa_retencion: 0 });
+      })
+    ).subscribe({
       next: (data) => {
         this.clientesNuevos = data.clientes_nuevos;
         this.clientesRecurrentes = data.clientes_recurrentes;
         this.tasaRetencion = data.tasa_retencion;
-        this.donaClientesValue = [data.clientes_nuevos, data.clientes_recurrentes];
+        this.donaClientesValue = data.clientes_nuevos > 0 || data.clientes_recurrentes > 0
+          ? [data.clientes_nuevos, data.clientes_recurrentes]
+          : [];
+        this.loadingClientes = false;
       },
-      error: (error) => {
-        console.error('Error al cargar clientes:', error);
+      error: () => {
+        this.loadingClientes = false;
       }
     });
   }

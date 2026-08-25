@@ -1,6 +1,7 @@
-<!-- Top Navigation Bar -->
-<header class="topnav-header bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
-  <div class="topnav-container">
+<!-- Main Layout -->
+<div class="relative flex flex-col h-screen w-full">
+  <header class="topnav-header bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
+    <div class="topnav-container">
     <!-- Logo -->
     <div class="topnav-logo">
       <a routerLink="/app" class="logo-link">
@@ -160,10 +161,8 @@
       </div>
     </div>
   </div>
-</header>
+  </header>
 
-<!-- Main Layout -->
-<div class="relative flex flex-col h-screen w-full">
   <div class="flex-1 relative overflow-auto">
     <router-outlet></router-outlet>
   </div>

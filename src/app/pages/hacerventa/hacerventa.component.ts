@@ -7,11 +7,14 @@ import { Cliente } from "@/app/models/cliente.models";
 import { Inventario } from '@/app/models/inventario.models';
 import { ConsultaService } from '@/app/services/consultas.service';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
+import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
+import { PedidoSalaService } from '@/app/services/pedido-sala.service';
 import { normalizeSku } from "@/app/services/search-services/producto-search.service";
 import { URL_BASE } from "@/app/services/utils/endpoints";
 import { updateStockMultiple } from "@/app/state/actions/inventario.actions";
 import { loadClientes } from "@/app/state/actions/cliente.actions";
 import { crearVenta, crearVentaExito } from "@/app/state/actions/venta.actions";
+import { actualizarPedido } from "@/app/state/actions/pedido.actions";
 import { AppState } from '@/app/state/app.state';
 import { selectClienteState } from "@/app/state/selectors/cliente.selectors";
 import { selectInventario } from '@/app/state/selectors/inventario.selectors';
@@ -28,10 +31,10 @@ import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiPlatform } from "@taiga-ui/cdk";
 import { TuiAlertService, TuiAppearance, TuiButton, TuiDropdown, TuiExpand, TuiIcon, TuiLabel, TuiLoader, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
-import { TuiCheckbox, TuiChip, TuiComboBox, TuiDataListWrapper, TuiFade, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiSegmented, TuiStepper, TuiSwitch, TuiTab, TuiTabs, TuiTooltip } from '@taiga-ui/kit';
+import { TuiBadge, TuiCheckbox, TuiChip, TuiComboBox, TuiDataListWrapper, TuiFade, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiSegmented, TuiStepper, TuiSwitch, TuiTab, TuiTabs, TuiTooltip } from '@taiga-ui/kit';
 import { TuiAppBar, TuiHeader, TuiNavigation } from '@taiga-ui/layout';
 import { TuiComboBoxModule, TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
-import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout } from 'rxjs';
+import { catchError, finalize, map, Observable, of, Subject, take, takeUntil, timeout } from 'rxjs';
 
 @Component({
   selector: 'app-hacerventa',
@@ -45,6 +48,7 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
     TuiSwitch,
     TuiPlatform,
     TuiButton,
+    TuiBadge,
     TuiCheckbox,
     TuiDropdown,
     TuiIcon,
@@ -99,142 +103,67 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
   vistaActiva: 'buscar' | 'nuevo' | 'nuevo_dni_fisico' = 'buscar';
-  activeTab: 'normal' | 'detallada' | 'pedido' = 'normal';
+  activeTab: 'normal' | 'pedido' = 'normal';
   activeTabIndex = 0;
-  validTabs = ['normal', 'detallada', 'pedido'] as const;
+  validTabs = ['normal', 'pedido'] as const;
 
   pedidoSeleccionado: any = null;
   pedidoFlowStep = 0;
+  pedidosSala: any[] = [];
   private readonly placeholderImg = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
 
-  pedidosEjemplo = [
-    {
-      id: 1001,
-      cliente: 'Carlos Ramirez',
-      documento: '10234567890',
-      fecha: '15/08/2026',
-      hora: '10:30 AM',
-      total: 245.80,
-      cantidadItems: 5,
-      estado: 'Pendiente',
-      metodoPago: 'Efectivo',
-      tipoComprobante: 'Boleta',
-      productos: [
-        {
-          inventarioId: 1,
-          productoId: 1,
-          producto_nombre: 'Polo Sublimado Cuello Redondo',
-          producto_sku: 'POLO-0001',
-          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
-          nombre_categoria: 'Ropa',
-          cantidad: 3,
-          costo_original: 45.00,
-          descuento: 0,
-          stock_actual: 50
-        },
-        {
-          inventarioId: 2,
-          productoId: 2,
-          producto_nombre: 'Gorra Sublimada',
-          producto_sku: 'GORRA-0001',
-          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
-          nombre_categoria: 'Accesorios',
-          cantidad: 2,
-          costo_original: 28.50,
-          descuento: 0,
-          stock_actual: 30
-        }
-      ]
-    },
-    {
-      id: 1002,
-      cliente: 'Maria Lopez',
-      documento: '45678912',
-      fecha: '16/08/2026',
-      hora: '02:15 PM',
-      total: 189.50,
-      cantidadItems: 3,
-      estado: 'Pendiente',
-      metodoPago: 'Yape',
-      tipoComprobante: 'Boleta',
-      productos: [
-        {
-          inventarioId: 3,
-          productoId: 3,
-          producto_nombre: 'Taza Magica 11oz',
-          producto_sku: 'TAZA-0001',
-          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
-          nombre_categoria: 'Hogar',
-          cantidad: 4,
-          costo_original: 22.00,
-          descuento: 0,
-          stock_actual: 40
-        },
-        {
-          inventarioId: 4,
-          productoId: 4,
-          producto_nombre: 'Llavero Acrilico',
-          producto_sku: 'LLAVE-0001',
-          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
-          nombre_categoria: 'Accesorios',
-          cantidad: 5,
-          costo_original: 8.00,
-          descuento: 0,
-          stock_actual: 100
-        }
-      ]
-    },
-    {
-      id: 1003,
-      cliente: 'Tienda Express SAC',
-      documento: '20543219876',
-      fecha: '17/08/2026',
-      hora: '09:00 AM',
-      total: 1250.00,
-      cantidadItems: 12,
-      estado: 'Pendiente',
-      metodoPago: 'Transferencia',
-      tipoComprobante: 'Factura',
-      productos: [
-        {
-          inventarioId: 1,
-          productoId: 1,
-          producto_nombre: 'Polo Sublimado Cuello Redondo',
-          producto_sku: 'POLO-0001',
-          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
-          nombre_categoria: 'Ropa',
-          cantidad: 12,
-          costo_original: 45.00,
-          descuento: 0,
-          stock_actual: 50
-        },
-        {
-          inventarioId: 2,
-          productoId: 2,
-          producto_nombre: 'Gorra Sublimada',
-          producto_sku: 'GORRA-0001',
-          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
-          nombre_categoria: 'Accesorios',
-          cantidad: 6,
-          costo_original: 28.50,
-          descuento: 0,
-          stock_actual: 30
-        },
-        {
-          inventarioId: 3,
-          productoId: 3,
-          producto_nombre: 'Taza Magica 11oz',
-          producto_sku: 'TAZA-0001',
-          imagen_producto: 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png',
-          nombre_categoria: 'Hogar',
-          cantidad: 10,
-          costo_original: 22.00,
-          descuento: 0,
-          stock_actual: 40
-        }
-      ]
-    }
-  ];
+  cargarPedidosSala() {
+    this.pedidosSala = this.pedidoSalaService.getPedidos()
+      .filter(p => p.estado !== 'ENTREGADO' && p.estado !== 'CANCELADO')
+      .map(p => ({
+        id: p.id,
+        numero_pedido: p.numero_pedido,
+        cliente: p.nombre_cliente || 'Sin cliente',
+        documento: p.numero_documento_cliente || '-',
+        telefono: p.telefono_cliente || '',
+        email: p.email_cliente || '',
+        fecha: this.formatDatePedido(p.fecha_hora),
+        hora: this.formatTimePedido(p.fecha_hora),
+        total: p.total,
+        subtotal: p.subtotal,
+        costo_envio: p.costo_envio || 0,
+        descuento_total: p.descuento_total || 0,
+        cantidadItems: (p.productos?.length || p.productos_json?.length || 0),
+        estado: p.estado,
+        metodoPago: p.metodo_pago,
+        tipo_pedido: p.tipo_pedido,
+        canal_venta: p.canal_venta,
+        prioridad: p.prioridad,
+        estado_pago: p.estado_pago,
+        observaciones: p.observaciones,
+        direccion_envio: p.direccion_envio,
+        tipoComprobante: 'Boleta',
+        productos: (p.productos || p.productos_json || []).map((prod: any) => ({
+          inventarioId: prod.producto || prod.inventarioId,
+          productoId: prod.producto || prod.inventarioId,
+          producto_nombre: prod.producto_nombre || 'Producto',
+          producto_sku: prod.producto_sku || '',
+          imagen_producto: prod.imagen_producto || this.placeholderImg,
+          nombre_categoria: prod.nombre_categoria || '',
+          cantidad: prod.cantidad,
+          costo_original: prod.costo_original || prod.valor_unitario || prod.precio_unitario || 0,
+          descuento: prod.descuento || 0,
+          stock_actual: prod.stock_actual || 0
+        }))
+      }));
+  }
+
+  private formatDatePedido(fecha: string): string {
+    if (!fecha) return '-';
+    const d = new Date(fecha);
+    return d.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  private formatTimePedido(fecha: string): string {
+    if (!fecha) return '-';
+    const d = new Date(fecha);
+    return d.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+  }
   protected expanded = false;
   private destroy$ = new Subject<void>();
   errorClientNotFound = false;
@@ -275,8 +204,14 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   private readonly store = inject(Store<AppState>);
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogService = inject(DialogService);
+  private readonly dialogServiceVentaDetail = inject(DialogVentaDetailService);
+  private readonly pedidoSalaService = inject(PedidoSalaService);
   userPermissions$ = this.store.select(selectPermissions);
   tiendaUser!: number
+  tiendaNombre = 'Mi Negocio';
+  tiendaRuc = '';
+  tiendaDireccion = '';
+  tiendaTelefono = '';
   userId!: number;
   inventarios!: Inventario[]
   clientes: Cliente[] = []
@@ -322,6 +257,9 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     this.activeTab = tab;
     this.activeTabIndex = index;
     this.location.replaceState(`/app/ventas/crear#${tab}`);
+    if (tab === 'pedido') {
+      this.cargarPedidosSala();
+    }
   }
 
   private isValidTab(tab: string): boolean {
@@ -462,7 +400,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       metodoPago: [this.listMetodosPago[3], Validators.required],
       formaPago: [this.formasPago[0], Validators.required],
       tipoComprobante: [this.tipoComprobantes[0], Validators.required],
-      cliente: [null, Validators.required],
+      cliente: [null],
       documento_cliente: [
         "",
         [
@@ -470,7 +408,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
         ]
       ],
 
-      nombre_cliente: ["", Validators.required],
+      nombre_cliente: ["", ],
       correo_cliente: [""],
       direccion_cliente: [""],
       telefono_cliente: [""],
@@ -485,9 +423,8 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     this.productosFormArray.valueChanges.subscribe((tipo: any) => {
       const documentoCtrl = this.ventaForm.get('documento_cliente');
       documentoCtrl?.setValidators([this.documentoValidator(tipo)]);
-      documentoCtrl?.updateValueAndValidity();
+      documentoCtrl?.updateValueAndValidity({ emitEvent: false });
       this.validarStock();
-
       this.calcularTotales();
     });
 
@@ -502,6 +439,9 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       if (fragment && this.isValidTab(fragment)) {
         this.activeTab = fragment as typeof this.activeTab;
         this.activeTabIndex = this.validTabs.indexOf(fragment as any);
+        if (fragment === 'pedido') {
+          this.cargarPedidosSala();
+        }
         this.cdr.markForCheck();
       }
     });
@@ -569,19 +509,16 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   }
 
   validarStock(): void {
+    if (this.pedidoFlowStep > 0) return;
+
     this.productosFormArray.controls.forEach((control, index) => {
       const cantidad = parseInt(control.get('cantidad_final')?.value || '0');
       const stock = parseInt(control.get('stock_actual')?.value || '0');
 
-
-
       if (stock - cantidad < 0) {
-
-        control.get('cantidad_final')?.setValue(1);
+        control.get('cantidad_final')?.setValue(1, { emitEvent: false });
         this.alerts.open('No hay stock suficiente para agregar mas para este producto.', { label: 'Mensaje informacion', appearance: "warning" }).subscribe();
-        // aca tienes que resetear el valor de cantidad final a 1
       }
-
     });
   }
 
@@ -750,6 +687,8 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   continuarConPedido() {
     if (!this.pedidoSeleccionado) return;
 
+    this.pedidoFlowStep = 1;
+
     while (this.productosFormArray.length) {
       this.productosFormArray.removeAt(0);
     }
@@ -778,7 +717,6 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     this.ventaForm.get('tipoComprobante')?.setValue(this.pedidoSeleccionado.tipoComprobante || 'Boleta');
     this.ventaForm.get('metodoPago')?.setValue(this.pedidoSeleccionado.metodoPago || this.listMetodosPago[3]);
     this.calcularTotales();
-    this.pedidoFlowStep = 1;
   }
 
   nextPedidoStep() {
@@ -800,20 +738,47 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
   confirmarVentaPedido() {
     if (!this.pedidoSeleccionado) return;
-    const total = this.salesTotals.total;
 
-    this.alerts.open('Venta realizada', {
-      label: `Pedido #${this.pedidoSeleccionado.id} procesado como venta correctamente por S/. ${total.toFixed(2)}`,
-      appearance: "success"
-    }).subscribe();
+    const preparedData = {
+      ...this.ventaForm.value,
+      estado: this.ventaForm.get("is_send_sunat")?.value,
+      is_save_user: this.ventaForm.get("is_save_user")?.value,
+      pedido_id: this.pedidoSeleccionado.id,
+    };
 
-    while (this.productosFormArray.length) {
-      this.productosFormArray.removeAt(0);
-    }
-    this.pedidoSeleccionado = null;
-    this.pedidoFlowStep = 0;
-    this.borrarCliente();
-    this.calcularTotales();
+    this.store.dispatch(crearVenta({ venta: preparedData }));
+
+    this.actions$.pipe(
+      ofType(crearVentaExito),
+      take(1),
+      takeUntil(this.destroy$)
+    ).subscribe(({ venta }: any) => {
+      this.pedidoSalaService.removePedido(this.pedidoSeleccionado.id);
+      this.store.dispatch(updateStockMultiple({ productos: preparedData.productos }));
+
+      this.store.dispatch(actualizarPedido({
+        pedidoId: this.pedidoSeleccionado.id,
+        data: { estado: 'ENTREGADO' }
+      }));
+
+      this.alerts.open('Venta realizada', {
+        label: `${this.pedidoSeleccionado.numero_pedido} procesado como venta correctamente`,
+        appearance: "success"
+      }).subscribe();
+
+      if (venta) {
+        this.dialogServiceVentaDetail.open(venta).subscribe();
+      }
+
+      while (this.productosFormArray.length) {
+        this.productosFormArray.removeAt(0);
+      }
+      this.pedidoSeleccionado = null;
+      this.pedidoFlowStep = 0;
+      this.borrarCliente();
+      this.calcularTotales();
+      this.cargarPedidosSala();
+    });
   }
 
 
@@ -831,15 +796,14 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(crearVenta({ venta: preparedData }));
 
-
     this.actions$.pipe(
       ofType(crearVentaExito),
+      take(1),
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.store.dispatch(updateStockMultiple({ productos: preparedData.productos }));
-      this.borrarCliente()
+      this.borrarCliente();
       this.calcularTotales();
-
     });
 
   }

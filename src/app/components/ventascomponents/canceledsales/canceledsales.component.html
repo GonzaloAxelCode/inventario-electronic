@@ -84,20 +84,11 @@
 
 </div>
 
-<!--  Para mostrar si no se hio una venta aqui -->
-<div class="">
-    <section>
-        <div *ngIf="ventas.length <= 0" class="h-[50vh] mx-auto flex flex-col items-center justify-center">
-            <img alt="survived" src="https://concepthousewares.co.uk/assets/images/empty_cart.png" tuiSlot="top"
-                class="object-contain w-56 h-56 text-center" />
-            <h2 class="text-xl text-center">No hay ventas candeladas hoy</h2>
-            <p class="text-md text-center">Empieza hacer tu primera venta</p>
-            <a routerLink="/app/ventas/crear">
-                <button appearance="primary-grayscale" tuiButton iconStart="@tui.store" class="my-3" size="s"
-                    type="button">
-                    Hacer venta
-                </button>
-            </a>
-        </div>
-    </section>
+<!-- Empty state -->
+<div *ngIf="ventas.length <= 0" class="flex flex-col items-center justify-center py-20 text-center">
+    <svg class="w-16 h-16 mb-4 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+    </svg>
+    <h2 class="text-xl font-bold text-neutral-600 dark:text-neutral-300 mb-2">No hay ventas anuladas hoy</h2>
+    <p class="text-sm text-neutral-400 dark:text-neutral-500">Las ventas anuladas del dia apareceran aqui</p>
 </div>

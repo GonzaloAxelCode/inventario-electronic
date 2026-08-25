@@ -15,6 +15,9 @@ import {
     crearPedido,
     crearPedidoExito,
     crearPedidoError,
+    actualizarPedido,
+    actualizarPedidoExito,
+    actualizarPedidoError,
     cancelarPedido,
     cancelarPedidoExito,
     cancelarPedidoError,
@@ -99,6 +102,24 @@ export class PedidoEffects {
                     catchError((error) => {
                         this.alertService.showError('Error al cancelar el pedido', 'Error').subscribe();
                         return of(cancelarPedidoError({ error }));
+                    })
+                )
+            )
+        )
+    );
+
+    actualizarPedidoEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(actualizarPedido),
+            exhaustMap(({ pedidoId, data }) =>
+                this.pedidoService.actualizarPedido(pedidoId, data).pipe(
+                    map((response) => {
+                        this.alertService.showSuccess(response.mensaje || 'Pedido actualizado', 'Exito').subscribe();
+                        return actualizarPedidoExito({ pedido: response.pedido, mensaje: response.mensaje });
+                    }),
+                    catchError((error) => {
+                        this.alertService.showError('Error al actualizar el pedido', 'Error').subscribe();
+                        return of(actualizarPedidoError({ error }));
                     })
                 )
             )

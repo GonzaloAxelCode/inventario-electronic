@@ -65,6 +65,7 @@ dayjs.locale('es');
 })
 export class ListallventasComponent {
   protected expanded = false;
+  viewMode = 'table' as string;
   ventasState$!: Observable<Partial<VentaState>>;
   ventas: any = []
   URL_BASE = URL_BASE

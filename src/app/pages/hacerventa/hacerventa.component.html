@@ -7,7 +7,6 @@
         <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
             class="flex gap-2 overflow-x-auto whitespace-nowrap">
             <button tuiTab type="button">Venta Normal</button>
-            <button tuiTab type="button">Venta Detallada</button>
             <button tuiTab type="button">Vender por pedido</button>
         </nav>
     </header>
@@ -450,322 +449,162 @@
             </div>
             </div>
 
-            <!-- TAB: Venta Detallada -->
-            <div *ngIf="activeTab === 'detallada'" class="p-4 sm:p-6">
+            <!-- TAB: Vender por pedido -->
+            <div *ngIf="activeTab === 'pedido'" class="p-4 sm:p-6">
                 <div class="max-w-7xl mx-auto">
 
-                    <!-- Grid principal -->
-                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-                        <!-- Columna izquierda: Datos del comprobante y cliente -->
-                        <div class="xl:col-span-2 space-y-5">
-
-                            <!-- Seccion: Datos del Emisor -->
-                            <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-200 dark:border-neutral-700">
-                                <div class="flex items-center gap-2.5 mb-4">
-                                    <svg class="w-5 h-5 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
-                                    </svg>
-                                    <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Emisor</h3>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>RUC Emisor</label>
-                                            <input tuiTextfield value="20610678901" readonly />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Razon Social</label>
-                                            <input tuiTextfield value="COMERCIO AXEL E.I.R.L." readonly />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Direccion Emisor</label>
-                                            <input tuiTextfield value="Av. Principal 123, Lima" readonly />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Telefono Emisor</label>
-                                            <input tuiTextfield value="(01) 555-1234" readonly />
-                                        </tui-textfield>
-                                    </div>
-                                </div>
+                    <!-- Header + Stepper -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+                            <div>
+                                <h2 class="text-lg font-bold text-neutral-900 dark:text-white mb-1">
+                                    {{ pedidoFlowStep === 0 ? 'Seleccionar Pedido' : 'Vender ' + pedidoSeleccionado?.numero_pedido }}
+                                </h2>
+                                <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                                    {{ pedidoFlowStep === 0
+                                        ? 'Selecciona un pedido pendiente para procesar como venta'
+                                        : 'Sigue los pasos para convertir el pedido en venta' }}
+                                </p>
                             </div>
-
-                            <!-- Seccion: Datos del Comprobante -->
-                            <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-200 dark:border-neutral-700">
-                                <div class="flex items-center gap-2.5 mb-4">
-                                    <svg class="w-5 h-5 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                            <button *ngIf="pedidoFlowStep > 0" tuiButton type="button" appearance="secondary-grayscale" size="s"
+                                (click)="volverSeleccionPedido()" class="!rounded-xl">
+                                <span class="flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"/>
                                     </svg>
-                                    <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Comprobante</h3>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    Cambiar Pedido
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Layout: Formulario + Boleta Preview -->
+                    <div [class]="pedidoFlowStep > 0 ? 'flex gap-6 items-start' : ''">
+                        
+                        <!-- Columna izquierda: Flujo del pedido -->
+                        <div [class]="pedidoFlowStep > 0 ? 'flex-1 min-w-0' : 'w-full'">
+
+                    <!-- ==================== PASO 0: SELECCIONAR PEDIDO ==================== -->
+                    <div *ngIf="pedidoFlowStep === 0">
+
+                        <!-- Empty state -->
+                        <div *ngIf="pedidosSala.length === 0"
+                            class="text-center py-16 rounded-3xl bg-white/50 dark:bg-neutral-800/30 border-2 border-dashed border-neutral-300 dark:border-neutral-600">
+                            <svg class="w-16 h-16 mx-auto mb-4 text-neutral-300 dark:text-neutral-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/>
+                            </svg>
+                            <h3 class="text-xl font-bold text-neutral-700 dark:text-neutral-300 mb-2">
+                                No hay pedidos en Sala de Ventas
+                            </h3>
+                            <p class="text-sm text-neutral-500 dark:text-neutral-400 max-w-xs mx-auto">
+                                Ve a Pedidos, abre un pedido y haz clic en "Enviar a Sala de Ventas"
+                            </p>
+                        </div>
+
+                        <!-- Grid de pedidos -->
+                        <div *ngIf="pedidosSala.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div *ngFor="let pedido of pedidosSala"
+                                (click)="pedidoSeleccionado = pedido"
+                                [class]="pedidoSeleccionado?.id === pedido.id
+                                    ? 'bg-white dark:bg-neutral-800 rounded-2xl p-5 border-2 border-emerald-500 cursor-pointer transition-all duration-200'
+                                    : 'bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500 cursor-pointer transition-all duration-200'">
+
+                                <!-- Header del pedido -->
+                                <div class="flex items-start justify-between mb-4">
                                     <div>
-                                        <tui-select formControlName="tipoComprobante" class="w-full">
-                                            Tipo Documento
-                                            <tui-data-list *tuiDataList>
-                                                <button *ngFor="let comprobante of tipoComprobantes" tuiOption [value]="comprobante">{{ comprobante }}</button>
-                                            </tui-data-list>
-                                        </tui-select>
+                                        <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Pedido</p>
+                                        <p class="text-lg font-bold text-neutral-900 dark:text-white">{{ pedido.numero_pedido }}</p>
                                     </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Serie</label>
-                                            <input tuiTextfield [value]="ventaForm.get('tipoComprobante')?.value === 'Factura' ? 'F001' : 'B001'" readonly />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Numero</label>
-                                            <input tuiTextfield value="00000001" readonly />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Fecha Emision</label>
-                                            <input tuiTextfield [value]="today" readonly />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Hora Emision</label>
-                                            <input tuiTextfield [value]="currentTime" readonly />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-select class="w-full" [formControl]="monedaControl">
-                                            Moneda
-                                            <tui-data-list *tuiDataList>
-                                                <button *ngFor="let moneda of monedas" tuiOption [value]="moneda">{{ moneda }}</button>
-                                            </tui-data-list>
-                                        </tui-select>
-                                    </div>
-                                    <div>
-                                        <tui-select formControlName="metodoPago" class="w-full">
-                                            Metodo Pago
-                                            <tui-data-list *tuiDataList>
-                                                <button *ngFor="let metodo of listMetodosPago" tuiOption [value]="metodo">{{ metodo }}</button>
-                                            </tui-data-list>
-                                        </tui-select>
-                                    </div>
-                                    <div>
-                                        <tui-select formControlName="formaPago" class="w-full">
-                                            Forma Pago
-                                            <tui-data-list *tuiDataList>
-                                                <button *ngFor="let pago of formasPago" tuiOption [value]="pago">{{ pago }}</button>
-                                            </tui-data-list>
-                                        </tui-select>
+                                    <div class="flex flex-col items-end gap-1">
+                                        <span class="text-[10px] px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-semibold">
+                                            {{ pedido.estado }}
+                                        </span>
+                                        <span class="text-[10px] px-2 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold">
+                                            {{ pedido.tipo_pedido }}
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Seccion: Datos del Cliente / Adquirente -->
-                            <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-200 dark:border-neutral-700">
-                                <div class="flex items-center gap-2.5 mb-4">
-                                    <svg class="w-5 h-5 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-                                    </svg>
-                                    <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">
-                                        Cliente / Adquirente
-                                    </h3>
-                                    <span *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'" class="text-[10px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400">
-                                        Sin identificacion
+                                <!-- Info del cliente -->
+                                <div class="mb-4">
+                                    <p class="text-sm font-semibold text-neutral-900 dark:text-white truncate">
+                                        {{ pedido.cliente }}
+                                    </p>
+                                    <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                                        {{ pedido.documento }}
+                                        <span *ngIf="pedido.telefono"> · {{ pedido.telefono }}</span>
+                                    </p>
+                                </div>
+
+                                <!-- Detalles -->
+                                <div class="grid grid-cols-2 gap-3 mb-4">
+                                    <div class="bg-neutral-50 dark:bg-neutral-700/30 rounded-lg p-2">
+                                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">Fecha</p>
+                                        <p class="text-xs font-semibold text-neutral-900 dark:text-white">{{ pedido.fecha }}</p>
+                                    </div>
+                                    <div class="bg-neutral-50 dark:bg-neutral-700/30 rounded-lg p-2">
+                                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">Hora</p>
+                                        <p class="text-xs font-semibold text-neutral-900 dark:text-white">{{ pedido.hora }}</p>
+                                    </div>
+                                    <div class="bg-neutral-50 dark:bg-neutral-700/30 rounded-lg p-2">
+                                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">Items</p>
+                                        <p class="text-xs font-semibold text-neutral-900 dark:text-white">{{ pedido.cantidadItems }} productos</p>
+                                    </div>
+                                    <div class="bg-neutral-50 dark:bg-neutral-700/30 rounded-lg p-2">
+                                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">Pago</p>
+                                        <p class="text-xs font-semibold text-neutral-900 dark:text-white">{{ pedido.metodoPago }}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Total -->
+                                <div class="flex items-center justify-between pt-3 border-t border-neutral-100 dark:border-neutral-700">
+                                    <span class="text-sm text-neutral-500 dark:text-neutral-400">Total</span>
+                                    <span class="text-xl font-black text-neutral-900 dark:text-white">
+                                        S/. {{ pedido.total | number:'1.2-2' }}
                                     </span>
                                 </div>
 
-                                <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Tipo Documento Cliente</label>
-                                            <input tuiTextfield [value]="ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'DNI' : 'RUC'" readonly />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>
-                                                {{ ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'Numero DNI' : 'Numero RUC' }}
-                                            </label>
-                                            <input tuiTextfield size="m" formControlName="documento_cliente"
-                                                [placeholder]="ventaForm.get('tipoComprobante')?.value === 'Boleta' ? '8 digitos' : '11 digitos'" />
-                                        </tui-textfield>
-                                    </div>
-                                    <div class="sm:col-span-2">
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>
-                                                {{ ventaForm.get('tipoComprobante')?.value === 'Factura' ? 'Razon Social' : 'Nombre Completo' }}
-                                            </label>
-                                            <input tuiTextfield size="m" formControlName="nombre_cliente"
-                                                [placeholder]="ventaForm.get('tipoComprobante')?.value === 'Factura' ? 'Razon social del cliente' : 'Nombre del cliente'" />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Direccion</label>
-                                            <input tuiTextfield size="m" formControlName="direccion_cliente" placeholder="Direccion del cliente" />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Correo Electronico</label>
-                                            <input tuiTextfield size="m" formControlName="correo_cliente" placeholder="correo@ejemplo.com" />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Telefono</label>
-                                            <input tuiTextfield size="m" formControlName="telefono_cliente" placeholder="Telefono" />
-                                        </tui-textfield>
-                                    </div>
-                                    <div>
-                                        <tui-textfield class="w-full">
-                                            <label tuiLabel>Codigo Postal</label>
-                                            <input tuiTextfield value="LIMA" />
-                                        </tui-textfield>
-                                    </div>
-                                    <div class="sm:col-span-2">
-                                        <button tuiButton type="button" appearance="primary-grayscale" size="m"
-                                            (click)="buscarCliente()" class="w-full !rounded-full"
-                                            [disabled]="ventaForm.get('documento_cliente')?.invalid || !(userPermissions$ | async)?.can_make_sale">
-                                            <svg class="w-4 h-4 mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
-                                            </svg>
-                                            Consultar en SUNAT / RENIEC
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'"
-                                    class="flex items-center gap-3 bg-neutral-50 dark:bg-neutral-700/30 rounded-xl p-4 border border-neutral-200/50 dark:border-neutral-600/30">
-                                    <svg class="w-8 h-8 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                                <!-- Check mark si esta seleccionado -->
+                                <div *ngIf="pedidoSeleccionado?.id === pedido.id" class="mt-3 flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
                                     </svg>
-                                    <div>
-                                        <p class="font-bold text-sm text-neutral-900 dark:text-white">Cliente Varios</p>
-                                        <p class="text-xs text-neutral-500 dark:text-neutral-400">Venta sin identificacion del cliente</p>
-                                    </div>
+                                    <span class="text-xs font-semibold">Seleccionado</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Seccion: Detalle de Items -->
-                            <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-200 dark:border-neutral-700">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center gap-2.5">
-                                        <svg class="w-5 h-5 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                        </svg>
-                                        <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Detalle de Items</h3>
-                                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400 font-semibold">
-                                            {{ productosFormArray.length }} item(s)
-                                        </span>
-                                    </div>
-                                    <button tuiButton type="button" appearance="primary-grayscale" size="s"
-                                        (click)="showDialog()" class="!rounded-full !text-xs">
-                                        <svg class="w-3.5 h-3.5 mr-1 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                                        </svg>
-                                        Agregar Item
-                                    </button>
-                                </div>
-
-                                <!-- Tabla de items SUNAT -->
-                                <div *ngIf="productosFormArray.length > 0" class="overflow-x-auto">
-                                    <table class="w-full text-sm border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
-                                        <thead class="bg-neutral-50 dark:bg-neutral-700/50">
-                                            <tr>
-                                                <th class="text-left py-3 px-3 text-[10px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">Cod.</th>
-                                                <th class="text-left py-3 px-3 text-[10px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">Descripcion</th>
-                                                <th class="text-center py-3 px-3 text-[10px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">Unidad</th>
-                                                <th class="text-center py-3 px-3 text-[10px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">Cant.</th>
-                                                <th class="text-right py-3 px-3 text-[10px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">Vr. Unit.</th>
-                                                <th class="text-right py-3 px-3 text-[10px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">Dscto.</th>
-                                                <th class="text-right py-3 px-3 text-[10px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">Vr. Venta</th>
-                                                <th class="text-right py-3 px-3 text-[10px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">IGV</th>
-                                                <th class="text-right py-3 px-3 text-[10px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">Total</th>
-                                                <th class="text-center py-3 px-3 text-[10px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item"
-                                                class="border-b border-neutral-100 dark:border-neutral-700/50 hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors">
-                                                <td class="py-3 px-3">
-                                                    <span class="text-xs font-mono text-neutral-600 dark:text-neutral-400">{{ item.get('producto_sku')?.value }}</span>
-                                                </td>
-                                                <td class="py-3 px-3">
-                                                    <div class="flex items-center gap-2">
-                                                        <div class="w-8 h-8 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 shrink-0">
-                                                            <img [src]="item.get('imagen_producto')?.value" class="w-full h-full object-cover" />
-                                                        </div>
-                                                        <span class="text-xs font-semibold text-neutral-900 dark:text-white truncate max-w-[120px]">{{ item.get('producto_nombre')?.value }}</span>
-                                                    </div>
-                                                </td>
-                                                <td class="py-3 px-3 text-center">
-                                                    <span class="text-[10px] px-2 py-1 rounded bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 font-semibold">NIU</span>
-                                                </td>
-                                                <td class="py-3 px-3">
-                                                    <tui-select formControlName="cantidad_final" class="w-16 mx-auto" tuiTextfieldSize="s">
-                                                        <tui-data-list *tuiDataList>
-                                                            <button *ngFor="let cantidad of arrayCantidades" tuiOption type="button" [value]="cantidad" class="text-xs">{{ cantidad }}</button>
-                                                        </tui-data-list>
-                                                    </tui-select>
-                                                </td>
-                                                <td class="py-3 px-3 text-right">
-                                                    <span class="text-xs font-mono text-neutral-900 dark:text-white">{{ item.get('costo_original')?.value }}</span>
-                                                </td>
-                                                <td class="py-3 px-3 text-right">
-                                                    <span class="text-xs font-mono text-red-500">{{ item.get('descuento')?.value || '0.00' }}</span>
-                                                </td>
-                                                <td class="py-3 px-3 text-right">
-                                                    <span class="text-xs font-mono text-neutral-900 dark:text-white font-semibold">
-                                                        {{ ((+item.get('costo_original')?.value || 0) * (+item.get('cantidad_final')?.value || 0)) | number:'1.2-2' }}
-                                                    </span>
-                                                </td>
-                                                <td class="py-3 px-3 text-right">
-                                                    <span class="text-xs font-mono text-neutral-500 dark:text-neutral-400">
-                                                        {{ ((+item.get('costo_original')?.value || 0) * (+item.get('cantidad_final')?.value || 0) * 0.18) | number:'1.2-2' }}
-                                                    </span>
-                                                </td>
-                                                <td class="py-3 px-3 text-right">
-                                                    <span class="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400">
-                                                        {{ ((+item.get('costo_original')?.value || 0) * (+item.get('cantidad_final')?.value || 0)) - (item.get('descuento')?.value || 0) | number:'1.2-2' }}
-                                                    </span>
-                                                </td>
-                                                <td class="py-3 px-3 text-center">
-                                                    <button tuiIconButton appearance="flat" iconStart="@tui.x" type="button"
-                                        (click)="eliminarProductoForm(i)" size="l"
-                                                        class="!text-neutral-400 hover:!text-red-500">
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <!-- Estado vacio -->
-                                <div *ngIf="productosFormArray.length === 0"
-                                    class="text-center py-10 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-700">
-                                    <svg class="w-10 h-10 mx-auto mb-3 text-neutral-300 dark:text-neutral-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/>
+                        <!-- Boton continuar -->
+                        <div class="mt-6" *ngIf="pedidoSeleccionado">
+                            <button tuiButton appearance="primary-grayscale" size="l" type="button"
+                                (click)="continuarConPedido()" class="w-full !rounded-2xl">
+                                <span class="flex items-center justify-center gap-2">
+                                    Continuar con {{ pedidoSeleccionado.numero_pedido }}
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
                                     </svg>
-                                    <p class="text-sm text-neutral-500 dark:text-neutral-400">No hay items en el comprobante</p>
-                                    <p class="text-xs text-neutral-400 dark:text-neutral-500 mt-1">Agregue productos para generar el detalle</p>
-                                </div>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
 
-                                <!-- Leyenda SUNAT -->
-                                <div *ngIf="productosFormArray.length > 0" class="mt-3 p-2 rounded-lg bg-neutral-50 dark:bg-neutral-700/30 border border-neutral-200/50 dark:border-neutral-600/30">
-                                    <p class="text-[10px] text-neutral-500 dark:text-neutral-400 font-semibold uppercase tracking-wider">
-                                        Venta gravada con IGV - Ley del IGV e ISC (D.L. 937 y R.S. 133-2013)
-                                    </p>
-                                </div>
-                            </div>
+                    <!-- ==================== PASO 1: CONFIRMAR ==================== -->
+                    <div *ngIf="pedidoFlowStep === 1" class="space-y-5">
 
-                            <!-- Seccion: Observaciones / Glosa -->
-                            <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-200 dark:border-neutral-700">
-                                <div class="flex items-center gap-2.5 mb-4">
+                        <!-- Header resumen -->
+                        <div class="text-center py-4">
+                            <p class="text-[10px] font-medium text-neutral-400 uppercase tracking-widest mb-1">Pedido</p>
+                            <p class="text-2xl font-semibold text-neutral-900 dark:text-white">{{ pedidoSeleccionado?.numero_pedido }}</p>
+                            <p class="text-sm text-neutral-400 mt-1">{{ pedidoSeleccionado?.cliente || 'Cliente Anonimo' }}</p>
+                        </div>
+
+                        <!-- Checklist -->
+                        <div class="space-y-2">
+                            <!-- Productos -->
+                            <div class="flex items-center gap-3 p-3 rounded-xl"
+                                [class]="productosFormArray.length > 0 ? 'bg-emerald-50/50 dark:bg-emerald-900/10' : 'bg-red-50/50 dark:bg-red-900/10'">
+                                <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
+                                    [class]="productosFormArray.length > 0 ? 'bg-emerald-500' : 'bg-red-500'">
                                     <svg class="w-5 h-5 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/>
                                     </svg>
@@ -776,9 +615,11 @@
                                 <p class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-2">Maximo 500 caracteres. Esta informacion se incluira en el comprobante electronico.</p>
                             </div>
                         </div>
+                    </div>
+                    </div> <!-- Cierre columna izquierda -->
 
                         <!-- Columna derecha: Resumen y Actions -->
-                        <div class="space-y-5">
+                        <div *ngIf="pedidoFlowStep > 0" class="space-y-5">
 
                             <!-- Resumen de Totales SUNAT -->
                             <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-200 dark:border-neutral-700 sticky top-4">
@@ -909,648 +750,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- TAB: Vender por pedido -->
-            <div *ngIf="activeTab === 'pedido'" class="p-4 sm:p-6">
-                <div class="max-w-7xl mx-auto">
-
-                    <!-- Header + Stepper -->
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
-                            <div>
-                                <h2 class="text-lg font-bold text-neutral-900 dark:text-white mb-1">
-                                    {{ pedidoFlowStep === 0 ? 'Seleccionar Pedido' : 'Vender Pedido #' + pedidoSeleccionado?.id }}
-                                </h2>
-                                <p class="text-sm text-neutral-500 dark:text-neutral-400">
-                                    {{ pedidoFlowStep === 0
-                                        ? 'Selecciona un pedido pendiente para procesar como venta'
-                                        : 'Sigue los pasos para convertir el pedido en venta' }}
-                                </p>
-                            </div>
-                            <button *ngIf="pedidoFlowStep > 0" tuiButton type="button" appearance="flat" size="s"
-                                (click)="volverSeleccionPedido()" class="!rounded-full !text-xs">
-                                Cambiar pedido
-                            </button>
-                        </div>
-
-                        <!-- Stepper -->
-                        <div *ngIf="pedidoFlowStep > 0" class="flex items-center justify-between max-w-md mx-auto">
-                            <div class="flex flex-col items-center">
-                                <div [class]="pedidoFlowStep >= 1 ? 'w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold transition-all duration-300' : 'w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-neutral-500 dark:text-neutral-400 font-bold transition-all duration-300'">
-                                    1
-                                </div>
-                                <span class="text-xs font-semibold mt-2 text-neutral-700 dark:text-neutral-300">Productos</span>
-                            </div>
-                            <div [class]="pedidoFlowStep >= 2 ? 'flex-1 h-1 bg-emerald-500 mx-2 transition-all duration-300' : 'flex-1 h-1 bg-neutral-200 dark:bg-neutral-700 mx-2 transition-all duration-300'"></div>
-                            <div class="flex flex-col items-center">
-                                <div [class]="pedidoFlowStep >= 2 ? 'w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold transition-all duration-300' : 'w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-neutral-500 dark:text-neutral-400 font-bold transition-all duration-300'">
-                                    2
-                                </div>
-                                <span class="text-xs font-semibold mt-2 text-neutral-700 dark:text-neutral-300">Cliente</span>
-                            </div>
-                            <div [class]="pedidoFlowStep >= 3 ? 'flex-1 h-1 bg-emerald-500 mx-2 transition-all duration-300' : 'flex-1 h-1 bg-neutral-200 dark:bg-neutral-700 mx-2 transition-all duration-300'"></div>
-                            <div class="flex flex-col items-center">
-                                <div [class]="pedidoFlowStep >= 3 ? 'w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold transition-all duration-300' : 'w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-neutral-500 dark:text-neutral-400 font-bold transition-all duration-300'">
-                                    3
-                                </div>
-                                <span class="text-xs font-semibold mt-2 text-neutral-700 dark:text-neutral-300">Confirmar</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ==================== PASO 0: SELECCIONAR PEDIDO ==================== -->
-                    <div *ngIf="pedidoFlowStep === 0">
-
-                        <!-- Grid de pedidos -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-                            <div *ngFor="let pedido of pedidosEjemplo"
-                                (click)="pedidoSeleccionado = pedido"
-                                [class]="pedidoSeleccionado?.id === pedido.id
-                                    ? 'bg-white dark:bg-neutral-800 rounded-2xl p-5 border-2 border-emerald-500 cursor-pointer transition-all duration-200'
-                                    : 'bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500 cursor-pointer transition-all duration-200'">
-
-                                <!-- Header del pedido -->
-                                <div class="flex items-start justify-between mb-4">
-                                    <div>
-                                        <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Pedido</p>
-                                        <p class="text-lg font-bold text-neutral-900 dark:text-white">#{{ pedido.id }}</p>
-                                    </div>
-                                    <span class="text-[10px] px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-semibold">
-                                        {{ pedido.estado }}
-                                    </span>
-                                </div>
-
-                                <!-- Info del cliente -->
-                                <div class="mb-4">
-                                    <p class="text-sm font-semibold text-neutral-900 dark:text-white truncate">
-                                        {{ pedido.cliente }}
-                                    </p>
-                                    <p class="text-xs text-neutral-500 dark:text-neutral-400">
-                                        {{ pedido.documento }}
-                                    </p>
-                                </div>
-
-                                <!-- Detalles -->
-                                <div class="grid grid-cols-2 gap-3 mb-4">
-                                    <div class="bg-neutral-50 dark:bg-neutral-700/30 rounded-lg p-2">
-                                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">Fecha</p>
-                                        <p class="text-xs font-semibold text-neutral-900 dark:text-white">{{ pedido.fecha }}</p>
-                                    </div>
-                                    <div class="bg-neutral-50 dark:bg-neutral-700/30 rounded-lg p-2">
-                                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">Hora</p>
-                                        <p class="text-xs font-semibold text-neutral-900 dark:text-white">{{ pedido.hora }}</p>
-                                    </div>
-                                    <div class="bg-neutral-50 dark:bg-neutral-700/30 rounded-lg p-2">
-                                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">Items</p>
-                                        <p class="text-xs font-semibold text-neutral-900 dark:text-white">{{ pedido.cantidadItems }} productos</p>
-                                    </div>
-                                    <div class="bg-neutral-50 dark:bg-neutral-700/30 rounded-lg p-2">
-                                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">Pago</p>
-                                        <p class="text-xs font-semibold text-neutral-900 dark:text-white">{{ pedido.metodoPago }}</p>
-                                    </div>
-                                </div>
-
-                                <!-- Total -->
-                                <div class="flex items-center justify-between pt-3 border-t border-neutral-100 dark:border-neutral-700">
-                                    <span class="text-sm text-neutral-500 dark:text-neutral-400">Total</span>
-                                    <span class="text-xl font-black text-neutral-900 dark:text-white">
-                                        S/. {{ pedido.total | number:'1.2-2' }}
-                                    </span>
-                                </div>
-
-                                <!-- Check mark si esta seleccionado -->
-                                <div *ngIf="pedidoSeleccionado?.id === pedido.id" class="mt-3 flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                                    </svg>
-                                    <span class="text-xs font-semibold">Seleccionado</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Boton continuar -->
-                        <div class="mt-6" *ngIf="pedidoSeleccionado">
-                            <button tuiButton appearance="primary-grayscale" size="l" type="button"
-                                (click)="continuarConPedido()" class="w-full !rounded-2xl">
-                                <span class="flex items-center justify-center gap-2">
-                                    Continuar con Pedido #{{ pedidoSeleccionado.id }}
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- ==================== PASO 1: PRODUCTOS ==================== -->
-                    <div *ngIf="pedidoFlowStep === 1">
-
-                        <!-- Resumen del pedido -->
-                        <div class="bg-gradient-to-r from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-900/10 rounded-2xl p-4 border border-emerald-200/50 dark:border-emerald-700/30 mb-6">
-                            <div class="flex items-center justify-between flex-wrap gap-2">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
-                                        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-neutral-900 dark:text-white">Pedido #{{ pedidoSeleccionado.id }}</p>
-                                        <p class="text-xs text-neutral-600 dark:text-neutral-400">
-                                            {{ pedidoSeleccionado.cliente }} &middot; {{ pedidoSeleccionado.documento }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Total del pedido</p>
-                                    <p class="text-lg font-black text-emerald-600 dark:text-emerald-400">
-                                        {{ salesTotals.total | currency:'S/' }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Header de productos -->
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-2.5">
-                                <svg class="w-5 h-5 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                </svg>
-                                <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Productos del Pedido</h3>
-                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400 font-semibold">
-                                    {{ productosFormArray.length }} item(s)
-                                </span>
-                            </div>
-                            <button tuiButton type="button" appearance="primary-grayscale" size="s"
-                                (click)="showDialog()" class="!rounded-full !text-xs">
-                                <svg class="w-3.5 h-3.5 mr-1 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                                </svg>
-                                Agregar producto
-                            </button>
-                        </div>
-
-                        <!-- Lista de productos -->
-                        <div class="space-y-4">
-                            <div *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item"
-                                class="bg-white dark:bg-neutral-800 relative rounded-2xl p-5 transition-all duration-300 border border-neutral-100 dark:border-neutral-700/50 hover:border-neutral-300 dark:hover:border-neutral-600">
-
-                                <!-- Numero de item -->
-                                <div class="absolute -top-3 -left-2 w-7 h-7 rounded-full bg-neutral-900 dark:bg-white flex items-center justify-center text-white dark:text-neutral-900 text-xs font-bold">
-                                    {{ i + 1 }}
-                                </div>
-
-                                <!-- Boton quitar -->
-                                <button tuiIconButton iconStart="@tui.x" type="button"
-                                    appearance="flat" (click)="eliminarProductoForm(i)" size="xs"
-                                    class="absolute top-3 right-3 !text-neutral-400 hover:!text-red-500">
-                                </button>
-
-                                <div class="flex flex-col sm:flex-row gap-4 mt-2">
-                                    <!-- Imagen del producto -->
-                                    <div class="shrink-0">
-                                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-neutral-100 dark:border-neutral-700">
-                                            <img [src]="item.get('imagen_producto')?.value"
-                                                alt="Imagen del producto" class="w-full h-full object-cover" />
-                                        </div>
-                                    </div>
-
-                                    <!-- Info + Controles -->
-                                    <div class="flex-1 min-w-0 pr-6">
-                                        <!-- Nombre y categoria -->
-                                        <div class="mb-3">
-                                            <p class="font-bold text-lg text-neutral-900 dark:text-white truncate leading-tight">
-                                                {{ item.get('producto_nombre')?.value }}
-                                            </p>
-                                            <div class="flex items-center gap-2 mt-1">
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300">
-                                                    {{ item.get('nombre_categoria')?.value }}
-                                                </span>
-                                                <tui-chip iconStart="@tui.scan-barcode" size="xs" class="text-[10px]">
-                                                    {{ item.get('producto_sku')?.value }}
-                                                </tui-chip>
-                                            </div>
-                                        </div>
-
-                                        <!-- Precio unitario -->
-                                        <div class="flex items-center gap-1.5 mb-3">
-                                            <span class="text-xs text-neutral-500 dark:text-neutral-400">Precio unitario:</span>
-                                            <span class="text-sm font-bold text-neutral-900 dark:text-white">
-                                                S/. {{ item.get('costo_original')?.value }}
-                                            </span>
-                                        </div>
-
-                                        <!-- Controles -->
-                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
-                                            <!-- Cantidad -->
-                                            <div>
-                                                <label class="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 mb-1.5 block uppercase tracking-wider">Cantidad</label>
-                                                <tui-select formControlName="cantidad_final" class="w-full" tuiTextfieldSize="m">
-                                                    <tui-data-list *tuiDataList>
-                                                        <button *ngFor="let cantidad of arrayCantidades" tuiOption type="button" [value]="cantidad" class="text-sm">
-                                                            {{ cantidad }}
-                                                        </button>
-                                                    </tui-data-list>
-                                                </tui-select>
-                                            </div>
-
-                                            <!-- Descuento -->
-                                            <div class="input-select-cantidad">
-                                                <tui-textfield>
-                                                    <label tuiLabel class="text-[11px]">Descuento</label>
-                                                    <input formControlName="descuento" prefix="S/. " tuiInputNumber
-                                                        [max]="((+item.get('costo_original')?.value || 0) * (+item.get('cantidad_final')?.value || 0)) -1"
-                                                        [min]="0" [step]="1" class="text-sm input-select-cantidad" />
-                                                </tui-textfield>
-                                            </div>
-
-                                            <!-- Total del item -->
-                                            <div class="text-center sm:text-right rounded-xl bg-neutral-50 dark:bg-neutral-700/30 p-3 border border-neutral-100 dark:border-neutral-700">
-                                                <p class="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 mb-0.5 uppercase tracking-wider">Total</p>
-                                                <p class="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white">
-                                                    {{ ((+item.get('costo_original')?.value || 0) *
-                                                    (+item.get('cantidad_final')?.value || 0)) -
-                                                    item.get("descuento")?.value | tuiAmount: 'S/.' :
-                                                    'left' | async }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Estado vacio -->
-                            <div *ngIf="productosFormArray.length === 0"
-                                class="text-center py-16 sm:py-20 rounded-3xl bg-white/50 dark:bg-neutral-800/30 border-2 border-dashed border-neutral-300 dark:border-neutral-600">
-                                <svg class="w-16 h-16 mx-auto mb-4 text-neutral-300 dark:text-neutral-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
-                                </svg>
-                                <h3 class="text-xl font-bold text-neutral-700 dark:text-neutral-300 mb-2">
-                                    Sin productos aun
-                                </h3>
-                                <p class="text-sm text-neutral-500 dark:text-neutral-400 max-w-xs mx-auto">
-                                    Agrega productos escaneando el codigo de barras o seleccionando del catalogo
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Siguiente paso -->
-                        <div class="mt-8 flex gap-4">
-                            <button tuiButton type="button" appearance="flat" size="l"
-                                (click)="prevPedidoStep()" class="flex-1 !rounded-2xl">
-                                <span class="flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
-                                    </svg>
-                                    Volver
-                                </span>
-                            </button>
-                            <button tuiButton type="button" appearance="primary-grayscale" size="l"
-                                (click)="nextPedidoStep()"
-                                [disabled]="productosFormArray.length === 0"
-                                class="flex-[2] !rounded-2xl">
-                                <span class="flex items-center justify-center gap-2">
-                                    Siguiente: Seleccionar Cliente
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- ==================== PASO 2: CLIENTE ==================== -->
-                    <div *ngIf="pedidoFlowStep === 2" class="space-y-6">
-
-                        <!-- Comprobante -->
-                        <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-100 dark:border-neutral-700/50">
-                            <div class="flex items-center gap-2.5 mb-4">
-                                <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
-                                </svg>
-                                <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Comprobante</h3>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <tui-select formControlName="tipoComprobante" class="w-full">
-                                    Tipo de comprobante
-                                    <tui-data-list *tuiDataList>
-                                        <button [disabled]="!(userPermissions$ | async)?.can_make_sale"
-                                            *ngFor="let comprobante of tipoComprobantes" tuiOption [value]="comprobante">
-                                            {{ comprobante }}
-                                        </button>
-                                    </tui-data-list>
-                                </tui-select>
-                                <tui-select formControlName="metodoPago" class="w-full">
-                                    Metodo de pago
-                                    <tui-data-list *tuiDataList>
-                                        <button [disabled]="!(userPermissions$ | async)?.can_make_sale"
-                                            *ngFor="let metodo of listMetodosPago" tuiOption [value]="metodo">
-                                            {{ metodo }}
-                                        </button>
-                                    </tui-data-list>
-                                </tui-select>
-                            </div>
-                        </div>
-
-                        <!-- Tipo de cliente -->
-                        <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-100 dark:border-neutral-700/50">
-                            <div class="flex items-center gap-2.5 mb-4">
-                                <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-                                </svg>
-                                <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">
-                                    Tipo de Cliente
-                                </h3>
-                            </div>
-
-                            <tui-segmented class="full w-full" *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'">
-                                <button (click)="changeModeClient('buscar')" type="button" class="!text-xs">
-                                    <svg class="w-3.5 h-3.5 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
-                                    </svg>
-                                    Buscar
-                                </button>
-                                <button (click)="changeModeClient('nuevo')" type="button" class="!text-xs">
-                                    <svg class="w-3.5 h-3.5 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"/>
-                                    </svg>
-                                    Nuevo
-                                </button>
-                            </tui-segmented>
-
-                            <!-- Buscar cliente existente -->
-                            <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima' && vistaActiva === 'buscar'" class="mt-4">
-                                <tui-textfield tuiChevron class="w-full">
-                                    <input tuiComboBox formControlName="documento_cliente_existente"
-                                        placeholder="Buscar por DNI o RUC" class="text-sm" />
-                                    <tui-data-list-wrapper *tuiTextfieldDropdown new
-                                        [items]="documents | tuiFilterByInput" />
-                                </tui-textfield>
-                            </div>
-
-                            <!-- Nuevo cliente -->
-                            <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima' && vistaActiva === 'nuevo'" class="mt-4">
-                                <div *ngIf="!ventaForm.get('cliente')?.value" class="flex gap-2">
-                                    <tui-input [disabled]="!(userPermissions$ | async)?.can_make_sale"
-                                        class="flex-1" formControlName="documento_cliente">
-                                        {{ ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'DNI' : 'RUC' }}
-                                        <input
-                                            [placeholder]="ventaForm.get('tipoComprobante')?.value === 'Boleta' ? 'Ingrese DNI' : 'Ingrese RUC'"
-                                            tuiTextfieldLegacy size="s" type="text" />
-                                    </tui-input>
-                                    <button tuiIconButton iconStart="@tui.search" type="button"
-                                        appearance="primary-grayscale" (click)="buscarCliente()" size="l"
-                                        [disabled]="ventaForm.get('documento_cliente')?.invalid || !(userPermissions$ | async)?.can_make_sale">
-                                    </button>
-                                </div>
-
-                                <!-- Cliente encontrado -->
-                                <div *ngIf="ventaForm.get('cliente')?.value" class="bg-gradient-to-r from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-900/10 rounded-xl p-3.5 border border-emerald-200/50 dark:border-emerald-700/30">
-                                    <div class="flex items-start justify-between mb-2">
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex items-center gap-2 mb-1">
-                                                <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
-                                                    <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                                                    </svg>
-                                                </div>
-                                                <p class="font-bold text-sm text-neutral-900 dark:text-white truncate">
-                                                    {{ ventaForm.get('nombre_cliente')?.value }}
-                                                </p>
-                                            </div>
-                                            <p class="text-xs text-neutral-600 dark:text-neutral-400 ml-8">
-                                                {{ ventaForm.get('documento_cliente')?.value }}
-                                            </p>
-                                        </div>
-                                        <button tuiIconButton iconStart="@tui.x" type="button" size="xs"
-                                            appearance="flat" (click)="borrarCliente()"
-                                            class="!text-neutral-400 hover:!text-red-500">
-                                        </button>
-                                    </div>
-                                    <button tuiButton size="s" type="button" appearance="primary-grayscale"
-                                        (click)="expanded = !expanded" class="w-full !rounded-full !text-xs">
-                                        {{ expanded ? 'Ocultar detalles' : 'Mas detalles' }}
-                                    </button>
-                                </div>
-
-                                <!-- Detalles expandibles -->
-                                <div [@expandCollapse]="expanded ? 'open' : 'closed'" class="overflow-hidden">
-                                    <div class="space-y-2 pt-3">
-                                        <tui-textfield class="w-full">
-                                            <input tuiTextfield size="s" formControlName="direccion_cliente"
-                                                placeholder="Direccion" class="text-sm" />
-                                        </tui-textfield>
-                                        <tui-textfield class="w-full">
-                                            <input tuiTextfield size="s" type="email"
-                                                formControlName="correo_cliente" placeholder="Correo electronico"
-                                                class="text-sm" />
-                                        </tui-textfield>
-                                        <tui-textfield class="w-full">
-                                            <input tuiTextfield size="s" formControlName="telefono_cliente"
-                                                placeholder="Telefono" class="text-sm" />
-                                        </tui-textfield>
-                                    </div>
-                                </div>
-
-                                <span *ngIf="errorClientNotFound" class="text-red-500 text-xs block mt-2 bg-red-50 dark:bg-red-900/20 rounded-lg px-3 py-2">
-                                    Cliente no encontrado. Intente mas tarde.
-                                </span>
-                            </div>
-
-                            <!-- Cliente anonimo -->
-                            <div *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'" class="mt-4">
-                                <div class="flex items-center gap-3 bg-neutral-50 dark:bg-neutral-700/30 rounded-xl p-3.5 border border-neutral-200/50 dark:border-neutral-600/30">
-                                    <div class="w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-600 flex items-center justify-center shrink-0">
-                                        <svg class="w-5 h-5 text-neutral-500 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-sm text-neutral-900 dark:text-white">
-                                            Clientes Varios
-                                        </p>
-                                        <p class="text-xs text-neutral-500 dark:text-neutral-400">Sin identificacion</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Botones de navegacion -->
-                        <div class="flex gap-4">
-                            <button tuiButton type="button" appearance="flat" size="l"
-                                (click)="prevPedidoStep()" class="flex-1 !rounded-2xl">
-                                <span class="flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
-                                    </svg>
-                                    Volver
-                                </span>
-                            </button>
-                            <button tuiButton type="button" appearance="primary-grayscale" size="l"
-                                (click)="nextPedidoStep()" class="flex-[2] !rounded-2xl">
-                                <span class="flex items-center justify-center gap-2">
-                                    Siguiente: Confirmar Venta
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- ==================== PASO 3: CONFIRMAR ==================== -->
-                    <div *ngIf="pedidoFlowStep === 3" class="space-y-6">
-
-                        <!-- Resumen de productos -->
-                        <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-100 dark:border-neutral-700/50">
-                            <div class="flex items-center gap-2.5 mb-4">
-                                <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                </svg>
-                                <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">
-                                    Productos del Pedido
-                                </h3>
-                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-semibold">
-                                    {{ productosFormArray.length }} item(s)
-                                </span>
-                            </div>
-
-                            <div class="space-y-2">
-                                <div *ngFor="let item of productosFormArray.controls; let i = index" class="flex items-center gap-3 p-2 rounded-xl bg-neutral-50 dark:bg-neutral-700/30">
-                                    <div class="w-10 h-10 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-600 shrink-0">
-                                        <img [src]="item.get('imagen_producto')?.value" class="w-full h-full object-cover" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-semibold text-neutral-900 dark:text-white truncate">{{ item.get('producto_nombre')?.value }}</p>
-                                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400">
-                                            x{{ item.get('cantidad_final')?.value }} &middot; S/. {{ item.get('costo_original')?.value }}
-                                        </p>
-                                    </div>
-                                    <p class="text-sm font-bold text-neutral-900 dark:text-white shrink-0">
-                                        {{ ((+item.get('costo_original')?.value || 0) * (+item.get('cantidad_final')?.value || 0)) - item.get("descuento")?.value | currency:'S/' }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cliente -->
-                        <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-100 dark:border-neutral-700/50">
-                            <div class="flex items-center gap-2.5 mb-4">
-                                <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-                                </svg>
-                                <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Cliente</h3>
-                            </div>
-                            <div *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'" class="flex items-center gap-3 bg-neutral-50 dark:bg-neutral-700/30 rounded-xl p-3 border border-neutral-200/50 dark:border-neutral-600/30">
-                                <div class="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-600 flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-neutral-500 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-bold text-neutral-900 dark:text-white">Clientes Varios</p>
-                                    <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Venta sin identificacion</p>
-                                </div>
-                            </div>
-                            <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima' && ventaForm.get('nombre_cliente')?.value" class="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-3 border border-emerald-200/50 dark:border-emerald-700/30">
-                                <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
-                                    <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-bold text-neutral-900 dark:text-white truncate">{{ ventaForm.get('nombre_cliente')?.value }}</p>
-                                    <p class="text-[10px] text-neutral-500 dark:text-neutral-400">{{ ventaForm.get('documento_cliente_existente')?.value || ventaForm.get('documento_cliente')?.value }}</p>
-                                </div>
-                            </div>
-                            <div *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima' && !ventaForm.get('nombre_cliente')?.value"
-                                class="flex items-center gap-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3 border border-amber-200 dark:border-amber-700/30">
-                                <svg class="w-5 h-5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
-                                </svg>
-                                <p class="text-xs font-semibold text-amber-700 dark:text-amber-300">
-                                    No se selecciono cliente, usa el paso anterior
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Pago -->
-                        <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-100 dark:border-neutral-700/50">
-                            <div class="flex items-center gap-2.5 mb-4">
-                                <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/>
-                                </svg>
-                                <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Metodo de Pago</h3>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <tui-select formControlName="metodoPago" class="w-full">
-                                    Metodo
-                                    <tui-data-list *tuiDataList>
-                                        <button *ngFor="let metodo of listMetodosPago" tuiOption [value]="metodo">
-                                            {{ metodo }}
-                                        </button>
-                                    </tui-data-list>
-                                </tui-select>
-                                <tui-select formControlName="formaPago" class="w-full">
-                                    Forma
-                                    <tui-data-list *tuiDataList>
-                                        <button *ngFor="let pago of formasPago" tuiOption [value]="pago">
-                                            {{ pago }}
-                                        </button>
-                                    </tui-data-list>
-                                </tui-select>
-                            </div>
-                        </div>
-
-                        <!-- Resumen de totales -->
-                        <div class="bg-neutral-900 dark:bg-neutral-800 rounded-2xl p-5 text-white">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-sm text-neutral-400">Subtotal</span>
-                                <span class="text-base font-bold">{{ salesTotals.subtotal | currency:'S/' }}</span>
-                            </div>
-                            <div class="flex justify-between items-center mb-3 pb-3 border-b border-neutral-700">
-                                <span class="text-sm text-neutral-400">Descuentos</span>
-                                <span class="text-base font-bold text-red-400">- {{ salesTotals.descuentoTotales | currency:'S/' }}</span>
-                            </div>
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <p class="text-xs text-neutral-400 uppercase tracking-wider mb-1">Total a pagar</p>
-                                    <p class="text-3xl font-black tracking-tight">{{ salesTotals.total | currency:'S/' }}</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-[10px] text-neutral-400">IGV 18%</p>
-                                    <p class="text-xs font-semibold text-neutral-300">{{ salesTotals.igv | currency:'S/' }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Botones de navegacion -->
-                        <div class="flex gap-4">
-                            <button tuiButton type="button" appearance="flat" size="l"
-                                (click)="prevPedidoStep()" class="flex-1 !rounded-2xl">
-                                <span class="flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
-                                    </svg>
-                                    Volver
-                                </span>
-                            </button>
-                            <button
-                                [disabled]="!ventaForm.valid || ventaForm.get('productos')?.value.length === 0"
-                                class="flex-[2]" tuiButton type="button" (click)="confirmarVentaPedido()" appearance="primary-grayscale"
-                                size="l">
-                                <span class="flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    Confirmar Venta
-                                </span>
-                            </button>
-                        </div>
                     </div>
 
                 </div>
@@ -1558,4 +758,6 @@
 
         </form>
     </tui-loader>
+    </div>
+</div>
 </div>

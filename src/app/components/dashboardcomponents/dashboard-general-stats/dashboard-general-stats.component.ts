@@ -49,41 +49,19 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
   loadingReporteMensual = false;
 
   // Compras del mes
-  comprasMes = [
-    { proveedor: 'Distribuidora Lima SAC', total: 12500.00, items: 45, fecha: '05/08/2026' },
-    { proveedor: 'Mayorista Central', total: 8900.00, items: 32, fecha: '12/08/2026' },
-    { proveedor: 'Importaciones Fast', total: 5600.00, items: 18, fecha: '20/08/2026' },
-  ];
-  totalComprasMes = 27000.00;
+  comprasMes: { proveedor: string; total: number; items: number; fecha: string }[] = [];
+  totalComprasMes = 0;
 
   // Top productos por mes
-  topProductosMes = [
-    { nombre: 'Gaseosa 600ml', cantidad: 156, ingresos: 546.00 },
-    { nombre: 'Pan integral', cantidad: 132, ingresos: 369.60 },
-    { nombre: 'Leche 1L', cantidad: 118, ingresos: 495.60 },
-    { nombre: 'Papa Lay\'s', cantidad: 98, ingresos: 294.00 },
-    { nombre: 'Jabón líquido', cantidad: 87, ingresos: 739.50 },
-  ];
+  topProductosMes: { nombre: string; cantidad: number; ingresos: number }[] = [];
   loadingTopProductosMes = false;
 
   // Métodos de pago por rango
-  metodosPagoRango = [
-    { nombre: 'Efectivo', cantidad: 245, monto: 19600.00, porcentaje: 43.3 },
-    { nombre: 'Yape', cantidad: 168, monto: 14280.00, porcentaje: 31.5 },
-    { nombre: 'Plin', cantidad: 78, monto: 6240.00, porcentaje: 13.8 },
-    { nombre: 'Transferencia', cantidad: 43, monto: 5160.00, porcentaje: 11.4 },
-  ];
+  metodosPagoRango: { nombre: string; cantidad: number; monto: number; porcentaje: number }[] = [];
   loadingMetodosPagoRango = false;
 
   // Categorías más vendidas por mes
-  categoriasMes = [
-    { nombre: 'Bebidas', cantidad: 312, ingresos: 12480.00 },
-    { nombre: 'Snacks', cantidad: 245, ingresos: 7350.00 },
-    { nombre: 'Lácteos', cantidad: 198, ingresos: 7920.00 },
-    { nombre: 'Panadería', cantidad: 167, ingresos: 5010.00 },
-    { nombre: 'Limpieza', cantidad: 134, ingresos: 8040.00 },
-    { nombre: 'Higiene', cantidad: 112, ingresos: 5600.00 },
-  ];
+  categoriasMes: { nombre: string; cantidad: number; ingresos: number }[] = [];
   loadingTopCategoriasMes = false;
 
   ngOnInit(): void {

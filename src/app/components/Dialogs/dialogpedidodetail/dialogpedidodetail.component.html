@@ -1,0 +1,318 @@
+<div class="flex flex-col max-h-[85vh] w-full">
+
+  <!-- HEADER (sin boton X) -->
+  <div class="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+        <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <h3 class="text-lg font-extrabold text-neutral-900 dark:text-white">{{ pedido.numero_pedido }}</h3>
+          <tui-badge [appearance]="getEstadoBadge(pedido.estado)" size="s">{{ pedido.estado }}</tui-badge>
+          <tui-badge [appearance]="getEstadoPagoBadge(pedido.estado_pago)" size="s">{{ pedido.estado_pago }}</tui-badge>
+        </div>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400">Pedido #{{ pedido.id }} · {{ formatDateTime(pedido.fecha_hora) }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="flex-1 overflow-y-auto p-4 space-y-5">
+
+    <!-- ==================== MODO VISTA ==================== -->
+    <ng-container *ngIf="!editMode">
+      <div class="flex flex-wrap gap-2">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
+          <span class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">{{ pedido.tipo_pedido }}</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+          <span class="text-xs font-semibold text-blue-700 dark:text-blue-300">{{ pedido.canal_venta }}</span>
+        </div>
+        <div *ngIf="pedido.prioridad === 'URGENTE'" class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-900/20 rounded-lg">
+          <span class="text-xs font-semibold text-red-700 dark:text-red-300">URGENTE</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
+          <span class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">{{ pedido.metodo_pago }}</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+          <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Estado</p>
+          <tui-badge [appearance]="getEstadoBadge(pedido.estado)" size="s">{{ pedido.estado }}</tui-badge>
+        </div>
+        <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+          <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Estado Pago</p>
+          <tui-badge [appearance]="getEstadoPagoBadge(pedido.estado_pago)" size="s">{{ pedido.estado_pago }}</tui-badge>
+        </div>
+        <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+          <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Tipo</p>
+          <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ pedido.tipo_pedido }}</p>
+        </div>
+        <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+          <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Canal</p>
+          <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ pedido.canal_venta }}</p>
+        </div>
+      </div>
+
+      <div class="p-4 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-3">Cliente</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-sm font-bold text-emerald-700 dark:text-emerald-300">{{ getClienteNombre().charAt(0) }}</div>
+          <div>
+            <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ getClienteNombre() }}</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ getClienteDocumento() }} <span *ngIf="pedido.email_cliente">· {{ pedido.email_cliente }}</span></p>
+            <p *ngIf="pedido.telefono_cliente" class="text-xs text-neutral-500 dark:text-neutral-400">Tel: {{ pedido.telefono_cliente }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="pedido.direccion_envio" class="p-4 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2">Direccion de Envio</p>
+        <p class="text-sm text-neutral-900 dark:text-white">{{ pedido.direccion_envio }}</p>
+        <p *ngIf="pedido.referencia_ubicacion" class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Ref: {{ pedido.referencia_ubicacion }}</p>
+      </div>
+
+      <div *ngIf="getProductos().length" class="space-y-2">
+        <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Productos ({{ getProductos().length }} items)</p>
+        <div class="border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
+          <table class="w-full text-xs">
+            <thead class="bg-neutral-100 dark:bg-neutral-700">
+              <tr>
+                <th class="text-left px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">#</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Producto</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Cant.</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">P. Unit.</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Dcto.</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of getProductos(); let i = index" class="border-t border-neutral-200 dark:border-neutral-700">
+                <td class="px-3 py-2 text-neutral-500 dark:text-neutral-400">{{ i + 1 }}</td>
+                <td class="px-3 py-2 font-medium text-neutral-900 dark:text-white">{{ item.producto_nombre }}</td>
+                <td class="px-3 py-2 text-right text-neutral-700 dark:text-neutral-300">{{ item.cantidad }}</td>
+                <td class="px-3 py-2 text-right text-neutral-700 dark:text-neutral-300">S/ {{ (item.valor_unitario || item.precio_unitario || 0) | number:'1.2-2' }}</td>
+                <td class="px-3 py-2 text-right text-red-500">{{ item.descuento ? '- S/ ' + (item.descuento | number:'1.2-2') : '-' }}</td>
+                <td class="px-3 py-2 text-right font-bold text-neutral-900 dark:text-white">S/ {{ getProductSubtotal(item) | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700 divide-y divide-neutral-200 dark:divide-neutral-700">
+        <div class="flex justify-between items-center px-4 py-2.5">
+          <span class="text-xs text-neutral-600 dark:text-neutral-400">Subtotal</span>
+          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ pedido.subtotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between items-center px-4 py-2.5">
+          <span class="text-xs text-neutral-600 dark:text-neutral-400">IGV (18%)</span>
+          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ pedido.igv_total | number:'1.2-2' }}</span>
+        </div>
+        <div *ngIf="pedido.descuento_total > 0" class="flex justify-between items-center px-4 py-2.5">
+          <span class="text-xs text-neutral-600 dark:text-neutral-400">Descuentos</span>
+          <span class="text-sm font-semibold text-red-600">- S/ {{ pedido.descuento_total | number:'1.2-2' }}</span>
+        </div>
+        <div *ngIf="pedido.costo_envio > 0" class="flex justify-between items-center px-4 py-2.5">
+          <span class="text-xs text-neutral-600 dark:text-neutral-400">Costo Envio</span>
+          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ pedido.costo_envio | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="p-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-xl border-2 border-emerald-200 dark:border-emerald-800">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Total Pedido</p>
+            <p class="text-[10px] text-emerald-500">{{ pedido.metodo_pago }} · {{ pedido.tipo_pedido }}</p>
+          </div>
+          <p class="text-2xl font-extrabold text-emerald-700 dark:text-emerald-300">S/ {{ pedido.total | number:'1.2-2' }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="pedido.observaciones" class="p-4 bg-amber-50 dark:bg-amber-900/10 rounded-xl border border-amber-200 dark:border-amber-800">
+        <p class="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-2">Observaciones</p>
+        <p class="text-sm text-amber-800 dark:text-amber-300">{{ pedido.observaciones }}</p>
+      </div>
+
+      <div *ngIf="pedido.notas_internas" class="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-200 dark:border-blue-800">
+        <p class="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-2">Notas Internas</p>
+        <p class="text-sm text-blue-800 dark:text-blue-300">{{ pedido.notas_internas }}</p>
+      </div>
+    </ng-container>
+
+    <!-- ==================== MODO EDICION ==================== -->
+    <ng-container *ngIf="editMode">
+      <form [formGroup]="editForm" class="space-y-5">
+
+        <!-- CLIENTE -->
+        <div formGroupName="cliente" class="p-4 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-3">
+          <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Cliente</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <tui-textfield class="w-full">
+              <input tuiTextfield size="s" formControlName="nombre_completo" placeholder="Nombre completo" class="text-sm" />
+            </tui-textfield>
+            <tui-textfield class="w-full">
+              <input tuiTextfield size="s" formControlName="numero" placeholder="DNI / RUC" class="text-sm" />
+            </tui-textfield>
+            <tui-textfield class="w-full">
+              <input tuiTextfield size="s" formControlName="telefono_cliente" placeholder="Telefono" class="text-sm" />
+            </tui-textfield>
+            <tui-textfield class="w-full">
+              <input tuiTextfield size="s" type="email" formControlName="correo_cliente" placeholder="Email" class="text-sm" />
+            </tui-textfield>
+          </div>
+        </div>
+
+        <!-- TIPO, CANAL, PRIORIDAD -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <tui-select formControlName="tipo_pedido" class="w-full">
+            Tipo de pedido
+            <tui-data-list *tuiDataList>
+              <button *ngFor="let tipo of tiposPedido" tuiOption [value]="tipo">{{ tipo }}</button>
+            </tui-data-list>
+          </tui-select>
+          <tui-select formControlName="canal_venta" class="w-full">
+            Canal de venta
+            <tui-data-list *tuiDataList>
+              <button *ngFor="let canal of canalesVenta" tuiOption [value]="canal">{{ canal }}</button>
+            </tui-data-list>
+          </tui-select>
+          <tui-select formControlName="prioridad" class="w-full">
+            Prioridad
+            <tui-data-list *tuiDataList>
+              <button *ngFor="let prio of prioridades" tuiOption [value]="prio">{{ prio }}</button>
+            </tui-data-list>
+          </tui-select>
+        </div>
+
+        <!-- PAGO -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <tui-select formControlName="metodo_pago" class="w-full">
+            Metodo de pago
+            <tui-data-list *tuiDataList>
+              <button *ngFor="let met of metodosPago" tuiOption [value]="met">{{ met }}</button>
+            </tui-data-list>
+          </tui-select>
+          <tui-select formControlName="estado_pago" class="w-full">
+            Estado de pago
+            <tui-data-list *tuiDataList>
+              <button *ngFor="let ep of estadosPago" tuiOption [value]="ep">{{ ep }}</button>
+            </tui-data-list>
+          </tui-select>
+        </div>
+
+        <!-- ADELANTO -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <tui-textfield class="w-full">
+            <label tuiLabel class="text-[11px]">Monto adelanto</label>
+            <input formControlName="monto_adelanto" prefix="S/. " tuiInputNumber [min]="0" [step]="1" class="text-sm" />
+          </tui-textfield>
+          <tui-textfield class="w-full">
+            <input tuiTextfield size="s" formControlName="metodo_pago_adelanto" placeholder="Metodo pago adelanto" class="text-sm" />
+          </tui-textfield>
+        </div>
+
+        <!-- DIRECCION -->
+        <tui-textfield class="w-full">
+          <input tuiTextfield size="s" formControlName="direccion_envio" placeholder="Direccion de envio" class="text-sm" />
+        </tui-textfield>
+        <tui-textfield class="w-full">
+          <input tuiTextfield size="s" formControlName="referencia_ubicacion" placeholder="Referencia de ubicacion" class="text-sm" />
+        </tui-textfield>
+
+        <!-- ENVIO Y REFERENCIA -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <tui-textfield class="w-full">
+            <label tuiLabel class="text-[11px]">Costo envio</label>
+            <input formControlName="costo_envio" prefix="S/. " tuiInputNumber [min]="0" [step]="1" class="text-sm" />
+          </tui-textfield>
+          <tui-textfield class="w-full">
+            <input tuiTextfield size="s" formControlName="referencia_externa" placeholder="Referencia externa" class="text-sm" />
+          </tui-textfield>
+        </div>
+
+        <!-- PRODUCTOS -->
+        <div class="p-4 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-3">
+          <div class="flex items-center justify-between">
+            <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Productos</p>
+            <button tuiButton appearance="primary-grayscale" size="xs" type="button" (click)="agregarProductoDialog()" class="!rounded-lg !text-[10px]">
+              + Agregar
+            </button>
+          </div>
+          <div formArrayName="productos">
+            <div *ngFor="let prod of productosFormArray.controls; let i = index" [formGroup]="prod"
+              class="bg-neutral-50 dark:bg-neutral-600/30 rounded-xl p-3 mb-2 border border-neutral-200 dark:border-neutral-600">
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <p class="text-sm font-semibold text-neutral-900 dark:text-white flex-1 min-w-0 truncate">{{ prod.get('producto_nombre')?.value }}</p>
+                <button tuiIconButton iconStart="@tui.x" type="button" appearance="flat" size="xs"
+                  (click)="eliminarProducto(i)" class="!text-red-400 hover:!text-red-600 shrink-0">
+                </button>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider block mb-1">Cantidad</label>
+                  <input formControlName="cantidad_final" type="number" [min]="1" [step]="1"
+                    class="w-full px-3 py-2 text-sm font-bold text-neutral-900 dark:text-white bg-white dark:bg-neutral-700 rounded-lg border border-neutral-200 dark:border-neutral-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider block mb-1">Descuento (S/.)</label>
+                  <input formControlName="descuento" type="number" [min]="0" [step]="1"
+                    class="w-full px-3 py-2 text-sm font-bold text-neutral-900 dark:text-white bg-white dark:bg-neutral-700 rounded-lg border border-neutral-200 dark:border-neutral-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTAS -->
+        <tui-textfield class="w-full">
+          <textarea tuiTextfield formControlName="observaciones" rows="2" placeholder="Observaciones" class="text-sm resize-none"></textarea>
+        </tui-textfield>
+        <tui-textfield class="w-full">
+          <textarea tuiTextfield formControlName="notas_internas" rows="2" placeholder="Notas internas" class="text-sm resize-none"></textarea>
+        </tui-textfield>
+      </form>
+    </ng-container>
+  </div>
+
+  <!-- ACCIONES -->
+  <div class="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50">
+    <tui-loader [showLoader]="saving" [overlay]="true">
+      <div class="flex gap-3">
+        <button *ngIf="!editMode" tuiButton appearance="primary" size="m" type="button" (click)="toggleEdit()" class="flex-1 !rounded-xl">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+            Actualizar Datos
+          </span>
+        </button>
+        <button *ngIf="editMode" tuiButton appearance="primary" size="m" type="button" (click)="guardarCambios()" class="flex-1 !rounded-xl" [disabled]="saving">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 12.75l6 6 9-13.5"/></svg>
+            Guardar Cambios
+          </span>
+        </button>
+        <button *ngIf="editMode" tuiButton appearance="flat" size="m" type="button" (click)="toggleEdit()" class="!rounded-xl">Cancelar</button>
+
+        <button *ngIf="!enSala && !editMode" tuiButton appearance="primary-grayscale" size="m" type="button" (click)="enviarASala()" class="flex-1 !rounded-xl">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            Enviar a Sala de Ventas
+          </span>
+        </button>
+        <button *ngIf="enSala && !editMode" tuiButton appearance="warning" size="m" type="button" (click)="removerDeSala()" class="flex-1 !rounded-xl">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            Remover de Sala
+          </span>
+        </button>
+      </div>
+      <p *ngIf="enSala && !editMode" class="text-[10px] text-emerald-600 dark:text-emerald-400 mt-2 text-center font-semibold">
+        Este pedido ya esta en Sala de Ventas. Ve a Hacer Venta > Vender por pedido.
+      </p>
+    </tui-loader>
+  </div>
+</div>

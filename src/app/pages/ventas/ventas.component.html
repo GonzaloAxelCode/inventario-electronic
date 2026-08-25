@@ -4,28 +4,29 @@
         <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Administra tus ventas, comprobantes y clientes</p>
 
         <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap">
-            <button tuiTab (click)="setTab('historial')" [class.active-link]="activeTab === 'historial'">Historial de Ventas</button>
-            <button tuiTab (click)="setTab('ventas-hoy')" [class.active-link]="activeTab === 'ventas-hoy'">Ventas Hoy</button>
-            <button tuiTab (click)="setTab('anuladas-hoy')" [class.active-link]="activeTab === 'anuladas-hoy'">Ventas Anuladas Hoy</button>
+            <button tuiTab type="button" (click)="setTab('historial')" [class.active-link]="activeTab === 'historial'">Historial de Ventas</button>
+            <button tuiTab type="button" (click)="setTab('ventas-hoy')" [class.active-link]="activeTab === 'ventas-hoy'">Ventas Hoy</button>
+            <button tuiTab type="button" (click)="setTab('anuladas-hoy')" [class.active-link]="activeTab === 'anuladas-hoy'">Anuladas Hoy</button>
         </nav>
     </header>
 
     <ng-container *ngIf="activeTab === 'historial'">
         <div class="pb-12">
+            <h2 class="text-lg font-bold text-neutral-900 dark:text-white mb-4">Historial de Ventas</h2>
             <app-listallventas></app-listallventas>
         </div>
     </ng-container>
 
     <ng-container *ngIf="activeTab === 'ventas-hoy'">
         <div class="pb-12">
-            <h2 class="text-xl font-bold mb-3">Todas las ventas realizadas hoy</h2>
+            <h2 class="text-lg font-bold text-neutral-900 dark:text-white mb-4">Ventas de Hoy</h2>
             <app-todaysalestable></app-todaysalestable>
         </div>
     </ng-container>
 
     <ng-container *ngIf="activeTab === 'anuladas-hoy'">
         <div class="pb-12">
-            <h2 class="text-xl font-bold mb-3">Ventas Anuladas Hoy</h2>
+            <h2 class="text-lg font-bold text-neutral-900 dark:text-white mb-4">Ventas Anuladas Hoy</h2>
             <app-canceledsales></app-canceledsales>
         </div>
     </ng-container>

@@ -1,4 +1,5 @@
 import { Pedido } from '@/app/models/pedido.models';
+import { DialogPedidoDetailService } from '@/app/services/dialogs-services/dialog-pedido-detail.service';
 import { PAGE_SIZE_PEDIDOS } from '@/app/services/utils/pages-sizes';
 import { buscarPedidos, cancelarPedido } from '@/app/state/actions/pedido.actions';
 import { AppState } from '@/app/state/app.state';
@@ -50,6 +51,7 @@ dayjs.locale('es');
 export class ListallpedidosComponent implements OnInit, OnDestroy {
 
   private store = inject(Store<AppState>);
+  private dialogPedidoDetail = inject(DialogPedidoDetailService);
   private destroy$ = new Subject<void>();
 
   pedidos: Pedido[] = [];
@@ -58,10 +60,10 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
   lengthPages = 0;
   count = 0;
   expanded = false;
+  viewMode: 'table' | 'grid' = 'table';
 
   readonly maxLength: TuiDayLike = { month: 12 };
 
-  private _range = new Subject<TuiDayRange>();
   range: TuiDayRange = new TuiDayRange(
     TuiDay.currentLocal().append({ day: -TuiDay.currentLocal().day + 1 }),
     TuiDay.currentLocal()
@@ -69,13 +71,24 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
 
   form = new FormGroup({
     numero_pedido: new FormControl(''),
-    metodo_pago: new FormControl(''),
-    estado: new FormControl(''),
     nombre_cliente: new FormControl(''),
     numero_documento_cliente: new FormControl(''),
+    email_cliente: new FormControl(''),
+    telefono_cliente: new FormControl(''),
+    referencia_externa: new FormControl(''),
+    estado: new FormControl(''),
+    tipo_pedido: new FormControl(''),
+    canal_venta: new FormControl(''),
+    estado_pago: new FormControl(''),
+    prioridad: new FormControl(''),
+    metodo_pago: new FormControl(''),
   });
 
-  readonly estados = ['COTIZADO', 'PENDIENTE', 'REALIZADO', 'CANCELADO'];
+  readonly estados = ['COTIZADO', 'PENDIENTE', 'CONFIRMADO', 'EN_PREPARACION', 'LISTO', 'ENTREGADO', 'CANCELADO'];
+  readonly tiposPedido = ['MESA', 'DELIVERY', 'TAKEAWAY', 'MOSTRADOR'];
+  readonly canalesVenta = ['PRESENCIAL', 'WHATSAPP', 'WEB', 'TELEFONO', 'TIKTOK'];
+  readonly estadosPago = ['PENDIENTE', 'PARCIAL', 'PAGADO'];
+  readonly prioridades = ['NORMAL', 'URGENTE'];
   readonly metodos_pago = ['Efectivo', 'Tarjeta', 'Yape', 'Plin', 'Transferencia', 'Otros'];
 
   ngOnInit() {
@@ -88,6 +101,8 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
         this.lengthPages = state.length_pages ?? 0;
         this.count = state.count ?? 0;
       });
+
+    this.onSearch();
   }
 
   ngOnDestroy(): void {
@@ -97,6 +112,34 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
 
   onRangeChange(newRange: TuiDayRange): void {
     this.range = newRange;
+  }
+
+  private buildDateArray(day: TuiDay): number[] {
+    return [day.year, day.month, day.day];
+  }
+
+  private buildFilters(): any {
+    const formValues = this.form.value;
+    const filters: any = {};
+
+    if (this.range) {
+      filters.from_date = this.buildDateArray(this.range.from);
+      filters.to_date = this.buildDateArray(this.range.to);
+    }
+    if (formValues.numero_pedido) filters.numero_pedido = formValues.numero_pedido;
+    if (formValues.nombre_cliente) filters.nombre_cliente = formValues.nombre_cliente;
+    if (formValues.numero_documento_cliente) filters.numero_documento_cliente = formValues.numero_documento_cliente;
+    if (formValues.email_cliente) filters.email_cliente = formValues.email_cliente;
+    if (formValues.telefono_cliente) filters.telefono_cliente = formValues.telefono_cliente;
+    if (formValues.referencia_externa) filters.referencia_externa = formValues.referencia_externa;
+    if (formValues.estado) filters.estado = formValues.estado;
+    if (formValues.tipo_pedido) filters.tipo_pedido = formValues.tipo_pedido;
+    if (formValues.canal_venta) filters.canal_venta = formValues.canal_venta;
+    if (formValues.estado_pago) filters.estado_pago = formValues.estado_pago;
+    if (formValues.prioridad) filters.prioridad = formValues.prioridad;
+    if (formValues.metodo_pago) filters.metodo_pago = formValues.metodo_pago;
+
+    return filters;
   }
 
   formatDate(date: string): string {
@@ -114,8 +157,20 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
     switch (estado) {
       case 'COTIZADO': return 'info';
       case 'PENDIENTE': return 'warning';
-      case 'REALIZADO': return 'positive';
+      case 'CONFIRMADO': return 'accent';
+      case 'EN_PREPARACION': return 'primary';
+      case 'LISTO': return 'success';
+      case 'ENTREGADO': return 'positive';
       case 'CANCELADO': return 'negative';
+      default: return 'neutral';
+    }
+  }
+
+  getEstadoPagoBadge(estado: string): string {
+    switch (estado) {
+      case 'PAGADO': return 'positive';
+      case 'PARCIAL': return 'warning';
+      case 'PENDIENTE': return 'negative';
       default: return 'neutral';
     }
   }
@@ -125,20 +180,8 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
   }
 
   onSearch() {
-    const formValues = this.form.value;
-    const cleanFilters: any = {};
-
-    if (this.range) {
-      cleanFilters.from_date = this.range.from.toString();
-      cleanFilters.to_date = this.range.to.toString();
-    }
-    if (formValues.numero_pedido) cleanFilters.numero_pedido = formValues.numero_pedido;
-    if (formValues.metodo_pago) cleanFilters.metodo_pago = formValues.metodo_pago;
-    if (formValues.estado) cleanFilters.estado = formValues.estado;
-    if (formValues.nombre_cliente) cleanFilters.nombre_cliente = formValues.nombre_cliente;
-    if (formValues.numero_documento_cliente) cleanFilters.numero_documento_cliente = formValues.numero_documento_cliente;
-
-    this.store.dispatch(buscarPedidos({ page: 1, page_size: PAGE_SIZE_PEDIDOS, filters: cleanFilters }));
+    const filters = this.buildFilters();
+    this.store.dispatch(buscarPedidos({ page: 1, page_size: PAGE_SIZE_PEDIDOS, filters }));
   }
 
   onCancelPedido(pedidoId: number) {
@@ -147,21 +190,13 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
     }
   }
 
+  onPedidoClick(pedido: Pedido) {
+    this.dialogPedidoDetail.open(pedido).subscribe();
+  }
+
   goToPage(index: number): void {
-    const formValues = this.form.value;
-    const cleanFilters: any = {};
-
-    if (this.range) {
-      cleanFilters.from_date = this.range.from.toString();
-      cleanFilters.to_date = this.range.to.toString();
-    }
-    if (formValues.numero_pedido) cleanFilters.numero_pedido = formValues.numero_pedido;
-    if (formValues.metodo_pago) cleanFilters.metodo_pago = formValues.metodo_pago;
-    if (formValues.estado) cleanFilters.estado = formValues.estado;
-    if (formValues.nombre_cliente) cleanFilters.nombre_cliente = formValues.nombre_cliente;
-    if (formValues.numero_documento_cliente) cleanFilters.numero_documento_cliente = formValues.numero_documento_cliente;
-
-    this.store.dispatch(buscarPedidos({ page: index + 1, page_size: PAGE_SIZE_PEDIDOS, filters: cleanFilters }));
+    const filters = this.buildFilters();
+    this.store.dispatch(buscarPedidos({ page: index + 1, page_size: PAGE_SIZE_PEDIDOS, filters }));
   }
 
   clearFilters() {
@@ -170,13 +205,6 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
       TuiDay.currentLocal().append({ day: -TuiDay.currentLocal().day + 1 }),
       TuiDay.currentLocal()
     );
-    this.store.dispatch(buscarPedidos({
-      page: 1,
-      page_size: PAGE_SIZE_PEDIDOS,
-      filters: {
-        from_date: this.range.from.toString(),
-        to_date: this.range.to.toString(),
-      }
-    }));
+    this.onSearch();
   }
 }

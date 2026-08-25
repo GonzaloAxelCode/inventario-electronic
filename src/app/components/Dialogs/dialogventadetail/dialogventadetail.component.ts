@@ -4,6 +4,7 @@ import { URL_BASE } from '@/app/services/utils/endpoints';
 import { anularVenta, anularVentaExito, generarComprobanteVenta, generarComprobanteVentaExito } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
+import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule, NgForOf } from '@angular/common';
@@ -83,6 +84,11 @@ export class DialogventadetailComponent implements OnInit {
 
 
   URL_BASE = URL_BASE
+  tiendaNombre = 'Mi Tienda';
+  tiendaRuc = '';
+  tiendaDireccion = '';
+  tiendaTelefono = '';
+  tiendaLogo: string | null = null;
   prevPdfTicket(url: string) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url + "#toolbar=1&navpanes=0&scrollbar=0&view=FitH");
   }
@@ -95,9 +101,27 @@ export class DialogventadetailComponent implements OnInit {
       this.loadingAnularVenta = state.loadingNotaCredito;
       this.loadingGenerarComprobante = state.loadingGenerarComprobante
     });
+
+    this.store.select(selectUsersState).subscribe(userState => {
+      const user = userState.user;
+      const tienda = user.tienda_data;
+      this.tiendaNombre = tienda?.nombre || user.tienda_nombre || 'Mi Tienda';
+      this.tiendaRuc = tienda?.ruc || '';
+      this.tiendaDireccion = tienda?.direccion || '';
+      this.tiendaTelefono = tienda?.telefono || '';
+      this.tiendaLogo = tienda?.logo_img ? URL_BASE + tienda.logo_img : null;
+    });
   }
 
   open = false;
+  showConfirmAnular = false;
+  showWhatsApp = false;
+  whatsappNumero = '';
+  whatsappMensaje = '';
+  showEmail = false;
+  emailDestino = '';
+  emailAsunto = '';
+  emailMensaje = '';
   protected titles = ["Producto Sin Imagen"]
   protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
 
@@ -152,7 +176,53 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
     return valor ? parseFloat(valor.toFixed(2)) : 0.0;
   }
 
+  confirmarAnular() {
+    this.showConfirmAnular = true;
+  }
+
+  cancelarAnular() {
+    this.showConfirmAnular = false;
+  }
+
+  abrirWhatsApp() {
+    this.whatsappNumero = this.venta.telefono_cliente || '';
+    this.whatsappMensaje = `Hola te saluda Movil Axel,\nTe envío tu comprobante electrónico:\n${this.stripDomain(this.comprobante.pdf_url)}\n\nGracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
+    this.showWhatsApp = true;
+  }
+
+  cerrarWhatsApp() {
+    this.showWhatsApp = false;
+  }
+
+  enviarWhatsAppModal() {
+    if (!this.whatsappNumero) return;
+    const url = `https://wa.me/51${this.whatsappNumero}?text=${encodeURIComponent(this.whatsappMensaje)}`;
+    window.open(url, '_blank');
+    this.showWhatsApp = false;
+  }
+
+  abrirEmail() {
+    this.emailDestino = this.venta.email_cliente || this.venta.correo_cliente || '';
+    this.emailAsunto = `Comprobante ${this.comprobante.serie}-${this.comprobante.correlativo} - Movil Axel`;
+    this.emailMensaje = `Hola,\n\nTe envío tu comprobante electrónico.\n\nPuedes descargarlo en el siguiente enlace:\n${this.stripDomain(this.comprobante.pdf_url)}\n\nGracias por tu compra. ¡Esperamos verte de nuevo pronto!\n\nSaludos,\nMovil Axel`;
+    this.showEmail = true;
+  }
+
+  cerrarEmail() {
+    this.showEmail = false;
+  }
+
+  enviarEmailModal() {
+    if (!this.emailDestino) return;
+    const subject = encodeURIComponent(this.emailAsunto);
+    const body = encodeURIComponent(this.emailMensaje);
+    const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${this.emailDestino}&su=${subject}&body=${body}`;
+    window.open(url, '_blank');
+    this.showEmail = false;
+  }
+
   anularVenta(id: number, doc: string) {
+    this.showConfirmAnular = false;
     this.store.dispatch(anularVenta({ ventaId: id, venta: this.venta, motivo: "Anulación de la operación", tipo_motivo: "01", anonima: doc == "00000000" }))
 
     this.actions$.pipe(

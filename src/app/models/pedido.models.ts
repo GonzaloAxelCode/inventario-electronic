@@ -21,24 +21,37 @@ export interface Pedido {
     numero_pedido: string;
     usuario?: number;
     tienda?: number;
+    tipo_pedido: string;
+    canal_venta: string;
+    prioridad: string;
     fecha_hora: string;
     fecha_realizacion?: string;
-    fecha_cancelacion?: string;
+    fecha_vencimiento?: string | null;
+    fecha_entrega_estimada?: string | null;
+    fecha_cancelacion?: string | null;
     metodo_pago: string;
-    estado: 'COTIZADO' | 'PENDIENTE' | 'REALIZADO' | 'CANCELADO';
+    estado: string;
+    estado_pago: string;
     activo: boolean;
-    total: number;
     subtotal: number;
     gravado_total?: number;
     igv_total: number;
     descuento_total: number;
+    costo_envio: number;
+    total: number;
+    monto_adelanto?: number;
+    metodo_pago_adelanto?: string | null;
     tipo_documento_cliente?: string;
     numero_documento_cliente?: string;
     nombre_cliente: string;
     email_cliente?: string;
     telefono_cliente?: string;
-    direccion_cliente?: string;
+    direccion_envio?: string;
+    referencia_ubicacion?: string;
     observaciones?: string;
+    notas_internas?: string;
+    motivo_cancelacion?: string | null;
+    referencia_externa?: string;
     productos: PedidoProducto[];
     productos_json?: any[];
     date_created: string;
@@ -53,8 +66,16 @@ export interface CreatePedido {
         telefono_cliente?: string;
         direccion_cliente?: string;
     };
+    tipo_pedido?: string;
+    canal_venta?: string;
+    prioridad?: string;
     metodoPago: string;
     observaciones?: string;
+    notas_internas?: string;
+    direccion_envio?: string;
+    referencia_ubicacion?: string;
+    costo_envio?: number;
+    referencia_externa?: string;
     productos: {
         inventarioId: number;
         cantidad_final: number;
@@ -63,14 +84,20 @@ export interface CreatePedido {
 }
 
 export interface PedidoSearchFilters {
-    from_date?: string | number[];
-    to_date?: string | number[];
+    from_date?: number[];
+    to_date?: number[];
     numero_pedido?: string;
     metodo_pago?: string;
     estado?: string;
+    tipo_pedido?: string;
+    canal_venta?: string;
+    estado_pago?: string;
+    prioridad?: string;
     nombre_cliente?: string;
     numero_documento_cliente?: string;
-    stock_disponible?: string;
+    email_cliente?: string;
+    telefono_cliente?: string;
+    referencia_externa?: string;
 }
 
 export interface PedidoResponse {

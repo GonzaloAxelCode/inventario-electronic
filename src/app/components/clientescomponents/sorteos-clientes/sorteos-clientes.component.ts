@@ -3,16 +3,21 @@ import { Component, inject, OnInit, OnDestroy, TemplateRef, ViewChild } from '@a
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@/app/state/app.state';
-import { selectCliente } from '@/app/state/selectors/cliente.selectors';
-import { loadClientes } from '@/app/state/actions/cliente.actions';
-import { Cliente } from '@/app/models/cliente.models';
-import { TuiAppearance, TuiButton, TuiDialogService, TuiTextfield, TuiTitle } from '@taiga-ui/core';
+import { selectCliente, selectClientesFrecuentes, selectTopClientesCompra } from '@/app/state/selectors/cliente.selectors';
+import { loadClientes, loadClientesFrecuentes, loadTopClientesCompra } from '@/app/state/actions/cliente.actions';
+import { Cliente, ClienteFrecuente, TopClienteCompra } from '@/app/models/cliente.models';
+import { TuiAppearance, TuiButton, TuiDialogService, TuiTitle } from '@taiga-ui/core';
 import { map, Subject, takeUntil } from 'rxjs';
+
+type FiltroSorteo = 'todos' | 'frecuentes' | 'top-compras';
+
+const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
 @Component({
   selector: 'app-sorteos-clientes',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TuiButton, TuiAppearance, TuiTitle, TuiTextfield],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TuiButton, TuiAppearance, TuiTitle],
   templateUrl: './sorteos-clientes.component.html',
   styleUrl: './sorteos-clientes.component.scss'
 })
@@ -26,6 +31,8 @@ export class SorteosClientesComponent implements OnInit, OnDestroy {
 
   clientes: Cliente[] = [];
   allClientes: Cliente[] = [];
+  clientesFrecuentes: ClienteFrecuente[] = [];
+  topClientes: TopClienteCompra[] = [];
 
   colores = [
     '#FF0000',
@@ -44,10 +51,25 @@ export class SorteosClientesComponent implements OnInit, OnDestroy {
   winner: Cliente | null = null;
   rotationAngle = 0;
 
-  // ==================== SORTEOS (igual que TikTok) ====================
+  // ==================== FILTROS ====================
   busquedaSorteo = '';
+  filtroActivo: FiltroSorteo | null = null;
   sorteoSeleccionados: Set<number> = new Set();
   sorteoListo = false;
+
+  // Selectores de mes/año
+  currentYear = new Date().getFullYear();
+  currentMonth = new Date().getMonth() + 1;
+  yearNumbers = [this.currentYear, this.currentYear - 1, this.currentYear - 2];
+  monthNames = MONTH_NAMES;
+  selectedMonth = this.currentMonth;
+  selectedYear = this.currentYear;
+
+  filtros = [
+    { key: 'todos' as FiltroSorteo, label: 'Todos', icon: '👥' },
+    { key: 'frecuentes' as FiltroSorteo, label: 'Más frecuentes', icon: '⭐' },
+    { key: 'top-compras' as FiltroSorteo, label: 'Top compras', icon: '💰' },
+  ];
 
   get sorteoParticipants(): Cliente[] {
     return this.clientes.filter(c => c.id !== undefined && this.sorteoSeleccionados.has(c.id));
@@ -71,25 +93,52 @@ export class SorteosClientesComponent implements OnInit, OnDestroy {
 
   getTextStyle(index: number): { [key: string]: string } {
     const midAngle = index * this.sectorAngle + this.sectorAngle / 2;
-    const radians = (midAngle - 90) * (Math.PI / 180);
-    const radius = 36;
-    const x = 50 + radius * Math.cos(radians);
-    const y = 50 + radius * Math.sin(radians);
     return {
-      'left': `${x}%`,
-      'top': `${y}%`,
-      'transform': `translate(-50%, -50%) rotate(${midAngle}deg)`,
+      'left': '50%',
+      'top': '50%',
+      'transform-origin': '0 0',
+      'transform': `rotate(${midAngle}deg) translateX(20%)`,
+      'white-space': 'nowrap',
     };
   }
 
   ngOnInit() {
     this.store.dispatch(loadClientes());
+    this.dispatchMonthActions();
+
     this.store.select(selectCliente)
       .pipe(takeUntil(this.destroy$))
       .subscribe((state) => {
         this.allClientes = (state.clientes || []).filter((c: Cliente) => c.activo !== false);
         this.clientes = [...this.allClientes];
       });
+
+    this.store.select(selectClientesFrecuentes)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((clientes) => {
+        this.clientesFrecuentes = clientes;
+      });
+
+    this.store.select(selectTopClientesCompra)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((clientes) => {
+        this.topClientes = clientes;
+      });
+  }
+
+  private dispatchMonthActions(): void {
+    this.store.dispatch(loadClientesFrecuentes({ anio: this.selectedYear, mes: this.selectedMonth }));
+    this.store.dispatch(loadTopClientesCompra({ anio: this.selectedYear, mes: this.selectedMonth }));
+  }
+
+  onMonthChange(value: string): void {
+    this.selectedMonth = Number(value);
+    this.dispatchMonthActions();
+  }
+
+  onYearChange(value: number): void {
+    this.selectedYear = value;
+    this.dispatchMonthActions();
   }
 
   ngOnDestroy() {
@@ -113,10 +162,14 @@ export class SorteosClientesComponent implements OnInit, OnDestroy {
 
   toggleTodosSorteo() {
     if (this.sorteoListo) return;
-    if (this.sorteoSeleccionados.size === this.clientes.length) {
-      this.sorteoSeleccionados.clear();
+    const filtrados = this.clientesSorteoFiltrados;
+    const todosSeleccionados = filtrados.every(c => c.id !== undefined && this.sorteoSeleccionados.has(c.id));
+    if (todosSeleccionados) {
+      filtrados.forEach(c => {
+        if (c.id !== undefined) this.sorteoSeleccionados.delete(c.id);
+      });
     } else {
-      this.clientes.forEach(c => {
+      filtrados.forEach(c => {
         if (c.id !== undefined) this.sorteoSeleccionados.add(c.id);
       });
     }
@@ -138,15 +191,52 @@ export class SorteosClientesComponent implements OnInit, OnDestroy {
   }
 
   get clientesSorteoFiltrados(): Cliente[] {
-    if (!this.busquedaSorteo.trim()) return this.clientes;
-    const t = this.busquedaSorteo.toLowerCase();
-    return this.clientes.filter(c =>
-      c.fullname.toLowerCase().includes(t) ||
-      c.firstname.toLowerCase().includes(t) ||
-      c.lastname.toLowerCase().includes(t) ||
-      c.document.includes(t) ||
-      c.phone.includes(t)
-    );
+    let resultado = this.clientes;
+
+    // Aplicar filtro de categoría
+    if (this.filtroActivo === 'frecuentes') {
+      const nombresFrecuentes = new Set(this.clientesFrecuentes.map(c => c.nombre));
+      resultado = resultado.filter(c => nombresFrecuentes.has(c.fullname));
+    } else if (this.filtroActivo === 'top-compras') {
+      const nombresTop = new Set(this.topClientes.map(c => c.nombre));
+      resultado = resultado.filter(c => nombresTop.has(c.fullname));
+    }
+
+    // Aplicar búsqueda
+    if (this.busquedaSorteo.trim()) {
+      const t = this.busquedaSorteo.toLowerCase();
+      resultado = resultado.filter(c =>
+        c.fullname.toLowerCase().includes(t) ||
+        c.firstname.toLowerCase().includes(t) ||
+        c.lastname.toLowerCase().includes(t) ||
+        c.document.includes(t) ||
+        c.phone.includes(t)
+      );
+    }
+
+    return resultado;
+  }
+
+  setFiltro(filtro: FiltroSorteo) {
+    if (this.filtroActivo === filtro) {
+      this.filtroActivo = null;
+    } else {
+      this.filtroActivo = filtro;
+    }
+    this.sorteoSeleccionados.clear();
+    this.sorteoSeleccionados = new Set(this.sorteoSeleccionados);
+  }
+
+  getFiltroCount(filtro: FiltroSorteo): number {
+    if (filtro === 'todos') return this.clientes.length;
+    if (filtro === 'frecuentes') return this.clientesFrecuentes.length;
+    if (filtro === 'top-compras') return this.topClientes.length;
+    return 0;
+  }
+
+  get todosFiltradosSeleccionados(): boolean {
+    const filtrados = this.clientesSorteoFiltrados;
+    return filtrados.length > 0 && filtrados.every(c => c.id !== undefined && this.sorteoSeleccionados.has(c.id));
   }
 
   girarRuleta() {

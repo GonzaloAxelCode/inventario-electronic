@@ -197,6 +197,21 @@ export class TodaysalestableComponent {
     }
   }
 
+  getTotalVentas(): number {
+    return this.ventas.reduce((sum: number, v: any) => sum + (v.total || 0), 0);
+  }
+
+  getTicketPromedio(): number {
+    if (this.ventas.length === 0) return 0;
+    return this.getTotalVentas() / this.ventas.length;
+  }
+
+  getTotalProductos(): number {
+    return this.ventas.reduce((sum: number, v: any) => {
+      return sum + (v.productos?.reduce((pSum: number, p: any) => pSum + (p.cantidad || 0), 0) || 0);
+    }, 0);
+  }
+
 
 
 

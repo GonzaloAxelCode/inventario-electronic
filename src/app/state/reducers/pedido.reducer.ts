@@ -10,6 +10,9 @@ import {
     crearPedido,
     crearPedidoExito,
     crearPedidoError,
+    actualizarPedido,
+    actualizarPedidoExito,
+    actualizarPedidoError,
     cancelarPedido,
     cancelarPedidoExito,
     cancelarPedidoError,
@@ -26,6 +29,7 @@ export interface PedidoState {
     length_pages: number;
     loadingCreate: boolean;
     loadingCancel: boolean;
+    loadingUpdate: boolean;
 }
 
 export const initialState: PedidoState = {
@@ -39,6 +43,7 @@ export const initialState: PedidoState = {
     length_pages: 0,
     loadingCreate: false,
     loadingCancel: false,
+    loadingUpdate: false,
 };
 
 export const pedidoReducer = createReducer(
@@ -107,5 +112,21 @@ export const pedidoReducer = createReducer(
         ...state,
         error,
         loadingCancel: false,
+    })),
+    on(actualizarPedido, (state) => ({
+        ...state,
+        loadingUpdate: true,
+    })),
+    on(actualizarPedidoExito, (state, { pedido }) => ({
+        ...state,
+        pedidos: state.pedidos.map((p) =>
+            p.id === pedido.id ? { ...p, ...pedido } : p
+        ),
+        loadingUpdate: false,
+    })),
+    on(actualizarPedidoError, (state, { error }) => ({
+        ...state,
+        error,
+        loadingUpdate: false,
     })),
 );

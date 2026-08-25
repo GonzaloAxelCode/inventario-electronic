@@ -25,7 +25,7 @@
             [style.transform]="'rotate(' + rotationAngle + 'deg)'"
             [style.transition]="isSpinning ? 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)' : 'none'">
             <div *ngFor="let c of (sorteoListo ? sorteoParticipants : clientes); let i = index"
-              class="absolute text-sm sm:text-lg lg:text-xl font-bold text-white whitespace-nowrap pointer-events-none drop-shadow-md"
+              class="absolute text-[8px] sm:text-[10px] lg:text-xs font-bold text-white whitespace-nowrap pointer-events-none drop-shadow-md"
               [ngStyle]="getTextStyle(i)">
               {{ c.firstname }}
             </div>
@@ -58,7 +58,7 @@
             {{ sorteoListo ? 'Participantes confirmados' : 'Seleccionar participantes' }}
           </h4>
           <span [class]="'text-xs font-semibold px-2.5 py-1 rounded-full ' + (sorteoListo ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300')">
-            {{ sorteoListo ? sorteoParticipants.length + ' listos' : sorteoSeleccionados.size + ' de ' + clientes.length }}
+            {{ sorteoListo ? sorteoParticipants.length + ' listos' : sorteoSeleccionados.size + ' de ' + clientesSorteoFiltrados.length + ' seleccionados' }}
           </span>
         </div>
         <p class="text-xs text-neutral-500 dark:text-neutral-400" *ngIf="!sorteoListo">
@@ -66,22 +66,55 @@
         </p>
       </div>
 
+      <!-- Filtros estilo WhatsApp -->
+      <div class="px-4 sm:px-5 pt-3 pb-2" *ngIf="!sorteoListo">
+        <!-- Selectores de mes/año -->
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-xs text-neutral-500 dark:text-neutral-400">Período:</span>
+          <select [(ngModel)]="selectedMonth" (ngModelChange)="onMonthChange($event)"
+            class="text-xs px-2 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white">
+            <option *ngFor="let m of monthNames; let i = index" [value]="i + 1">{{ m }}</option>
+          </select>
+          <select [(ngModel)]="selectedYear" (ngModelChange)="onYearChange($event)"
+            class="text-xs px-2 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white">
+            <option *ngFor="let y of yearNumbers" [ngValue]="y">{{ y }}</option>
+          </select>
+        </div>
+
+        <!-- Botones de filtro -->
+        <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <button *ngFor="let filtro of filtros" (click)="setFiltro(filtro.key)"
+            [ngClass]="filtroActivo === filtro.key
+              ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/25'
+              : 'bg-white dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-600'"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0">
+            <span class="text-sm">{{ filtro.icon }}</span>
+            <span>{{ filtro.label }}</span>
+            <span class="text-[10px] opacity-75">({{ getFiltroCount(filtro.key) }})</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Acciones rápidas -->
       <div class="px-4 sm:px-5 pt-3 pb-2 flex flex-col gap-2" *ngIf="!sorteoListo">
-        <tui-textfield [tuiTextfieldSize]="'s'" iconStart="@tui.search">
-          <input tuiTextfield type="text" [(ngModel)]="busquedaSorteo" [ngModelOptions]="{standalone: true}" placeholder="Buscar cliente por nombre, documento o teléfono..." />
-        </tui-textfield>
+        <div class="relative">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" [(ngModel)]="busquedaSorteo" placeholder="Buscar cliente por nombre, documento o teléfono..."
+            class="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50" />
+        </div>
         <button (click)="toggleTodosSorteo()"
-          [ngClass]="sorteoSeleccionados.size === clientes.length ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900' : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200'"
+          [ngClass]="todosFiltradosSeleccionados ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900' : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200'"
           class="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors self-start">
-          {{ sorteoSeleccionados.size === clientes.length ? 'Deseleccionar todos' : 'Seleccionar todos' }}
+          {{ todosFiltradosSeleccionados ? 'Deseleccionar todos' : 'Seleccionar todos' }}
         </button>
       </div>
 
       <!-- Lista de clientes -->
       <div class="p-4 sm:p-5 pt-2 max-h-[35vh] overflow-y-auto">
         <div class="space-y-1.5">
-          <div *ngFor="let c of clientesSorteoFiltrados; let i = index"
+          <div *ngFor="let c of (sorteoListo ? sorteoParticipants : clientesSorteoFiltrados); let i = index"
             [ngClass]="{
               'bg-neutral-50 dark:bg-neutral-700/50': !sorteoListo && !isSorteoSeleccionado(c.id!),
               'bg-emerald-50 dark:bg-emerald-900/20': isSorteoSeleccionado(c.id!) && !sorteoListo,

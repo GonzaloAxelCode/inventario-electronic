@@ -1,90 +1,67 @@
-import { GuiaRemisionRemitente } from '@/app/models/guia-remision.models';
-import { cargarGuias } from '@/app/state/actions/guia-remision.actions';
-import { AppState } from '@/app/state/app.state';
-import { ListaguiasComponent } from '@/app/components/guiaremisioncomponents/listaguias/listaguias.component';
-import { FormguiaComponent } from '@/app/components/guiaremisioncomponents/formguia/formguia.component';
-import { DetalleguiaComponent } from '@/app/components/guiaremisioncomponents/detalleguia/detalleguia.component';
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
-import { Store } from '@ngrx/store';
-import { TuiFade, TuiTab, TuiTabs } from '@taiga-ui/kit';
-import { TuiHeader, TuiNavigation, TuiSubheaderComponent } from '@taiga-ui/layout';
-import { TuiIcon } from '@taiga-ui/core';
+import { Component } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
+import { TuiDay, TuiDayLike, TuiDayRange } from '@taiga-ui/cdk';
+import { TuiButton, TuiTextfield } from '@taiga-ui/core';
+import { TuiBadge, TuiPagination, TuiSwitch } from '@taiga-ui/kit';
+import { TuiExpand } from '@taiga-ui/experimental';
+import { TuiSearch } from '@taiga-ui/layout';
+import { TuiInputDateRangeModule, TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
 
 @Component({
   selector: 'app-guia-remision',
   standalone: true,
   imports: [
     CommonModule,
-    TuiNavigation,
-    TuiHeader,
-    TuiSubheaderComponent,
-    TuiTabs,
-    TuiTab,
-    TuiFade,
-    TuiIcon,
-    ListaguiasComponent,
-    FormguiaComponent,
-    DetalleguiaComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    TuiButton,
+    TuiTextfield,
+    TuiBadge,
+    TuiPagination,
+    TuiSwitch,
+    TuiSearch,
+    TuiExpand,
+    TuiInputDateRangeModule,
+    TuiInputModule,
+    TuiSelectModule,
   ],
   templateUrl: './guia-remision.component.html',
   styleUrls: ['./guia-remision.component.scss'],
 })
-export class GuiaRemisionComponent implements OnInit {
+export class GuiaRemisionComponent {
 
-  private store = inject(Store<AppState>);
-  private route = inject(ActivatedRoute);
-  private location = inject(Location);
+  expanded = false;
+  viewMode = 'table' as string;
 
-  validTabs = ['lista', 'registrar'] as const;
-  activeTab: 'lista' | 'registrar' = 'lista';
-  activeTabIndex = 0;
+  readonly maxLength: TuiDayLike = { month: 12 };
 
-  guiaSeleccionada: GuiaRemisionRemitente | null = null;
+  range: TuiDayRange = new TuiDayRange(
+    TuiDay.currentLocal().append({ day: -TuiDay.currentLocal().day + 1 }),
+    TuiDay.currentLocal()
+  );
 
-  ngOnInit() {
-    this.store.dispatch(cargarGuias({ page: 1, page_size: 10 }));
+  form = new FormGroup({
+    numero_guia: new FormControl(''),
+    nombre_destinatario: new FormControl(''),
+    estado: new FormControl(''),
+  });
 
-    const fragment = this.route.snapshot.fragment;
-    if (fragment && this.isValidTab(fragment)) {
-      this.activeTab = fragment as typeof this.activeTab;
-      this.activeTabIndex = this.validTabs.indexOf(fragment as any);
-    }
+  readonly estados = ['PENDIENTE', 'EN_TRANSITO', 'ENTREGADO', 'CANCELADO'];
+
+  onRangeChange(newRange: TuiDayRange): void {
+    this.range = newRange;
   }
 
-  onTabChange(index: number) {
-    const tab = this.validTabs[index];
-    this.activeTab = tab;
-    this.activeTabIndex = index;
-    this.guiaSeleccionada = null;
-    this.location.replaceState(`/app/guia-remision#${tab}`);
+  onSearch() {
+    // TODO: implementar busqueda
   }
 
-  onVerDetalle(guia: GuiaRemisionRemitente) {
-    this.guiaSeleccionada = guia;
-  }
-
-  onEditarGuia(guia: GuiaRemisionRemitente) {
-    this.guiaSeleccionada = guia;
-    this.activeTab = 'registrar';
-    this.activeTabIndex = 1;
-  }
-
-  onCerrarDetalle() {
-    this.guiaSeleccionada = null;
-    this.store.dispatch(cargarGuias({ page: 1, page_size: 10 }));
-  }
-
-  onCancelarForm() {
-    this.guiaSeleccionada = null;
-    this.activeTab = 'lista';
-    this.activeTabIndex = 0;
-    this.location.replaceState('/app/guia-remision#lista');
-  }
-
-  private isValidTab(tab: string): boolean {
-    return this.validTabs.includes(tab as any);
+  clearFilters() {
+    this.form.reset();
+    this.range = new TuiDayRange(
+      TuiDay.currentLocal().append({ day: -TuiDay.currentLocal().day + 1 }),
+      TuiDay.currentLocal()
+    );
   }
 }

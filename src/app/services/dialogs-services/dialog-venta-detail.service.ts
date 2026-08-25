@@ -19,13 +19,10 @@ export class DialogVentaDetailService {
     open(data: Partial<Venta> | null): Observable<boolean> {
         const component = new PolymorpheusComponent(DialogventadetailComponent);
         const options: Partial<VentaDialogOptions> = {
-            dismissible: false,
+            dismissible: true,
             size: "auto",
             data,
             appearance: 'lorem-ipsum',
-
-
-
         };
 
         return this.dialogService.open(component, options);

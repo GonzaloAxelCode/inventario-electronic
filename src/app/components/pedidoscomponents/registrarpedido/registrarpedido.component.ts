@@ -6,6 +6,7 @@ import { ConsultaService } from '@/app/services/consultas.service';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { normalizeSku } from "@/app/services/search-services/producto-search.service";
 import { URL_BASE } from "@/app/services/utils/endpoints";
+import { loadClientes } from "@/app/state/actions/cliente.actions";
 import { crearPedido, crearPedidoExito } from "@/app/state/actions/pedido.actions";
 import { AppState } from '@/app/state/app.state';
 import { selectClienteState } from "@/app/state/selectors/cliente.selectors";
@@ -96,6 +97,9 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
   pedidoForm: FormGroup;
   listMetodosPago = [" YAPE", "PLIN", "Transferencia(No disponible)", "Efectivo"]
   formasPago = ["Contado"]
+  listTipoPedido = ["MESA", "DELIVERY", "TAKEAWAY", "MOSTRADOR"]
+  listCanalVenta = ["PRESENCIAL", "WHATSAPP", "WEB", "TELEFONO"]
+  listPrioridad = ["NORMAL", "URGENTE"]
   protected readonly options = { updateOn: 'blur' } as const;
   loaderSearchCliente = false;
 
@@ -147,24 +151,29 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
     const docExistenteControl = this.pedidoForm.get('documento_cliente_existente');
     const docNuevoControl = this.pedidoForm.get('documento_cliente');
     const clienteControl = this.pedidoForm.get('cliente');
+    const nombreControl = this.pedidoForm.get('nombre_cliente');
 
     if (this.vistaActiva === 'sin_cliente') {
       docExistenteControl?.clearValidators();
       docNuevoControl?.clearValidators();
       clienteControl?.clearValidators();
+      nombreControl?.clearValidators();
     } else if (this.vistaActiva === 'buscar') {
       docExistenteControl?.setValidators([Validators.required]);
       docNuevoControl?.clearValidators();
       clienteControl?.setValidators([Validators.required]);
+      nombreControl?.clearValidators();
     } else {
       docExistenteControl?.clearValidators();
       docNuevoControl?.setValidators([Validators.required]);
       clienteControl?.setValidators([Validators.required]);
+      nombreControl?.clearValidators();
     }
 
     docExistenteControl?.updateValueAndValidity();
     docNuevoControl?.updateValueAndValidity();
     clienteControl?.updateValueAndValidity();
+    nombreControl?.updateValueAndValidity();
   }
 
   clickedInside() {
@@ -285,6 +294,9 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
       usuarioId: [this.userId],
       metodoPago: [this.listMetodosPago[3], Validators.required],
       formaPago: [this.formasPago[0], Validators.required],
+      tipo_pedido: ['MOSTRADOR'],
+      canal_venta: ['PRESENCIAL'],
+      prioridad: ['NORMAL'],
       cliente: [null],
       documento_cliente: [""],
       nombre_cliente: ["", Validators.required],
@@ -294,6 +306,11 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
       documento_cliente_existente: [""],
       productos: this.fb.array([], [Validators.required, Validators.minLength(1)]),
       observaciones: [""],
+      notas_internas: [""],
+      direccion_envio: [""],
+      referencia_ubicacion: [""],
+      costo_envio: [0],
+      referencia_externa: [""],
     });
 
     this.productosFormArray.valueChanges.subscribe(() => {
@@ -303,6 +320,9 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
 
   documents: string[] = []
   ngOnInit() {
+    this.changeModeClient('sin_cliente');
+    this.store.dispatch(loadClientes());
+
     this.store.select(selectInventario).subscribe((state) => {
       this.inventarios = state.inventarios
     })
@@ -413,7 +433,10 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
 
       this.pedidoForm.patchValue({
         nombre_cliente: clienteForm.nombre_completo,
-        cliente: clienteForm
+        cliente: clienteForm,
+        telefono_cliente: clienteSearh.phone || '',
+        correo_cliente: clienteSearh.email || '',
+        direccion_cliente: clienteSearh.address || '',
       });
       this.is_client_exists = true
       this.clienteSelected = clienteSearh
@@ -504,8 +527,16 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
         telefono_cliente: formValue.telefono_cliente || undefined,
         direccion_cliente: formValue.direccion_cliente || undefined,
       },
+      tipo_pedido: formValue.tipo_pedido || undefined,
+      canal_venta: formValue.canal_venta || undefined,
+      prioridad: formValue.prioridad || undefined,
       metodoPago: formValue.metodoPago,
       observaciones: formValue.observaciones || undefined,
+      notas_internas: formValue.notas_internas || undefined,
+      direccion_envio: formValue.direccion_envio || undefined,
+      referencia_ubicacion: formValue.referencia_ubicacion || undefined,
+      costo_envio: formValue.costo_envio || 0,
+      referencia_externa: formValue.referencia_externa || undefined,
       productos: formValue.productos.map((p: any) => ({
         inventarioId: p.inventarioId,
         cantidad_final: parseInt(p.cantidad_final),
