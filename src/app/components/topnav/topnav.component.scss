@@ -19,8 +19,12 @@ body {
   align-items: center;
   justify-content: space-between;
   height: 4rem;
-  padding: 0 1rem;
+  padding: 0 1.25rem;
   max-width: 100%;
+}
+
+:host-context([tuiTheme="dark"]) .topnav-header {
+  border-bottom: 1px solid rgba(163, 230, 53, 0.1);
 }
 
 /* Logo */
@@ -68,13 +72,13 @@ body {
   display: flex;
   align-items: center;
   gap: 0.375rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 10px;
+  font-size: 0.938rem;
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
-  transition: all 150ms ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
   border: none;
   background: none;
@@ -87,8 +91,8 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .nav-link:hover {
-  background: rgb(38 38 38);
-  color: white;
+  background: rgba(163, 230, 53, 0.1);
+  color: #a3e635;
 }
 
 .nav-link-active {
@@ -98,8 +102,10 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .nav-link-active {
-  background: rgb(85 85 85);
-  color: white;
+  background: linear-gradient(135deg, #a3e635, #84cc16);
+  color: #000;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(163, 230, 53, 0.3);
 }
 
 .nav-icon {
@@ -123,15 +129,17 @@ body {
 /* Per-item Dropdown */
 .item-dropdown {
   position: fixed;
-  border-radius: 0.75rem;
-  box-shadow:
-    0 20px 40px -8px rgba(0, 0, 0, 0.12),
-    0 8px 16px -4px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(163, 230, 53, 0.1);
   padding: 0.5rem;
   min-width: 280px;
   z-index: 99999;
-  animation: item-dropdown-enter 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: item-dropdown-enter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: top left;
+}
+
+:host-context([tuiTheme="dark"]) .item-dropdown {
+  backdrop-filter: blur(20px);
 }
 
 @keyframes item-dropdown-enter {
@@ -158,12 +166,20 @@ body {
   color: rgb(161 161 170);
 }
 
+:host-context([tuiTheme="dark"]) .item-dropdown-header-icon {
+  color: #a3e635;
+}
+
 .item-dropdown-header-label {
   font-size: 0.8125rem;
   font-weight: 600;
   color: rgb(161 161 170);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+:host-context([tuiTheme="dark"]) .item-dropdown-header-label {
+  color: #a3e635;
 }
 
 .item-dropdown-divider {
@@ -173,7 +189,7 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .item-dropdown-divider {
-  background: rgb(64 64 64);
+  background: rgba(163, 230, 53, 0.15);
 }
 
 .item-dropdown-grid {
@@ -202,7 +218,7 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .item-dropdown-card:hover {
-  background: rgb(38 38 38);
+  background: rgba(163, 230, 53, 0.1);
 }
 
 .item-dropdown-card-icon {
@@ -218,8 +234,8 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .item-dropdown-card-icon {
-  background: rgb(38 38 38);
-  color: rgb(161 161 170);
+  background: rgba(163, 230, 53, 0.1);
+  color: #a3e635;
 }
 
 .item-dropdown-card-icon svg {
@@ -260,7 +276,7 @@ body {
 
 .item-dropdown-card:hover .item-dropdown-card-arrow {
   transform: translateX(2px);
-  color: rgb(99 102 241);
+  color: #a3e635;
 }
 
 /* Overflow Menu */
@@ -272,29 +288,33 @@ body {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 0.25rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  padding: 0.25rem;
+  margin-top: 0.5rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(163, 230, 53, 0.1);
+  padding: 0.5rem;
   min-width: 200px;
   max-height: 400px;
   overflow-y: auto;
   z-index: 9999;
-  animation: item-dropdown-enter 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: item-dropdown-enter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: top right;
+}
+
+:host-context([tuiTheme="dark"]) .overflow-dropdown {
+  backdrop-filter: blur(20px);
 }
 
 .overflow-item {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.625rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 10px;
+  font-size: 0.938rem;
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
-  transition: all 100ms ease;
+  transition: all 0.15s ease;
   cursor: pointer;
   border: none;
   background: none;
@@ -307,12 +327,13 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .overflow-item:hover {
-  background: rgb(55 55 55);
+  background: rgba(163, 230, 53, 0.1);
+  color: #a3e635;
 }
 
 .overflow-item-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
   flex-shrink: 0;
 }
 
@@ -338,25 +359,30 @@ body {
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 12px;
   border: none;
   background: none;
   cursor: pointer;
-  transition: background-color 150ms ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:host-context([tuiTheme="dark"]) .user-menu-trigger:hover {
+  background: rgba(163, 230, 53, 0.1);
 }
 
 .user-avatar {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
-  background: linear-gradient(to bottom right, rgb(99 102 241), rgb(139 92 246));
+  background: linear-gradient(135deg, #a3e635, #84cc16);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
+  color: #000;
+  font-size: 0.875rem;
+  font-weight: 700;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(163, 230, 53, 0.25);
 }
 
 .user-info {
@@ -399,11 +425,11 @@ body {
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 0.5rem;
+  border-radius: 12px;
   border: none;
   background: none;
   cursor: pointer;
-  transition: background-color 150ms ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .mobile-menu-button:hover {
@@ -411,23 +437,27 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .mobile-menu-button:hover {
-  background-color: rgb(55 55 55);
+  background: rgba(163, 230, 53, 0.1);
 }
 
 .mobile-dropdown {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 0.25rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  margin-top: 0.5rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(163, 230, 53, 0.1);
   padding: 0.5rem;
   min-width: 280px;
   max-height: calc(100vh - 6rem);
   overflow-y: auto;
   z-index: 9999;
-  animation: item-dropdown-enter 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: item-dropdown-enter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: top right;
+}
+
+:host-context([tuiTheme="dark"]) .mobile-dropdown {
+  backdrop-filter: blur(20px);
 }
 
 .mobile-dropdown-header {
@@ -448,12 +478,17 @@ body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.625rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 10px;
+  font-size: 0.938rem;
   font-weight: 500;
   text-decoration: none;
-  transition: all 150ms ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:host-context([tuiTheme="dark"]) .mobile-nav-link:hover {
+  background: rgba(163, 230, 53, 0.1);
+  color: #a3e635;
 }
 
 /* Common Dropdown Styles */
@@ -468,14 +503,15 @@ body {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
-  background: linear-gradient(to bottom right, rgb(99 102 241), rgb(139 92 246));
+  background: linear-gradient(135deg, #a3e635, #84cc16);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #000;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(163, 230, 53, 0.25);
 }
 
 .dropdown-divider {
@@ -483,24 +519,33 @@ body {
   margin: 0.25rem 0;
 }
 
+:host-context([tuiTheme="dark"]) .dropdown-divider {
+  background: rgba(163, 230, 53, 0.15);
+}
+
 .dropdown-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 10px;
+  font-size: 0.938rem;
   font-weight: 500;
   text-align: left;
   cursor: pointer;
   border: none;
   background: none;
-  transition: all 100ms ease;
+  transition: all 0.15s ease;
+}
+
+:host-context([tuiTheme="dark"]) .dropdown-item:hover {
+  background: rgba(163, 230, 53, 0.1);
+  color: #a3e635;
 }
 
 .dropdown-item-icon {
-  width: 1rem;
-  height: 1rem;
+  width: 1.125rem;
+  height: 1.125rem;
   flex-shrink: 0;
 }

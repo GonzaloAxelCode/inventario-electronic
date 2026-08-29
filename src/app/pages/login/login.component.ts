@@ -58,11 +58,13 @@ export class LoginComponent implements OnInit {
 	// --- Vista actual: landing (portada) o login (formulario) ---
 	view: 'landing' | 'login' = 'landing';
 
-	showPassword = false;
+showPassword = false;
 
-	// "Recordarme" es solo UI: se mantiene fuera del loginForm a propósito
-	// para no alterar el payload que recibe loginInAction (username/password).
-	rememberMe = true;
+  showForgotModal = false;
+
+  // "Recordarme" es solo UI: se mantiene fuera del loginForm a propósito
+  // para no alterar el payload que recibe loginInAction (username/password).
+  rememberMe = true;
 
 	@ViewChild('usernameInput') usernameInputRef?: ElementRef<HTMLInputElement>;
 
@@ -88,9 +90,17 @@ export class LoginComponent implements OnInit {
 		this.showPassword = false;
 	}
 
-	togglePasswordVisibility(): void {
-		this.showPassword = !this.showPassword;
-	}
+togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  openForgotModal(): void {
+    this.showForgotModal = true;
+  }
+
+  closeForgotModal(): void {
+    this.showForgotModal = false;
+  }
 
 	onSubmit(): void {
 

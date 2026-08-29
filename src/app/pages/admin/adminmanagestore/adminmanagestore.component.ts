@@ -1,6 +1,7 @@
 import { DialogcreatetiendaComponent } from '@/app/components/Dialogs/dialogcreatetienda/dialogcreatetienda.component';
 import { FormaddstoreComponent } from '@/app/components/Forms/formaddstore/formaddstore.component';
 import { TabletiendasComponent } from '@/app/components/Tables/tabletiendas/tabletiendas.component';
+import { loadTiendasAction } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
 import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
@@ -58,26 +59,36 @@ export class AdminmanagestoreComponent implements OnInit {
     this.gestionTitle$ = this.isSuperUser$.pipe(map(isSuper => isSuper ? 'Gestión de Tiendas' : 'Gestionar Mis sucursales'));
     this.gestionSubtitle$ = this.isSuperUser$.pipe(map(isSuper => isSuper ? 'Administra todas las tiendas del sistema' : 'Administra tu tienda y sucursales'));
 
+    // Cargar tiendas al inicializar
+    this.store.dispatch(loadTiendasAction());
+
     this.filteredTiendas$ = combineLatest([
       this.store.select(selectTiendaState),
       this.store.select(selectCurrenttUser)
     ]).pipe(
       map(([tiendaState, user]) => {
-        const tiendas = tiendaState.tiendas ?? [];
+        let tiendas = tiendaState.tiendas ?? [];
+        // Filtrar tiendas sin propietario
+        tiendas = tiendas.filter((t: any) => t.propietario != null);
         if (!user) return tiendas;
         if (user.is_superuser) return tiendas;
         // Solo admin tienda (es_propietario === true) ve filtrado; resto no debería estar aquí (guard lo bloquea)
         if ((user as any).es_propietario !== true) return [];
-        // Admin tienda: mostrar solo su tienda y tiendas donde es propietario/miembro (simular sucursales/padre)
+        // Admin tienda: mostrar su tienda, sucursales y tiendas donde es propietario/miembro
         const userId = user.id;
         const rawTiendaId: any = (user as any).tienda;
         const userTiendaId = typeof rawTiendaId === 'number' ? rawTiendaId : rawTiendaId?.id ?? (user as any).tienda_data?.id ?? null;
         const userTiendaDataId = (user as any).tienda_data?.id ?? null;
         const filtered = tiendas.filter((t: any) => {
+          // Mostrar la tienda del usuario
           if (userTiendaId && t.id === userTiendaId) return true;
           if (userTiendaDataId && t.id === userTiendaDataId) return true;
+          // Mostrar tiendas donde es propietario
           if (t.propietario === userId) return true;
+          // Mostrar tiendas donde es miembro
           if (t.users_tienda?.some((u: any) => u.id === userId)) return true;
+          // Mostrar sucursales de la tienda del usuario (tienda_padre = userTiendaId)
+          if (userTiendaId && t.tienda_padre === userTiendaId) return true;
           return false;
         });
         // Si no hay coincidencias pero tiene tienda_data, mostrar esa como sucursal única (fallback para simular padre)

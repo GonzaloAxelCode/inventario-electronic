@@ -21,6 +21,9 @@ export interface User {
     user_permissions_list: string[];
     all_permissions_meta: string[];
     date_created?: any;
+    theme?: 'light' | 'dark';
+    navbar_type?: 'top' | 'normal';
+    modulos_habilitados?: string[];
 }
 
 export interface UserPermissions {

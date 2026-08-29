@@ -3,8 +3,8 @@
     <!-- ============ NAVBAR ============ -->
     <header class="icloud-nav">
         <div class="icloud-nav__brand">
-            <img src="/assets/LOGOS/logo-ligth-theme2000x2000.png" alt="GV Software Plus" class="icloud-nav__logo" />
-            <span>iCloud</span>
+            <img src="/assets/LOGOS/logo-dark-theme2000x2000.png" alt="GV Software Plus" class="icloud-nav__logo" />
+            <span>Gonza <span style="color: #ff9500;">Fact</span></span>
         </div>
     </header>
 
@@ -13,7 +13,7 @@
 
         <div class="icloud-home__orbit">
             <div class="icloud-home__center">
-                <img src="/assets/LOGOS/logo-ligth-theme2000x2000.png" alt="GV Software Plus" />
+                <img src="/assets/LOGOS/logo-dark-theme2000x2000.png" alt="GV Software Plus" />
             </div>
 
             <span class="icloud-home__sat icloud-home__sat--1"><mat-icon>mail</mat-icon></span>
@@ -22,51 +22,60 @@
             <span class="icloud-home__sat icloud-home__sat--4"><mat-icon>insights</mat-icon></span>
             <span class="icloud-home__sat icloud-home__sat--5"><mat-icon>notifications</mat-icon></span>
             <span class="icloud-home__sat icloud-home__sat--6"><mat-icon>apps</mat-icon></span>
+            <span class="icloud-home__sat icloud-home__sat--7"><mat-icon>inventory</mat-icon></span>
+            <span class="icloud-home__sat icloud-home__sat--8"><mat-icon>point_of_sale</mat-icon></span>
         </div>
 
-        <h1 class="icloud-home__wordmark">iCloud</h1>
+        <h1 class="icloud-home__wordmark">Gonza <span style="color: #ff9500; font-weight: 700;">Fact</span></h1>
 
         <button type="button" class="icloud-home__cta" (click)="onStartLogin()">
             Iniciar sesión
         </button>
 
         <p class="icloud-home__tagline">
-            El mejor lugar para todos<br />
-            tus proyectos, archivos, notas,<br />
-            correos y mucho más.
+            Transforma tu negocio con tecnología,<br />
+            automatiza tus procesos y enfócate<br />
+            en lo que realmente importa: crecer.
         </p>
 
         <section class="icloud-home__cards">
             <article class="icloud-home__card">
-                <div class="icloud-home__card-icons">
-                    <span class="icloud-home__mini icloud-home__mini--blue"><mat-icon>mail</mat-icon></span>
-                    <span class="icloud-home__mini icloud-home__mini--green"><mat-icon>event_note</mat-icon></span>
-                    <span class="icloud-home__mini icloud-home__mini--yellow"><mat-icon>checklist</mat-icon></span>
-                    <span class="icloud-home__mini icloud-home__mini--gray"><mat-icon>folder</mat-icon></span>
-                    <span class="icloud-home__mini icloud-home__mini--gray"><mat-icon>badge</mat-icon></span>
-                    <span class="icloud-home__mini icloud-home__mini--green"><mat-icon>bar_chart</mat-icon></span>
-                    <span class="icloud-home__mini icloud-home__mini--yellow"><mat-icon>edit</mat-icon></span>
-                    <span class="icloud-home__mini icloud-home__mini--purple"><mat-icon>palette</mat-icon></span>
+                <div class="icloud-home__card-icon-wrap icloud-home__card-icon-wrap--blue">
+                    <mat-icon>inventory_2</mat-icon>
                 </div>
-                <h3>Fácil acceso a las apps o los datos de tu equipo</h3>
+                <h3>Gestión de Inventario</h3>
                 <p>
-                    GV Software Plus mantiene toda tu información personal segura, actualizada y disponible
-                    estés donde estés. Desde el navegador puedes acceder a tus archivos y mucho más.
-                    Los cambios se sincronizan en todos tus dispositivos para que estés siempre al día.
+                    Control rápido y organizado de todos tus productos. Mantén tu inventario siempre actualizado con alertas de stock bajo y seguimiento en tiempo real de cada movimiento.
                 </p>
             </article>
 
-            <article class="icloud-home__card icloud-home__card--plus">
-                <div class="icloud-home__plus-badge" aria-hidden="true">
-                    <span class="icloud-home__plus-cloud icloud-home__plus-cloud--a"><mat-icon>lock</mat-icon></span>
-                    <span class="icloud-home__plus-cloud icloud-home__plus-cloud--b">PLUS</span>
-                    <span class="icloud-home__plus-cloud icloud-home__plus-cloud--c"><mat-icon>public</mat-icon></span>
+            <article class="icloud-home__card">
+                <div class="icloud-home__card-icon-wrap icloud-home__card-icon-wrap--purple">
+                    <mat-icon>auto_awesome</mat-icon>
                 </div>
-                <h3>Más espacio y funciones adicionales para proteger tu privacidad</h3>
+                <h3>Automatización Inteligente</h3>
                 <p>
-                    Amplía tu plan para conseguir más espacio de almacenamiento y funciones de privacidad
-                    adicionales. Incluso puedes compartir la suscripción con tu equipo.
-                    Más información en <a href="javascript:void(0)">gvsoftwareplus.com/plus</a>.
+                    Automatiza tareas repetitivas y ahorra tiempo valioso. Nuestro sistema se encarga de los procesos para que tú puedas enfocarte en hacer crecer tu negocio.
+                </p>
+            </article>
+
+            <article class="icloud-home__card">
+                <div class="icloud-home__card-icon-wrap icloud-home__card-icon-wrap--green">
+                    <mat-icon>devices</mat-icon>
+                </div>
+                <h3>Multiplataforma</h3>
+                <p>
+                    Accede desde cualquier dispositivo, en cualquier lugar. Nuestras aplicaciones web y móviles se adaptan perfectamente a tu flujo de trabajo.
+                </p>
+            </article>
+
+            <article class="icloud-home__card">
+                <div class="icloud-home__card-icon-wrap icloud-home__card-icon-wrap--orange">
+                    <mat-icon>trending_up</mat-icon>
+                </div>
+                <h3>Analítica y Reportes</h3>
+                <p>
+                    Toma decisiones inteligentes con datos en tiempo real. Reportes detallados y estadísticas que te muestran el panorama completo de tu negocio.
                 </p>
             </article>
         </section>
@@ -91,25 +100,8 @@
                 <svg viewBox="0 0 24 24" fill="none"><path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
             </button>
 
-            <div class="icloud-auth__rings-wrap">
-                <div class="icloud-auth__rings" aria-hidden="true">
-                    <span
-                        class="icloud-auth__dot-pt"
-                        *ngFor="let d of ringDots"
-                        [style.transform]="'rotate(' + d.angle + 'deg) translate(' + d.radius + 'px)'"
-                        [style.width.px]="d.size"
-                        [style.height.px]="d.size"
-                        [style.background]="'hsl(' + d.hue + ', 75%, 62%)'"
-                    ></span>
-                </div>
-                <img
-                    class="icloud-auth__rings-logo"
-                    src="/assets/LOGOS/logo-ligth-theme2000x2000.png"
-                    alt="GV Software Plus"
-                />
-            </div>
-
-            <h1 class="icloud-auth__title">Iniciar sesión con la cuenta de<br />GV Software Plus</h1>
+            <h1 class="icloud-auth__wordmark">Gonza <span style="color: #ff9500; font-weight: 700;">Fact</span></h1>
+            <p class="icloud-auth__subtitle">Accede a tu cuenta para gestionar tu negocio de forma inteligente</p>
 
             <div class="icloud-auth__fieldgroup">
                 <div class="icloud-auth__fieldrow">
@@ -166,7 +158,7 @@
                     <input type="checkbox" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}" />
                     <span>Mantener sesión iniciada</span>
                 </label>
-                <a href="javascript:void(0)" class="icloud-auth__link">¿Has olvidado la contraseña? ↗</a>
+                <a href="javascript:void(0)" class="icloud-auth__link" (click)="openForgotModal()">¿Has olvidado la contraseña? ↗</a>
             </div>
 
             <button
@@ -190,6 +182,39 @@
             <a href="javascript:void(0)">Privacidad</a>
             <span class="icloud-auth__dot">•</span>
             <a href="javascript:void(0)">Términos</a>
+        </div>
+    </div>
+
+    <!-- ============ MODAL: CONTACTO ============ -->
+    <div class="icloud-modal-overlay" *ngIf="showForgotModal" (click)="closeForgotModal()">
+        <div class="icloud-modal" (click)="$event.stopPropagation()">
+            <button class="icloud-modal__close" (click)="closeForgotModal()" aria-label="Cerrar">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+            </button>
+
+            <div class="icloud-modal__icon">
+                <mat-icon>lock_reset</mat-icon>
+            </div>
+
+            <h2 class="icloud-modal__title">¿Olvidaste tu contraseña?</h2>
+            <p class="icloud-modal__text">
+                Contacta con el administrador para restablecer tu acceso al sistema.
+            </p>
+
+            <a
+                href="https://wa.me/51999999999?text=Hola,%20necesito%20restablecer%20mi%20contraseña%20de%20Gonza%20Fact"
+                target="_blank"
+                class="icloud-modal__whatsapp"
+            >
+                <svg viewBox="0 0 24 24" fill="currentColor" class="icloud-modal__whatsapp-icon">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                Contactar por WhatsApp
+            </a>
+
+            <button class="icloud-modal__cancel" (click)="closeForgotModal()">
+                Cancelar
+            </button>
         </div>
     </div>
 </div>

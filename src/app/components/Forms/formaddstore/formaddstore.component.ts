@@ -31,6 +31,8 @@ export class FormaddstoreComponent implements OnInit {
   isAdminTienda = false;
   parentTiendaId: number | null = null;
   parentTiendaNombre: string | null = null;
+  parentTiendaRazonSocial: string | null = null;
+  parentTiendaRuc: string | null = null;
   isSuperUser = false;
   selectedCert: File | null = null;
   certFileName: string | null = null;
@@ -69,9 +71,19 @@ export class FormaddstoreComponent implements OnInit {
         const rawId: any = user.tienda;
         this.parentTiendaId = typeof rawId === 'number' ? rawId : rawId?.id ?? user.tienda_data?.id ?? null;
         this.parentTiendaNombre = user.tienda_data?.nombre ?? user.tienda_nombre ?? (this.parentTiendaId ? `Tienda #${this.parentTiendaId}` : null);
+        this.parentTiendaRazonSocial = user.tienda_data?.razon_social ?? null;
+        this.parentTiendaRuc = user.tienda_data?.ruc ?? null;
+
+        // Auto-fill razon_social and ruc from parent store
+        this.tiendaForm.patchValue({
+          razon_social: this.parentTiendaRazonSocial || '',
+          ruc: this.parentTiendaRuc || ''
+        });
       } else {
         this.parentTiendaId = null;
         this.parentTiendaNombre = null;
+        this.parentTiendaRazonSocial = null;
+        this.parentTiendaRuc = null;
       }
       // Obligatorio solo para superusuario al final: elegir si es padre o sucursal
       const ctrl = this.tiendaForm.get('tienda_padre_select');

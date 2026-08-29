@@ -2,6 +2,7 @@ import { User } from '@/app/models/user.models';
 import { DialogCreateUserService } from '@/app/services/dialogs-services/dialog-create-user.service';
 import { DialogEditUserPermissionService } from '@/app/services/dialogs-services/dialog-edit-user-permissions.service';
 import { DialogUpdatePasswordService } from '@/app/services/dialogs-services/dialog-update-password-user.service';
+import { UserService } from '@/app/services/user.service';
 import { desactivateUserAction, loadUsersAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
 import { UserState } from '@/app/state/reducers/user.reducer';
@@ -27,11 +28,13 @@ import { Observable, tap } from 'rxjs';
 export class TableUsersComponent implements OnInit {
   userState$?: Observable<UserState>;
   users!: User[]
+  deletedUsers: User[] = []
   @Input() idtienda: number = 0
   openDropdownIndex: number | null = null;
 
   currentUser: User | null = null;
   isAdminTienda = false;
+  isSuperUser = false;
 
   loadingUpdateUser: boolean = true;
   loadingUsers: boolean = true;
@@ -57,7 +60,10 @@ export class TableUsersComponent implements OnInit {
   private readonly dialogServiceCreateuser = inject(DialogCreateUserService);
 
 
-  constructor(private store: Store<AppState>) {
+  constructor(
+    private store: Store<AppState>,
+    private userService: UserService
+  ) {
 
   }
   ngOnInit() {
@@ -76,8 +82,23 @@ export class TableUsersComponent implements OnInit {
         this.currentUser = user as User | null;
         const u: any = user as any;
         this.isAdminTienda = !!u && !u.is_superuser && u.es_propietario === true;
+        this.isSuperUser = !!u?.is_superuser;
+        if (this.isSuperUser) {
+          this.loadDeletedUsers();
+        }
       })
     ).subscribe();
+  }
+
+  loadDeletedUsers(): void {
+    this.userService.getDeletedUsers(this.idtienda).subscribe({
+      next: (users) => {
+        this.deletedUsers = users;
+      },
+      error: (error) => {
+        console.error('Error al cargar usuarios eliminados:', error);
+      }
+    });
   }
 
   isSelf(user: User): boolean {
@@ -88,15 +109,39 @@ export class TableUsersComponent implements OnInit {
     return this.isAdminTienda && this.isSelf(user);
   }
 
+  isUserDeleted(user: User | null): boolean {
+    return !!user && !!(user as any).is_deleted;
+  }
+
   get filteredUsers(): User[] {
     if (!this.users) return [];
     if (!this.currentUser) return this.users;
-    return this.users.filter(u => u.id !== this.currentUser!.id);
+    let allUsers = [...this.users];
+    if (this.isSuperUser && this.deletedUsers.length > 0) {
+      const existingIds = new Set(this.users.map(u => u.id));
+      const newDeletedUsers = this.deletedUsers.filter(u => !existingIds.has(u.id));
+      allUsers = [...allUsers, ...newDeletedUsers];
+    }
+    return allUsers.filter(u => u.id !== this.currentUser!.id);
   }
 
   // Modal eliminar — solo visual, sin funcionalidad
   showDeleteConfirm = false;
   userToDelete: User | null = null;
+
+  // Modal editar usuario
+  showEditUserModal = false;
+  userToEdit: User | null = null;
+  editUserData = {
+    username: '',
+    first_name: '',
+    last_name: ''
+  };
+
+  // Modal resetear contraseña
+  showResetPasswordModal = false;
+  userToResetPassword: User | null = null;
+  newPassword = '';
 
   openDeleteConfirm(user: User): void {
     if (user.is_superuser || this.isSelfAdminTienda(user)) return;
@@ -109,9 +154,81 @@ export class TableUsersComponent implements OnInit {
     this.userToDelete = null;
   }
 
+  openEditUserDialog(user: User): void {
+    this.userToEdit = user;
+    this.editUserData = {
+      username: user.username || '',
+      first_name: user.first_name || '',
+      last_name: user.last_name || ''
+    };
+    this.showEditUserModal = true;
+  }
+
+  closeEditUserModal(): void {
+    this.showEditUserModal = false;
+    this.userToEdit = null;
+  }
+
+  confirmEditUser(): void {
+    if (!this.userToEdit) return;
+
+    this.userService.updateUserBasicData(this.userToEdit.id, this.editUserData).subscribe({
+      next: (response) => {
+        console.log('Usuario actualizado:', response);
+        this.store.dispatch(loadUsersAction({ idTienda: this.idtienda }));
+        this.closeEditUserModal();
+      },
+      error: (error) => {
+        console.error('Error al actualizar usuario:', error);
+        this.closeEditUserModal();
+      }
+    });
+  }
+
+  openResetPasswordDialog(user: User): void {
+    this.userToResetPassword = user;
+    this.newPassword = '';
+    this.showResetPasswordModal = true;
+  }
+
+  closeResetPasswordModal(): void {
+    this.showResetPasswordModal = false;
+    this.userToResetPassword = null;
+    this.newPassword = '';
+  }
+
+  confirmResetPassword(): void {
+    if (!this.userToResetPassword || !this.newPassword) return;
+
+    this.userService.adminResetPassword(this.userToResetPassword.id, this.newPassword).subscribe({
+      next: (response) => {
+        console.log('Contraseña actualizada:', response);
+        this.closeResetPasswordModal();
+      },
+      error: (error) => {
+        console.error('Error al resetear contraseña:', error);
+        this.closeResetPasswordModal();
+      }
+    });
+  }
+
   confirmDelete(): void {
-    // Solo cierra modal — sin dispatch, sin funcionalidad por ahora
-    this.closeDeleteConfirm();
+    if (!this.userToDelete) return;
+
+    const userId = this.userToDelete.id;
+    const isCurrentlyDeleted = (this.userToDelete as any).is_deleted;
+
+    this.userService.toggleUserDeleted(userId, !isCurrentlyDeleted).subscribe({
+      next: (response) => {
+        console.log('Usuario eliminado/restaurado:', response);
+        this.store.dispatch(loadUsersAction({ idTienda: this.idtienda }));
+        this.closeDeleteConfirm();
+      },
+      error: (error) => {
+        console.error('Error al eliminar/restaurar usuario:', error);
+        this.closeDeleteConfirm();
+      }
+    });
   }
 
 

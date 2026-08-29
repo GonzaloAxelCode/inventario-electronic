@@ -79,7 +79,10 @@ export const userInitial = {
         can_create_proveedor: false,
         can_update_proveedor: false,
         can_delete_proveedor: false,
-    }
+    },
+    theme: 'light',
+    navbar_type: 'normal',
+    modulos_habilitados: []
 }
 export const initialStateUser: UserState = {
     users: [],

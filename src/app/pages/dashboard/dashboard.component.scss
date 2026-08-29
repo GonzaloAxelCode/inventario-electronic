@@ -2,3 +2,13 @@
   display: block;
   height: auto;
 }
+
+.ventas-por-rango-container {
+  display: none;
+}
+
+@media (min-width: 550px) {
+  .ventas-por-rango-container {
+    display: block;
+  }
+}

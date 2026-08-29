@@ -29,17 +29,18 @@
           El nombre es obligatorio
         </div>
       </div>
-
-      <!-- Razon Social -->
+<!-- Razon Social -->
       <div>
         <tui-input 
           formControlName="razon_social" 
-          placeholder="Ingrese la razón social" 
           class="w-full"
+          [readOnly]="isAdminTienda"
         >
           Razón Social
         </tui-input>
+        <p *ngIf="isAdminTienda" class="text-[10px] text-[#86868b] mt-1">Se hereda de la tienda padre</p>
       </div>
+
   <div>
         <tui-input 
           formControlName="representante" 
@@ -64,11 +65,12 @@
       <div>
         <tui-input 
           formControlName="ruc" 
-          placeholder="Ingrese el RUC" 
           class="w-full"
+          [readOnly]="isAdminTienda"
         >
           RUC
         </tui-input>
+        <p *ngIf="isAdminTienda" class="text-[10px] text-[#86868b] mt-1">Se hereda de la tienda padre</p>
       </div>
 
       <!-- Dirección -->

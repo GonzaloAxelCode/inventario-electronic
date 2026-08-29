@@ -29,30 +29,53 @@
           </p>
           <p class="text-[11px] font-mono text-[#86868b] dark:text-[#a1a1a6] truncate">{{ '@' + user.username }}</p>
           <div class="flex items-center gap-2 mt-1">
-            <span class="w-1.5 h-1.5 rounded-full" [ngClass]="user.is_active ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
-            <span class="text-[11px] font-medium" [ngClass]="user.is_active ? 'text-[#30d158]' : 'text-[#86868b]'">{{ user.is_active ? 'Activo' : 'Inactivo' }}</span>
+            <span *ngIf="!isUserDeleted(user)" class="w-1.5 h-1.5 rounded-full" [ngClass]="user.is_active ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
+            <span *ngIf="isUserDeleted(user)" class="w-1.5 h-1.5 rounded-full bg-[#ff3b30]"></span>
+            <span *ngIf="!isUserDeleted(user)" class="text-[11px] font-medium" [ngClass]="user.is_active ? 'text-[#30d158]' : 'text-[#86868b]'">{{ user.is_active ? 'Activo' : 'Inactivo' }}</span>
+            <span *ngIf="isUserDeleted(user)" class="text-[11px] font-medium text-[#ff3b30]">Eliminado</span>
             <span *ngIf="user.is_superuser" class="text-[10px] px-1.5 py-0.5 rounded-full bg-black text-white dark:bg-white dark:text-black font-semibold tracking-wide">SUPERUSER</span>
           </div>
         </div>
 
         <!-- Actions trailing Apple — admin tienda no puede auto-desactivarse ni ver sus permisos -->
         <div class="flex items-center gap-1.5 shrink-0">
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.is_active" [disabled]="user.is_superuser || isSelfAdminTienda(user)" (click)="toggleUpdateStateUser($event, user)" />
-          <button (click)="showDialogEditPermissions(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user)"
+          <input tuiSwitch type="checkbox" [(ngModel)]="user.is_active" [disabled]="user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)" (click)="toggleUpdateStateUser($event, user)" />
+          <!-- Editar usuario -->
+          <button (click)="openEditUserDialog(user)"
+            class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#0071e3] border-[#0071e3]/20 bg-[#0071e3]/[0.06] hover:bg-[#0071e3]/10 transition-colors"
+            title="Editar">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            <span class="hidden sm:inline ml-1 text-[11px] font-medium">Editar</span>
+          </button>
+          <!-- Resetear contraseña — solo superusuarios -->
+          <button *ngIf="isSuperUser" (click)="openResetPasswordDialog(user)"
+            class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#ff9f0a] border-[#ff9f0a]/20 bg-[#ff9f0a]/[0.06] hover:bg-[#ff9f0a]/10 transition-colors"
+            title="Resetear contraseña">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+            <span class="hidden sm:inline ml-1 text-[11px] font-medium">Contraseña</span>
+          </button>
+          <button (click)="showDialogEditPermissions(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)"
             class="hidden sm:inline-flex items-center gap-1 h-7 px-3 rounded-full border text-[11px] font-medium transition-colors"
-            [ngClass]="(user.is_superuser || isSelfAdminTienda(user)) ? 'border-black/[0.06] text-[#86868b]/50 bg-transparent cursor-not-allowed' : 'border-black/[0.08] dark:border-white/[0.08] text-[#1d1d1f] dark:text-white hover:bg-black/[0.04] bg-transparent'">
+            [ngClass]="(user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)) ? 'border-black/[0.06] text-[#86868b]/50 bg-transparent cursor-not-allowed' : 'border-black/[0.08] dark:border-white/[0.08] text-[#1d1d1f] dark:text-white hover:bg-black/[0.04] bg-transparent'">
             Permisos
           </button>
-          <button (click)="showDialogEditPermissions(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user)"
+          <button (click)="showDialogEditPermissions(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)"
             class="sm:hidden w-7 h-7 rounded-full border border-black/[0.08] dark:border-white/[0.08] flex items-center justify-center text-[#86868b] disabled:opacity-40">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1-1.51V13a2 2 0 014 0v.49c.27.07.54.17.8.3a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V18a2 2 0 01-4  0v-.09c.07-.27.17-.54.3-.8z"/></svg>
           </button>
-          <!-- Eliminar — solo modal confirmación, sin funcionalidad -->
-          <button (click)="openDeleteConfirm(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user)"
+          <!-- Eliminar — solo para usuarios no eliminados -->
+          <button *ngIf="!isUserDeleted(user)" (click)="openDeleteConfirm(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user)"
             class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#ff3b30] border-[#ff3b30]/20 bg-[#ff3b30]/[0.06] hover:bg-[#ff3b30]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             title="Eliminar">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             <span class="hidden sm:inline ml-1 text-[11px] font-medium">Eliminar</span>
+          </button>
+          <!-- Restaurar — solo superusuarios para usuarios eliminados -->
+          <button *ngIf="isUserDeleted(user) && isSuperUser" (click)="openDeleteConfirm(user)"
+            class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#30d158] border-[#30d158]/20 bg-[#30d158]/[0.06] hover:bg-[#30d158]/10 transition-colors"
+            title="Restaurar">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span class="hidden sm:inline ml-1 text-[11px] font-medium">Restaurar</span>
           </button>
         </div>
       </div>
@@ -77,18 +100,72 @@
   <div *ngIf="showDeleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" (click)="closeDeleteConfirm()"></div>
     <div class="relative w-full max-w-[360px] rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#1c1c1e] p-6 shadow-xl">
-      <div class="w-10 h-10 mx-auto rounded-full bg-[#ff3b30]/10 flex items-center justify-center mb-3">
-        <svg class="w-5 h-5 text-[#ff3b30]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center mb-3" [ngClass]="isUserDeleted(userToDelete) ? 'bg-[#30d158]/10' : 'bg-[#ff3b30]/10'">
+        <svg *ngIf="!isUserDeleted(userToDelete)" class="w-5 h-5 text-[#ff3b30]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        <svg *ngIf="isUserDeleted(userToDelete)" class="w-5 h-5 text-[#30d158]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
       </div>
-      <h3 class="text-[15px] font-semibold tracking-[-0.02em] text-center text-[#1d1d1f] dark:text-white">¿Eliminar personal?</h3>
+      <h3 class="text-[15px] font-semibold tracking-[-0.02em] text-center text-[#1d1d1f] dark:text-white">{{ isUserDeleted(userToDelete) ? '¿Restaurar personal?' : '¿Eliminar personal?' }}</h3>
       <p class="text-[12px] leading-5 text-center text-[#86868b] dark:text-[#a1a1a6] mt-1">
-        ¿Seguro que deseas eliminar a <span class="font-semibold text-[#1d1d1f] dark:text-white">{{ userToDelete?.first_name || userToDelete?.username }}</span>?
-        Esta acción no se puede deshacer.
+        ¿Seguro que deseas {{ isUserDeleted(userToDelete) ? 'restaurar' : 'eliminar' }} a <span class="font-semibold text-[#1d1d1f] dark:text-white">{{ userToDelete?.first_name || userToDelete?.username }}</span>?
+        {{ isUserDeleted(userToDelete) ? 'El usuario podrá acceder nuevamente.' : 'El usuario no podrá acceder al sistema.' }}
       </p>
-      <p class="text-[11px] text-center text-[#86868b] mt-2">Solo confirmación visual — sin funcionalidad aún.</p>
       <div class="flex gap-3 mt-5">
         <button (click)="closeDeleteConfirm()" class="flex-1 h-9 rounded-full border border-black/[0.08] dark:border-white/[0.08] bg-transparent text-[#1d1d1f] dark:text-white text-[13px] font-medium">Cancelar</button>
-        <button (click)="confirmDelete()" class="flex-1 h-9 rounded-full bg-[#ff3b30] hover:bg-[#ff453a] text-white text-[13px] font-medium">Eliminar</button>
+        <button (click)="confirmDelete()" class="flex-1 h-9 rounded-full text-white text-[13px] font-medium"
+          [ngClass]="isUserDeleted(userToDelete) ? 'bg-[#30d158] hover:bg-[#34d158]' : 'bg-[#ff3b30] hover:bg-[#ff453a]'">
+          {{ isUserDeleted(userToDelete) ? 'Restaurar' : 'Eliminar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal editar usuario -->
+  <div *ngIf="showEditUserModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" (click)="closeEditUserModal()"></div>
+    <div class="relative w-full max-w-[360px] rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#1c1c1e] p-6 shadow-xl">
+      <div class="w-10 h-10 mx-auto rounded-full bg-[#0071e3]/10 flex items-center justify-center mb-3">
+        <svg class="w-5 h-5 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      </div>
+      <h3 class="text-[15px] font-semibold tracking-[-0.02em] text-center text-[#1d1d1f] dark:text-white">Editar Usuario</h3>
+      <div class="mt-4 space-y-3">
+        <div>
+          <label class="text-[11px] font-medium text-[#86868b] dark:text-[#a1a1a6] uppercase tracking-wider">Usuario</label>
+          <input type="text" [(ngModel)]="editUserData.username" class="mt-1 w-full h-9 px-3 rounded-lg border border-black/[0.08] dark:border-white/[0.08] bg-transparent text-[13px] text-[#1d1d1f] dark:text-white outline-none focus:border-[#0071e3]">
+        </div>
+        <div>
+          <label class="text-[11px] font-medium text-[#86868b] dark:text-[#a1a1a6] uppercase tracking-wider">Nombre</label>
+          <input type="text" [(ngModel)]="editUserData.first_name" class="mt-1 w-full h-9 px-3 rounded-lg border border-black/[0.08] dark:border-white/[0.08] bg-transparent text-[13px] text-[#1d1d1f] dark:text-white outline-none focus:border-[#0071e3]">
+        </div>
+        <div>
+          <label class="text-[11px] font-medium text-[#86868b] dark:text-[#a1a1a6] uppercase tracking-wider">Apellido</label>
+          <input type="text" [(ngModel)]="editUserData.last_name" class="mt-1 w-full h-9 px-3 rounded-lg border border-black/[0.08] dark:border-white/[0.08] bg-transparent text-[13px] text-[#1d1d1f] dark:text-white outline-none focus:border-[#0071e3]">
+        </div>
+      </div>
+      <div class="flex gap-3 mt-5">
+        <button (click)="closeEditUserModal()" class="flex-1 h-9 rounded-full border border-black/[0.08] dark:border-white/[0.08] bg-transparent text-[#1d1d1f] dark:text-white text-[13px] font-medium">Cancelar</button>
+        <button (click)="confirmEditUser()" class="flex-1 h-9 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white text-[13px] font-medium">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal resetear contraseña -->
+  <div *ngIf="showResetPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" (click)="closeResetPasswordModal()"></div>
+    <div class="relative w-full max-w-[360px] rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#1c1c1e] p-6 shadow-xl">
+      <div class="w-10 h-10 mx-auto rounded-full bg-[#ff9f0a]/10 flex items-center justify-center mb-3">
+        <svg class="w-5 h-5 text-[#ff9f0a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+      </div>
+      <h3 class="text-[15px] font-semibold tracking-[-0.02em] text-center text-[#1d1d1f] dark:text-white">Resetear Contraseña</h3>
+      <p class="text-[12px] text-center text-[#86868b] dark:text-[#a1a1a6] mt-1">
+        Nueva contraseña para <span class="font-semibold text-[#1d1d1f] dark:text-white">{{ userToResetPassword?.first_name || userToResetPassword?.username }}</span>
+      </p>
+      <div class="mt-4">
+        <label class="text-[11px] font-medium text-[#86868b] dark:text-[#a1a1a6] uppercase tracking-wider">Nueva contraseña</label>
+        <input type="password" [(ngModel)]="newPassword" placeholder="Ingresa la nueva contraseña" class="mt-1 w-full h-9 px-3 rounded-lg border border-black/[0.08] dark:border-white/[0.08] bg-transparent text-[13px] text-[#1d1d1f] dark:text-white outline-none focus:border-[#ff9f0a]">
+      </div>
+      <div class="flex gap-3 mt-5">
+        <button (click)="closeResetPasswordModal()" class="flex-1 h-9 rounded-full border border-black/[0.08] dark:border-white/[0.08] bg-transparent text-[#1d1d1f] dark:text-white text-[13px] font-medium">Cancelar</button>
+        <button (click)="confirmResetPassword()" class="flex-1 h-9 rounded-full bg-[#ff9f0a] hover:bg-[#ffb340] text-white text-[13px] font-medium">Guardar</button>
       </div>
     </div>
   </div>

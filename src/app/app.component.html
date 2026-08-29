@@ -2,16 +2,25 @@
   
   <!-- Si está cargando: loader -->
   <ng-container *ngIf="loading$ | async; else appContent">
-    <div class="fixed inset-0 flex items-center flex-col gap-3 justify-center
-                 bg-neutral-100 z-[9999]">
-      
-      <img src="https://play-lh.googleusercontent.com/WmJJ8jUmn5QD78CHUvrwqmroo3OlJDaWHxjFCyRfhg-Wi2R6P7i43FwIPkw86hy5pg=w240-h480-rw"
-           class="w-60 transition-all duration-300 "
-           alt="App Logo"
-           fetchpriority="high">
-
-    <p class="text-neutral-700 text-lg"><b>GV</b> Software</p>
-      <tui-loader size="m" class="mt-4"></tui-loader>
+    <div class="loader-overlay" [class.loader-dark]="darkMode()">
+      <div class="loader-content">
+        <img *ngIf="!darkMode()" 
+             src="/assets/LOGOS/logo-ligth-theme2000x2000.png" 
+             class="loader-logo" 
+             alt="Gonza Fact">
+        <img *ngIf="darkMode()" 
+             src="/assets/LOGOS/logo-dark-theme2000x2000.png" 
+             class="loader-logo" 
+             alt="Gonza Fact">
+        
+        <div class="loader-spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        
+        <p class="loader-text">Gonza <span class="loader-text-orange">Fact</span></p>
+      </div>
     </div>
   </ng-container>
 

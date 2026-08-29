@@ -40,6 +40,20 @@ export class UserService {
             })
         );
     }
+
+    getDeletedUsers(idTienda: number): Observable<User[]> {
+        const { accessToken } = getAuthDataFromLocalStorage()
+        const headers = new HttpHeaders().set('Authorization', `JWT ${accessToken}`);
+
+        return this.http.get<User[]>(`${this.siteURL}/usuarios/tienda/${idTienda}/?is_deleted=true`, {
+            headers
+        }).pipe(
+            catchError(error => {
+                console.error(error);
+                return throwError(error);
+            })
+        );
+    }
     createUser(user: Partial<User>, tienda_id: number): Observable<User> {
         return this.http.post<User>(`${this.siteURL}/usuarios/create/${tienda_id}/`, user).pipe(
             catchError(error => {
@@ -80,6 +94,74 @@ export class UserService {
 
     deleteUser(id: number): Observable<any> {
         return this.http.delete(`${this.siteURL}/usuarios/delete/${id}/`).pipe(
+            catchError(error => {
+                console.error(error);
+                return throwError(error);
+            })
+        );
+    }
+
+    updateUserConfig(config: {
+        theme?: 'light' | 'dark';
+        navbar_type?: 'top' | 'normal';
+        modulos_habilitados?: string[];
+    }): Observable<any> {
+        const { accessToken } = getAuthDataFromLocalStorage();
+        const headers = new HttpHeaders().set('Authorization', `JWT ${accessToken}`);
+
+        return this.http.patch(`${this.siteURL}/usuarios/config/`, config, {
+            headers
+        }).pipe(
+            catchError(error => {
+                console.error(error);
+                return throwError(error);
+            })
+        );
+    }
+
+    toggleUserDeleted(id: number, isDeleted?: boolean): Observable<any> {
+        const { accessToken } = getAuthDataFromLocalStorage();
+        const headers = new HttpHeaders().set('Authorization', `JWT ${accessToken}`);
+
+        const body = isDeleted !== undefined ? { is_deleted: isDeleted } : {};
+
+        return this.http.patch(`${this.siteURL}/usuarios/toggle-deleted/${id}/`, body, {
+            headers
+        }).pipe(
+            catchError(error => {
+                console.error(error);
+                return throwError(error);
+            })
+        );
+    }
+
+    updateUserBasicData(id: number, data: {
+        username?: string;
+        first_name?: string;
+        last_name?: string;
+    }): Observable<any> {
+        const { accessToken } = getAuthDataFromLocalStorage();
+        const headers = new HttpHeaders().set('Authorization', `JWT ${accessToken}`);
+
+        return this.http.patch(`${this.siteURL}/usuarios/update/basic/${id}/`, data, {
+            headers
+        }).pipe(
+            catchError(error => {
+                console.error(error);
+                return throwError(error);
+            })
+        );
+    }
+
+    adminResetPassword(id: number, newPassword: string): Observable<any> {
+        const { accessToken } = getAuthDataFromLocalStorage();
+        const headers = new HttpHeaders().set('Authorization', `JWT ${accessToken}`);
+
+        return this.http.post(`${this.siteURL}/usuarios/admin/reset-password/${id}/`, {
+            new_password: newPassword
+        }, {
+            headers
+        }).pipe(
             catchError(error => {
                 console.error(error);
                 return throwError(error);

@@ -3,3 +3,37 @@
   -webkit-font-smoothing: antialiased;
   display: block;
 }
+
+/* Lime green accent for dark mode */
+:host-context([tuiTheme="dark"]) .topnav-header {
+  border-bottom-color: rgba(163, 230, 53, 0.2) !important;
+}
+
+:host-context([tuiTheme="dark"]) .nav-link-active {
+  background: linear-gradient(135deg, #a3e635, #84cc16) !important;
+  color: #000 !important;
+  box-shadow: 0 4px 16px rgba(163, 230, 53, 0.4);
+}
+
+:host-context([tuiTheme="dark"]) .nav-link:hover {
+  color: #a3e635 !important;
+  background: rgba(163, 230, 53, 0.1) !important;
+}
+
+:host-context([tuiTheme="dark"]) .user-avatar {
+  background: linear-gradient(135deg, #a3e635, #84cc16) !important;
+  color: #000 !important;
+  box-shadow: 0 2px 8px rgba(163, 230, 53, 0.3);
+}
+
+:host-context([tuiTheme="dark"]) .dropdown-divider {
+  background: rgba(163, 230, 53, 0.2) !important;
+}
+
+:host-context([tuiTheme="dark"]) .user-menu-dropdown {
+  border-color: rgba(163, 230, 53, 0.15) !important;
+}
+
+:host-context([tuiTheme="dark"]) .user-menu-dropdown button:hover {
+  background: rgba(163, 230, 53, 0.1) !important;
+}

@@ -13,11 +13,11 @@
 
       <!-- Desktop Nav — Apple pill, sin fondo pesado -->
       <nav class="hidden md:flex items-center gap-1 p-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08]">
-        <a routerLink="/admin" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="!bg-white !text-[#1d1d1f] dark:!bg-[#3a3a3c] dark:!text-white shadow-sm ring-1 ring-black/[0.04]"
+        <a routerLink="/admin" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="nav-link-active"
           class="px-4 py-1.5 rounded-full text-[13px] font-medium text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white transition-all">
           Inicio
         </a>
-        <a routerLink="/admin/store" routerLinkActive="!bg-white !text-[#1d1d1f] dark:!bg-[#3a3a3c] dark:!text-white shadow-sm ring-1 ring-black/[0.04]"
+        <a routerLink="/admin/store" routerLinkActive="nav-link-active"
           class="px-4 py-1.5 rounded-full text-[13px] font-medium text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white transition-all">
           {{ isSuperUser ? 'Tiendas' : 'Mis sucursales' }}
         </a>
@@ -28,7 +28,7 @@
         <!-- User pill Apple -->
         <div class="user-menu-container relative hidden md:block">
           <button (click)="toggleUserMenu(); $event.stopPropagation()" class="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] transition-colors">
-            <div class="w-7 h-7 rounded-full bg-white dark:bg-[#2c2c2e] flex items-center justify-center text-[11px] font-semibold text-[#1d1d1f] dark:text-white ring-1 ring-black/[0.06]">
+            <div class="w-7 h-7 rounded-full user-avatar bg-white dark:bg-[#2c2c2e] flex items-center justify-center text-[11px] font-semibold text-[#1d1d1f] dark:text-white ring-1 ring-black/[0.06]">
               {{ user?.first_name?.charAt(0) || 'U' }}{{ user?.last_name?.charAt(0) || '' }}
             </div>
             <div class="text-left hidden lg:block">
@@ -37,22 +37,22 @@
             </div>
             <svg class="w-3 h-3 text-[#86868b]" [class.rotate-180]="userMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
-          <div *ngIf="userMenuOpen" class="absolute right-0 mt-2 w-64 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#1c1c1e] shadow-xl overflow-hidden z-50">
+          <div *ngIf="userMenuOpen" class="user-menu-dropdown absolute right-0 mt-2 w-64 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#1c1c1e] shadow-xl overflow-hidden z-50">
             <div class="p-4 flex gap-3">
-              <div class="w-9 h-9 rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center text-[12px] font-semibold">{{ user?.first_name?.charAt(0) || 'U' }}{{ user?.last_name?.charAt(0) || '' }}</div>
+              <div class="w-9 h-9 rounded-full user-avatar bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center text-[12px] font-semibold">{{ user?.first_name?.charAt(0) || 'U' }}{{ user?.last_name?.charAt(0) || '' }}</div>
               <div>
                 <p class="text-[13px] font-semibold text-[#1d1d1f] dark:text-white">{{ user?.first_name }} {{ user?.last_name }}</p>
                 <p class="text-[11px] text-[#86868b]">{{ user?.username }}</p>
               </div>
             </div>
-            <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
+            <div class="h-px dropdown-divider bg-black/[0.06] dark:bg-white/[0.06]"></div>
             <button (click)="navigateTo('/app/settings/cuenta')" class="w-full text-left px-4 py-2.5 text-[13px] text-[#1d1d1f] dark:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">Mi Cuenta</button>
-            <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
+            <div class="h-px dropdown-divider bg-black/[0.06] dark:bg-white/[0.06]"></div>
             <button (click)="toggleTheme($event)" class="w-full flex items-center gap-2 px-4 py-2.5 text-[13px] text-[#1d1d1f] dark:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">
               <app-darkmode></app-darkmode>
               <span>Tema</span>
             </button>
-            <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
+            <div class="h-px dropdown-divider bg-black/[0.06] dark:bg-white/[0.06]"></div>
             <button (click)="logout2()" class="w-full text-left px-4 py-2.5 text-[13px] text-[#ff3b30] hover:bg-[#ff3b30]/[0.06]">Cerrar Sesión</button>
           </div>
         </div>
@@ -77,12 +77,12 @@
               <a routerLink="/admin" (click)="closeMobileMenu()" class="block px-3 py-2.5 rounded-xl text-[13px] font-medium hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">Inicio</a>
               <a routerLink="/admin/store" (click)="closeMobileMenu()" class="block px-3 py-2.5 rounded-xl text-[13px] font-medium hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">{{ isSuperUser ? 'Tiendas' : 'Mis sucursales' }}</a>
             </nav>
-            <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
+            <div class="h-px dropdown-divider bg-black/[0.06] dark:bg-white/[0.06]"></div>
             <button (click)="toggleTheme($event)" class="w-full flex items-center gap-2 px-4 py-2.5 text-[13px] text-[#1d1d1f] dark:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">
               <app-darkmode></app-darkmode>
               <span>Tema</span>
             </button>
-            <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
+            <div class="h-px dropdown-divider bg-black/[0.06] dark:bg-white/[0.06]"></div>
             <button (click)="logout2()" class="w-full text-left px-4 py-3 text-[13px] text-[#ff3b30]">Cerrar Sesión</button>
           </div>
         </div>
