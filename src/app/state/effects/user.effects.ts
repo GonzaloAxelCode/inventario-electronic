@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, exhaustMap, map, of, switchMap } from 'rxjs';
+import { catchError, exhaustMap, map, of, switchMap, tap } from 'rxjs';
 
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
 import { UserService } from '@/app/services/user.service';
@@ -36,6 +36,9 @@ export class UserEffects {
             ofType(loadUserAction),
             exhaustMap(() =>
                 this.userService.fetchCurrentUser().pipe(
+                    tap((data: any) => {
+                        console.log('users/me response:', data);
+                    }),
                     map((data: any) => {
                         const loginData = getLoginUserDataFromLocalStorage();
                         const mergedUser = {
