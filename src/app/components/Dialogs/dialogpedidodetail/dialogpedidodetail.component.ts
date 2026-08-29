@@ -6,6 +6,7 @@ import { AppState } from '@/app/state/app.state';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, FormArray, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiDialogContext, TuiButton, TuiAppearance, TuiAlertService, TuiLoader, TuiTextfield, TuiDataList } from '@taiga-ui/core';
 import { TuiBadge, TuiInputNumber, TuiSelect, TuiDataListWrapper } from '@taiga-ui/kit';
@@ -21,12 +22,13 @@ import { injectContext } from '@taiga-ui/polymorpheus';
 })
 export class DialogpedidodetailComponent implements OnInit {
   protected readonly context = injectContext<TuiDialogContext<boolean, Pedido>>();
-  public pedido: Pedido = this.context.data ?? {} as Pedido;
+  public pedido: Pedido = { ...this.context.data } as Pedido;
   private readonly pedidoSalaService = inject(PedidoSalaService);
   private readonly dialogService = inject(DialogService);
   private readonly alerts = inject(TuiAlertService);
   private readonly store = inject(Store<AppState>);
   private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
 
   enSala = this.pedidoSalaService.hasPedido(this.pedido.id);
   editMode = false;
@@ -237,6 +239,12 @@ export class DialogpedidodetailComponent implements OnInit {
       label: `${this.pedido.numero_pedido} removido`,
       appearance: 'warning'
     }).subscribe();
+  }
+
+  irAVentaPorPedido(): void {
+    this.pedidoSalaService.savePedido(this.pedido);
+    this.router.navigate(['/app/ventas/crear'], { fragment: 'pedido' });
+    this.close();
   }
 
   close(): void {

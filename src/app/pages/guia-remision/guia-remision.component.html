@@ -1,10 +1,16 @@
 <main class="p-4 sm:p-6">
   <div class="max-w-7xl mx-auto">
 
-    <!-- Header -->
-    <div class="mb-6">
-      <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Guías de Remisión</h2>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400">Gestiona guías de remisión electrónicas</p>
+    <!-- Header Apple sin fondo -->
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h2 class="text-lg sm:text-xl font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Guías de Remisión</h2>
+        <p class="text-xs text-[#86868b] dark:text-[#a1a1a6]">Gestiona guías de remisión electrónicas</p>
+      </div>
+      <a routerLink="/app/guia-remision/nueva" class="inline-flex items-center gap-1.5 h-8 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium hover:bg-black dark:hover:bg-[#f5f5f7] transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+        Nueva Guía
+      </a>
     </div>
 
     <!-- FILTROS DE BUSQUEDA -->
@@ -100,13 +106,14 @@
       </form>
     </search>
 
-    <!-- EMPTY STATE -->
-    <div class="flex flex-col items-center justify-center py-20 text-center">
-      <svg class="w-16 h-16 mb-4 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.25 7.5V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/>
-      </svg>
-      <h2 class="text-xl font-bold text-neutral-600 dark:text-neutral-300 mb-2">No hay guías de remisión</h2>
-      <p class="text-sm text-neutral-400 dark:text-neutral-500">Las guías de remisión que registres aparecerán aquí</p>
+    <!-- EMPTY STATE Apple sin fondo -->
+    <div class="flex flex-col items-center justify-center py-16 text-center rounded-2xl border border-dashed border-black/[0.08] dark:border-white/[0.08] bg-transparent">
+      <div class="w-12 h-12 rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center mb-3">
+        <svg class="w-6 h-6 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </div>
+      <h2 class="text-[15px] font-semibold text-[#1d1d1f] dark:text-white">No hay guías de remisión</h2>
+      <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mt-1">Las guías que registres aparecerán aquí</p>
+      <a routerLink="/app/guia-remision/nueva" class="mt-4 inline-flex items-center gap-1.5 h-8 px-5 rounded-full bg-[#0071e3] text-white text-[13px] font-medium hover:bg-[#0077ed]">Crear primera guía</a>
     </div>
 
   </div>

@@ -49,8 +49,6 @@ export class UserService {
         );
     }
 
-
-
     updateUser(user: Partial<User>): Observable<User> {
         return this.http.put<User>(`${this.siteURL}/usuarios/update/${user.id}/`, user).pipe(
             catchError(error => {

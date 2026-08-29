@@ -101,7 +101,7 @@
         <span>Configuración</span>
       </a>
 
-      <a routerLink="/app/store" (click)="onClose()" *ngIf="user.is_superuser"
+      <a routerLink="/app/tiendas" (click)="onClose()" *ngIf="user.is_superuser"
         routerLinkActive="nav-link-active" class="nav-link text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white">
         <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
@@ -121,7 +121,7 @@
           </div>
           <div class="user-info">
             <span class="user-name text-neutral-900 dark:text-white">{{ user.username }}</span>
-            <span class="user-role text-neutral-500 dark:text-neutral-400">{{ user.is_superuser ? 'Administrador' : 'Personal' }}</span>
+            <span class="user-role text-neutral-500 dark:text-neutral-400">{{ user.is_superuser ? 'Desarrollador' : 'Personal' }}</span>
           </div>
           <svg class="chevron-icon text-neutral-400" [class.rotate-180]="userMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>

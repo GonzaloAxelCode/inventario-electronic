@@ -6,6 +6,9 @@ export enum ActionTypes {
     LOAD_TIENDAS = 'LOAD_TIENDAS',
     LOAD_TIENDAS_SUCCESS = 'LOAD_TIENDAS_SUCCESS',
     LOAD_TIENDAS_FAIL = 'LOAD_TIENDAS_FAIL',
+    LOAD_MI_TIENDA = 'LOAD_MI_TIENDA',
+    LOAD_MI_TIENDA_SUCCESS = 'LOAD_MI_TIENDA_SUCCESS',
+    LOAD_MI_TIENDA_FAIL = 'LOAD_MI_TIENDA_FAIL',
     CREATE_TIENDA = 'CREATE_TIENDA',
     CREATE_TIENDA_SUCCESS = 'CREATE_TIENDA_SUCCESS',
     CREATE_TIENDA_FAIL = 'CREATE_TIENDA_FAIL',
@@ -40,6 +43,20 @@ export const loadTiendasSuccess = createAction(
 
 export const loadTiendasFail = createAction(
     ActionTypes.LOAD_TIENDAS_FAIL,
+    props<{ error: any }>()
+);
+
+export const loadMiTiendaAction = createAction(
+    ActionTypes.LOAD_MI_TIENDA
+);
+
+export const loadMiTiendaSuccess = createAction(
+    ActionTypes.LOAD_MI_TIENDA_SUCCESS,
+    props<{ tienda: Tienda }>()
+);
+
+export const loadMiTiendaFail = createAction(
+    ActionTypes.LOAD_MI_TIENDA_FAIL,
     props<{ error: any }>()
 );
 

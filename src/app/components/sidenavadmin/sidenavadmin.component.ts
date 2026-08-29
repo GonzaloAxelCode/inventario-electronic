@@ -94,6 +94,16 @@ export class SidenavadminComponent implements OnInit {
     });
   }
 
+  get is_SuperUser(): boolean {
+    return !!this.user?.is_superuser;
+  }
+
+  get isAdminTienda(): boolean {
+    if (!this.user || this.is_SuperUser) return false;
+    const u: any = this.user;
+    return u.es_propietario === true;
+  }
+
   toggleUserMenu() {
     this.userMenuOpen = !this.userMenuOpen;
   }

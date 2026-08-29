@@ -1,18 +1,9 @@
-table {
-  width: 100%;
-  
+:host {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
-
-
 [tuiTh],
 [tuiTd] {
-    border-inline-start: none;
-    border-inline-end: none;  background-color: transparent;
+  border: none;
+  background: transparent;
 }
-
-[tuiTable] [tuiTitle] {
-    flex-direction: row;
-    gap: 0.375rem;
-    
-}
-

@@ -20,6 +20,15 @@ export class TiendaService {
         );
     }
 
+    fetchMiTienda(): Observable<Tienda> {
+        return this.http.get<Tienda>(`${this.siteURL}/mi-tienda/`).pipe(
+            catchError(error => {
+                printError(error);
+                return throwError(error);
+            })
+        );
+    }
+
     createTienda(tienda: FormData): Observable<Tienda> {
         return this.http.post<Tienda>(`${this.siteURL}/tiendas/create/`, tienda).pipe(
             catchError(error => {

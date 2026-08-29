@@ -10,6 +10,9 @@ import {
     eliminarTiendaPermanently,
     eliminarTiendaPermanentlyFail,
     eliminarTiendaPermanentlySuccess,
+    loadMiTiendaAction,
+    loadMiTiendaFail,
+    loadMiTiendaSuccess,
     loadTiendasAction,
     loadTiendasFail,
     loadTiendasSuccess,
@@ -20,11 +23,13 @@ import {
 
 const initialState: TiendaState = {
     tiendas: [],
+    miTienda: null,
     loadingTiendas: false,
     loadingCreateTienda: false,
     loadingActiveTienda: false,
     loadingDeleteTienda: false,
     loadingUpdateTienda: false,
+    loadingMiTienda: false,
     errors: {}
 };
 
@@ -105,12 +110,28 @@ export const tiendaReducer = createReducer(
     })),
     on(updateTiendaSuccess, (state, { tienda }) => ({
         ...state,
-        tiendas: state.tiendas.filter(t => t.id !== tienda.id),
+        tiendas: state.tiendas.map(t => t.id === tienda.id ? tienda : t),
+        miTienda: state.miTienda?.id === tienda.id ? tienda : state.miTienda,
         loadingUpdateTienda: false
     })),
     on(updateTiendaFail, (state, { error }) => ({
         ...state,
         errors: error,
         loadingUpdateTienda: false
+    })),
+
+    on(loadMiTiendaAction, (state) => ({
+        ...state,
+        loadingMiTienda: true
+    })),
+    on(loadMiTiendaSuccess, (state, { tienda }) => ({
+        ...state,
+        miTienda: tienda,
+        loadingMiTienda: false
+    })),
+    on(loadMiTiendaFail, (state, { error }) => ({
+        ...state,
+        errors: error,
+        loadingMiTienda: false
     }))
 );

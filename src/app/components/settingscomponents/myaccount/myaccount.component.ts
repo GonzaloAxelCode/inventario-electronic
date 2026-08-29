@@ -1,10 +1,12 @@
 import { Tienda } from '@/app/models/tienda.models';
 import { User } from '@/app/models/user.models';
+import { getLoginUserDataFromLocalStorage } from '@/app/services/utils/localstorage-functions';
 import { AppState } from '@/app/state/app.state';
 import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
@@ -20,7 +22,7 @@ export class MyaccountComponent implements OnInit {
   user: User = initialStateUser.user;
   tienda!: Tienda;
 
-  constructor(private store: Store<AppState>) {
+  constructor(private store: Store<AppState>, private router: Router) {
     this.userState$ = this.store.select(selectUsersState);
   }
 

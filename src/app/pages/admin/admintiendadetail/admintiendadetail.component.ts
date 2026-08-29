@@ -1,8 +1,9 @@
 import { Tienda } from '@/app/models/tienda.models';
 import { URL_BASE } from '@/app/services/utils/endpoints';
-import { eliminarTiendaPermanently, eliminarTiendaPermanentlySuccess, updateTiendaAction } from '@/app/state/actions/tienda.actions';
+import { eliminarTiendaPermanently, eliminarTiendaPermanentlySuccess, loadTiendasAction, updateTiendaAction } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
+import { selectCurrenttUser } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -12,16 +13,17 @@ import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiAlertService, TuiAppearance, TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiButtonLoading, TuiConfirmData, TuiTab, TuiTabs } from '@taiga-ui/kit';
-import { TuiInputModule } from '@taiga-ui/legacy';
+import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
 import { Subject, takeUntil } from 'rxjs';
 import { TableUsersComponent } from '../../../components/Tables/tableusers/tableusers.component';
+import { DialogUpdateTiendaService } from '@/app/services/dialogs-services/dialog-updatetienda.service';
 
 @Component({
   selector: 'app-admintiendadetail',
   standalone: true,
   imports: [
     CommonModule, TuiButton, TuiAppearance, TuiLoader,
-    TuiInputModule, FormsModule, TuiTextfield, ReactiveFormsModule,
+    TuiInputModule, TuiSelectModule, FormsModule, TuiTextfield, ReactiveFormsModule,
     TuiButtonLoading, TuiTabs, TuiTab, TableUsersComponent
   ],
   templateUrl: './admintiendadetail.component.html',
@@ -38,7 +40,11 @@ export class AdmintiendadetailComponent implements OnInit {
   deleteTiendaLoader = false;
   loading = true;
 
-  activeTab: 'update' | 'config' | 'personal' = 'update';
+  activeTab: 'update' | 'config' | 'personal' | 'diseno' = 'update';
+  readonly seriesOptions = ['001','002','003','004','005','006','007','008','009','010'];
+  isSuperUser = false;
+  selectedTicket: 't80_1' | 't80_2' | 't80_3' = 't80_1';
+  selectedInvoice: 'pdf_1' | 'pdf_2' | 'pdf_3' = 'pdf_1';
 
   private readonly dialogs = inject(TuiResponsiveDialogService);
   private readonly alerts = inject(TuiAlertService);
@@ -49,7 +55,8 @@ export class AdmintiendadetailComponent implements OnInit {
     private actions$: Actions,
     private cdRef: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private dialogUpdateTienda: DialogUpdateTiendaService
   ) {}
 
   setTab(tab: typeof this.activeTab) {
@@ -61,18 +68,52 @@ export class AdmintiendadetailComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Inicializa form vacío síncrono para evitar NG01052 (formGroup expects FormGroup)
+    this.tiendaForm = this.fb.group({
+      nombre: ['', Validators.required],
+      razon_social: ['', Validators.required],
+      ruc: ['', Validators.required],
+      direccion: ['', Validators.required],
+      telefono: [''],
+      email: [''],
+      representante: [''],
+      serie: ['', Validators.required],
+      correlativo_inicial_boleta: [1],
+      correlativo_inicial_factura: [1],
+      correlativo_inicial_nota_credito: [1]
+    });
+
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    let hasDispatchedLoad = false;
 
     this.store.select(selectTiendaState).subscribe((state) => {
-      const found = state.tiendas?.find(t => t.id === id);
+      const found = state.tiendas?.find(t => t.id === id) || (state.miTienda?.id === id ? state.miTienda : null);
       if (found) {
-        this.tienda = found;
-        this.logoPreview = found.logo_img ? URL_BASE + found.logo_img : null;
+        this.tienda = found as Tienda;
+        this.logoPreview = (found as Tienda).logo_img ? URL_BASE + (found as Tienda).logo_img : null;
         this.initForm();
+        this.loading = false;
+      } else if (state.loadingTiendas || state.loadingMiTienda) {
+        this.loading = true;
+      } else if (state.tiendas.length === 0 && !hasDispatchedLoad) {
+        hasDispatchedLoad = true;
+        this.store.dispatch(loadTiendasAction());
+        this.loading = true;
+      } else if (state.tiendas.length > 0 && !found) {
+        // Tienda no encontrada tras cargar
+        this.loading = false;
+      } else if (state.tiendas.length === 0 && hasDispatchedLoad) {
+        // Ya se intentó cargar y sigue vacío
         this.loading = false;
       }
       this.deleteTiendaLoader = state.loadingDeleteTienda;
       this.loadingUpdateTienda = state.loadingUpdateTienda;
+      this.cdRef.markForCheck();
+    });
+
+    this.store.select(selectCurrenttUser).pipe(takeUntil(this.destroy$)).subscribe(user => {
+      const u: any = user as any;
+      this.isSuperUser = !!u?.is_superuser;
       this.cdRef.markForCheck();
     });
   }
@@ -85,8 +126,6 @@ export class AdmintiendadetailComponent implements OnInit {
       direccion: [this.tienda.direccion || '', Validators.required],
       telefono: [this.tienda.telefono || ''],
       email: [this.tienda.email || ''],
-      sol_user: [this.tienda.sol_user || ''],
-      sol_password: [this.tienda.sol_password || ''],
       representante: [this.tienda.representante || ''],
       serie: [this.tienda.serie || '', Validators.required],
       correlativo_inicial_boleta: [this.tienda.correlativo_inicial_boleta || 1],
@@ -106,6 +145,15 @@ export class AdmintiendadetailComponent implements OnInit {
       this.selectedLogo = null;
       this.logoPreview = null;
     }
+  }
+
+  openEditModal(): void {
+    this.dialogUpdateTienda.open(this.tienda as any).subscribe(result => {
+      if (result) {
+        // El store se actualiza vía updateTiendaSuccess; refresca la vista
+        this.cdRef.markForCheck();
+      }
+    });
   }
 
   onSubmit() {

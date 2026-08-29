@@ -9,9 +9,6 @@ import {
     cargarPedidos,
     cargarPedidosExito,
     cargarPedidosError,
-    buscarPedidos,
-    buscarPedidosExito,
-    buscarPedidosError,
     crearPedido,
     crearPedidoExito,
     crearPedidoError,
@@ -37,27 +34,10 @@ export class PedidoEffects {
     cargarPedidosEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cargarPedidos),
-            switchMap(({ fromDate, toDate }) =>
-                this.pedidoService.getPedidos(fromDate, toDate).pipe(
+            switchMap(({ page, page_size, filters }) =>
+                this.pedidoService.getPedidos(page, page_size, filters).pipe(
                     map((response) =>
                         cargarPedidosExito({
-                            pedidos: response.results,
-                            count: response.count,
-                        })
-                    ),
-                    catchError((error) => of(cargarPedidosError({ error })))
-                )
-            )
-        )
-    );
-
-    buscarPedidosEffect = createEffect(() =>
-        this.actions$.pipe(
-            ofType(buscarPedidos),
-            switchMap(({ page, page_size, filters }) =>
-                this.pedidoService.buscarPedidos(page, page_size, filters).pipe(
-                    map((response) =>
-                        buscarPedidosExito({
                             pedidos: response.results,
                             count: response.count,
                             next: response.next,
@@ -66,7 +46,7 @@ export class PedidoEffects {
                             length_pages: response.length_pages,
                         })
                     ),
-                    catchError((error) => of(buscarPedidosError({ error })))
+                    catchError((error) => of(cargarPedidosError({ error })))
                 )
             )
         )

@@ -49,6 +49,7 @@ export const userInitial = {
     is_superuser: false,
     es_empleado: false,
     desactivate_account: false,
+    rol: 'usuario',
     permissions: {
         can_make_sale: false,
         can_cancel_sale: false,
@@ -74,6 +75,10 @@ export const userInitial = {
         view_category: false,
         view_supplier: false,
         view_store: false,
+        can_create_user: false,
+        can_create_proveedor: false,
+        can_update_proveedor: false,
+        can_delete_proveedor: false,
     }
 }
 export const initialStateUser: UserState = {
@@ -105,7 +110,6 @@ export const userReducer = createReducer(
         loadingUsers: false
     })),
 
-
     on(createUserAction, state => ({
         ...state,
         loadingCreateUser: true
@@ -120,7 +124,6 @@ export const userReducer = createReducer(
         errors: error,
         loadingCreateUser: false
     })),
-
 
     on(updateUserAction, state => ({
         ...state,
@@ -212,7 +215,7 @@ export const userReducer = createReducer(
                     ...user,
                     permissions: {
                         ...user.permissions,
-                        [permiso]: valor, // 👈 solo actualiza el permiso específico
+                        [permiso]: valor,
                     },
                 }
                 : user

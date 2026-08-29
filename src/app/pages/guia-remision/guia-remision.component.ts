@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { TuiDay, TuiDayLike, TuiDayRange } from '@taiga-ui/cdk';
 import { TuiButton, TuiTextfield } from '@taiga-ui/core';
 import { TuiBadge, TuiPagination, TuiSwitch } from '@taiga-ui/kit';
@@ -15,6 +16,7 @@ import { TuiInputDateRangeModule, TuiInputModule, TuiSelectModule } from '@taiga
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule,
     TuiButton,
     TuiTextfield,
     TuiBadge,

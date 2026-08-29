@@ -1,0 +1,699 @@
+// Todo queda bajo .icloud-auth y usa colores fijos (no variables/clases del tema global),
+// además Angular encapsula estos estilos por defecto al componente (ViewEncapsulation.Emulated),
+// así que nada de esto puede filtrarse ni ser sobreescrito por el tema claro/oscuro global.
+
+:host {
+    display: block;
+}
+
+.icloud-root {
+    --ic-bg: #000000;
+    --ic-surface: rgba(24, 24, 26, 0.72);
+    --ic-border: rgba(255, 255, 255, 0.09);
+    --ic-text: #f5f5f7;
+    --ic-text-soft: #98989d;
+    --ic-blue: #2997ff;
+    --ic-blue-deep: #0071e3;
+    --ic-red: #ff453a;
+
+    position: relative;
+    min-height: 100dvh;
+    width: 100%;
+    background: var(--ic-bg);
+    color: var(--ic-text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    color-scheme: dark;
+}
+
+// --- Navbar ---
+.icloud-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--ic-border);
+}
+
+.icloud-nav__brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ic-text);
+}
+
+.icloud-nav__logo {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+// ============================================================
+// LANDING (icloud.com pre-login)
+// ============================================================
+.icloud-home {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: ic-view-in 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.icloud-home__orbit {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin-bottom: 20px;
+}
+
+.icloud-home__center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--ic-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+    img {
+        width: 68%;
+        height: 68%;
+        object-fit: contain;
+    }
+}
+
+.icloud-home__sat {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
+    animation: ic-float 4.5s ease-in-out infinite;
+
+    mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.icloud-home__sat--1 { top: 0; left: 44%; background: #0a84ff; animation-delay: 0s; }
+.icloud-home__sat--2 { top: 20%; right: -4%; background: #bf5af2; animation-delay: 0.4s; }
+.icloud-home__sat--3 { top: 66%; right: 2%; background: #ff9f0a; animation-delay: 0.8s; }
+.icloud-home__sat--4 { bottom: -2%; left: 40%; background: #30d158; animation-delay: 1.2s; }
+.icloud-home__sat--5 { top: 62%; left: -4%; background: #64d2ff; animation-delay: 1.6s; }
+.icloud-home__sat--6 { top: 16%; left: -2%; background: #ff453a; animation-delay: 2s; }
+
+@keyframes ic-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.icloud-home__wordmark {
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 4px 0 24px;
+}
+
+.icloud-home__cta {
+    padding: 9px 22px;
+    border-radius: 999px;
+    border: 1px solid var(--ic-border);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--ic-text);
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.icloud-home__cta:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+}
+
+.icloud-home__tagline {
+    margin: 26px 0 44px;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--ic-text);
+    max-width: 480px;
+}
+
+.icloud-home__cards {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 720px) {
+    .icloud-home__cards {
+        grid-template-columns: 1fr;
+    }
+    .icloud-home__wordmark {
+        font-size: 42px;
+    }
+}
+
+.icloud-home__card {
+    text-align: left;
+    background: var(--ic-surface);
+    border: 1px solid var(--ic-border);
+    border-radius: 18px;
+    padding: 28px;
+    backdrop-filter: blur(20px);
+
+    h3 {
+        font-size: 17px;
+        font-weight: 600;
+        margin: 0 0 10px;
+        color: var(--ic-text);
+    }
+
+    p {
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--ic-text-soft);
+        margin: 0;
+
+        a {
+            color: var(--ic-blue);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.icloud-home__card-icons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+    max-width: 200px;
+}
+
+.icloud-home__mini {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.icloud-home__mini--blue { background: #0a84ff; }
+.icloud-home__mini--green { background: #30d158; }
+.icloud-home__mini--yellow { background: #ffd60a; color: #1c1c1e; }
+.icloud-home__mini--purple { background: #bf5af2; }
+.icloud-home__mini--gray { background: #48484a; }
+
+.icloud-home__card--plus {
+    background: linear-gradient(160deg, rgba(10, 132, 255, 0.16), var(--ic-surface) 55%);
+}
+
+.icloud-home__plus-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.icloud-home__plus-cloud {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+}
+
+.icloud-home__plus-cloud--a,
+.icloud-home__plus-cloud--c {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--ic-border);
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.icloud-home__plus-cloud--b {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    background: linear-gradient(135deg, var(--ic-blue), #5e5ce6);
+}
+
+@keyframes ic-view-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+// ============================================================
+// LOGIN (paso a paso)
+// ============================================================
+.icloud-auth {
+    position: relative;
+    min-height: calc(100dvh - 44px);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 24px;
+    animation: ic-view-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+// --- Fondo ambiental ---
+.icloud-auth__aura {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.icloud-auth__blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.35;
+    mix-blend-mode: screen;
+    will-change: transform;
+}
+
+.icloud-auth__blob--a {
+    width: 46vw;
+    height: 46vw;
+    top: -12%;
+    left: -10%;
+    background: radial-gradient(circle, #0a84ff, transparent 70%);
+    animation: ic-drift-a 22s ease-in-out infinite alternate;
+}
+
+.icloud-auth__blob--b {
+    width: 40vw;
+    height: 40vw;
+    bottom: -14%;
+    right: -8%;
+    background: radial-gradient(circle, #bf5af2, transparent 70%);
+    animation: ic-drift-b 26s ease-in-out infinite alternate;
+}
+
+.icloud-auth__blob--c {
+    width: 30vw;
+    height: 30vw;
+    top: 40%;
+    left: 55%;
+    background: radial-gradient(circle, #32d74b, transparent 70%);
+    opacity: 0.2;
+    animation: ic-drift-c 30s ease-in-out infinite alternate;
+}
+
+@keyframes ic-drift-a {
+    to { transform: translate(6%, 8%) scale(1.08); }
+}
+@keyframes ic-drift-b {
+    to { transform: translate(-8%, -6%) scale(1.12); }
+}
+@keyframes ic-drift-c {
+    to { transform: translate(-10%, 6%) scale(0.94); }
+}
+
+// --- Tarjeta ---
+.icloud-auth__card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 32px 28px;
+    border-radius: 20px;
+    background: var(--ic-surface);
+    border: 1px solid var(--ic-border);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+    animation: ic-card-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes ic-card-in {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.icloud-auth__back {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--ic-text-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.icloud-auth__back:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--ic-text);
+}
+
+.icloud-auth__rings-wrap {
+    position: relative;
+    width: 168px;
+    height: 168px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+
+.icloud-auth__rings {
+    position: absolute;
+    inset: 0;
+    animation: ic-ring-spin 50s linear infinite;
+}
+
+.icloud-auth__dot-pt {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    border-radius: 50%;
+    transform-origin: 0 0;
+}
+
+@keyframes ic-ring-spin {
+    to { transform: rotate(360deg); }
+}
+
+.icloud-auth__rings-logo {
+    position: relative;
+    z-index: 1;
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+}
+
+.icloud-auth__title {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    margin: 0 0 26px;
+    color: var(--ic-text);
+    text-align: center;
+}
+
+// --- Grupo de campos apilados (usuario + contraseña en una sola caja) ---
+.icloud-auth__fieldgroup {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--ic-border);
+    background: rgba(255, 255, 255, 0.04);
+    overflow: hidden;
+}
+
+.icloud-auth__fieldrow {
+    position: relative;
+
+    &:not(:last-child) {
+        border-bottom: 1px solid var(--ic-border);
+    }
+
+    &:focus-within {
+        background: rgba(41, 151, 255, 0.08);
+    }
+}
+
+.icloud-auth__input--stacked {
+    width: 100%;
+    height: 56px;
+    padding: 20px 16px 6px;
+    background: transparent;
+    border: none;
+    color: var(--ic-text);
+    font-size: 15px;
+    outline: none;
+}
+
+.icloud-auth__eye + .icloud-auth__input--stacked,
+.icloud-auth__input--stacked:has(~ .icloud-auth__eye) {
+    padding-right: 44px;
+}
+
+.icloud-auth__floating-label {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    color: var(--ic-text-soft);
+    pointer-events: none;
+    transition: top 0.15s ease, font-size 0.15s ease, color 0.15s ease;
+}
+
+.icloud-auth__input--stacked:focus ~ .icloud-auth__floating-label,
+.icloud-auth__input--stacked:not(:placeholder-shown) ~ .icloud-auth__floating-label {
+    top: 13px;
+    font-size: 11px;
+    color: var(--ic-text-soft);
+}
+
+.icloud-auth__input--stacked:focus ~ .icloud-auth__floating-label {
+    color: var(--ic-blue);
+}
+
+.icloud-auth__eye {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: transparent;
+    color: var(--ic-text-soft);
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.icloud-auth__eye:hover {
+    color: var(--ic-text);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.icloud-auth__eye-icon {
+    width: 16px;
+    height: 16px;
+}
+
+// --- Fila: recordarme + olvidé contraseña ---
+.icloud-auth__row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+
+.icloud-auth__checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ic-text);
+    cursor: pointer;
+
+    input[type='checkbox'] {
+        width: 15px;
+        height: 15px;
+        accent-color: var(--ic-blue);
+        cursor: pointer;
+    }
+}
+
+.icloud-auth__link {
+    font-size: 13px;
+    color: var(--ic-blue);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.icloud-auth__link:hover {
+    text-decoration: underline;
+}
+
+// --- Botón enviar ---
+.icloud-auth__submit {
+    width: 100%;
+    height: 48px;
+    margin-top: 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(180deg, var(--ic-blue), var(--ic-blue-deep));
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+}
+
+.icloud-auth__submit:not(:disabled):hover {
+    filter: brightness(1.12);
+}
+
+.icloud-auth__submit:not(:disabled):active {
+    transform: scale(0.98);
+}
+
+.icloud-auth__submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.icloud-auth__spinner {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2.5px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    animation: ic-spin 0.7s linear infinite;
+}
+
+@keyframes ic-spin {
+    to { transform: rotate(360deg); }
+}
+
+// --- Error ---
+.icloud-auth__error {
+    width: 100%;
+    margin-top: 16px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255, 69, 58, 0.12);
+    border: 1px solid rgba(255, 69, 58, 0.3);
+    color: #ff8a80;
+    font-size: 12.5px;
+    text-align: center;
+    animation: ic-shake 0.4s ease;
+}
+
+@keyframes ic-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(3px); }
+}
+
+// --- Legal / footer ---
+.icloud-auth__legal {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--ic-text-soft);
+
+    a {
+        color: var(--ic-text-soft);
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: var(--ic-text);
+        text-decoration: underline;
+    }
+}
+
+.icloud-auth__dot {
+    opacity: 0.5;
+}
+
+// --- Responsive ---
+@media (max-width: 380px) {
+    .icloud-auth__card {
+        padding: 32px 22px 24px;
+    }
+
+    .icloud-auth__rings-wrap {
+        width: 130px;
+        height: 130px;
+    }
+}
+
+// --- Accesibilidad: respeta reduce motion ---
+@media (prefers-reduced-motion: reduce) {
+    .icloud-auth__blob,
+    .icloud-auth__card,
+    .icloud-auth__rings,
+    .icloud-auth__spinner,
+    .icloud-auth__error {
+        animation: none !important;
+    }
+}

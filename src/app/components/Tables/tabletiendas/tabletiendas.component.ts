@@ -6,7 +6,7 @@ import { desactivateTiendaAction } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -25,6 +25,7 @@ import { Observable, tap } from 'rxjs';
   styleUrl: './tabletiendas.component.scss'
 })
 export class TabletiendasComponent implements OnInit {
+  @Input() tiendas: Tienda[] | null = null;
   URL_BASE = URL_BASE
   tiendasState$?: Observable<TiendaState>;
   allColumns = [
@@ -97,9 +98,11 @@ export class TabletiendasComponent implements OnInit {
 
   private readonly dialogService = inject(DialogUpdateTiendaService);
   private readonly dialogServiceDetail = inject(DialogDetailTiendaService);
-  protected showDialogUpdate(): void {
-    this.dialogService.open({}).subscribe((result: any) => {
-
+  protected showDialogUpdate(tienda?: Tienda): void {
+    this.dialogService.open(tienda ?? {}).subscribe((result: any) => {
+      if (result) {
+        // Actualizado, el store ya se encarga de refrescar
+      }
     });
   }
   protected showDialogDetailTienda(tienda: Tienda): void {
@@ -153,6 +156,36 @@ export class TabletiendasComponent implements OnInit {
     return names.join(', ') + extra;
   }
 
+  getGroupedTiendas(tiendas: Tienda[]): { ownerId: number | null; ownerLabel: string; tiendas: Tienda[] }[] {
+    const map = new Map<string, { ownerId: number | null; ownerLabel: string; tiendas: Tienda[] }>();
+    for (const t of tiendas) {
+      const key = t.propietario != null ? `owner-${t.propietario}` : 'sin-owner';
+      if (!map.has(key)) {
+        let label = 'Sin propietario';
+        if (t.propietario != null) {
+          const ownerUser = t.users_tienda?.find(u => u.id === t.propietario);
+          if (ownerUser) {
+            const full = `${ownerUser.first_name || ''} ${ownerUser.last_name || ''}`.trim();
+            label = full || ownerUser.username || `Propietario #${t.propietario}`;
+          } else {
+            label = `Propietario #${t.propietario}`;
+          }
+        }
+        map.set(key, { ownerId: t.propietario, ownerLabel: label, tiendas: [] });
+      }
+      map.get(key)!.tiendas.push(t);
+    }
+    return Array.from(map.values()).sort((a, b) => {
+      if (a.ownerId == null) return 1;
+      if (b.ownerId == null) return -1;
+      return a.ownerId - b.ownerId;
+    });
+  }
 
+  getOwnerInitials(label: string): string {
+    const parts = label.trim().split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return (label[0] || '?').toUpperCase();
+  }
 
 }

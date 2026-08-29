@@ -15,7 +15,7 @@
     </ng-container>
 
     <ng-container *ngIf="activeTab === 'crear'">
-        <app-registrarpedido></app-registrarpedido>
+        <app-registrarpedido (pedidoCreado)="onPedidoCreado()"></app-registrarpedido>
     </ng-container>
 
 </main>

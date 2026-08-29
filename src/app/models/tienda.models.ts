@@ -13,15 +13,16 @@ export interface Tienda {
     serie: string | null;
     representante: string | null;
     sol_user: string | null;
-    sol_password: string | null; // ⚠️ idealmente no usar en frontend
+    sol_password: string | null;
 
-    logo_img: string | null; // URL del backend
+    logo_img: string | null;
     activo: boolean;
     is_deleted: boolean;
+    propietario: number | null;
     correlativo_inicial_boleta: number;
     correlativo_inicial_factura: number;
     correlativo_inicial_nota_credito: number;
-    date_created: string; // ISO string (DateTimeField)
+    date_created: string;
     users_tienda: User[];
 }
 
@@ -40,11 +41,13 @@ export interface TiendaCreate {
 
 export interface TiendaState {
     tiendas: Tienda[];
+    miTienda: Tienda | null;
     loadingCreateTienda: boolean,
     loadingActiveTienda: boolean,
     loadingTiendas: boolean;
     loadingDeleteTienda: boolean;
     loadingUpdateTienda: boolean;
+    loadingMiTienda: boolean;
     errors?: any;
 }
 

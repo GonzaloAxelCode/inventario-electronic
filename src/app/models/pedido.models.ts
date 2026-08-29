@@ -102,11 +102,6 @@ export interface PedidoSearchFilters {
 
 export interface PedidoResponse {
     count: number;
-    results: Pedido[];
-}
-
-export interface PedidoSearchResponse {
-    count: number;
     next: number | null;
     previous: number | null;
     index_page: number;

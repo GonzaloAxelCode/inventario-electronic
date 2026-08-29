@@ -1,7 +1,7 @@
 import { User } from '@/app/models/user.models';
-import { updateUserPermissionsAction } from '@/app/state/actions/user.actions';
+import { updateUserAction, updateUserPermissionsAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
-import { selectUsersState } from '@/app/state/selectors/user.selectors';
+import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,6 +23,9 @@ export class DialogedituserpersmissionsComponent implements OnInit {
 
   public permissionsForm: FormGroup;
   loaderUpdatePermission: boolean = false
+  isSuperUser = false;
+  isTargetAdminTienda = false;
+  loadingAdminToggle = false;
 
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
     this.permissionsForm = this.fb.group({
@@ -65,8 +68,15 @@ export class DialogedituserpersmissionsComponent implements OnInit {
   ngOnInit() {
     this.store.select(selectUsersState).subscribe((state) => {
       this.loaderUpdatePermission = state.loadingUpdatePermissions;
-
+      this.loadingAdminToggle = (state as any).loadingUpdateUser || false;
     })
+
+    this.store.select(selectCurrenttUser).subscribe(u => {
+      const cur: any = u as any;
+      this.isSuperUser = !!cur?.is_superuser;
+    });
+
+    this.isTargetAdminTienda = !!(this.user as any)?.es_propietario;
 
     //aca escuchar el reducer si fue eliminado exitosamente para cerrar el dialog escucha el action 
   }
@@ -128,5 +138,11 @@ export class DialogedituserpersmissionsComponent implements OnInit {
     );
   }
 
+  onAdminTiendaToggle(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.checked;
+    this.isTargetAdminTienda = value;
+    this.store.dispatch(updateUserAction({ user: { id: this.user.id, es_propietario: value } as any }));
+  }
 
 }

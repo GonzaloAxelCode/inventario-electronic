@@ -4,7 +4,7 @@
 
 <form
   [formGroup]="permissionsForm"
-  class="wrapper grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 pt-6 px-4 pb-10 
+  class="wrapper grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 pt-6 px-4 pb-6 
          text-black dark:text-white transition-colors duration-500"
 >
 
@@ -33,4 +33,26 @@
     </div>
   </div>
 </form>
+
+<!-- Apartado convertir en admin-tienda — solo superusuarios, Apple sin fondos -->
+<div *ngIf="isSuperUser" class="mx-4 mb-6 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
+  <div class="px-4 py-3 flex items-center justify-between">
+    <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">Administración de tienda</p>
+    <span class="text-[10px] px-2 py-1 rounded-full bg-[#0071e3]/10 text-[#0071e3] font-medium">Solo superusuario</span>
+  </div>
+  <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
+  <label class="flex items-center justify-between px-4 py-4 cursor-pointer hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors">
+    <div class="flex-1 min-w-0 pr-4">
+      <p class="text-[13px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white">Convertir en admin-tienda</p>
+      <p class="text-[11px] leading-4 text-[#86868b] dark:text-[#a1a1a6] mt-0.5">Permite gestionar sucursales, crear tiendas bajo su padre y acceder a <span class="font-mono">/admin/store</span> (es_propietario).</p>
+      <p class="text-[11px] font-mono text-[#86868b] mt-1">Usuario: {{ user.username }} · ID {{ user.id }} · Actual: {{ isTargetAdminTienda ? 'Sí' : 'No' }}</p>
+    </div>
+    <input tuiSwitch type="checkbox" [checked]="isTargetAdminTienda" (change)="onAdminTiendaToggle($event)" class="shrink-0" />
+  </label>
+  <div class="px-4 pb-3 flex items-center gap-2 text-[11px] text-[#86868b]">
+    <span class="w-1.5 h-1.5 rounded-full" [ngClass]="isTargetAdminTienda ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
+    <span>{{ isTargetAdminTienda ? 'Es admin-tienda (propietario)' : 'No es admin-tienda' }}</span>
+    <span *ngIf="loadingAdminToggle" class="ml-auto text-[11px] animate-pulse">Guardando…</span>
+  </div>
+</div>
 </tui-loader>

@@ -6,22 +6,43 @@ import { filter, map } from 'rxjs/operators';
 import { AppState } from '../state/app.state';
 import { selectUser } from '../state/selectors/user.selectors';
 
-// 🔑 guard para superusuarios
 export function superUserGuard() {
     return (): Observable<boolean | UrlTree> => {
         const store = inject(Store<AppState>);
         const router = inject(Router);
         return store.select(selectUser).pipe(
-            filter(state => !state.loadingCurrentUser),
+            filter(state => !state.loadingCurrentUser && !!state.user),
             map((state: any) => {
-                const isSuperUser = !!state.user.is_superuser;
+                const user = state.user as any;
+                const isSuperUser = !!user.is_superuser;
+                const isAdminTienda = user?.es_propietario === true;
                 if (isSuperUser) {
-                    // Si es superusuario, permitir acceso
                     return true;
-                } else {
-                    // Si NO es superusuario, redirigir a app
-                    return router.createUrlTree(['/app']);
                 }
+                if (isAdminTienda) {
+                    return router.createUrlTree(['/admin/store']);
+                }
+                return router.createUrlTree(['/app']);
+            })
+        );
+    };
+}
+
+export function adminStoreGuard() {
+    return (): Observable<boolean | UrlTree> => {
+        const store = inject(Store<AppState>);
+        const router = inject(Router);
+        return store.select(selectUser).pipe(
+            filter(state => !state.loadingCurrentUser && !!state.user),
+            map((state: any) => {
+                const user = state.user;
+                const isSuperUser = !!user.is_superuser;
+                // Solo admin tienda = es_propietario === true (endpoint /api/usuarios/me/ -> es_propietario)
+                const isAdminTienda = user.es_propietario === true;
+                if (isSuperUser || isAdminTienda) {
+                    return true;
+                }
+                return router.createUrlTree(['/app']);
             })
         );
     };

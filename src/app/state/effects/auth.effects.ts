@@ -1,13 +1,14 @@
 import { AuthService } from '@/app/services/auth.service';
 
-import { saveAuthDataToLocalStorage } from '@/app/services/utils/localstorage-functions';
+import { saveAuthDataToLocalStorage, saveLoginUserDataToLocalStorage } from '@/app/services/utils/localstorage-functions';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { catchError, exhaustMap, filter, map, of, tap, withLatestFrom } from 'rxjs';
 import { loadTiendasAction } from '../actions/tienda.actions';
-import { loadUserAction } from '../actions/user.actions';
+import { loadUserAction, loadUserSuccess } from '../actions/user.actions';
 import { AppState } from '../app.state';
+import { selectCurrenttUser } from '../selectors/user.selectors';
 import {
     checkTokenAction,
     checkTokenActionFail,
@@ -39,6 +40,11 @@ export class AuthEffects {
 
                         });
 
+                        saveLoginUserDataToLocalStorage({
+                            rol: response?.rol,
+                            tienda: response?.tienda,
+                            mis_tiendas_count: response?.mis_tiendas_count,
+                        });
 
                         return loginInActionSuccess({
                             refreshToken: response?.refresh,
@@ -103,6 +109,18 @@ export class AuthEffects {
                 ofType(checkTokenActionSuccess),
                 tap(() => {
                     this.store.dispatch(loadUserAction());
+                })
+            ),
+        { dispatch: false }
+    );
+
+    loadTiendasIfSuperUser$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(loadUserSuccess),
+                withLatestFrom(this.store.select(selectCurrenttUser)),
+                filter(([_, user]) => !!user?.is_superuser),
+                tap(() => {
                     this.store.dispatch(loadTiendasAction());
                 })
             ),

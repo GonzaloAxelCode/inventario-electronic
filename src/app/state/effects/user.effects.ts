@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, exhaustMap, map, of } from 'rxjs';
+import { catchError, exhaustMap, map, of, switchMap } from 'rxjs';
 
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
 import { UserService } from '@/app/services/user.service';
+import { TiendaService } from '@/app/services/tienda.service';
+import { getLoginUserDataFromLocalStorage } from '@/app/services/utils/localstorage-functions';
 import {
     createUserAction, createUserFail, createUserSuccess,
     deleteUserAction, deleteUserFail, deleteUserSuccess,
@@ -24,6 +26,7 @@ export class UserEffects {
     constructor(
         private actions$: Actions,
         private userService: UserService,
+        private tiendaService: TiendaService,
         private store: Store<AppState>,
         private toastr: ToastrService,
         private alertService: CustomAlertService
@@ -34,8 +37,12 @@ export class UserEffects {
             exhaustMap(() =>
                 this.userService.fetchCurrentUser().pipe(
                     map((data: any) => {
-
-                        return loadUserSuccess({ user: data });
+                        const loginData = getLoginUserDataFromLocalStorage();
+                        const mergedUser = {
+                            ...data,
+                            rol: loginData.rol || data.rol,
+                        };
+                        return loadUserSuccess({ user: mergedUser });
                     }),
                     catchError(error => of(loadUserFail({ error })))
                 )
@@ -65,12 +72,22 @@ export class UserEffects {
             ofType(createUserAction),
             exhaustMap(({ user, tienda_id }) =>
                 this.userService.createUser(user, tienda_id).pipe(
-                    map((data: any) => {
-
+                    switchMap((data: any) => {
+                        const newUser = data.usuario;
                         this.alertService.showSuccess('Usuario creado exitosamente', 'Éxito').subscribe();
 
+                        const formData = new FormData();
+                        formData.append('propietario', String(newUser.id));
 
-                        return createUserSuccess({ user: data.usuario });
+                        return this.tiendaService.updateTIenda(formData, tienda_id).pipe(
+                            map(() => {
+                                this.alertService.showSuccess('Tienda asignada al administrador', 'Éxito').subscribe();
+                                return createUserSuccess({ user: newUser });
+                            }),
+                            catchError(() => {
+                                return of(createUserSuccess({ user: newUser }));
+                            })
+                        );
                     }),
                     catchError(error => {
                         this.alertService.showError('Error al crear el usuario', 'Error').subscribe();

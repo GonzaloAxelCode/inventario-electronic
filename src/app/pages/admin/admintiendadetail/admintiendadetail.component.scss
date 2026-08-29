@@ -1,18 +1,5 @@
-.active-link {
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #171717;
-    border-radius: 1px;
-  }
-}
-
-:host-context([tuiTheme="dark"]) .active-link::after {
-  background: #e5e5e5;
+:host {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

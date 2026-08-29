@@ -2,12 +2,14 @@ import { CommonModule } from '@angular/common';
 import {
 	ChangeDetectionStrategy,
 	Component,
+	ElementRef,
 	EventEmitter,
 	inject,
 	OnInit,
 	Output,
+	ViewChild
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
@@ -23,7 +25,7 @@ import { selectAuth } from '../../state/selectors/auth.selectors';
 	templateUrl: './login.component.html',
 	styleUrls: ['./login.component.scss'],
 	standalone: true,
-	imports: [ReactiveFormsModule, CommonModule, MatButtonModule, MatIconModule],
+	imports: [ReactiveFormsModule, FormsModule, CommonModule, MatButtonModule, MatIconModule],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit {
@@ -53,8 +55,41 @@ export class LoginComponent implements OnInit {
 		password: this.passwordFormControl,
 	});
 
+	// --- Vista actual: landing (portada) o login (formulario) ---
+	view: 'landing' | 'login' = 'landing';
+
+	showPassword = false;
+
+	// "Recordarme" es solo UI: se mantiene fuera del loginForm a propósito
+	// para no alterar el payload que recibe loginInAction (username/password).
+	rememberMe = true;
+
+	@ViewChild('usernameInput') usernameInputRef?: ElementRef<HTMLInputElement>;
+
+	// Anillo de puntos decorativo alrededor del logo (estilo Apple ID)
+	readonly ringDots = Array.from({ length: 32 }).map((_, i) => ({
+		angle: i * (360 / 32),
+		radius: i % 2 === 0 ? 66 : 74,
+		size: i % 3 === 0 ? 9 : 6,
+		hue: Math.round((i * 360) / 32),
+	}));
+
 	ngOnInit(): void {
 
+	}
+
+	onStartLogin(): void {
+		this.view = 'login';
+		setTimeout(() => this.usernameInputRef?.nativeElement.focus(), 60);
+	}
+
+	onBackToLanding(): void {
+		this.view = 'landing';
+		this.showPassword = false;
+	}
+
+	togglePasswordVisibility(): void {
+		this.showPassword = !this.showPassword;
 	}
 
 	onSubmit(): void {

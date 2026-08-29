@@ -1,4 +1,4 @@
-import { Pedido, PedidoResponse, PedidoSearchFilters, PedidoSearchResponse, CreatePedido } from '@/app/models/pedido.models';
+import { Pedido, PedidoResponse, PedidoSearchFilters, CreatePedido } from '@/app/models/pedido.models';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -12,32 +12,19 @@ export class PedidoService {
     private siteURL = URL_BASE + '/api';
     private http = inject(HttpClient);
 
-    getPedidos(fromDate: string, toDate: string): Observable<PedidoResponse> {
-        return this.http.post<PedidoResponse>(`${this.siteURL}/pedidos/lista/`, {
-            from_date: fromDate,
-            to_date: toDate,
-        }).pipe(
-            timeout(30000),
-            catchError((error) => {
-                console.error('Error al obtener pedidos', error);
-                return throwError(() => error);
-            })
-        );
-    }
-
-    buscarPedidos(
+    getPedidos(
         page: number = 1,
         page_size: number = 10,
         filters: PedidoSearchFilters = {}
-    ): Observable<PedidoSearchResponse> {
-        return this.http.post<PedidoSearchResponse>(`${this.siteURL}/pedidos/buscar/`, {
+    ): Observable<PedidoResponse> {
+        return this.http.post<PedidoResponse>(`${this.siteURL}/pedidos/lista/`, {
             page,
             page_size,
             query: filters,
         }).pipe(
             timeout(30000),
             catchError((error) => {
-                console.error('Error al buscar pedidos', error);
+                console.error('Error al obtener pedidos', error);
                 return throwError(() => error);
             })
         );

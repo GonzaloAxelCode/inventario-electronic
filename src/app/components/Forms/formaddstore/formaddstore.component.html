@@ -1,5 +1,17 @@
 <div class="form-container mt-5">
   <form [formGroup]="tiendaForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <!-- Banner sucursal para admin tienda — Apple sin fondo pesado -->
+    <div *ngIf="isAdminTienda" class="rounded-2xl border border-[#0071e3]/15 bg-[#0071e3]/[0.06] dark:bg-[#0071e3]/[0.10] px-4 py-3 flex gap-3">
+      <div class="w-8 h-8 rounded-full bg-[#0071e3]/15 flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11v2m0 0v2m0-2h2m-2 0H8"/></svg>
+      </div>
+      <div>
+        <p class="text-[12px] font-semibold tracking-[-0.01em] text-[#0071e3]">Se creará como sucursal</p>
+        <p class="text-[12px] leading-4 text-[#1d1d1f] dark:text-white">Bajo tu tienda padre: <span class="font-semibold">{{ parentTiendaNombre || ('ID ' + parentTiendaId) }}</span> <span *ngIf="parentTiendaId" class="font-mono text-[#86868b]">#{{ parentTiendaId }}</span></p>
+        <p class="text-[11px] text-[#86868b] dark:text-[#a1a1a6] mt-0.5">Solo puedes crear sucursales de tu tienda principal. El personal se gestiona con normalidad.</p>
+      </div>
+    </div>
+    <div *ngIf="!isSuperUser && !isAdminTienda" class="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-transparent px-3 py-2 text-[11px] text-[#86868b]">Creando tienda principal</div>
 
     <!-- Grid responsivo -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -39,13 +51,13 @@
       </div>
 
   <div>
-        <tui-input 
-          formControlName="serie" 
-          placeholder="Ingrese la serie de comprobantes" 
-          class="w-full"
-        >
+        <tui-select formControlName="serie" class="w-full">
           Serie de comprobantes
-        </tui-input>
+          <select tuiSelect [items]="seriesOptions" placeholder="Seleccione serie (001-010)"></select>
+        </tui-select>
+        <div *ngIf="tiendaForm.get('serie')?.touched && tiendaForm.get('serie')?.invalid" class="text-red-500 text-sm">
+          La serie es obligatoria
+        </div>
       </div>
 
       <!-- RUC -->
@@ -96,64 +108,137 @@
         </tui-input>
       </div>
 
-      <!-- Usuario SOL -->
-      <div>
-        <tui-input 
-          formControlName="sol_user" 
-          placeholder="Usuario SOL" 
-          class="w-full"
-        >
-          Usuario SOL
-        </tui-input>
+      <!-- Credenciales SOL SUNAT — solo superusuarios -->
+      <div *ngIf="isSuperUser" class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <tui-input formControlName="sol_user" placeholder="Usuario SOL" class="w-full">Usuario SOL</tui-input>
+        </div>
+        <div>
+          <tui-input formControlName="sol_password" placeholder="Clave SOL" type="password" class="w-full">Clave SOL</tui-input>
+        </div>
       </div>
 
-      <!-- Contraseña SOL -->
-      <div>
-        <tui-input 
-          formControlName="sol_password" 
-          placeholder="Contraseña SOL" 
-          class="w-full"
-          type="password"
-        >
-          Contraseña SOL
-        </tui-input>
+      <!-- Archivo clave SUNAT — solo superusuarios -->
+      <div *ngIf="isSuperUser" class="lg:col-span-2 rounded-2xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-4">
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-xl bg-[#0071e3]/10 flex items-center justify-center shrink-0">
+            <svg class="w-4.5 h-4.5 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11c0 3.517-1.009 6.797-2.753 9.579a.5.5 0 01-.86-.49A9.001 9.001 0 0012 3a9.001 9.001 0 003.613 17.09.5.5 0 01-.86.49A10.97 10.97 0 0112 11z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11V7a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[12px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white">Archivo clave SUNAT</p>
+            <p class="text-[11px] leading-4 text-[#86868b] dark:text-[#a1a1a6]">Certificado .p12/.pfx para validar credenciales SUNAT</p>
+            <div class="mt-3 flex flex-wrap items-center gap-2">
+              <button type="button" (click)="certInputCreate.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
+              <span *ngIf="certFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[180px]">{{ certFileName }}</span>
+              <span *ngIf="!certFileName" class="text-[11px] text-[#86868b]">Ningún archivo</span>
+              <button *ngIf="certFileName" type="button" (click)="selectedCert=null; certFileName=null; certInputCreate.value=''" class="text-[11px] text-[#ff3b30] hover:underline">Quitar</button>
+            </div>
+          </div>
+        </div>
+        <input type="file" #certInputCreate (change)="onCertSelected($event)" accept=".p12,.pfx,.pem,.key,.crt,.cer" class="hidden" />
+        <p class="text-[10px] text-[#86868b] mt-2">Solo superusuarios. Se enviará como <span class="font-mono">certificado</span> junto a SOL.</p>
       </div>
 
-      <!-- Logo -->
-<div class="lg:col-span-2">
-  <label class="block mb-2 text-sm font-medium">Logo de la Tienda</label>
+      <!-- Imágenes — Apple elegante sin fondos, con instrucciones -->
+      <div class="lg:col-span-2 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
+        <div class="px-4 py-2.5 flex items-center justify-between"><p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Imágenes</p><span class="text-[10px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">Opcionales</span></div>
+        <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
+        <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Logo claro -->
+          <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3 flex flex-col">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-7 h-7 rounded-lg bg-white dark:bg-[#2c2c2e] ring-1 ring-black/[0.06] flex items-center justify-center"><svg class="w-4 h-4 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.608-4.608a2 2 0 012.828 0L16 16m-2-2l1.5-1.5a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+              <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Logo claro</p>
+              <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3]">Requerido</span>
+            </div>
+            <div class="w-full aspect-square rounded-xl overflow-hidden bg-white dark:bg-[#1c1c1e] ring-1 ring-black/[0.06] cursor-pointer flex items-center justify-center" (click)="fileInput.click()">
+              <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo Preview" class="w-full h-full object-contain p-2"/>
+              <div *ngIf="!logoPreview" class="text-center p-4">
+                <svg class="w-6 h-6 mx-auto text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 16v-8m0 0l-3 3m3-3l3 3M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+                <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white mt-1">Subir logo</p>
+                <p class="text-[10px] text-[#86868b]">Toca para seleccionar</p>
+              </div>
+            </div>
+            <p class="text-[10px] leading-3 text-[#86868b] mt-2">Recomendado <b class="text-[#1d1d1f] dark:text-white">512×512 px</b> cuadrado 1:1 · PNG transparente o JPG · <b>Máx 2MB</b> · Mín 200×200 · Se muestra 32–64px</p>
+            <p *ngIf="selectedLogo" class="text-[10px] font-mono truncate mt-1 px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08]">{{ selectedLogo.name }}</p>
+            <button *ngIf="selectedLogo" type="button" (click)="selectedLogo=null; logoPreview=null; fileInput.value=''" class="text-[10px] text-[#ff3b30] mt-1 self-start">Quitar</button>
+            <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/png,image/jpeg,image/webp" class="hidden"/>
+          </div>
 
-  <!-- Contenedor clicable -->
-  <div class="w-32 h-32 border rounded overflow-hidden cursor-pointer"
-       (click)="fileInput.click()">
+          <!-- Logo oscuro -->
+          <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3 flex flex-col">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-7 h-7 rounded-lg bg-[#1d1d1f] dark:bg-white flex items-center justify-center"><svg class="w-4 h-4 text-white dark:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg></div>
+              <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Logo oscuro</p>
+              <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Opcional</span>
+            </div>
+            <div class="w-full aspect-square rounded-xl overflow-hidden bg-[#1d1d1f] dark:bg-white ring-1 ring-black/[0.06] cursor-pointer flex items-center justify-center" (click)="fileInputDark.click()">
+              <img *ngIf="logoDarkPreview" [src]="logoDarkPreview" alt="Logo Dark Preview" class="w-full h-full object-contain p-2"/>
+              <div *ngIf="!logoDarkPreview" class="text-center p-4">
+                <svg class="w-6 h-6 mx-auto text-white/60 dark:text-black/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 16v-8m0 0l-3 3m3-3l3 3M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+                <p class="text-[11px] font-medium text-white dark:text-black mt-1">Logo dark</p>
+                <p class="text-[10px] text-white/60 dark:text-black/50">Para tema oscuro</p>
+              </div>
+            </div>
+            <p class="text-[10px] leading-3 text-[#86868b] mt-2">Mismo tamaño <b class="text-[#1d1d1f] dark:text-white">512×512</b> · Versión blanca · PNG transparente · <b>Máx 2MB</b> · Si no se sube, se invierte el claro</p>
+            <p *ngIf="selectedLogoDark" class="text-[10px] font-mono truncate mt-1 px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08]">{{ selectedLogoDark.name }}</p>
+            <button *ngIf="selectedLogoDark" type="button" (click)="selectedLogoDark=null; logoDarkPreview=null; fileInputDark.value=''" class="text-[10px] text-[#ff3b30] mt-1 self-start">Quitar</button>
+            <input type="file" #fileInputDark (change)="onLogoDarkSelected($event)" accept="image/png,image/jpeg,image/webp" class="hidden"/>
+          </div>
 
-    <!-- Preview de la imagen o fondo gris si no hay -->
-    <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo Preview"
-         class="w-full h-full object-cover"/>
-    <div *ngIf="!logoPreview" class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
-      Seleccionar
+          <!-- Banner -->
+          <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3 flex flex-col">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-7 h-7 rounded-lg bg-[#30d158]/15 flex items-center justify-center"><svg class="w-4 h-4 text-[#30d158]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.608-4.608a2 2 0 012.828 0L16 16m-2-2l1.5-1.5a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+              <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Banner</p>
+              <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Opcional</span>
+            </div>
+            <div class="w-full aspect-[3/1] rounded-xl overflow-hidden bg-white dark:bg-[#1c1c1e] ring-1 ring-black/[0.06] cursor-pointer flex items-center justify-center" (click)="fileInputBanner.click()">
+              <img *ngIf="bannerPreview" [src]="bannerPreview" alt="Banner Preview" class="w-full h-full object-cover"/>
+              <div *ngIf="!bannerPreview" class="text-center p-3">
+                <svg class="w-6 h-6 mx-auto text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.608-4.608a2 2 0 012.828 0L16 16m-2-2l1.5-1.5a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white mt-1">Subir banner</p>
+                <p class="text-[10px] text-[#86868b]">1200×400</p>
+              </div>
+            </div>
+            <p class="text-[10px] leading-3 text-[#86868b] mt-2">Recomendado <b class="text-[#1d1d1f] dark:text-white">1200×400 px</b> 3:1 · JPG/PNG · <b>Máx 5MB</b> · Se recorta como cover</p>
+            <p *ngIf="selectedBanner" class="text-[10px] font-mono truncate mt-1 px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08]">{{ selectedBanner.name }}</p>
+            <button *ngIf="selectedBanner" type="button" (click)="selectedBanner=null; bannerPreview=null; fileInputBanner.value=''" class="text-[10px] text-[#ff3b30] mt-1 self-start">Quitar</button>
+            <input type="file" #fileInputBanner (change)="onBannerSelected($event)" accept="image/png,image/jpeg,image/webp" class="hidden"/>
+          </div>
+        </div>
+      </div>
+
+
     </div>
-  </div>
 
-  <!-- Input oculto -->
-  <input type="file" #fileInput (change)="onFileSelected($event)"
-         accept="image/*" class="hidden"/>
-</div>
-
-
-    </div>
+      <!-- Jerarquía — solo superusuario, obligatorio final -->
+      <div *ngIf="isSuperUser" class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
+        <div class="px-4 py-2.5 flex items-center justify-between"><p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Jerarquía</p><span class="text-[10px] px-2 py-1 rounded-full bg-[#ff3b30]/10 text-[#ff3b30] font-medium">Obligatorio</span></div>
+        <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
+        <div class="p-4">
+          <label class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">¿Registrar como tienda padre o sucursal?</label>
+          <select formControlName="tienda_padre_select" class="mt-2 w-full h-10 rounded-xl border border-black/[0.12] dark:border-white/[0.12] bg-transparent px-3 text-[13px] text-[#1d1d1f] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0071e3]/20">
+            <option value="" disabled>Selecciona una opción</option>
+            <option value="padre">Registrar como tienda Padre</option>
+            <option *ngFor="let t of tiendasList" [value]="t.id">{{ t.nombre }} — RUC {{ t.ruc || '—' }} · ID {{ t.id }}</option>
+          </select>
+          <p *ngIf="tiendaForm.get('tienda_padre_select')?.touched && tiendaForm.get('tienda_padre_select')?.invalid" class="text-[#ff3b30] text-[11px] mt-1">Debes elegir si es tienda padre o seleccionar una tienda padre existente.</p>
+          <p class="text-[10px] leading-3 text-[#86868b] mt-2">Si eliges una tienda, la nueva se creará como <b class="text-[#1d1d1f] dark:text-white">sucursal</b> bajo esa padre. <b>Registrar como tienda Padre</b> la crea como principal.</p>
+        </div>
+      </div>
 
     <!-- Botón -->
     <div class="w-full flex flex-1">
       <button 
         tuiButton 
         size="m"
-        appearance="outline-grayscale"
-        class="w-full"
+        appearance="primary"
+        class="w-full rounded-full"
         type="submit" 
         [disabled]="tiendaForm.invalid"
       >
-        Crear Tienda
+        {{ isAdminTienda ? 'Crear Sucursal' : 'Crear Tienda' }}
         <tui-loader [showLoader]="!!(loadingCreateTienda$  | async)?.loadingCreateTienda"></tui-loader>
       </button>
     </div>

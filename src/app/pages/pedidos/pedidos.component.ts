@@ -1,7 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Store } from '@ngrx/store';
 
 import {
   TuiHeader,
@@ -16,8 +15,6 @@ import {
 } from '@taiga-ui/kit';
 
 import { TuiIcon } from '@taiga-ui/core';
-import { AppState } from '@/app/state/app.state';
-import { cargarPedidos } from '@/app/state/actions/pedido.actions';
 import { ListallpedidosComponent } from '@/app/components/pedidoscomponents/listallpedidos/listallpedidos.component';
 import { RegistrarpedidoComponent } from '@/app/components/pedidoscomponents/registrarpedido/registrarpedido.component';
 
@@ -41,7 +38,6 @@ import { RegistrarpedidoComponent } from '@/app/components/pedidoscomponents/reg
 })
 export class PedidosComponent implements OnInit {
 
-  private store = inject(Store<AppState>);
   private route = inject(ActivatedRoute);
   private location = inject(Location);
   private cdr = inject(ChangeDetectorRef);
@@ -51,12 +47,6 @@ export class PedidosComponent implements OnInit {
   activeTabIndex = 0;
 
   ngOnInit() {
-    const today = new Date();
-    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-    const fromDate = firstDay.toISOString().split('T')[0];
-    const toDate = today.toISOString().split('T')[0];
-    this.store.dispatch(cargarPedidos({ fromDate, toDate }));
-
     this.route.fragment.subscribe((fragment) => {
       if (fragment && this.isValidTab(fragment)) {
         this.activeTab = fragment as typeof this.activeTab;
@@ -64,6 +54,10 @@ export class PedidosComponent implements OnInit {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  onPedidoCreado() {
+    this.onTabChange(0);
   }
 
   onTabChange(index: number) {

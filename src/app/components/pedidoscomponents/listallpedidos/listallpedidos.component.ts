@@ -1,7 +1,7 @@
 import { Pedido } from '@/app/models/pedido.models';
 import { DialogPedidoDetailService } from '@/app/services/dialogs-services/dialog-pedido-detail.service';
 import { PAGE_SIZE_PEDIDOS } from '@/app/services/utils/pages-sizes';
-import { buscarPedidos, cancelarPedido } from '@/app/state/actions/pedido.actions';
+import { cargarPedidos, cancelarPedido } from '@/app/state/actions/pedido.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectPedido } from '@/app/state/selectors/pedido.selectors';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
@@ -181,7 +181,7 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
 
   onSearch() {
     const filters = this.buildFilters();
-    this.store.dispatch(buscarPedidos({ page: 1, page_size: PAGE_SIZE_PEDIDOS, filters }));
+    this.store.dispatch(cargarPedidos({ page: 1, page_size: PAGE_SIZE_PEDIDOS, filters }));
   }
 
   onCancelPedido(pedidoId: number) {
@@ -196,7 +196,7 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
 
   goToPage(index: number): void {
     const filters = this.buildFilters();
-    this.store.dispatch(buscarPedidos({ page: index + 1, page_size: PAGE_SIZE_PEDIDOS, filters }));
+    this.store.dispatch(cargarPedidos({ page: index + 1, page_size: PAGE_SIZE_PEDIDOS, filters }));
   }
 
   clearFilters() {

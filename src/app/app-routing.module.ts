@@ -3,9 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { authGuard } from './guards/auth.guard';
 import { loginGuard } from './guards/login.guard';
-import { superUserGuard } from './guards/superuser.guard';
-
-import { roleRedirectGuard } from './guards/role-redirect.guard';
+import { redirectGuard } from './guards/redirect.guard';
+import { adminStoreGuard, superUserGuard } from './guards/superuser.guard';
 
 import { AdminlayoutComponent } from './layouts/adminlayout/adminlayout.component';
 import { AuthlayoutComponent } from './layouts/authlayout/authlayout.component';
@@ -61,6 +60,10 @@ const routes: Routes = [
 				loadComponent: () => import('./pages/proveedores/proveedores.component').then(m => m.ProveedoresComponent)
 			},
 			{
+				path: 'guia-remision/nueva',
+				loadComponent: () => import('./pages/guia-remision/nueva-guia/nueva-guia.component').then(m => m.NuevaGuiaComponent)
+			},
+			{
 				path: 'guia-remision',
 				loadComponent: () => import('./pages/guia-remision/guia-remision.component').then(m => m.GuiaRemisionComponent)
 			},
@@ -92,28 +95,28 @@ const routes: Routes = [
 	{
 		path: 'admin',
 		component: AdminlayoutComponent,
-		canActivate: [authGuard, superUserGuard()],
+		canActivate: [authGuard],
 		canActivateChild: [authGuard],
 		children: [
 			{
 				path: '',
-				loadComponent: () => import('./pages/admin/adminhome/adminhome.component').then(m => m.AdminhomeComponent)
-			},
-			{
-				path: 'history',
-				loadComponent: () => import('./pages/admin/adminhistory/adminhistory.component').then(m => m.AdminhistoryComponent)
+				loadComponent: () => import('./pages/admin/adminhome/adminhome.component').then(m => m.AdminhomeComponent),
+				canActivate: [adminStoreGuard()]
 			},
 			{
 				path: 'config',
-				loadComponent: () => import('./pages/admin/adminsettings/adminsettings.component').then(m => m.AdminsettingsComponent)
+				loadComponent: () => import('./pages/admin/adminsettings/adminsettings.component').then(m => m.AdminsettingsComponent),
+				canActivate: [superUserGuard()]
 			},
 			{
 				path: 'store',
-				loadComponent: () => import('./pages/admin/adminmanagestore/adminmanagestore.component').then(m => m.AdminmanagestoreComponent)
+				loadComponent: () => import('./pages/admin/adminmanagestore/adminmanagestore.component').then(m => m.AdminmanagestoreComponent),
+				canActivate: [adminStoreGuard()]
 			},
 			{
 				path: 'store/:id',
-				loadComponent: () => import('./pages/admin/admintiendadetail/admintiendadetail.component').then(m => m.AdmintiendadetailComponent)
+				loadComponent: () => import('./pages/admin/admintiendadetail/admintiendadetail.component').then(m => m.AdmintiendadetailComponent),
+				canActivate: [adminStoreGuard()]
 			},
 		]
 	},
@@ -130,7 +133,7 @@ const routes: Routes = [
 	},
 	{
 		path: '',
-		canActivate: [authGuard, roleRedirectGuard()],
+		canActivate: [redirectGuard()],
 		children: []
 	},
 	{

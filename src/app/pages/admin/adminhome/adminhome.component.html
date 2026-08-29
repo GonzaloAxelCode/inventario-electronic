@@ -1,1 +1,219 @@
-<p>adminhome works!</p>
+<div class="min-h-screen bg-transparent">
+  <div class="max-w-[980px] mx-auto px-6 md:px-8 py-10">
+    <!-- Apple Header -->
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-[30px] md:text-[34px] font-semibold tracking-[-0.03em] leading-none text-[#1d1d1f] dark:text-white antialiased flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center">
+            <svg class="w-4.5 h-4.5 text-[#1d1d1f] dark:text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </span>
+          Inicio
+        </h1>
+        <p class="text-[13px] leading-5 text-[#86868b] dark:text-[#a1a1a6] mt-2 font-normal">
+          Panel Admin · usuario autenticado <span class="font-mono text-[11px] px-1.5 py-0.5 rounded-full bg-black/[0.06] dark:bg-white/[0.08]">GET /api/usuarios/me/</span>
+        </p>
+      </div>
+      <button (click)="reload()"
+        class="inline-flex items-center gap-2 h-8 px-4 rounded-full bg-black/[0.06] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-[13px] font-medium text-[#1d1d1f] dark:text-white transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        Actualizar
+      </button>
+    </div>
+
+    <div class="h-px bg-black/[0.08] dark:bg-white/[0.08] mb-8"></div>
+
+    <!-- Loading — Apple shimmer sin fondo -->
+    <div *ngIf="loading$ | async" class="space-y-4 animate-pulse">
+      <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent p-6">
+        <div class="flex gap-4">
+          <div class="w-14 h-14 rounded-full bg-black/[0.06] dark:bg-white/[0.08]"></div>
+          <div class="flex-1 space-y-3 py-1">
+            <div class="h-3.5 rounded-full bg-black/[0.06] dark:bg-white/[0.08] w-1/3"></div>
+            <div class="h-3 rounded-full bg-black/[0.04] dark:bg-white/[0.06] w-1/2"></div>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="h-20 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent"></div>
+        <div class="h-20 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent"></div>
+        <div class="h-20 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent"></div>
+      </div>
+    </div>
+
+    <!-- Content Apple -->
+    <ng-container *ngIf="user$ | async as user">
+      <div *ngIf="!(loading$ | async)" class="space-y-6">
+
+        <!-- Perfil — Apple inset grouped, sin fondo pesado -->
+        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
+          <div class="px-6 py-6 flex gap-5">
+            <div class="w-14 h-14 rounded-full bg-black/[0.06] dark:bg-white/[0.08] ring-1 ring-black/[0.08] dark:ring-white/[0.08] flex items-center justify-center text-[17px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white shrink-0">
+              {{ getInitials(user) }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2">
+                <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">{{ user.username }}</h2>
+                <span *ngIf="user.is_superuser" class="text-[10px] font-semibold tracking-wide uppercase px-2 py-1 rounded-full bg-black text-white dark:bg-white dark:text-black">Superuser</span>
+                <span class="w-1.5 h-1.5 rounded-full" [ngClass]="user.is_active ? 'bg-[#30d158]' : 'bg-[#ff3b30]'"></span>
+                <span class="text-[12px] text-[#86868b] dark:text-[#a1a1a6]">{{ user.is_active ? 'Activo' : 'Inactivo' }}</span>
+              </div>
+              <p class="text-[13px] leading-5 text-[#1d1d1f] dark:text-white/90 mt-1">
+                {{ user.first_name }} {{ user.last_name }}
+                <span *ngIf="!user.first_name && !user.last_name" class="italic text-[#86868b]">sin nombre</span>
+                <span class="text-[#86868b]"> · ID {{ user.id }}</span>
+              </p>
+              <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mt-1">Ingresó {{ user.date_joined | date:'mediumDate' }} · {{ user.date_joined | date:'shortTime' }}</p>
+            </div>
+            <div class="hidden sm:flex flex-col items-end gap-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[12px] font-medium text-[#1d1d1f] dark:text-white">
+                <span class="w-1.5 h-1.5 rounded-full" [ngClass]="user.is_superuser ? 'bg-[#ff9f0a]' : 'bg-[#0071e3]'"></span>
+                {{ user.rol || (user.is_superuser ? 'superuser' : 'usuario') }}
+              </span>
+              <span *ngIf="user.es_propietario !== undefined"
+                class="text-[11px] font-medium px-2.5 py-1 rounded-full border"
+                [ngClass]="user.es_propietario ? 'border-black/[0.08] dark:border-white/[0.08] text-[#1d1d1f] dark:text-white bg-transparent' : 'border-black/[0.06] text-[#86868b] bg-transparent'">
+                {{ user.es_propietario ? 'Propietario' : 'No propietario' }}
+              </span>
+            </div>
+          </div>
+          <div class="h-px bg-black/[0.06] dark:bg-white/[0.06] mx-6"></div>
+          <div class="px-6 py-3 flex flex-wrap gap-4 text-[12px]">
+            <span class="text-[#86868b] dark:text-[#a1a1a6]">staff <b class="font-medium text-[#1d1d1f] dark:text-white">{{ user.is_staff ? 'sí' : 'no' }}</b></span>
+            <span class="text-[#86868b] dark:text-[#a1a1a6]">superuser <b class="font-medium text-[#1d1d1f] dark:text-white">{{ user.is_superuser ? 'sí' : 'no' }}</b></span>
+            <span *ngIf="user.es_empleado" class="text-[#0071e3] font-medium">empleado</span>
+          </div>
+        </div>
+
+        <!-- Info — Apple inset list sin fondo -->
+        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden divide-y divide-black/[0.06] dark:divide-white/[0.06]">
+          <div class="flex items-center justify-between px-5 py-3.5">
+            <span class="text-[12px] font-medium tracking-wide uppercase text-[#86868b] dark:text-[#a1a1a6]">Cuenta</span>
+            <span class="text-[11px] text-[#86868b]">ID #{{ user.id }}</span>
+          </div>
+          <div class="flex items-center justify-between px-5 py-4">
+            <div>
+              <p class="text-[13px] font-medium text-[#1d1d1f] dark:text-white tracking-[-0.01em]">Username</p>
+              <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] font-mono">{{ user.username }}</p>
+            </div>
+            <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div *ngIf="!user.is_superuser" class="flex items-center justify-between px-5 py-4">
+            <div class="min-w-0">
+              <p class="text-[13px] font-medium text-[#1d1d1f] dark:text-white">Tienda</p>
+              <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] truncate">
+                <span class="font-mono text-[#1d1d1f] dark:text-white">{{ user.tienda ?? '—' }}</span>
+                <span *ngIf="user.tienda_nombre"> · {{ user.tienda_nombre }}</span>
+                <span *ngIf="user.tienda_data?.nombre"> · {{ user.tienda_data!.nombre }}</span>
+              </p>
+            </div>
+            <span *ngIf="!user.tienda_data" class="text-[11px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">Sin tienda</span>
+          </div>
+          <div class="flex items-center justify-between px-5 py-4">
+            <div>
+              <p class="text-[13px] font-medium text-[#1d1d1f] dark:text-white">Permisos</p>
+              <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6]">{{ countGranted(user) }} de {{ getPermissionEntries(user).length }} activos</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="hidden sm:block w-24 h-1 rounded-full bg-black/[0.08] dark:bg-white/[0.08] overflow-hidden">
+                <div class="h-full bg-[#1d1d1f] dark:bg-white rounded-full transition-all" [style.width.%]="getPermissionEntries(user).length ? (countGranted(user)/getPermissionEntries(user).length*100) : 0"></div>
+              </div>
+              <span class="text-[11px] font-medium px-2 py-1 rounded-full bg-black text-white dark:bg-white dark:text-black">{{ countGranted(user) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tienda asociada — Apple list, sin fondo (oculto para superuser) -->
+        <div *ngIf="user.tienda_data && !user.is_superuser" class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
+          <div class="px-5 py-3.5 flex items-center justify-between">
+            <p class="text-[12px] font-medium tracking-wide uppercase text-[#86868b] dark:text-[#a1a1a6]">Tienda asociada</p>
+            <a *ngIf="user.tienda_data?.id" [routerLink]="['/admin/store', user.tienda_data.id]" class="text-[12px] font-medium text-[#0071e3] hover:text-[#0077ed]">Ver →</a>
+          </div>
+          <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
+          <div class="divide-y divide-black/[0.06] dark:divide-white/[0.06]">
+            <div class="px-5 py-4 flex items-center gap-4">
+              <div class="w-10 h-10 rounded-xl bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center">
+                <svg class="w-5 h-5 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[14px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white truncate">{{ user.tienda_data.nombre }}</p>
+                <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] truncate">ID {{ user.tienda_data.id }} · RUC {{ user.tienda_data.ruc || '—' }} · {{ user.tienda_data.razon_social || '—' }}</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-0 text-[12px] divide-x divide-black/[0.06] dark:divide-white/[0.06]">
+              <div class="px-5 py-3"><p class="text-[#86868b]">Dirección</p><p class="font-medium text-[#1d1d1f] dark:text-white truncate">{{ user.tienda_data.direccion || '—' }}</p></div>
+              <div class="px-5 py-3"><p class="text-[#86868b]">Contacto</p><p class="font-medium text-[#1d1d1f] dark:text-white truncate">{{ user.tienda_data.telefono || '—' }} · {{ user.tienda_data.email || '—' }}</p></div>
+              <div class="px-5 py-3"><p class="text-[#86868b]">Serie</p><p class="font-mono font-medium text-[#1d1d1f] dark:text-white">{{ user.tienda_data.serie || '—' }}</p></div>
+              <div class="px-5 py-3"><p class="text-[#86868b]">Estado</p><p class="font-medium" [ngClass]="user.tienda_data.activo ? 'text-[#30d158]' : 'text-[#ff3b30]'">{{ user.tienda_data.activo ? 'Activa' : 'Inactiva' }} · {{ user.tienda_data.is_deleted ? 'Eliminada' : 'Vigente' }}</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Permisos — Apple chips minimal -->
+        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
+          <div class="px-5 py-3.5 flex items-center justify-between">
+            <p class="text-[12px] font-medium tracking-wide uppercase text-[#86868b] dark:text-[#a1a1a6]">Permisos · {{ getPermissionEntries(user).length }}</p>
+            <span class="text-[11px] font-medium px-2 py-1 rounded-full bg-black text-white dark:bg-white dark:text-black">{{ countGranted(user) }} activos</span>
+          </div>
+          <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
+          <div *ngIf="getPermissionEntries(user).length === 0" class="px-5 py-8 text-center">
+            <p class="text-[13px] text-[#86868b]">Sin permisos cargados.</p>
+          </div>
+          <div *ngIf="getPermissionEntries(user).length > 0" class="p-4 flex flex-wrap gap-1.5">
+            <span *ngFor="let p of getPermissionEntries(user); trackBy: trackByKey"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-medium tracking-[-0.01em]"
+              [ngClass]="p.value
+                ? 'bg-[#1d1d1f] text-white border-[#1d1d1f] dark:bg-white dark:text-black dark:border-white'
+                : 'bg-transparent text-[#86868b] dark:text-[#a1a1a6] border-black/[0.08] dark:border-white/[0.12]'">
+              <span class="w-1 h-1 rounded-full" [ngClass]="p.value ? 'bg-white dark:bg-black' : 'bg-[#86868b]/50'"></span>
+              {{ formatLabel(p.key) }}
+            </span>
+          </div>
+
+        </div>
+
+        <!-- Accesos — Apple list con chevron, sin fondos -->
+        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden divide-y divide-black/[0.06] dark:divide-white/[0.06]">
+          <a routerLink="/admin/store" class="flex items-center gap-4 px-5 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors group">
+            <div class="w-8 h-8 rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center">
+              <svg class="w-4 h-4 text-[#1d1d1f] dark:text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            </div>
+            <div class="flex-1">
+              <p class="text-[14px] font-medium tracking-[-0.01em] text-[#1d1d1f] dark:text-white">Gestionar Tiendas</p>
+              <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6]">Crear, editar y ver tiendas</p>
+            </div>
+            <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a] group-hover:text-[#86868b] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+          <a routerLink="/admin/config" class="flex items-center gap-4 px-5 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors group">
+            <div class="w-8 h-8 rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center">
+              <svg class="w-4 h-4 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <div class="flex-1">
+              <p class="text-[14px] font-medium tracking-[-0.01em] text-[#1d1d1f] dark:text-white">Configuración</p>
+              <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6]">Ajustes del panel admin</p>
+            </div>
+            <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a] group-hover:text-[#86868b] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+
+        <p class="text-center text-[11px] leading-4 text-[#86868b] dark:text-[#a1a1a6] px-4">
+          <span class="font-mono">GET /api/usuarios/me/</span> · IsAuthenticated · JWT
+        </p>
+      </div>
+    </ng-container>
+
+    <!-- Empty / Error — Apple -->
+    <div *ngIf="(user$ | async) === null && !(loading$ | async)" class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent py-12 text-center">
+      <div class="w-12 h-12 mx-auto rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center mb-3">
+        <svg class="w-6 h-6 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      </div>
+      <p class="text-[14px] font-medium text-[#1d1d1f] dark:text-white">No se pudo cargar el usuario</p>
+      <p *ngIf="error$ | async as err" class="text-[11px] font-mono text-[#ff3b30] mt-2 px-6 break-all">{{ err | json }}</p>
+      <button (click)="reload()" class="mt-4 h-8 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium">Reintentar</button>
+      <p class="text-[11px] text-[#86868b] dark:text-[#a1a1a6] mt-3">Verifica el token JWT.</p>
+    </div>
+  </div>
+</div>

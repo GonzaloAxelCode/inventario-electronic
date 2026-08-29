@@ -6,6 +6,7 @@ import { URL_BASE } from '@/app/services/utils/endpoints';
 import { clearTokensAction } from '@/app/state/actions/auth.actions';
 import { clearInventariosFromCache } from '@/app/state/actions/inventario.actions';
 import { clearUserAction } from '@/app/state/actions/user.actions';
+import { getLoginUserDataFromLocalStorage } from '@/app/services/utils/localstorage-functions';
 import { AppState } from '@/app/state/app.state';
 import { UserState } from '@/app/state/reducers/user.reducer';
 import { selectAuth } from '@/app/state/selectors/auth.selectors';
@@ -105,8 +106,12 @@ export class SidenavComponent implements OnInit {
   ngOnInit() {
     this.userState$.subscribe(userState => {
       this.user = userState.user;
-      this.tienda = userState.user.tienda_data ?? {} as Tienda;
+      this.tienda = userState.user?.tienda_data ?? {} as Tienda;
     });
+  }
+
+  get isSuperUser(): boolean {
+    return !!this.user?.is_superuser;
   }
 
   toggleUserMenu() {

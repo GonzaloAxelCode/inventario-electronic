@@ -12,13 +12,15 @@ export interface User {
     is_superuser: boolean;
     es_empleado: boolean;
     desactivate_account: boolean;
-    tienda: any | number
-    tienda_nombre?: string | null
-    tienda_data?: Tienda
+    tienda: any | number;
+    tienda_nombre?: string | null;
+    tienda_data?: Tienda;
+    rol?: 'superuser' | 'empleado' | 'usuario' | string;
+    es_propietario?: boolean;
     permissions: UserPermissions;
-    user_permissions_list: string[];   // 👈 faltaba
-    all_permissions_meta: string[];    // 👈 faltaba
-    date_created?: any
+    user_permissions_list: string[];
+    all_permissions_meta: string[];
+    date_created?: any;
 }
 
 export interface UserPermissions {
@@ -46,7 +48,7 @@ export interface UserPermissions {
     view_category: boolean;
     view_supplier: boolean;
     view_store: boolean;
-    can_create_user: boolean;   // 👈 también faltaba
+    can_create_user: boolean;
     can_create_proveedor: boolean
     can_update_proveedor: boolean
     can_delete_proveedor: boolean

@@ -15,7 +15,7 @@ import { selectPedido } from '@/app/state/selectors/pedido.selectors';
 import { selectCurrenttUser, selectPermissions, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AsyncPipe, CommonModule, NgForOf } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, inject, OnDestroy, OnInit, Output, signal, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Actions, ofType } from "@ngrx/effects";
 import { Store } from '@ngrx/store';
@@ -80,6 +80,7 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
   styleUrl: './registrarpedido.component.scss'
 })
 export class RegistrarpedidoComponent implements OnInit, OnDestroy {
+  @Output() pedidoCreado = new EventEmitter<void>();
   vistaActiva: 'buscar' | 'nuevo' | 'sin_cliente' = 'sin_cliente';
   currentStep = 1;
   protected expanded = false;
@@ -177,11 +178,14 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
   }
 
   clickedInside() {
-    this.container.nativeElement.style.borderColor = '#86efac';
+    if (this.container?.nativeElement) {
+      this.container.nativeElement.style.borderColor = '#86efac';
+    }
   }
 
   @HostListener('document:click', ['$event'])
   clickedOutside(event: MouseEvent) {
+    if (!this.container?.nativeElement) return;
     const clickedInside = this.container.nativeElement.contains(event.target as Node);
 
     if (!clickedInside) {
@@ -553,6 +557,7 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
       this.borrarCliente();
       this.pedidoForm.get('productos')?.reset([]);
       this.calcularTotales();
+      this.pedidoCreado.emit();
     });
   }
 

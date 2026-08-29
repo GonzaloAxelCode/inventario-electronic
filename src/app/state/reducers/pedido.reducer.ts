@@ -4,9 +4,6 @@ import {
     cargarPedidos,
     cargarPedidosExito,
     cargarPedidosError,
-    buscarPedidos,
-    buscarPedidosExito,
-    buscarPedidosError,
     crearPedido,
     crearPedidoExito,
     crearPedidoError,
@@ -52,22 +49,7 @@ export const pedidoReducer = createReducer(
         ...state,
         loading: true,
     })),
-    on(cargarPedidosExito, (state, { pedidos, count }) => ({
-        ...state,
-        pedidos,
-        count,
-        loading: false,
-    })),
-    on(cargarPedidosError, (state, { error }) => ({
-        ...state,
-        error,
-        loading: false,
-    })),
-    on(buscarPedidos, (state) => ({
-        ...state,
-        loading: true,
-    })),
-    on(buscarPedidosExito, (state, { pedidos, count, next, previous, index_page, length_pages }) => ({
+    on(cargarPedidosExito, (state, { pedidos, count, next, previous, index_page, length_pages }) => ({
         ...state,
         pedidos,
         count,
@@ -77,7 +59,7 @@ export const pedidoReducer = createReducer(
         length_pages,
         loading: false,
     })),
-    on(buscarPedidosError, (state, { error }) => ({
+    on(cargarPedidosError, (state, { error }) => ({
         ...state,
         error,
         loading: false,

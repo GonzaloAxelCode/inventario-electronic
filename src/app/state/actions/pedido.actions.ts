@@ -6,10 +6,6 @@ export enum PedidoActionTypes {
     CARGAR_PEDIDOS_EXITO = '[Pedido] Cargar Pedidos Exito',
     CARGAR_PEDIDOS_ERROR = '[Pedido] Cargar Pedidos Error',
 
-    BUSCAR_PEDIDOS = '[Pedido] Buscar Pedidos',
-    BUSCAR_PEDIDOS_EXITO = '[Pedido] Buscar Pedidos Exito',
-    BUSCAR_PEDIDOS_ERROR = '[Pedido] Buscar Pedidos Error',
-
     CREAR_PEDIDO = '[Pedido] Crear Pedido',
     CREAR_PEDIDO_EXITO = '[Pedido] Crear Pedido Exito',
     CREAR_PEDIDO_ERROR = '[Pedido] Crear Pedido Error',
@@ -25,26 +21,11 @@ export enum PedidoActionTypes {
 
 export const cargarPedidos = createAction(
     PedidoActionTypes.CARGAR_PEDIDOS,
-    props<{ fromDate: string; toDate: string }>()
+    props<{ page?: number; page_size?: number; filters?: PedidoSearchFilters }>()
 );
 
 export const cargarPedidosExito = createAction(
     PedidoActionTypes.CARGAR_PEDIDOS_EXITO,
-    props<{ pedidos: Pedido[]; count: number }>()
-);
-
-export const cargarPedidosError = createAction(
-    PedidoActionTypes.CARGAR_PEDIDOS_ERROR,
-    props<{ error: any }>()
-);
-
-export const buscarPedidos = createAction(
-    PedidoActionTypes.BUSCAR_PEDIDOS,
-    props<{ page?: number; page_size?: number; filters?: PedidoSearchFilters }>()
-);
-
-export const buscarPedidosExito = createAction(
-    PedidoActionTypes.BUSCAR_PEDIDOS_EXITO,
     props<{
         pedidos: Pedido[];
         count: number;
@@ -55,8 +36,8 @@ export const buscarPedidosExito = createAction(
     }>()
 );
 
-export const buscarPedidosError = createAction(
-    PedidoActionTypes.BUSCAR_PEDIDOS_ERROR,
+export const cargarPedidosError = createAction(
+    PedidoActionTypes.CARGAR_PEDIDOS_ERROR,
     props<{ error: any }>()
 );
 

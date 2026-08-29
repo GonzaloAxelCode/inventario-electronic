@@ -5,7 +5,7 @@ import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { TiendaService } from '@/app/services/tienda.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
-import { createTiendaAction, createTiendaFail, createTiendaSuccess, desactivateTiendaAction, desactivateTiendaFail, desactivateTiendaSuccess, eliminarTiendaPermanently, eliminarTiendaPermanentlyFail, eliminarTiendaPermanentlySuccess, loadTiendasAction, loadTiendasFail, loadTiendasSuccess, updateTiendaAction, updateTiendaFail, updateTiendaSuccess } from '../actions/tienda.actions';
+import { createTiendaAction, createTiendaFail, createTiendaSuccess, desactivateTiendaAction, desactivateTiendaFail, desactivateTiendaSuccess, eliminarTiendaPermanently, eliminarTiendaPermanentlyFail, eliminarTiendaPermanentlySuccess, loadMiTiendaAction, loadMiTiendaFail, loadMiTiendaSuccess, loadTiendasAction, loadTiendasFail, loadTiendasSuccess, updateTiendaAction, updateTiendaFail, updateTiendaSuccess } from '../actions/tienda.actions';
 
 @Injectable()
 export class TiendaEffects {
@@ -37,6 +37,19 @@ export class TiendaEffects {
             )
         )
     );
+
+    loadMiTiendaEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadMiTiendaAction),
+            exhaustMap(() =>
+                this.tiendaService.fetchMiTienda().pipe(
+                    map(tienda => loadMiTiendaSuccess({ tienda })),
+                    catchError(error => of(loadMiTiendaFail({ error })))
+                )
+            )
+        )
+    );
+
     createTiendaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(createTiendaAction),

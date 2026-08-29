@@ -66,21 +66,19 @@
 
 
       <!-- PESTAÑAS SIN ROUTER -->
-      <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap py-2 px-1">
+      <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap">
 
-        <button tuiTab (click)="setTab('update')" [class.active-link]="activeTab === 'update'">
+        <button tuiTab type="button" (click)="setTab('update')" [class.active-link]="activeTab === 'update'">
           Actualizar Tienda
         </button>
 
-        <button tuiTab (click)="setTab('personal')" [class.active-link]="activeTab === 'personal'">
+        <button tuiTab type="button" (click)="setTab('personal')" [class.active-link]="activeTab === 'personal'">
           Gestionar Personal
         </button>
 
-        <button tuiTab (click)="setTab('config')" [class.active-link]="activeTab === 'config'">
+        <button tuiTab type="button" (click)="setTab('config')" [class.active-link]="activeTab === 'config'">
           Configuracion
         </button>
-
-
 
       </nav>
 
