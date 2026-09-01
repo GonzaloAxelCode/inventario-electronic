@@ -1,146 +1,152 @@
-<div class="flex flex-col max-h-[85vh] w-full">
+<div class="flex flex-col w-full" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;">
 
-  <!-- HEADER (sin boton X) -->
-  <div class="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50">
+  <!-- HEADER Apple Style -->
+  <div class="flex items-start justify-between gap-4 p-5">
     <div class="flex items-center gap-3">
-      <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-        <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
         </svg>
       </div>
       <div>
         <div class="flex items-center gap-2 flex-wrap">
-          <h3 class="text-lg font-extrabold text-neutral-900 dark:text-white">{{ pedido.numero_pedido }}</h3>
-          <tui-badge [appearance]="getEstadoBadge(pedido.estado)" size="s">{{ pedido.estado }}</tui-badge>
-          <tui-badge [appearance]="getEstadoPagoBadge(pedido.estado_pago)" size="s">{{ pedido.estado_pago }}</tui-badge>
+          <h2 class="text-xl font-semibold tracking-tight text-stone-900 dark:text-white">{{ pedido.numero_pedido }}</h2>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
+            [class]="getEstadoColor(pedido.estado)">
+            {{ pedido.estado }}
+          </span>
         </div>
-        <p class="text-xs text-neutral-500 dark:text-neutral-400">Pedido #{{ pedido.id }} · {{ formatDateTime(pedido.fecha_hora) }}</p>
+        <p class="text-xs text-stone-400 mt-0.5">{{ formatDateTime(pedido.fecha_hora) }}</p>
       </div>
+    </div>
+    <div class="text-right">
+      <p class="text-2xl font-semibold text-stone-900 dark:text-white">S/ {{ pedido.total | number:'1.2-2' }}</p>
+      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium mt-1"
+        [class]="getEstadoPagoColor(pedido.estado_pago)">
+        {{ pedido.estado_pago }}
+      </span>
     </div>
   </div>
 
   <!-- CONTENT -->
-  <div class="flex-1 overflow-y-auto p-4 space-y-5">
+  <div class="flex-1 p-5 space-y-5">
 
     <!-- ==================== MODO VISTA ==================== -->
     <ng-container *ngIf="!editMode">
-      <div class="flex flex-wrap gap-2">
-        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
-          <span class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">{{ pedido.tipo_pedido }}</span>
-        </div>
-        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-          <span class="text-xs font-semibold text-blue-700 dark:text-blue-300">{{ pedido.canal_venta }}</span>
-        </div>
-        <div *ngIf="pedido.prioridad === 'URGENTE'" class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-900/20 rounded-lg">
-          <span class="text-xs font-semibold text-red-700 dark:text-red-300">URGENTE</span>
-        </div>
-        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
-          <span class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">{{ pedido.metodo_pago }}</span>
-        </div>
-      </div>
-
+      <!-- Grid info del pedido -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
-          <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Estado</p>
-          <tui-badge [appearance]="getEstadoBadge(pedido.estado)" size="s">{{ pedido.estado }}</tui-badge>
+        <div class="space-y-0.5">
+          <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Tipo</p>
+          <p class="text-sm font-medium text-stone-900 dark:text-white">{{ pedido.tipo_pedido }}</p>
         </div>
-        <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
-          <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Estado Pago</p>
-          <tui-badge [appearance]="getEstadoPagoBadge(pedido.estado_pago)" size="s">{{ pedido.estado_pago }}</tui-badge>
+        <div class="space-y-0.5">
+          <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Canal</p>
+          <p class="text-sm font-medium text-stone-900 dark:text-white">{{ pedido.canal_venta }}</p>
         </div>
-        <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
-          <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Tipo</p>
-          <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ pedido.tipo_pedido }}</p>
+        <div class="space-y-0.5">
+          <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Metodo Pago</p>
+          <p class="text-sm font-medium text-stone-900 dark:text-white">{{ pedido.metodo_pago }}</p>
         </div>
-        <div class="p-3 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
-          <p class="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Canal</p>
-          <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ pedido.canal_venta }}</p>
+        <div class="space-y-0.5">
+          <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Prioridad</p>
+          <p class="text-sm font-medium text-stone-900 dark:text-white">{{ pedido.prioridad }}</p>
         </div>
       </div>
 
-      <div class="p-4 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
-        <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-3">Cliente</p>
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-sm font-bold text-emerald-700 dark:text-emerald-300">{{ getClienteNombre().charAt(0) }}</div>
-          <div>
-            <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ getClienteNombre() }}</p>
-            <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ getClienteDocumento() }} <span *ngIf="pedido.email_cliente">· {{ pedido.email_cliente }}</span></p>
-            <p *ngIf="pedido.telefono_cliente" class="text-xs text-neutral-500 dark:text-neutral-400">Tel: {{ pedido.telefono_cliente }}</p>
+      <!-- Cliente -->
+      <div>
+        <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-3">Cliente</p>
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-700 flex items-center justify-center text-lg font-semibold text-stone-500 dark:text-stone-400 shrink-0">
+            {{ getClienteNombre().charAt(0) }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-base font-medium text-stone-900 dark:text-white">{{ getClienteNombre() }}</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 mt-2">
+              <div>
+                <p class="text-[10px] text-stone-400 uppercase">Documento</p>
+                <p class="text-xs text-stone-600 dark:text-stone-300">{{ getClienteDocumento() }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] text-stone-400 uppercase">Email</p>
+                <p class="text-xs text-stone-600 dark:text-stone-300">{{ pedido.email_cliente || 'Sin correo' }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] text-stone-400 uppercase">Telefono</p>
+                <p class="text-xs text-stone-600 dark:text-stone-300">{{ pedido.telefono_cliente || 'Sin telefono' }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div *ngIf="pedido.direccion_envio" class="p-4 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
-        <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2">Direccion de Envio</p>
-        <p class="text-sm text-neutral-900 dark:text-white">{{ pedido.direccion_envio }}</p>
-        <p *ngIf="pedido.referencia_ubicacion" class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Ref: {{ pedido.referencia_ubicacion }}</p>
-      </div>
-
-      <div *ngIf="getProductos().length" class="space-y-2">
-        <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Productos ({{ getProductos().length }} items)</p>
-        <div class="border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
-          <table class="w-full text-xs">
-            <thead class="bg-neutral-100 dark:bg-neutral-700">
-              <tr>
-                <th class="text-left px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">#</th>
-                <th class="text-left px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Producto</th>
-                <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Cant.</th>
-                <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">P. Unit.</th>
-                <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Dcto.</th>
-                <th class="text-right px-3 py-2.5 font-semibold text-neutral-600 dark:text-neutral-300">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of getProductos(); let i = index" class="border-t border-neutral-200 dark:border-neutral-700">
-                <td class="px-3 py-2 text-neutral-500 dark:text-neutral-400">{{ i + 1 }}</td>
-                <td class="px-3 py-2 font-medium text-neutral-900 dark:text-white">{{ item.producto_nombre }}</td>
-                <td class="px-3 py-2 text-right text-neutral-700 dark:text-neutral-300">{{ item.cantidad }}</td>
-                <td class="px-3 py-2 text-right text-neutral-700 dark:text-neutral-300">S/ {{ (item.valor_unitario || item.precio_unitario || 0) | number:'1.2-2' }}</td>
-                <td class="px-3 py-2 text-right text-red-500">{{ item.descuento ? '- S/ ' + (item.descuento | number:'1.2-2') : '-' }}</td>
-                <td class="px-3 py-2 text-right font-bold text-neutral-900 dark:text-white">S/ {{ getProductSubtotal(item) | number:'1.2-2' }}</td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- Direccion de envio -->
+      <div *ngIf="pedido.direccion_envio">
+        <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-2">Direccion de Envio</p>
+        <div>
+          <p class="text-sm text-stone-900 dark:text-white">{{ pedido.direccion_envio }}</p>
+          <p *ngIf="pedido.referencia_ubicacion" class="text-xs text-stone-500 dark:text-stone-400 mt-1">Ref: {{ pedido.referencia_ubicacion }}</p>
+          <p *ngIf="pedido.costo_envio > 0" class="text-xs text-stone-500 dark:text-stone-400 mt-1">Costo envio: S/ {{ pedido.costo_envio | number:'1.2-2' }}</p>
         </div>
       </div>
 
-      <div class="bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700 divide-y divide-neutral-200 dark:divide-neutral-700">
-        <div class="flex justify-between items-center px-4 py-2.5">
-          <span class="text-xs text-neutral-600 dark:text-neutral-400">Subtotal</span>
-          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ pedido.subtotal | number:'1.2-2' }}</span>
-        </div>
-        <div class="flex justify-between items-center px-4 py-2.5">
-          <span class="text-xs text-neutral-600 dark:text-neutral-400">IGV (18%)</span>
-          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ pedido.igv_total | number:'1.2-2' }}</span>
-        </div>
-        <div *ngIf="pedido.descuento_total > 0" class="flex justify-between items-center px-4 py-2.5">
-          <span class="text-xs text-neutral-600 dark:text-neutral-400">Descuentos</span>
-          <span class="text-sm font-semibold text-red-600">- S/ {{ pedido.descuento_total | number:'1.2-2' }}</span>
-        </div>
-        <div *ngIf="pedido.costo_envio > 0" class="flex justify-between items-center px-4 py-2.5">
-          <span class="text-xs text-neutral-600 dark:text-neutral-400">Costo Envio</span>
-          <span class="text-sm font-semibold text-neutral-900 dark:text-white">S/ {{ pedido.costo_envio | number:'1.2-2' }}</span>
-        </div>
-      </div>
-
-      <div class="p-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-xl border-2 border-emerald-200 dark:border-emerald-800">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Total Pedido</p>
-            <p class="text-[10px] text-emerald-500">{{ pedido.metodo_pago }} · {{ pedido.tipo_pedido }}</p>
+      <!-- Productos -->
+      <div *ngIf="getProductos().length">
+        <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-2">Productos ({{ getProductos().length }})</p>
+        <div class="space-y-3">
+          <div *ngFor="let item of getProductos(); let i = index"
+               class="flex items-start gap-3 py-2">
+            <!-- Imagen producto -->
+            <img [src]="getImagenProducto(item)" [alt]="item.producto_nombre" class="w-11 h-11 rounded-lg object-cover border border-stone-200/60 dark:border-stone-700/40 shrink-0 bg-stone-50 dark:bg-stone-700" loading="lazy" />
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-stone-900 dark:text-white">{{ item.producto_nombre }}</p>
+              <div class="flex items-center gap-3 mt-1">
+                <span class="text-xs text-stone-500">x{{ item.cantidad }}</span>
+                <span class="text-xs text-stone-500">S/ {{ (item.valor_unitario || item.precio_unitario || 0) | number:'1.2-2' }}</span>
+                <span *ngIf="item.descuento" class="text-xs text-red-500">-S/ {{ item.descuento | number:'1.2-2' }}</span>
+              </div>
+            </div>
+            <!-- Total -->
+            <span class="text-sm font-semibold text-stone-900 dark:text-white">S/ {{ getProductSubtotal(item) | number:'1.2-2' }}</span>
           </div>
-          <p class="text-2xl font-extrabold text-emerald-700 dark:text-emerald-300">S/ {{ pedido.total | number:'1.2-2' }}</p>
         </div>
       </div>
 
-      <div *ngIf="pedido.observaciones" class="p-4 bg-amber-50 dark:bg-amber-900/10 rounded-xl border border-amber-200 dark:border-amber-800">
-        <p class="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-2">Observaciones</p>
-        <p class="text-sm text-amber-800 dark:text-amber-300">{{ pedido.observaciones }}</p>
+      <!-- Resumen montos -->
+      <div class="space-y-2 pt-3">
+        <div class="flex justify-between text-xs">
+          <span class="text-stone-400">Subtotal</span>
+          <span class="text-stone-600 dark:text-stone-300">S/ {{ pedido.subtotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between text-xs">
+          <span class="text-stone-400">IGV (18%)</span>
+          <span class="text-stone-600 dark:text-stone-300">S/ {{ pedido.igv_total | number:'1.2-2' }}</span>
+        </div>
+        <div *ngIf="pedido.descuento_total > 0" class="flex justify-between text-xs">
+          <span class="text-stone-400">Descuento</span>
+          <span class="text-red-500">- S/ {{ pedido.descuento_total | number:'1.2-2' }}</span>
+        </div>
+        <div *ngIf="pedido.costo_envio > 0" class="flex justify-between text-xs">
+          <span class="text-stone-400">Costo Envio</span>
+          <span class="text-stone-600 dark:text-stone-300">S/ {{ pedido.costo_envio | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between items-baseline pt-2">
+          <span class="text-sm font-medium text-stone-900 dark:text-white">Total</span>
+          <span class="text-xl font-semibold text-stone-900 dark:text-white">S/ {{ pedido.total | number:'1.2-2' }}</span>
+        </div>
       </div>
 
-      <div *ngIf="pedido.notas_internas" class="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-200 dark:border-blue-800">
-        <p class="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-2">Notas Internas</p>
-        <p class="text-sm text-blue-800 dark:text-blue-300">{{ pedido.notas_internas }}</p>
+      <!-- Observaciones -->
+      <div *ngIf="pedido.observaciones">
+        <p class="text-[10px] font-medium text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-2">Observaciones</p>
+        <p class="text-sm text-stone-700 dark:text-stone-300">{{ pedido.observaciones }}</p>
+      </div>
+
+      <!-- Notas internas -->
+      <div *ngIf="pedido.notas_internas">
+        <p class="text-[10px] font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">Notas Internas</p>
+        <p class="text-sm text-stone-700 dark:text-stone-300">{{ pedido.notas_internas }}</p>
       </div>
     </ng-container>
 
@@ -280,45 +286,108 @@
   </div>
 
   <!-- ACCIONES -->
-  <div class="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50">
-    <tui-loader [showLoader]="saving" [overlay]="true">
-      <div class="flex gap-3">
-        <button *ngIf="!editMode" tuiButton appearance="primary" size="m" type="button" (click)="toggleEdit()" class="flex-1 !rounded-xl">
+  <div class="p-4">
+    <tui-loader [showLoader]="saving || deleting" [overlay]="true">
+      <!-- Si NO esta en sala: mostrar Actualizar y Enviar a Ventas -->
+      <div *ngIf="!enSala && !editMode" class="flex gap-3">
+        <button tuiButton appearance="primary" size="m" type="button" (click)="toggleEdit()" class="flex-1 !rounded-xl">
           <span class="flex items-center justify-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
-            Actualizar Datos
+            Actualizar
           </span>
         </button>
-        <button *ngIf="editMode" tuiButton appearance="primary" size="m" type="button" (click)="guardarCambios()" class="flex-1 !rounded-xl" [disabled]="saving">
-          <span class="flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 12.75l6 6 9-13.5"/></svg>
-            Guardar Cambios
-          </span>
-        </button>
-        <button *ngIf="editMode" tuiButton appearance="flat" size="m" type="button" (click)="toggleEdit()" class="!rounded-xl">Cancelar</button>
-
-        <button *ngIf="!enSala && !editMode" tuiButton appearance="primary-grayscale" size="m" type="button" (click)="enviarASala()" class="flex-1 !rounded-xl">
+        <button tuiButton appearance="primary-grayscale" size="m" type="button" (click)="enviarASala()" class="flex-1 !rounded-xl">
           <span class="flex items-center justify-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-            Enviar a Sala de Ventas
-          </span>
-        </button>
-        <button *ngIf="enSala && !editMode" tuiButton appearance="warning" size="m" type="button" (click)="removerDeSala()" class="flex-1 !rounded-xl">
-          <span class="flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            Remover de Sala
-          </span>
-        </button>
-        <button *ngIf="!editMode" tuiButton appearance="accent" size="m" type="button" (click)="irAVentaPorPedido()" class="flex-1 !rounded-xl">
-          <span class="flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
-            Vender por Pedido
+            Enviar a Ventas
           </span>
         </button>
       </div>
-      <p *ngIf="enSala && !editMode" class="text-[10px] text-emerald-600 dark:text-emerald-400 mt-2 text-center font-semibold">
-        Este pedido ya esta en Sala de Ventas. Ve a Hacer Venta > Vender por pedido.
-      </p>
+
+      <!-- Si esta en sala: NO mostrar botones -->
+      <div *ngIf="enSala && !editMode" class="text-center py-2">
+        <div class="flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-sm font-semibold">Este pedido ya esta en Sala de Ventas</p>
+        </div>
+        <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">Ve a Hacer Venta > Vender por pedido para procesarlo</p>
+      </div>
+
+      <!-- Modo edicion -->
+      <div *ngIf="editMode" class="flex gap-3">
+        <button tuiButton appearance="primary" size="m" type="button" (click)="guardarCambios()" class="flex-1 !rounded-xl" [disabled]="saving">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 12.75l6 6 9-13.5"/></svg>
+            Guardar
+          </span>
+        </button>
+        <button tuiButton appearance="flat" size="m" type="button" (click)="toggleEdit()" class="!rounded-xl">Cancelar</button>
+      </div>
+
+      <!-- Botón eliminar pedido (solo si no está en modo edición) -->
+      <div *ngIf="!editMode" class="mt-4 pt-4 border-t border-stone-200 dark:border-stone-700">
+        <button
+          tuiButton
+          appearance="flat"
+          size="m"
+          type="button"
+          (click)="mostrarConfirmacionEliminar()"
+          class="w-full !rounded-xl !text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/20">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+            Eliminar Pedido
+          </span>
+        </button>
+      </div>
     </tui-loader>
+  </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div *ngIf="showDeleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+  <div class="bg-white dark:bg-neutral-800 rounded-2xl p-6 max-w-sm mx-4 shadow-2xl">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+        <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold text-stone-900 dark:text-white">Eliminar Pedido</h3>
+        <p class="text-sm text-stone-500 dark:text-stone-400">Esta acción no se puede deshacer</p>
+      </div>
+    </div>
+    <p class="text-sm text-stone-600 dark:text-stone-300 mb-6">
+      ¿Estás seguro de que deseas eliminar permanentemente el pedido <strong>{{ pedido.numero_pedido }}</strong>?
+    </p>
+    <div class="flex gap-3">
+      <button
+        tuiButton
+        appearance="flat"
+        size="m"
+        type="button"
+        (click)="cancelarEliminar()"
+        class="flex-1 !rounded-xl">
+        Cancelar
+      </button>
+      <button
+        tuiButton
+        appearance="primary"
+        size="m"
+        type="button"
+        (click)="eliminarPedido()"
+        class="flex-1 !rounded-xl !bg-red-600 hover:!bg-red-700">
+        <span class="flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+          Eliminar
+        </span>
+      </button>
+    </div>
   </div>
 </div>

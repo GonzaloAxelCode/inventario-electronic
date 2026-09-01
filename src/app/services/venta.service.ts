@@ -334,8 +334,8 @@ export class VentaService {
         );
     }
 
-    getTopProductsMonth(month: string): Observable<{ year: number; month: number; results: { nombre: string; cantidad_total_vendida: number }[] }> {
-        return this.http.post<{ year: number; month: number; results: { nombre: string; cantidad_total_vendida: number }[] }>(
+    getTopProductsMonth(month: string): Observable<{ year: number; month: number; results: { nombre: string; cantidad_total_vendida: number; unidades_vendidas?: number; total_vendido?: number; monto_total_vendido?: number }[] }> {
+        return this.http.post<{ year: number; month: number; results: { nombre: string; cantidad_total_vendida: number; unidades_vendidas?: number; total_vendido?: number; monto_total_vendido?: number }[] }>(
             `${this.siteURL}/sales/top-products-month/`,
             { month }
         ).pipe(
@@ -460,6 +460,42 @@ export class VentaService {
         );
     }
 
+    getVentaById(ventaId: number): Observable<Venta> {
+        return this.http.get<Venta>(`${this.siteURL}/sales/${ventaId}/`).pipe(
+            catchError(error => {
+                console.error('Error al obtener venta por id', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    getDailyCancelledSales(): Observable<DailyCancelledSalesResponse> {
+        return this.http.get<DailyCancelledSalesResponse>(
+            `${this.siteURL}/reports/daily-cancelled-sales/`
+        ).pipe(
+            catchError(error => {
+                console.error('Error al obtener ventas anuladas del día', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    getClientsSalesHistory(params: { page?: number; page_size?: number; search?: string; from_date?: string; to_date?: string; estado?: string } = {}): Observable<ClientsSalesHistoryResponse> {
+        let httpParams = new HttpParams();
+        if (params.page) httpParams = httpParams.set('page', params.page.toString());
+        if (params.page_size) httpParams = httpParams.set('page_size', params.page_size.toString());
+        if (params.search) httpParams = httpParams.set('search', params.search);
+        if (params.from_date) httpParams = httpParams.set('from_date', params.from_date);
+        if (params.to_date) httpParams = httpParams.set('to_date', params.to_date);
+        if (params.estado) httpParams = httpParams.set('estado', params.estado);
+        return this.http.get<ClientsSalesHistoryResponse>(`${this.siteURL}/reports/clients-sales-history/`, { params: httpParams }).pipe(
+            catchError(error => {
+                console.error('Error al obtener historial de clientes', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
     getDailyCustomers(): Observable<DailyCustomersResponse> {
         return this.http.get<DailyCustomersResponse>(
             `${this.siteURL}/reports/daily-customers/`
@@ -569,6 +605,8 @@ export interface RecentSale {
     monto: number;
     cantidad_productos: number;
     metodo_pago: string;
+    estado?: string;
+    estado_sunat?: string;
 }
 
 export interface DailyRecentSalesResponse {
@@ -595,4 +633,39 @@ export interface MonthlyCustomersResponse {
     porcentaje_nuevos: number;
     porcentaje_recurrentes: number;
     tasa_retencion: number;
+}
+
+export interface DailyCancelledSalesResponse {
+    fecha: string;
+    total_anuladas: number;
+    total_monto_anulado: number;
+    ventas: Venta[];
+}
+
+export interface ClientInfo {
+    numero_documento: string;
+    tipo_documento: string;
+    nombre_cliente: string;
+    fullname: string;
+    firstname: string;
+    lastname: string | null;
+    email: string;
+    phone: string;
+    address: string;
+    document: string;
+    tienda_id: number;
+    cliente_id: number;
+}
+export interface ClientResumen {
+    total_ventas: number;
+    total_monto: number;
+    primera_compra: string;
+    ultima_compra: string;
+}
+export interface ClientsSalesHistoryResponse {
+    total_clientes: number;
+    page: number;
+    page_size: number;
+    total_pages: number;
+    clientes: { cliente: ClientInfo; resumen: ClientResumen; historial_ventas: Venta[]; is_sale?: boolean }[];
 }

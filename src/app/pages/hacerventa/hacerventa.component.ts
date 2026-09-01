@@ -11,9 +11,9 @@ import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog
 import { PedidoSalaService } from '@/app/services/pedido-sala.service';
 import { normalizeSku } from "@/app/services/search-services/producto-search.service";
 import { URL_BASE } from "@/app/services/utils/endpoints";
-import { updateStockMultiple } from "@/app/state/actions/inventario.actions";
 import { loadClientes } from "@/app/state/actions/cliente.actions";
-import { crearVenta, crearVentaExito } from "@/app/state/actions/venta.actions";
+import { crearVenta, crearVentaExito, crearVentaError } from "@/app/state/actions/venta.actions";
+import { eliminarPedido } from "@/app/state/actions/pedido.actions";
 import { actualizarPedido } from "@/app/state/actions/pedido.actions";
 import { AppState } from '@/app/state/app.state';
 import { selectClienteState } from "@/app/state/selectors/cliente.selectors";
@@ -179,11 +179,13 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   ventaForm: FormGroup;
   listMetodosPago = [" YAPE", "PLIN", "Transferencia(No disponible)", "Efectivo"]
   tipoComprobantes = ["Boleta", "Factura", "Anonima"]
+  tipoComprobantesPedido = ["Boleta", "Factura"]
   formasPago = ["Contado"]
   monedas = ["PEN - Sol Peruano", "USD - Dolar Americano"]
   monedaControl = this.fb.control(this.monedas[0]);
   protected readonly options = { updateOn: 'blur' } as const;
   loaderSearchCliente = false;
+  processingVenta = false;
   today: string;
   currentTime: string;
 
@@ -655,7 +657,11 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
         this.ventaForm.patchValue({
           nombre_cliente: clienteForm.nombre_completo || clienteForm.nombre_o_razon_social,
-          cliente: clienteForm
+          cliente: clienteForm,
+          // Siempre mantener correo/direccion/telefono en el payload (aunque se editen manualmente)
+          direccion_cliente: data.direccion || data.address || (data as any).domicilio || this.ventaForm.get('direccion_cliente')?.value || '',
+          correo_cliente: (data as any).email || (data as any).correo || this.ventaForm.get('correo_cliente')?.value || '',
+          telefono_cliente: (data as any).telefono || (data as any).phone || this.ventaForm.get('telefono_cliente')?.value || ''
         });
 
         this.errorClientNotFound = false; // Resetea el error si hay datos
@@ -679,7 +685,10 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       documento_cliente: '',
       nombre_cliente: '',
       cliente: null,
-      documento_cliente_existente: ""
+      documento_cliente_existente: "",
+      correo_cliente: '',
+      direccion_cliente: '',
+      telefono_cliente: ''
 
     });
   }
@@ -688,6 +697,12 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     if (!this.pedidoSeleccionado) return;
 
     this.pedidoFlowStep = 1;
+
+    // Forzar tipo de comprobante a Boleta (no se permite Anonima en pedidos)
+    const tipoActual = this.ventaForm.get('tipoComprobante')?.value;
+    if (tipoActual === 'Anonima') {
+      this.ventaForm.get('tipoComprobante')?.setValue('Boleta');
+    }
 
     while (this.productosFormArray.length) {
       this.productosFormArray.removeAt(0);
@@ -739,8 +754,20 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   confirmarVentaPedido() {
     if (!this.pedidoSeleccionado) return;
 
+    this.processingVenta = true;
+
+    // Forzar tipo de comprobante a Boleta si es Anonima (no permitido en pedidos)
+    const tipoComprobante = this.ventaForm.get('tipoComprobante')?.value;
+    if (tipoComprobante === 'Anonima') {
+      this.ventaForm.get('tipoComprobante')?.setValue('Boleta');
+    }
+
     const preparedData = {
       ...this.ventaForm.value,
+      tipoComprobante: this.ventaForm.get('tipoComprobante')?.value || 'Boleta',
+      correo_cliente: this.ventaForm.get('correo_cliente')?.value || '',
+      direccion_cliente: this.ventaForm.get('direccion_cliente')?.value || '',
+      telefono_cliente: this.ventaForm.get('telefono_cliente')?.value || '',
       estado: this.ventaForm.get("is_send_sunat")?.value,
       is_save_user: this.ventaForm.get("is_save_user")?.value,
       pedido_id: this.pedidoSeleccionado.id,
@@ -753,13 +780,19 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       take(1),
       takeUntil(this.destroy$)
     ).subscribe(({ venta }: any) => {
+      // Remover de la sala de ventas
       this.pedidoSalaService.removePedido(this.pedidoSeleccionado.id);
-      this.store.dispatch(updateStockMultiple({ productos: preparedData.productos }));
 
-      this.store.dispatch(actualizarPedido({
-        pedidoId: this.pedidoSeleccionado.id,
-        data: { estado: 'ENTREGADO' }
-      }));
+      // Si la venta fue ACEPTADA por SUNAT, eliminar el pedido permanentemente
+      if (venta?.comprobante?.estado_sunat === 'ACEPTADO') {
+        this.store.dispatch(eliminarPedido({ pedidoId: this.pedidoSeleccionado.id }));
+      } else {
+        // Si no fue aceptada, solo actualizar estado a ENTREGADO
+        this.store.dispatch(actualizarPedido({
+          pedidoId: this.pedidoSeleccionado.id,
+          data: { estado: 'ENTREGADO' }
+        }));
+      }
 
       this.alerts.open('Venta realizada', {
         label: `${this.pedidoSeleccionado.numero_pedido} procesado como venta correctamente`,
@@ -778,7 +811,42 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       this.borrarCliente();
       this.calcularTotales();
       this.cargarPedidosSala();
+      this.processingVenta = false;
     });
+
+    // Manejar error
+    this.actions$.pipe(
+      ofType(crearVentaError),
+      take(1),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.processingVenta = false;
+    });
+  }
+
+  quitarPedidoSala(pedido?: any) {
+    const pedidoQuitar = pedido || this.pedidoSeleccionado;
+    if (!pedidoQuitar) return;
+
+    this.alerts.open('Pedido quitado', {
+      label: `${pedidoQuitar.numero_pedido} fue quitado de la sala de ventas`,
+      appearance: "warning"
+    }).subscribe();
+
+    this.pedidoSalaService.removePedido(pedidoQuitar.id);
+
+    // Si el pedido quitado es el seleccionado, resetear el flujo
+    if (this.pedidoSeleccionado?.id === pedidoQuitar.id) {
+      while (this.productosFormArray.length) {
+        this.productosFormArray.removeAt(0);
+      }
+      this.pedidoSeleccionado = null;
+      this.pedidoFlowStep = 0;
+      this.borrarCliente();
+      this.calcularTotales();
+    }
+
+    this.cargarPedidosSala();
   }
 
 
@@ -789,6 +857,9 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   hacerVenta() {
     const preparedData = {
       ...this.ventaForm.value,
+      correo_cliente: this.ventaForm.get('correo_cliente')?.value || '',
+      direccion_cliente: this.ventaForm.get('direccion_cliente')?.value || '',
+      telefono_cliente: this.ventaForm.get('telefono_cliente')?.value || '',
       estado: this.ventaForm.get("is_send_sunat")?.value,
       is_save_user: this.ventaForm.get("is_save_user")?.value
     }
@@ -801,7 +872,6 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       take(1),
       takeUntil(this.destroy$)
     ).subscribe(() => {
-      this.store.dispatch(updateStockMultiple({ productos: preparedData.productos }));
       this.borrarCliente();
       this.calcularTotales();
     });

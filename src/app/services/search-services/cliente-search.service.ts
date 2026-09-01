@@ -30,11 +30,7 @@ export class ClienteSearchService {
                 cliente.lastname?.toLowerCase().includes(text) ||
                 cliente.document?.toLowerCase().includes(text) ||
                 cliente.phone?.toLowerCase().includes(text) ||
-                cliente.email?.toLowerCase().includes(text) ||
-                cliente.address?.toLowerCase().includes(text) ||
-                cliente.department?.toLowerCase().includes(text) ||
-                cliente.province?.toLowerCase().includes(text) ||
-                cliente.district?.toLowerCase().includes(text)
+                cliente.email?.toLowerCase().includes(text)
             );
         });
 

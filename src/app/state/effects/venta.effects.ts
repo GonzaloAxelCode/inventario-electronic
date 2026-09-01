@@ -52,6 +52,7 @@ import {
     cargarVentasTiendaErrorToday,
     cargarVentasTiendaExito,
     cargarVentasTiendaExitoToday,
+    cargarVentasTiendaToday,
     crearVenta,
     crearVentaError,
     crearVentaExito,
@@ -77,7 +78,7 @@ export class VentaEffects {
     ) { }
     loadVentasTiendaHoyEffect = createEffect(() =>
         this.actions$.pipe(
-            ofType(cargarVentasRangoFechasTienda),
+            ofType(cargarVentasTiendaToday),
             exhaustMap(() =>
                 this.ventaService.getVentasHoy().pipe(
                     map(response => {

@@ -17,6 +17,8 @@ export interface Venta {
     igv_total: number
     total: number
     productos_json: string
+    clientes_json?: string
+    cliente_json?: string
     comprobante: ComprobanteElectronico,
     tipo_documento_cliente: string
     numero_documento_cliente: string

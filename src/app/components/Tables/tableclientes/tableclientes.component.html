@@ -1,138 +1,180 @@
-<tui-loader
-  [overlay]="true"
-  [showLoader]="!!(selectClientes$ | async)?.loadingClientes"
->
-<div class="table-clientes-wrapper">
+<tui-loader [overlay]="true" [showLoader]="!!(selectClientes$ | async)?.loadingClientes">
+<div class="space-y-4" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;">
 
-  <!-- ================= BUSCADOR ================= -->
-  <div class="search-bar">
-    <form [formGroup]="form" (submit)="onSubmitSearch()" class="search-form">
-      <div class="search-input-wrapper">
-        <tui-textfield iconStart="@tui.search" tuiTextfieldSize="m">
-          <input
-            tuiTextfield
-            formControlName="text"
-            placeholder="Buscar por nombre, correo, teléfono..."
-          />
-        </tui-textfield>
-      </div>
-
-      <div class="search-actions">
-        <button
-          tuiButton
-          appearance="primary-grayscale"
-          iconStart="@tui.rotate-cw"
-          size="s"
-          type="reset"
-          (click)="clearSearch()"
-          *ngIf="isTheSearchWasDone"
-        >
-          Limpiar
-        </button>
-      </div>
+  <!-- ================= BUSCADOR APPLE ================= -->
+  <div class="flex flex-col gap-3">
+    <form [formGroup]="form" (submit)="onSubmitSearch()" class="flex gap-2 items-center">
+      <tui-textfield iconStart="@tui.search" class="flex-1" tuiTextfieldSize="m">
+        <input tuiTextfield formControlName="text" placeholder="Buscar por nombre, correo, teléfono o DNI..." />
+      </tui-textfield>
+      <button *ngIf="isTheSearchWasDone" tuiButton appearance="secondary" size="m" type="button" (click)="clearSearch()" iconStart="@tui.x" class="!rounded-xl">
+        Limpiar
+      </button>
     </form>
 
-    <span class="results-count text-neutral-500 dark:text-neutral-400 text-sm py-4">
-      {{ isTheSearchWasDone ? allClientesSearch.length : allClientes.length }} clientes
-    </span>
+    <!-- Toolbar Apple: Resultados + Toggle Vista -->
+    <div class="flex items-center justify-between gap-3 bg-stone-50/70 dark:bg-neutral-800/50 backdrop-blur rounded-2xl px-4 py-3 border border-stone-200/50 dark:border-neutral-700/30">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-medium text-stone-500 dark:text-stone-400">Clientes:</span>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-stone-900 dark:bg-white text-white dark:text-stone-900 text-xs font-bold">
+          {{ currentClientes.length }}
+        </span>
+        <span class="hidden sm:inline text-xs text-stone-400">· {{ (selectClientes$ | async)?.clientes?.length || 0 }} total</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-0.5 bg-stone-200 dark:bg-neutral-700 rounded-xl p-1">
+          <button type="button" (click)="viewMode = 'table'" [class]="viewMode === 'table' ? 'px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-600 text-stone-900 dark:text-white shadow-sm' : 'px-3 py-1.5 rounded-lg text-stone-500 dark:text-stone-400'">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+          </button>
+          <button type="button" (click)="viewMode = 'grid'" [class]="viewMode === 'grid' ? 'px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-600 text-stone-900 dark:text-white shadow-sm' : 'px-3 py-1.5 rounded-lg text-stone-500 dark:text-stone-400'">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ================= ESTADO VACÍO ================= -->
-  <tui-block-status
-    *ngIf="
-      (selectClientes$ | async)?.clientes?.length === 0 &&
-      !(selectClientes$ | async)?.loadingClientes;
-      else listaClientes
-    "
-    size="m"
-    class="empty-state"
-  >
-    <div class="flex flex-col items-center gap-3 py-4">
-      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-violet-100 to-blue-100 dark:from-violet-900/30 dark:to-blue-900/30 flex items-center justify-center">
-        <svg class="w-10 h-10 text-violet-500 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
+  <tui-block-status *ngIf="(selectClientes$ | async)?.clientes?.length === 0 && !(selectClientes$ | async)?.loadingClientes; else listaClientes" size="m" class="py-12">
+    <div class="flex flex-col items-center gap-4">
+      <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
       </div>
       <div class="text-center">
-        <h4 class="text-base font-bold text-neutral-900 dark:text-white">Aún no tienes ningún cliente</h4>
-        <span class="text-sm text-neutral-500 dark:text-neutral-400">Empieza a crear tus primeros clientes</span>
+        <h4 class="text-base font-bold tracking-tight text-stone-900 dark:text-white">Aún no tienes clientes</h4>
+        <p class="text-sm text-stone-500 dark:text-stone-400 mt-1">Crea tu primer cliente para empezar</p>
       </div>
     </div>
   </tui-block-status>
 
-  <!-- ================= LISTA COMPACTA ================= -->
+  <!-- ================= LISTA ================= -->
   <ng-template #listaClientes>
 
-    <!-- HEADER (solo desktop) -->
-    <div class="list-header bg-neutral-100 dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 text-neutral-500 dark:text-neutral-400">
-      <div class="col-id">ID</div>
-      <div class="col-cliente">Cliente</div>
-      <div class="col-telefono">Teléfono</div>
-      <div class="col-email">Email</div>
-    </div>
+    <!-- MODO FILAS (tabla) -->
+    <ng-container *ngIf="viewMode === 'table'">
+      <!-- Header desktop Apple -->
+      <div class="hidden lg:grid grid-cols-[1.6fr_120px_200px_110px] gap-3 px-5 py-2.5 rounded-2xl bg-stone-100/70 dark:bg-neutral-800/50 border border-stone-200/50 dark:border-neutral-700/30 text-[10px] font-semibold tracking-widest uppercase text-stone-400 mb-2">
+        <div>Cliente</div>
+        <div class="text-center">Documento</div>
+        <div class="text-center">Contacto</div>
+        <div class="text-center">Estado</div>
+      </div>
 
-    <!-- CONTENEDOR CON SCROLL INFINITO -->
-    <div
-      class="list-body bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600"
-      infiniteScroll
-      [scrollWindow]="false"
-      [infiniteScrollDistance]="2"
-      [infiniteScrollThrottle]="300"
-      (scrolled)="onScroll()"
-    >
-      <!-- FILA -->
-      <div
-        *ngFor="let cliente of currentClientes; trackBy: trackByFn"
-        class="list-row border-b border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700/50"
-      >
-        <!-- Avatar con iniciales -->
-        <div class="col-id">
-          <div class="avatar-initials" [style.background]="getAvatarColor(cliente.id)">
-            {{ getInitials(cliente.fullname) }}
+      <!-- Mobile + Desktop filas -->
+      <div class="space-y-2 max-h-[52vh] overflow-y-auto pr-1" infiniteScroll [scrollWindow]="false" [infiniteScrollDistance]="2" [infiniteScrollThrottle]="300" (scrolled)="onScroll()">
+        <!-- Card fila Apple -->
+        <div *ngFor="let cliente of currentClientes; trackBy: trackByFn" class="group flex flex-col lg:grid lg:grid-cols-[1.6fr_120px_200px_110px] gap-3 items-start lg:items-center p-4 rounded-[20px] bg-white/90 dark:bg-neutral-800/60 backdrop-blur-xl border border-stone-200/60 dark:border-neutral-700/40 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:scale-[1.005] active:scale-[0.995] transition-all cursor-pointer">
+          <!-- Cliente -->
+          <div class="flex items-center gap-3 min-w-0 w-full">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0" [style.background]="getAvatarColor(cliente.id)">
+              {{ getInitials(cliente.fullname) }}
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white truncate">{{ cliente.fullname }}</p>
+              <p class="text-xs text-stone-500 dark:text-stone-400 truncate">#{{ cliente.id }} · {{ cliente.document || 'Sin DNI' }}</p>
+            </div>
+            <span class="lg:hidden inline-flex items-center px-2 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-[10px] font-semibold border border-emerald-200/50">Activo</span>
+          </div>
+
+          <!-- Documento -->
+          <div class="flex lg:justify-center items-center gap-2 w-full lg:w-auto">
+            <div class="lg:hidden w-8 h-8 rounded-lg bg-stone-100 dark:bg-neutral-700 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 9h3.75M15 9a3 3 0 013 3v3m-3-3h-3m-3 0h-3m-3 0V6a2.25 2.25 0 012.25-2.25h6.75A2.25 2.25 0 0118 6v6m-3-3v6m-3-3h3"/></svg>
+            </div>
+            <div class="lg:text-center">
+              <p class="lg:hidden text-[10px] font-semibold tracking-widest uppercase text-stone-400">Documento</p>
+              <p class="text-sm font-medium text-stone-900 dark:text-white">{{ cliente.document || '-' }}</p>
+              <p class="text-[11px] text-stone-500 dark:text-stone-400 truncate">{{ cliente.district || cliente.province || '-' }}</p>
+            </div>
+          </div>
+
+          <!-- Contacto -->
+          <div class="flex lg:flex-col lg:items-center gap-2 w-full lg:w-auto">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-stone-100 dark:bg-neutral-700/50 border border-stone-200/50 text-xs font-medium text-stone-700 dark:text-stone-300">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-4.245-4.245c-.162-.441.004-.928.38-1.21l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
+              {{ cliente.phone || 'Sin teléfono' }}
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-200/50 text-xs font-medium text-blue-700 dark:text-blue-300 truncate max-w-[160px]">
+              <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+              <span class="truncate">{{ cliente.email || 'Sin correo' }}</span>
+            </span>
+          </div>
+
+          <!-- Estado / Acción -->
+          <div class="hidden lg:flex justify-center">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 text-xs font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Activo
+            </span>
+          </div>
+
+          <!-- Chevron mobile -->
+          <div class="hidden lg:hidden flex justify-end w-full">
+            <div class="w-7 h-7 rounded-full bg-stone-900 dark:bg-white flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-white dark:text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
           </div>
         </div>
 
-        <!-- Nombre -->
-        <div class="col-cliente">
-          <div class="client-name font-medium text-sm text-neutral-900 dark:text-white">{{ cliente.fullname }}</div>
-          <div class="client-id text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">#{{ cliente.id }}</div>
+        <div *ngIf="loading" class="flex justify-center py-6">
+          <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-stone-900 dark:border-white"></div>
         </div>
+        <div *ngIf="!hasMore && !loading && currentClientes.length > 0" class="text-center text-xs text-stone-400 py-4">Has visto todos los clientes · {{ currentClientes.length }} de {{ allClientes.length }}</div>
+      </div>
+    </ng-container>
 
-        <!-- Teléfono -->
-        <div class="col-telefono">
-          <tui-chip
-            *ngIf="cliente.phone; else sinTelefono"
-            size="s"
-            iconStart="@tui.phone"
-            appearance="positive"
-          >
-            {{ cliente.phone }}
-          </tui-chip>
-          <ng-template #sinTelefono>
-            <span class="text-muted text-neutral-400 dark:text-neutral-500">Sin teléfono</span>
-          </ng-template>
-        </div>
-
-        <!-- Email -->
-        <div class="col-email">
-          <span class="text-neutral-400 dark:text-neutral-500 text-sm" *ngIf="!cliente.email">Sin correo</span>
-          <span class="text-sm text-neutral-700 dark:text-neutral-300" *ngIf="cliente.email">{{ cliente.email }}</span>
+    <!-- MODO GRILLA - Apple -->
+    <ng-container *ngIf="viewMode === 'grid'">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-[52vh] overflow-y-auto pr-1" infiniteScroll [scrollWindow]="false" [infiniteScrollDistance]="2" [infiniteScrollThrottle]="300" (scrolled)="onScroll()">
+        <div *ngFor="let cliente of currentClientes; trackBy: trackByFn" class="group bg-white/90 dark:bg-neutral-800/60 backdrop-blur-xl rounded-[24px] border border-stone-200/60 dark:border-neutral-700/40 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)] overflow-hidden hover:shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex flex-col">
+          <!-- Header -->
+          <div class="p-4 pb-3 border-b border-stone-100 dark:border-neutral-700/40">
+            <div class="flex items-start justify-between gap-3">
+              <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-white font-bold shadow-md shrink-0" [style.background]="getAvatarColor(cliente.id)">
+                {{ getInitials(cliente.fullname) }}
+              </div>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 text-[10px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Activo
+              </span>
+            </div>
+            <p class="text-sm font-bold tracking-tight text-stone-900 dark:text-white mt-3 truncate">{{ cliente.fullname }}</p>
+            <p class="text-xs text-stone-500 dark:text-stone-400">#{{ cliente.id }} · {{ cliente.document || 'Sin DNI' }}</p>
+          </div>
+          <!-- Body -->
+          <div class="p-4 space-y-3 flex-1">
+            <div class="flex items-center gap-2 text-xs">
+              <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-neutral-700 flex items-center justify-center shrink-0">
+                <svg class="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-4.245-4.245c-.162-.441.004-.928.38-1.21l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
+              </div>
+              <span class="font-medium text-stone-900 dark:text-white truncate">{{ cliente.phone || 'Sin teléfono' }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center shrink-0">
+                <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+              </div>
+              <span class="font-medium text-stone-700 dark:text-stone-300 truncate">{{ cliente.email || 'Sin correo' }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <div class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center shrink-0">
+                <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10.5a.75.75 0 01.75.75v1.5a2.25 2.25 0 01-2.25 2.25h-1.5a2.25 2.25 0 01-2.25-2.25v-1.5A.75.75 0 0110.5 10.5h3z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+              </div>
+              <span class="truncate text-stone-600 dark:text-stone-400">{{ cliente.address || cliente.district || 'Sin dirección' }}</span>
+            </div>
+          </div>
+          <!-- Footer -->
+          <div class="px-4 py-3 bg-stone-50/70 dark:bg-neutral-700/20 border-t border-stone-100 dark:border-neutral-700/40 flex items-center justify-between">
+            <span class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">DNI · {{ cliente.document || '-' }}</span>
+            <div class="w-7 h-7 rounded-full bg-stone-900 dark:bg-white flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+              <svg class="w-3.5 h-3.5 text-white dark:text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </div>
         </div>
       </div>
-
-      <!-- Loader scroll -->
-      <div *ngIf="loading" class="scroll-loader">
-        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+      <div *ngIf="loading" class="flex justify-center py-6">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-stone-900 dark:border-white"></div>
       </div>
+      <div *ngIf="!hasMore && !loading && currentClientes.length > 0" class="text-center text-xs text-stone-400 py-4">Has visto todos los clientes · {{ currentClientes.length }} de {{ allClientes.length }}</div>
+    </ng-container>
 
-      <!-- Fin de lista -->
-      <div
-        *ngIf="!hasMore && !loading && currentClientes.length > 0"
-        class="end-message text-neutral-400 dark:text-neutral-500"
-      >
-        Has visto todos los clientes
-      </div>
-    </div>
   </ng-template>
 
 </div>

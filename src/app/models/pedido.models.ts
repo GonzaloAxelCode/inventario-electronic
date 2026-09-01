@@ -2,6 +2,7 @@ export interface PedidoProducto {
     id?: number;
     producto?: number;
     producto_nombre?: string;
+    producto_imagen?: string;
     cantidad: number;
     stock_disponible?: boolean;
     valor_unitario: number;

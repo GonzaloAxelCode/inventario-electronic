@@ -190,6 +190,53 @@
                                     <tui-data-list-wrapper *tuiTextfieldDropdown new
                                         [items]="documents | tuiFilterByInput" />
                                 </tui-textfield>
+                                <!-- Botón detalles para cliente buscado -->
+                                <div *ngIf="ventaForm.get('cliente')?.value" class="mt-3">
+                                    <div class="bg-gradient-to-r from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-900/10 rounded-xl p-3.5 border border-emerald-200/50 dark:border-emerald-700/30 mb-2">
+                                        <div class="flex items-start justify-between">
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
+                                                        <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                                                        </svg>
+                                                    </div>
+                                                    <p class="font-bold text-sm text-neutral-900 dark:text-white truncate">
+                                                        {{ ventaForm.get('nombre_cliente')?.value }}
+                                                    </p>
+                                                </div>
+                                                <p class="text-xs text-neutral-600 dark:text-neutral-400 ml-8">
+                                                    {{ ventaForm.get('documento_cliente')?.value || ventaForm.get('documento_cliente_existente')?.value?.split('-')[0] }}
+                                                </p>
+                                            </div>
+                                            <button tuiIconButton iconStart="@tui.x" type="button" size="xs"
+                                                appearance="flat" (click)="borrarCliente()"
+                                                class="!text-neutral-400 hover:!text-red-500">
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button tuiButton size="s" type="button" appearance="primary-grayscale"
+                                        (click)="expanded = !expanded" class="w-full !rounded-full !text-xs">
+                                        {{ expanded ? 'Ocultar detalles' : 'Detalles' }}
+                                    </button>
+                                    <div [@expandCollapse]="expanded ? 'open' : 'closed'" class="overflow-hidden">
+                                        <div class="space-y-2 pt-3">
+                                            <tui-textfield class="w-full">
+                                                <input tuiTextfield size="s" formControlName="direccion_cliente"
+                                                    placeholder="Direccion" class="text-sm" />
+                                            </tui-textfield>
+                                            <tui-textfield class="w-full">
+                                                <input tuiTextfield size="s" type="email"
+                                                    formControlName="correo_cliente" placeholder="Correo electronico"
+                                                    class="text-sm" />
+                                            </tui-textfield>
+                                            <tui-textfield class="w-full">
+                                                <input tuiTextfield size="s" formControlName="telefono_cliente"
+                                                    placeholder="Telefono" class="text-sm" />
+                                            </tui-textfield>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Nuevo cliente / Consultar -->
@@ -479,10 +526,10 @@
                     </div>
 
                     <!-- Layout: Formulario + Boleta Preview -->
-                    <div [class]="pedidoFlowStep > 0 ? 'flex gap-6 items-start' : ''">
+                    <div [class]="pedidoFlowStep > 0 ? 'flex flex-col lg:flex-row gap-4 lg:gap-6 items-start' : ''">
                         
                         <!-- Columna izquierda: Flujo del pedido -->
-                        <div [class]="pedidoFlowStep > 0 ? 'flex-1 min-w-0' : 'w-full'">
+                        <div [class]="pedidoFlowStep > 0 ? 'w-full lg:flex-1 lg:min-w-0' : 'w-full'">
 
                     <!-- ==================== PASO 0: SELECCIONAR PEDIDO ==================== -->
                     <div *ngIf="pedidoFlowStep === 0">
@@ -506,11 +553,22 @@
                             <div *ngFor="let pedido of pedidosSala"
                                 (click)="pedidoSeleccionado = pedido"
                                 [class]="pedidoSeleccionado?.id === pedido.id
-                                    ? 'bg-white dark:bg-neutral-800 rounded-2xl p-5 border-2 border-emerald-500 cursor-pointer transition-all duration-200'
-                                    : 'bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500 cursor-pointer transition-all duration-200'">
+                                    ? 'bg-white dark:bg-neutral-800 rounded-2xl p-5 border-2 border-emerald-500 cursor-pointer transition-all duration-200 relative'
+                                    : 'bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500 cursor-pointer transition-all duration-200 relative'">
+
+                                <!-- Botón quitar pedido -->
+                                <button
+                                    type="button"
+                                    (click)="quitarPedidoSala(pedido); $event.stopPropagation()"
+                                    class="absolute top-3 right-3 p-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors z-10"
+                                    title="Quitar pedido de la sala">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
 
                                 <!-- Header del pedido -->
-                                <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-start justify-between mb-4 pr-8">
                                     <div>
                                         <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Pedido</p>
                                         <p class="text-lg font-bold text-neutral-900 dark:text-white">{{ pedido.numero_pedido }}</p>
@@ -589,164 +647,231 @@
                     </div>
 
                     <!-- ==================== PASO 1: CONFIRMAR ==================== -->
-                    <div *ngIf="pedidoFlowStep === 1" class="space-y-5">
+                    <div *ngIf="pedidoFlowStep === 1" class="space-y-4">
 
-                        <!-- Header resumen -->
-                        <div class="text-center py-4">
-                            <p class="text-[10px] font-medium text-neutral-400 uppercase tracking-widest mb-1">Pedido</p>
-                            <p class="text-2xl font-semibold text-neutral-900 dark:text-white">{{ pedidoSeleccionado?.numero_pedido }}</p>
-                            <p class="text-sm text-neutral-400 mt-1">{{ pedidoSeleccionado?.cliente || 'Cliente Anonimo' }}</p>
+                        <!-- Header resumen compacto -->
+                        <div class="flex items-center justify-between gap-3 py-3 px-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
+                                    <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-bold text-neutral-900 dark:text-white truncate">{{ pedidoSeleccionado?.numero_pedido }}</p>
+                                    <p class="text-xs text-neutral-500 dark:text-neutral-400 truncate">{{ pedidoSeleccionado?.cliente || 'Cliente Anonimo' }}</p>
+                                </div>
+                            </div>
+                            <div class="shrink-0">
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400">S/ {{ salesTotals.total | number:'1.2-2' }}</p>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
+                                        Pendiente
+                                    </span>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Checklist -->
-                        <div class="space-y-2">
-                            <!-- Productos -->
-                            <div class="flex items-center gap-3 p-3 rounded-xl"
-                                [class]="productosFormArray.length > 0 ? 'bg-emerald-50/50 dark:bg-emerald-900/10' : 'bg-red-50/50 dark:bg-red-900/10'">
-                                <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-                                    [class]="productosFormArray.length > 0 ? 'bg-emerald-500' : 'bg-red-500'">
-                                    <svg class="w-5 h-5 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/>
-                                    </svg>
-                                    <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Observaciones / Glosa</h3>
+                        <!-- Preview de Boleta -->
+                        <div class="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+                            <!-- Header del comprobante -->
+                            <div class="p-4 sm:p-5 border-b border-neutral-100 dark:border-neutral-700">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 uppercase">
+                                                {{ ventaForm.get('tipoComprobante')?.value || 'Boleta' }}
+                                            </span>
+                                            <span class="text-[10px] text-neutral-400">{{ pedidoSeleccionado?.fecha | date:'mediumDate' }}</span>
+                                        </div>
+                                        <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-neutral-900 dark:text-white">B001-00000000</h2>
+                                    </div>
+                                    <div class="text-right shrink-0">
+                                        <p class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">S/ {{ salesTotals.total | number:'1.2-2' }}</p>
+                                    </div>
                                 </div>
-                                <textarea class="w-full h-20 p-3 text-sm rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700/50 text-neutral-900 dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                                    placeholder="Notas, referencia de pedido, condiciones de venta..."></textarea>
-                                <p class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-2">Maximo 500 caracteres. Esta informacion se incluira en el comprobante electronico.</p>
+
+                                <!-- Info grid compacta -->
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-700">
+                                    <div>
+                                        <p class="text-[9px] sm:text-[10px] font-medium text-neutral-400 uppercase">Estado</p>
+                                        <p class="text-xs sm:text-sm font-medium text-neutral-900 dark:text-white">Pendiente</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] sm:text-[10px] font-medium text-neutral-400 uppercase">Método</p>
+                                        <p class="text-xs sm:text-sm font-medium text-neutral-900 dark:text-white">{{ ventaForm.get('metodoPago')?.value || 'Efectivo' }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] sm:text-[10px] font-medium text-neutral-400 uppercase">Forma</p>
+                                        <p class="text-xs sm:text-sm font-medium text-neutral-900 dark:text-white">{{ ventaForm.get('formaPago')?.value || 'Contado' }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] sm:text-[10px] font-medium text-neutral-400 uppercase">Moneda</p>
+                                        <p class="text-xs sm:text-sm font-medium text-neutral-900 dark:text-white">PEN</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Productos -->
+                            <div class="p-4 sm:p-5">
+                                <p class="text-[10px] font-medium text-neutral-400 uppercase tracking-widest mb-3">Productos ({{ productosFormArray.length }})</p>
+                                <div class="space-y-2">
+                                    <div *ngFor="let item of productosFormArray.controls; let i = index"
+                                        class="flex gap-3 p-3 border border-neutral-100 dark:border-neutral-700 rounded-xl bg-neutral-50/50 dark:bg-neutral-800/50">
+                                        <!-- Imagen -->
+                                        <img [src]="item.get('imagen_producto')?.value || 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                                            class="w-12 h-12 rounded-lg object-cover border border-neutral-200 dark:border-neutral-600 shrink-0" />
+                                        <!-- Info -->
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium truncate text-neutral-900 dark:text-white">{{ item.get('producto_nombre')?.value }}</p>
+                                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                                                <span class="text-xs text-neutral-500 dark:text-neutral-400">x{{ item.get('cantidad_final')?.value }}</span>
+                                                <span class="text-xs text-neutral-500 dark:text-neutral-400">S/ {{ item.get('costo_original')?.value | number:'1.2-2' }} c/u</span>
+                                                <span *ngIf="(item.get('descuento')?.value || 0) > 0" class="text-xs text-red-500">-S/ {{ item.get('descuento')?.value | number:'1.2-2' }}</span>
+                                            </div>
+                                        </div>
+                                        <!-- Total item -->
+                                        <div class="text-right shrink-0">
+                                            <p class="text-sm font-bold text-neutral-900 dark:text-white">S/ {{ ((+item.get('costo_original')?.value || 0) * (+item.get('cantidad_final')?.value || 0)) - (item.get('descuento')?.value || 0) | number:'1.2-2' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Resumen montos -->
+                            <div class="p-4 sm:p-5 bg-neutral-50 dark:bg-neutral-800/50 border-t border-neutral-100 dark:border-neutral-700">
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-xs sm:text-sm">
+                                        <span class="text-neutral-500 dark:text-neutral-400">Subtotal</span>
+                                        <span class="font-medium text-neutral-900 dark:text-white">S/ {{ salesTotals.subtotal | number:'1.2-2' }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs sm:text-sm">
+                                        <span class="text-neutral-500 dark:text-neutral-400">IGV (18%)</span>
+                                        <span class="font-medium text-neutral-900 dark:text-white">S/ {{ salesTotals.igv | number:'1.2-2' }}</span>
+                                    </div>
+                                    <div *ngIf="salesTotals.descuentoTotales > 0" class="flex justify-between text-xs sm:text-sm">
+                                        <span class="text-red-500">Descuento</span>
+                                        <span class="font-medium text-red-500">- S/ {{ salesTotals.descuentoTotales | number:'1.2-2' }}</span>
+                                    </div>
+                                    <div class="h-px bg-neutral-200 dark:bg-neutral-600 my-2"></div>
+                                    <div class="flex justify-between items-baseline">
+                                        <span class="text-sm font-bold text-neutral-900 dark:text-white">Total</span>
+                                        <span class="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400">S/ {{ salesTotals.total | number:'1.2-2' }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     </div> <!-- Cierre columna izquierda -->
 
                         <!-- Columna derecha: Resumen y Actions -->
-                        <div *ngIf="pedidoFlowStep > 0" class="space-y-5">
+                        <div *ngIf="pedidoFlowStep > 0" class="w-full lg:w-[380px] lg:sticky lg:top-4 space-y-4">
 
-                            <!-- Resumen de Totales SUNAT -->
-                            <div class="bg-white dark:bg-neutral-800 rounded-2xl p-5 border border-neutral-200 dark:border-neutral-700 sticky top-4">
-                                <div class="flex items-center gap-2.5 mb-4">
-                                    <svg class="w-5 h-5 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            <!-- Seccion: Comprobante -->
+                            <div class="bg-white dark:bg-neutral-800 rounded-2xl p-4 border border-neutral-200 dark:border-neutral-700">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <svg class="w-4 h-4 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                                     </svg>
-                                    <h3 class="text-base font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Resumen</h3>
+                                    <h3 class="text-xs font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Comprobante</h3>
                                 </div>
-
-                                <div class="space-y-3">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm text-neutral-600 dark:text-neutral-400">Op. Gravada</span>
-                                        <span class="text-sm font-semibold text-neutral-900 dark:text-white font-mono">
-                                            {{ salesTotals.subtotal | number:'1.2-2' }}
-                                        </span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm text-neutral-600 dark:text-neutral-400">Op. Inafecta</span>
-                                        <span class="text-sm font-semibold text-neutral-900 dark:text-white font-mono">0.00</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm text-neutral-600 dark:text-neutral-400">Op. Exonerada</span>
-                                        <span class="text-sm font-semibold text-neutral-900 dark:text-white font-mono">0.00</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm text-neutral-600 dark:text-neutral-400">ISC</span>
-                                        <span class="text-sm font-semibold text-neutral-900 dark:text-white font-mono">0.00</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm text-neutral-600 dark:text-neutral-400">IGV (18%)</span>
-                                        <span class="text-sm font-semibold text-neutral-900 dark:text-white font-mono">
-                                            {{ salesTotals.igv | number:'1.2-2' }}
-                                        </span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm text-neutral-600 dark:text-neutral-400">Otros Cargos</span>
-                                        <span class="text-sm font-semibold text-neutral-900 dark:text-white font-mono">0.00</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm text-red-500 font-semibold">Descuento Global</span>
-                                        <span class="text-sm font-semibold text-red-500 font-mono">
-                                            - {{ salesTotals.descuentoTotales | number:'1.2-2' }}
-                                        </span>
-                                    </div>
-
-                                    <div class="border-t border-neutral-200 dark:border-neutral-700 pt-3 mt-3">
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-base font-bold text-neutral-900 dark:text-white">Importe Total</span>
-                                            <span class="text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
-                                                {{ salesTotals.total | number:'1.2-2' }}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div class="border-t border-neutral-200 dark:border-neutral-700 pt-3 mt-2">
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-xs text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Moneda</span>
-                                            <span class="text-xs font-bold text-neutral-900 dark:text-white">PEN (Soles)</span>
-                                        </div>
-                                        <div class="flex justify-between items-center mt-1">
-                                            <span class="text-xs text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Son</span>
-                                            <span class="text-xs text-neutral-600 dark:text-neutral-300 italic text-right max-w-[180px]">
-                                                {{ convertirNumeroALetras(salesTotals.total) }}
-                                            </span>
-                                        </div>
-                                    </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
+                                    <tui-select formControlName="tipoComprobante" class="w-full">
+                                        Comprobante
+                                        <tui-data-list *tuiDataList>
+                                            <button *ngFor="let comprobante of (pedidoFlowStep > 0 ? tipoComprobantesPedido : tipoComprobantes)" tuiOption [value]="comprobante">
+                                                {{ comprobante }}
+                                            </button>
+                                        </tui-data-list>
+                                    </tui-select>
+                                    <tui-select formControlName="metodoPago" class="w-full">
+                                        Método pago
+                                        <tui-data-list *tuiDataList>
+                                            <button *ngFor="let metodo of listMetodosPago" tuiOption [value]="metodo">
+                                                {{ metodo }}
+                                            </button>
+                                        </tui-data-list>
+                                    </tui-select>
+                                    <tui-select formControlName="formaPago" class="w-full">
+                                        Forma pago
+                                        <tui-data-list *tuiDataList>
+                                            <button *ngFor="let pago of formasPago" tuiOption [value]="pago">
+                                                {{ pago }}
+                                            </button>
+                                        </tui-data-list>
+                                    </tui-select>
                                 </div>
+                            </div>
 
-                                <!-- SUNAT Info -->
-                                <div class="mt-4 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-700/30 border border-neutral-200 dark:border-neutral-600/30">
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <img src="https://www.proactivanet.com/wp-content/uploads/2023/01/PROACTIVANET-Logo-Sunat.png"
-                                            class="object-contain w-8 opacity-60" alt="SUNAT">
-                                        <div>
-                                            <p class="text-[10px] font-bold text-neutral-700 dark:text-neutral-300">Comprobante Electronico</p>
-                                            <p class="text-[9px] text-neutral-500 dark:text-neutral-400">Enviado a SUNAT automaticamente</p>
-                                        </div>
-                                    </div>
-                                    <div class="space-y-1">
-                                        <div class="flex justify-between">
-                                            <span class="text-[9px] text-neutral-500 dark:text-neutral-400">Estado:</span>
-                                            <span class="text-[9px] font-semibold text-emerald-600 dark:text-emerald-400">Pendiente de envio</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span class="text-[9px] text-neutral-500 dark:text-neutral-400">Formato:</span>
-                                            <span class="text-[9px] font-semibold text-neutral-700 dark:text-neutral-300">UBL 2.1</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span class="text-[9px] text-neutral-500 dark:text-neutral-400">Firma Digital:</span>
-                                            <span class="text-[9px] font-semibold text-emerald-600 dark:text-emerald-400">SHA-256</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Botones de accion -->
-                                <div class="mt-5 space-y-3">
-                                    <button *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'"
-                                        [disabled]="true"
-                                        class="btn-finalizar w-full"
-                                        tuiButton type="button" appearance="primary-grayscale" size="l">
-                                        <span class="flex items-center justify-center gap-2">
-                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            Muy pronto
-                                        </span>
-                                    </button>
-
-                                    <button *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'"
-                                        [disabled]="true"
-                                        class="btn-finalizar w-full"
-                                        tuiButton type="button" appearance="primary-grayscale" size="l">
-                                        <span class="flex items-center justify-center gap-2">
-                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            Muy pronto
-                                        </span>
-                                    </button>
-
-                                    <button tuiButton type="button" appearance="flat" size="s" [disabled]="true" class="w-full !text-neutral-500 !rounded-full">
-                                        <svg class="w-4 h-4 mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z"/>
+                            <!-- Resumen con botón finalizar -->
+                            <div class="bg-gradient-to-br from-neutral-900 to-neutral-800 dark:from-neutral-700 dark:to-neutral-800 rounded-2xl p-4 sm:p-5 text-white shadow-xl shadow-neutral-900/20">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
-                                        Vista Previa XML
+                                    </div>
+                                    <h3 class="text-xs font-bold uppercase tracking-wider">Resumen</h3>
+                                </div>
+
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-neutral-400">Subtotal</span>
+                                        <span class="text-sm font-semibold">S/ {{ salesTotals.subtotal | number:'1.2-2' }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-neutral-400">Descuentos</span>
+                                        <span class="text-sm font-semibold text-red-400">- S/ {{ salesTotals.descuentoTotales | number:'1.2-2' }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-neutral-400">IGV 18%</span>
+                                        <span class="text-sm font-semibold">S/ {{ salesTotals.igv | number:'1.2-2' }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t border-white/10 pt-3 mb-4">
+                                    <div class="flex justify-between items-baseline">
+                                        <span class="text-sm font-medium text-neutral-400">Total</span>
+                                        <span class="text-3xl sm:text-4xl font-black tracking-tight">S/ {{ salesTotals.total | number:'1.2-2' }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2 mb-4 py-2 px-3 bg-white/5 rounded-lg">
+                                    <img src="https://www.proactivanet.com/wp-content/uploads/2023/01/PROACTIVANET-Logo-Sunat.png"
+                                        class="object-contain w-10 h-10 opacity-70" alt="SUNAT">
+                                    <div>
+                                        <p class="text-[10px] font-semibold text-white/80">Electrónico SUNAT</p>
+                                        <p class="text-[9px] text-white/50">Comprobante oficial</p>
+                                    </div>
+                                </div>
+
+                                <!-- Boton finalizar -->
+                                <div *ngIf="(userPermissions$ | async)?.can_make_sale">
+                                    <button
+                                        [disabled]="productosFormArray.length === 0 || processingVenta"
+                                        class="w-full py-3 px-4 bg-white text-neutral-900 font-bold text-sm rounded-xl hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                                        tuiButton type="button" (click)="confirmarVentaPedido()" size="l">
+                                        <tui-loader *ngIf="processingVenta" size="s" class="!text-neutral-900"></tui-loader>
+                                        <ng-container *ngIf="!processingVenta">
+                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Finalizar Venta
+                                        </ng-container>
                                     </button>
+                                </div>
+
+                                <!-- Advertencia permisos -->
+                                <div *ngIf="!(userPermissions$ | async)?.can_make_sale"
+                                    class="bg-amber-500/20 border border-amber-500/30 rounded-xl p-3">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                                        </svg>
+                                        <p class="text-xs font-semibold text-amber-300">
+                                            Permisos insuficientes
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

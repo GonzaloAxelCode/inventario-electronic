@@ -39,12 +39,19 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
   private readonly months$ = inject(TUI_MONTHS);
 
   private today = new Date();
-  private _range = new BehaviorSubject<TuiDayRange>(
-    new TuiDayRange(
-      new TuiDay(this.today.getFullYear() - 1, this.today.getMonth(), this.today.getDate()),
-      new TuiDay(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
-    )
-  );
+  private _range = new BehaviorSubject<TuiDayRange>(this.createInitialRange());
+
+  private createInitialRange(): TuiDayRange {
+    const today = new Date();
+    const fromDate = new Date(today);
+    fromDate.setDate(today.getDate() - 60);
+    const toDate = new Date(today); // fin = hoy (31/08), no 01/09 para evitar que la venta de hoy aparezca en mañana
+    // Si necesitas incluir mañana, cambia a: toDate.setDate(today.getDate() + 1);
+    return new TuiDayRange(
+      new TuiDay(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate()),
+      new TuiDay(toDate.getFullYear(), toDate.getMonth(), toDate.getDate()),
+    );
+  }
 
   range$ = this._range.asObservable();
 
@@ -66,7 +73,7 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
   );
 
   protected readonly yStringify: TuiStringHandler<number> = (y) =>
-    `S/. ${y.toLocaleString('en-US', { maximumFractionDigits: 0, signDisplay: 'exceptZero', style: 'decimal' })}`;
+    `S/. ${(y ?? 0).toLocaleString('en-US', { maximumFractionDigits: 0, signDisplay: 'exceptZero', style: 'decimal' })}`;
 
   protected value$ = combineLatest([this.salesData$, this.range$]).pipe(
     switchMap(([data, range]) =>
@@ -95,9 +102,19 @@ export class ChartsalesbetweentwodatesComponent implements OnInit {
   @tuiPure
   private processData(data: Array<[string, number]>): Array<[TuiDay, number]> {
     return data?.map(([dateString, value]) => {
-      const dateParts = dateString.split(',').map(Number);
-      const day = new TuiDay(dateParts[0], dateParts[1], dateParts[2]);
-      return [day, value];
+      if (!dateString) return [new TuiDay(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()), value ?? 0] as [TuiDay, number];
+      const sep = dateString.includes(',') ? ',' : dateString.includes('-') ? '-' : dateString.includes('/') ? '/' : ',';
+      const dateParts = dateString.split(sep).map(s => Number(s.trim()));
+      const y = dateParts[0] || this.today.getFullYear();
+      let m: number = dateParts[1] ?? this.today.getMonth();
+      if (m >= 1 && m <= 12 && sep !== ',') m = m - 1;
+      const d = dateParts[2] || 1;
+      try {
+        const day = new TuiDay(y, m, d);
+        return [day, value ?? 0] as [TuiDay, number];
+      } catch {
+        return [new TuiDay(y, Math.max(0, Math.min(11, m)), Math.max(1, d)), value ?? 0] as [TuiDay, number];
+      }
     }) || [];
   }
 

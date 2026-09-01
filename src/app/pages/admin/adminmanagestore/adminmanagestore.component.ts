@@ -41,6 +41,7 @@ export class AdminmanagestoreComponent implements OnInit {
   filteredTiendas$!: Observable<any[]>;
   gestionTitle$!: Observable<string>;
   gestionSubtitle$!: Observable<string>;
+  loadingTiendas$!: Observable<boolean>;
 
   private readonly dialog = tuiDialog(DialogcreatetiendaComponent, {
     dismissible: true,
@@ -61,6 +62,10 @@ export class AdminmanagestoreComponent implements OnInit {
 
     // Cargar tiendas al inicializar
     this.store.dispatch(loadTiendasAction());
+
+    this.loadingTiendas$ = this.store.select(selectTiendaState).pipe(
+      map(tiendaState => tiendaState.loadingTiendas)
+    );
 
     this.filteredTiendas$ = combineLatest([
       this.store.select(selectTiendaState),

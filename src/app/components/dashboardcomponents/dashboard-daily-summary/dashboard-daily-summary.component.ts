@@ -3,6 +3,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { TuiLegendItem, TuiPieChart } from '@taiga-ui/addon-charts';
 import { TuiHovered } from '@taiga-ui/cdk';
 import { VentaService } from '@/app/services/venta.service';
+import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
+import { Venta } from '@/app/models/venta.models';
 import { timeout, catchError, of } from 'rxjs';
 
 @Component({
@@ -15,6 +17,7 @@ import { timeout, catchError, of } from 'rxjs';
 export class DashboardDailySummaryComponent implements OnInit {
 
   private ventaService = inject(VentaService);
+  private dialogVentaDetail = inject(DialogVentaDetailService);
 
   // Loading states
   loadingSummary = true;
@@ -53,7 +56,30 @@ export class DashboardDailySummaryComponent implements OnInit {
   topProductos: { nombre: string; cantidad: number; total: number }[] = [];
 
   // 6. Últimas ventas realizadas
-  ultimasVentas: { id: string; hora: string; cliente: string; total: number; metodo: string }[] = [];
+  ultimasVentas: {
+    venta_id: number;
+    id: string;
+    hora: string;
+    cliente: string;
+    total: number;
+    metodo: string;
+    estado: string;
+    fecha_hora: string;
+    tipo_comprobante: string;
+    tipo_documento_cliente: string;
+    numero_documento_cliente: string;
+    email_cliente: string;
+    telefono_cliente: string;
+    direccion_cliente: string;
+    cantidad_productos: number;
+    productos: any[];
+    subtotal: number;
+    gravado_total: number;
+    igv_total: number;
+    descuento_total: number;
+    comprobante: any;
+    nota_credito: any;
+  }[] = [];
 
   // 7. Clientes nuevos vs recurrentes
   clientesNuevos = 0;
@@ -225,12 +251,29 @@ export class DashboardDailySummaryComponent implements OnInit {
       })
     ).subscribe({
       next: (data) => {
-        this.ultimasVentas = (data.ventas_recientes || []).map(v => ({
+        this.ultimasVentas = (data.ventas_recientes || []).map((v: any) => ({
+          venta_id: v.venta_id,
           id: v.numero_comprobante,
           hora: v.hora,
           cliente: v.cliente,
           total: v.monto,
-          metodo: v.metodo_pago
+          metodo: v.metodo_pago,
+          estado: (v.nota_credito && v.nota_credito.nota_credito_id) ? 'ANULADA' : (v.estado || 'COMPLETADA'),
+          fecha_hora: v.fecha_hora,
+          tipo_comprobante: v.tipo_comprobante,
+          tipo_documento_cliente: v.tipo_documento_cliente,
+          numero_documento_cliente: v.numero_documento_cliente,
+          email_cliente: v.email_cliente,
+          telefono_cliente: v.telefono_cliente,
+          direccion_cliente: v.direccion_cliente,
+          cantidad_productos: v.cantidad_productos,
+          productos: v.productos || [],
+          subtotal: v.subtotal,
+          gravado_total: v.gravado_total,
+          igv_total: v.igv_total,
+          descuento_total: v.descuento_total,
+          comprobante: v.comprobante || null,
+          nota_credito: v.nota_credito || null
         }));
         this.loadingVentas = false;
       },
@@ -238,6 +281,110 @@ export class DashboardDailySummaryComponent implements OnInit {
         this.loadingVentas = false;
       }
     });
+  }
+
+  isAnulada(venta: { nota_credito: any }): boolean {
+    return venta.nota_credito !== null && venta.nota_credito !== undefined && venta.nota_credito.nota_credito_id;
+  }
+
+  openVentaDetail(venta: typeof this.ultimasVentas[0]): void {
+    const ventaData: Partial<Venta> = {
+      id: venta.venta_id,
+      fecha_hora: venta.fecha_hora,
+      metodo_pago: venta.metodo,
+      estado: venta.estado,
+      tipo_comprobante: venta.tipo_comprobante,
+      subtotal: venta.subtotal,
+      gravado_total: venta.gravado_total,
+      igv_total: venta.igv_total,
+      total: venta.total,
+      tipo_documento_cliente: venta.tipo_documento_cliente,
+      numero_documento_cliente: venta.numero_documento_cliente,
+      nombre_cliente: venta.cliente,
+      correo_cliente: venta.email_cliente,
+      direccion_cliente: venta.direccion_cliente,
+      telefono_cliente: venta.telefono_cliente,
+      email_cliente: venta.email_cliente,
+      productos: (venta.productos || []).map((p: any) => ({
+        id: 0,
+        producto: 0,
+        producto_nombre: p.nombre,
+        cantidad: p.cantidad,
+        valor_unitario: p.precio_unitario,
+        valor_venta: p.subtotal,
+        base_igv: 0,
+        porcentaje_igv: 0,
+        igv: 0,
+        tipo_afectacion_igv: '',
+        total_impuestos: 0,
+        precio_unitario: p.precio_unitario,
+        cantidad_total_vendida: p.cantidad,
+        descuento: p.descuento
+      })),
+      comprobante: venta.comprobante ? {
+        tipo_comprobante: venta.comprobante.tipo_comprobante,
+        serie: venta.comprobante.serie,
+        correlativo: venta.comprobante.correlativo,
+        numero: venta.comprobante.numero_comprobante,
+        moneda: venta.comprobante.moneda,
+        tipo_documento_cliente: venta.tipo_documento_cliente,
+        numero_documento_cliente: venta.numero_documento_cliente,
+        nombre_cliente: venta.cliente,
+        gravadas: venta.comprobante.gravadas,
+        igv: venta.comprobante.igv,
+        valorVenta: venta.comprobante.valor_venta,
+        sub_total: venta.comprobante.sub_total,
+        total: venta.comprobante.total,
+        leyenda: venta.comprobante.leyenda || '',
+        estado_sunat: venta.comprobante.estado_sunat,
+        xml_url: venta.comprobante.xml_url || '',
+        pdf_url: venta.comprobante.pdf_url || '',
+        cdr_url: venta.comprobante.cdr_url || '',
+        ticket_url: venta.comprobante.ticket_url || '',
+        items: [],
+        descuento_total: venta.comprobante.descuento_total
+      } as any : {
+        tipo_comprobante: venta.tipo_comprobante,
+        serie: venta.id.split('-')[0] || '',
+        correlativo: venta.id.split('-')[1] || '',
+        numero: venta.id,
+        moneda: 'PEN',
+        tipo_documento_cliente: venta.tipo_documento_cliente,
+        numero_documento_cliente: venta.numero_documento_cliente,
+        nombre_cliente: venta.cliente,
+        gravadas: venta.gravado_total,
+        igv: venta.igv_total,
+        valorVenta: venta.subtotal,
+        sub_total: venta.subtotal,
+        total: venta.total,
+        leyenda: '',
+        estado_sunat: 'ACEPTADO',
+        xml_url: '',
+        pdf_url: '',
+        cdr_url: '',
+        ticket_url: '',
+        items: [],
+        descuento_total: venta.descuento_total
+      } as any,
+      comprobante_nota_credito: (venta.nota_credito && venta.nota_credito.nota_credito_id) ? {
+        id: venta.nota_credito.nota_credito_id,
+        serie: venta.nota_credito.serie,
+        correlativo: venta.nota_credito.correlativo,
+        tipo_comprobante_modifica: venta.nota_credito.tipo_comprobante_modifica,
+        serie_modifica: venta.nota_credito.serie_modifica,
+        correlativo_modifica: venta.nota_credito.correlativo_modifica,
+        tipo_motivo: venta.nota_credito.tipo_motivo,
+        motivo: venta.nota_credito.motivo,
+        moneda: venta.nota_credito.moneda,
+        total: venta.nota_credito.total,
+        estado_sunat: venta.nota_credito.estado_sunat,
+        fecha_emision: venta.nota_credito.fecha_emision,
+        xml_url: venta.nota_credito.xml_url || '',
+        pdf_url: venta.nota_credito.pdf_url || '',
+        cdr_url: venta.nota_credito.cdr_url || ''
+      } as any : null
+    };
+    this.dialogVentaDetail.open(ventaData).subscribe();
   }
 
   loadDailyCustomers(): void {

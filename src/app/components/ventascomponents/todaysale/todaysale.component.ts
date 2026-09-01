@@ -53,7 +53,29 @@ export class TodaysaleComponent {
   }
   loadingAnularVenta: boolean = false
   loadingGenerarComprobante: boolean = false
-  public productos_json = JSON.parse(this.venta.productos_json ?? '[]');
+  public productos_json = (()=>{ try{ const r=(this.venta as any)?.productos_json; return typeof r==='string'? JSON.parse(r ?? '[]') : (r || []);}catch{return []}})();
+
+  get productosDetalle(): any[] {
+    try {
+      const raw = (this.venta as any)?.productos_json;
+      if (raw) {
+        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        if (Array.isArray(parsed) && parsed.length) return parsed;
+      }
+    } catch {}
+    return (this.venta as any)?.productos || [];
+  }
+
+  getProductos(venta: any): any[] {
+    try {
+      const raw = (venta as any)?.productos_json;
+      if (raw) {
+        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        if (Array.isArray(parsed) && parsed.length) return parsed;
+      }
+    } catch {}
+    return (venta as any)?.productos || [];
+  }
   ngOnInit(): void {
 
     this.store.select(selectVenta).subscribe((state: VentaState) => {
@@ -134,6 +156,14 @@ export class TodaysaleComponent {
   protected index = 0;
   protected length = 1;
 
+  private cleanPhone(raw: string): string {
+    if (!raw) return '';
+    let digits = String(raw).replace(/\D/g, '');
+    if (digits.startsWith('51') && digits.length >= 11) digits = digits.substring(2);
+    if (digits.startsWith('0')) digits = digits.replace(/^0+/, '');
+    return digits;
+  }
+
   enviarWhatsApp(
     event: MouseEvent,
     pdfUrl: string,
@@ -146,7 +176,8 @@ export class TodaysaleComponent {
 Te envío tu comprobante electrónico:
 ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
 
-    const url = `https://wa.me/51${telefono}?text=${encodeURIComponent(mensaje)}`;
+    const clean = this.cleanPhone(telefono);
+    const url = `https://wa.me/${clean}?text=${encodeURIComponent(mensaje)}`;
 
     window.open(url, '_blank');
   }

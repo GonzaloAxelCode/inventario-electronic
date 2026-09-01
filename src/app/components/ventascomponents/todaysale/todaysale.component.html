@@ -425,13 +425,13 @@
       <!-- DESKTOP -->
       <div class="hidden lg:block divide-y divide-neutral-200 dark:divide-neutral-800">
 
-        <div *ngFor="let item of venta.productos" class="grid grid-cols-[70px_3fr_1fr_1fr_1fr_1fr]
+        <div *ngFor="let item of productosDetalle" class="grid grid-cols-[70px_3fr_1fr_1fr_1fr_1fr]
            px-1 py-4 items-center">
 
           <!-- Imagen -->
           <div class="flex justify-center">
-            <img [src]="item.producto_imagen
-          ? URL_BASE + item.producto_imagen
+            <img [src]="(item.img_url || item.producto_imagen)
+          ? ((item.img_url || item.producto_imagen).toString().startsWith('http') ? (item.img_url || item.producto_imagen) : URL_BASE + (item.img_url || item.producto_imagen))
           : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" class="w-12 h-12 rounded-lg object-cover
                border border-neutral-300 dark:border-neutral-600" />
           </div>
@@ -446,7 +446,7 @@
 
           <!-- Cantidad -->
           <div class="text-right font-semibold">
-            {{ item.cantidad }}
+            {{ item.cantidad ?? item.cantidad_final }}
           </div>
 
           <!-- Total -->
@@ -460,16 +460,16 @@
       <!-- MOBILE -->
       <div class="lg:hidden space-y-4">
 
-        <div *ngFor="let item of venta.productos" class="rounded-xl
+        <div *ngFor="let item of productosDetalle" class="rounded-xl
            border border-neutral-200 dark:border-neutral-800
            bg-white dark:bg-neutral-900
            shadow-sm p-4">
 
           <!-- Header -->
           <div class="flex gap-3 items-center cursor-pointer"
-            (click)="onSetImageProduct(item.producto_imagen, item.producto_nombre); open = true;">
-            <img [src]="item.producto_imagen
-          ? URL_BASE + item.producto_imagen
+            (click)="onSetImageProduct(item.img_url || item.producto_imagen, item.producto_nombre); open = true;">
+            <img [src]="(item.img_url || item.producto_imagen)
+          ? ((item.img_url || item.producto_imagen).toString().startsWith('http') ? (item.img_url || item.producto_imagen) : URL_BASE + (item.img_url || item.producto_imagen))
           : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'" class="w-14 h-14 rounded-lg object-cover
                border border-neutral-300 dark:border-neutral-600" />
 

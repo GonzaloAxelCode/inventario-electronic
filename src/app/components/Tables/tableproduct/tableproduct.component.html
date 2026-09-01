@@ -61,7 +61,7 @@
                         *ngIf="(isTheSearchWasDone ? ((productosState$ | async)?.productos_search?.length || 0) : ((productosState$ | async)?.productos?.length || 0)) > 0">
 
                         <!-- Vista de CARDS para móviles -->
-                        <div class="block lg:hidden space-y-3 px-2">
+                        <div class="block lg:hidden space-y-3">
                             <div
                                 *ngIf="((productosState$ | async)?.search_products_found ) === '' || ((productosState$ | async)?.search_products_found === 'products_found') ">
 
@@ -363,7 +363,7 @@
                             </div>
                         </section>
                     </div>
-                    <div class="pt-4 flex justify-center px-2"
+                    <div class="pt-4 flex justify-center"
                         *ngIf="((productosState$ | async)?.search_products_found) === 'products_found' || ((productosState$ | async)?.search_products_found) === ''">
                         <tui-pagination [index]="(productosState$ | async)?.index_page"
                             [length]="(productosState$ | async)?.length_pages" (indexChange)="goToPage($event)"

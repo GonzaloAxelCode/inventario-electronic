@@ -394,17 +394,25 @@ export const ventaReducer = createReducer(
             venta.id === ventaId
                 ? {
                     ...venta,
-
+                    estado: 'ANULADA',
                     comprobante_nota_credito: comprobante_nota_credito
                 }
                 : venta
         ),
-
+        ventas_search: state.ventas_search.map(venta =>
+            venta.id === ventaId
+                ? {
+                    ...venta,
+                    estado: 'ANULADA',
+                    comprobante_nota_credito: comprobante_nota_credito
+                }
+                : venta
+        ),
         ventasToday: state.ventasToday.map(venta =>
             venta.id === ventaId
                 ? {
                     ...venta,
-
+                    estado: 'ANULADA',
                     comprobante_nota_credito: comprobante_nota_credito
                 }
                 : venta

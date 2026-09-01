@@ -188,7 +188,7 @@ export class TopnavComponent implements OnInit, AfterViewInit, OnDestroy {
       featureFlag: 'guiasRemision',
       subItems: [
         { route: '/app/guia-remision', label: 'Todas las Guías', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', description: 'Historial de guías' },
-        { route: '/app/guia-remision', label: 'Nueva Guía', icon: 'M12 6v6m0 0v6m0-6h6m-6 0H6', description: 'Crear guía de remisión' },
+        { route: '/app/guia-remision/nueva', label: 'Nueva Guía', icon: 'M12 6v6m0 0v6m0-6h6m-6 0H6', description: 'Crear guía de remisión' },
       ],
     },
     {
@@ -215,13 +215,12 @@ export class TopnavComponent implements OnInit, AfterViewInit, OnDestroy {
       ],
     },
     {
-      route: '/app/store',
+      route: '/app/tiendas',
       label: 'Tiendas',
       icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
       superuserOnly: true,
       subItems: [
-        { route: '/app/store', label: 'Mis Tiendas', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4', description: 'Gestionar tiendas' },
-        { route: '/app/store', label: 'Nueva Tienda', icon: 'M12 6v6m0 0v6m0-6h6m-6 0H6', description: 'Crear tienda' },
+        { route: '/app/tiendas', label: 'Mis Tiendas', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4', description: 'Gestionar tiendas' },
       ],
     },
   ];

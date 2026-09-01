@@ -7,6 +7,7 @@ import { InventarioCacheService } from '@/app/services/inventario-cache.service'
 import { InventarioService } from '@/app/services/inventario.service';
 import { InventarioSearchService } from '@/app/services/search-services/inventario-search.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
+import { loadProductosAction } from '../actions/producto.actions';
 import {
     actualizarInventario,
 
@@ -128,9 +129,10 @@ export class InventarioEffects {
                         await this.cache.saveAll(res.results);
                         await this.cache.setLastSync(new Date().toISOString());
                     }),
-                    map(res =>
-                        loadInventariosSuccess({ inventarios: res.results })
-                    ),
+                    mergeMap(res => [
+                        loadInventariosSuccess({ inventarios: res.results }),
+                        loadProductosAction({ page: 1, page_size: 1000 })
+                    ]),
                     catchError(error => of(loadInventariosFail({ error })))
                 )
             )

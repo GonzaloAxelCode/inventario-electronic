@@ -65,7 +65,7 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
   readonly maxLength: TuiDayLike = { month: 12 };
 
   range: TuiDayRange = new TuiDayRange(
-    TuiDay.currentLocal().append({ day: -TuiDay.currentLocal().day + 1 }),
+    TuiDay.currentLocal().append({ month: -3 }),
     TuiDay.currentLocal()
   );
 
@@ -202,7 +202,7 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
   clearFilters() {
     this.form.reset();
     this.range = new TuiDayRange(
-      TuiDay.currentLocal().append({ day: -TuiDay.currentLocal().day + 1 }),
+      TuiDay.currentLocal().append({ month: -3 }),
       TuiDay.currentLocal()
     );
     this.onSearch();

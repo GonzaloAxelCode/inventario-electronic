@@ -101,11 +101,15 @@ export class GraficosInicioComponent implements OnInit {
 
     this.ventaService.getTopProductsMonth(monthStr).subscribe({
       next: (data) => {
-        const max = data.results.length > 0 ? Math.max(...data.results.map(r => r.cantidad_total_vendida)) : 1;
+        const getCantidad = (r: any) => r.unidades_vendidas ?? r.cantidad_total_vendida ?? 0;
+        const getTotal = (r: any) => r.monto_total_vendido ?? r.total_vendido ?? 0;
+        const max = data.results.length > 0 ? Math.max(...data.results.map(r => getCantidad(r))) : 1;
         this.topProductsMax = max;
-        this.topProducts = data.results.slice(0, 8).map((r, i) => ({
+        this.topProducts = data.results.slice(0, 8).map((r: any, i: number) => ({
           name: r.nombre,
-          value: Math.round((r.cantidad_total_vendida / max) * 100),
+          cantidad: getCantidad(r),
+          total: getTotal(r),
+          value: max > 0 ? Math.round((getCantidad(r) / max) * 100) : 0,
           color: this.topProductsColors[i % this.topProductsColors.length],
         }));
         this.loadingTopProducts = false;
@@ -126,7 +130,7 @@ export class GraficosInicioComponent implements OnInit {
   ];
 
   // 5. Top productos
-  topProducts: { name: string; value: number; color: string }[] = [];
+  topProducts: { name: string; cantidad: number; total: number; value: number; color: string }[] = [];
   loadingTopProducts = true;
   selectedMonthTop = MONTH_NAMES[new Date().getMonth()];
   selectedYearTop = this.currentYear;
@@ -135,7 +139,8 @@ export class GraficosInicioComponent implements OnInit {
 
   getGaugeDash(): string {
     const circumference = 2 * Math.PI * 45;
-    const filled = (Math.abs(this.gaugeValue) / 100) * circumference * 0.75;
+    const safeValue = this.gaugeValue ?? 0;
+    const filled = (Math.abs(safeValue) / 100) * circumference * 0.75;
     return `${filled} ${circumference}`;
   }
 

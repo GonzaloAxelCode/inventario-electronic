@@ -1,26 +1,14 @@
-
 import { Venta } from '@/app/models/venta.models';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
-import { clearVentaSearch } from '@/app/state/actions/venta.actions';
-import { AppState } from '@/app/state/app.state';
-import { VentaState } from '@/app/state/reducers/venta.reducer';
-import { selectUsersState } from '@/app/state/selectors/user.selectors';
-import { selectVentaState } from '@/app/state/selectors/venta.selectors';
-import { AsyncPipe, CommonModule, NgForOf, NgIf } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { VentaService } from '@/app/services/venta.service';
+import { URL_BASE } from '@/app/services/utils/endpoints';
+import { CommonModule, NgForOf, NgIf } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { TuiAxes, TuiLineDaysChart } from '@taiga-ui/addon-charts';
-import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiDayLike } from '@taiga-ui/cdk';
-import { TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiBadge, TuiBlock, TuiChip, TuiDataListWrapper, TuiFade, TuiItemsWithMore, TuiPagination, TuiSkeleton, TuiStatus, TuiTab, TuiTabs, TuiTabsWithMore, TuiTile } from '@taiga-ui/kit';
-import { TuiAppBar, TuiBlockDetails, TuiBlockStatus, TuiHeader, TuiNavigation, TuiSearch } from '@taiga-ui/layout';
-import { TuiInputDateModule, TuiInputDateRangeModule, TuiInputModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
-import { formatDistanceToNow } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { map, Observable } from 'rxjs';
+import { TuiAppearance, TuiButton } from '@taiga-ui/core';
+import { TuiBadge } from '@taiga-ui/kit';
+import { TuiBlockStatus } from '@taiga-ui/layout';
+import { catchError, of, timeout } from 'rxjs';
 
 import * as dayjs from 'dayjs';
 import * as advancedFormat from 'dayjs/plugin/advancedFormat';
@@ -29,192 +17,87 @@ import * as localizedFormat from 'dayjs/plugin/localizedFormat';
 dayjs.extend(advancedFormat);    //@ts-ignore
 dayjs.extend(localizedFormat);
 dayjs.locale('es');
+
 @Component({
   selector: 'app-canceledsales',
   standalone: true,
   imports: [
-    AsyncPipe, TuiItemsWithMore, TuiAppearance,
-    CommonModule, TuiTabsWithMore,
-    TuiIcon,
-    TuiBlockStatus, TuiBlockDetails, TuiBlock, TuiTile,
-    FormsModule,
-    NgForOf,
-    ReactiveFormsModule,
-    RouterLink,
-    TuiAppBar,
-    TuiAppearance,
-    TuiBadge,
-
-    TuiBlockStatus,
-    TuiButton,
-    TuiTab,
-    TuiChip, TuiSkeleton,
-    TuiDataList,
-    TuiDataListWrapper,
-    TuiDropdown,
-
-    TuiInputDateModule,
-    TuiInputDateRangeModule,
-    TuiInputModule,
-
-    TuiLoader,
-
-    TuiSearch,
-
-    TuiSelectModule,
-    TuiStatus,
-
-    TuiTable,
-    TuiTextareaModule,
-    TuiTextfield,
-    TuiTextfieldControllerModule,
-
-    TuiButton,
-    TuiAppearance,
-    TuiTable,
-    TuiFade,
-    TuiNavigation, TuiHeader, TuiTabs,
-    AsyncPipe,
-    FormsModule,
-    NgIf,
-    TuiAxes,
-    TuiInputDateRangeModule,
-    TuiLineDaysChart, TuiPagination],
+    CommonModule, NgForOf, NgIf,
+    TuiAppearance, TuiButton, TuiBadge, TuiBlockStatus
+  ],
   templateUrl: './canceledsales.component.html',
   styleUrl: './canceledsales.component.scss'
 })
-export class CanceledsalesComponent {
-  ventasState$!: Observable<Partial<VentaState>>;
-  ventas: any = []
-  data: any
-  allColumns = [
+export class CanceledsalesComponent implements OnInit {
+  private readonly dialogServiceVentaDetail = inject(DialogVentaDetailService);
+  private readonly ventaService = inject(VentaService);
 
-    { key: 'metodo_pago', label: 'Método de Pago' },
-  ];
+  loading = true;
+  ventas: Venta[] = [];
+  totalAnuladas = 0;
+  totalMontoAnulado = 0;
+  fecha = '';
+  URL_BASE = URL_BASE;
 
+  ngOnInit(): void {
+    this.loadCancelledSales();
+  }
+
+  loadCancelledSales(): void {
+    this.loading = true;
+    this.ventaService.getDailyCancelledSales().pipe(
+      timeout(10000),
+      catchError(err => {
+        console.error('Error daily-cancelled-sales', err);
+        return of({ fecha: '', total_anuladas: 0, total_monto_anulado: 0, ventas: [] } as any);
+      })
+    ).subscribe({
+      next: (res) => {
+        this.fecha = res.fecha || '';
+        this.totalAnuladas = res.total_anuladas ?? 0;
+        this.totalMontoAnulado = res.total_monto_anulado ?? 0;
+        this.ventas = res.ventas ?? [];
+        this.loading = false;
+      },
+      error: () => { this.loading = false; }
+    });
+  }
+
+  // Helpers UI
   formatoCorto(fecha: string): string {
+    if (!fecha) return '--';
     //@ts-ignore
     const txt = dayjs(fecha).format('D, MMM YYYY');
     return txt.charAt(0).toUpperCase() + txt.slice(1);
   }
-
-
   formatoHora12(fecha: string): string {
+    if (!fecha) return '--';
     //@ts-ignore
-    return dayjs(fecha).format('h:mm A'); // → 8:34 PM
-  }
-  periodoVenta(fecha: string): string {
-    //@ts-ignore
-    const hora = dayjs(fecha).hour();
-
-    if (hora < 12) return "Venta hecha en la mañana";
-    if (hora < 18) return "Venta hecha en la tarde";
-    return "Venta hecha en la noche";
+    return dayjs(fecha).format('h:mm A');
   }
   stripDomain(url?: string): string {
     if (!url) return '';
     try {
-      // Obtener solo la parte del path
       const u = new URL(url);
       let path = u.pathname + u.search + u.hash;
-
-      // Quitar el subdirectorio "axelmovilcomprobantes" si existe
       path = path.replace(/^\/?axelmovilcomprobantes\/?/, '/');
-
       return "https://pub-6b79c76579594222bdd6f486ae49157e.r2.dev" + path;
     } catch {
-      // Si la URL no es válida, usar regex como respaldo
-      return url
-        .replace(/^https?:\/\/[^\/]+/i, '') // quitar dominio
-        .replace(/^\/?axelmovilcomprobantes\/?/, '/'); // quitar subcarpeta
+      return url.replace(/^https?:\/\/[^\/]+/i, '').replace(/^\/?axelmovilcomprobantes\/?/, '/');
     }
   }
-
-  private readonly dialogServiceVentaDetail = inject(DialogVentaDetailService);
-  filteredData: any = []
-  allColumnKeys = this.allColumns.map(c => c.key);
-  displayedColumns = [...this.allColumnKeys];
-  tiendaUser!: number
-
-  constructor(private fb: FormBuilder, private store: Store<AppState>) {
-
+  getProductos(venta: any): any[] {
+    try {
+      const raw = venta?.productos_json;
+      if (raw) {
+        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        if (Array.isArray(parsed) && parsed.length) return parsed;
+      }
+    } catch {}
+    return venta?.productos ?? [];
   }
-  ngOnInit() {
-
-    this.store.select(selectUsersState).pipe(
-      map(userState => userState.user.tienda)
-    ).subscribe(tienda => {
-      this.tiendaUser = tienda || 0;
-    });
-    this.ventasState$ = this.store.select(selectVentaState);
-    this.ventasState$.subscribe(ventas => {
-      const ventasToday = ventas?.ventasToday ?? [];
-      this.ventas = ventasToday.filter(
-        v => v.estado === 'ANULADA'
-      );
-      this.data = ventas.topProductoMostSales
-      console.log("TOP PORDUCTOS MAS VENDOD", ventas.topProductoMostSales)
-      this.filteredData = ventasToday.filter(
-        v => v.estado === 'ANULADA'
-      );
-    });
-  }
-  getVentaValue(venta: Venta, key: string): any {
-    return venta[key as keyof Venta];
-  }
-
-  formatoRelativoCapitalizado(fecha: string): string {
-    const texto = formatDistanceToNow(new Date(fecha), {
-      addSuffix: true,
-      locale: es
-    });
-
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
-  }
-  estados_sunat = ["Pendiente", "Aceptado", "Rechazado"]
-  metodos_pago = ["YAPE", "Efectivo", "Deposito", "Plin"]
-  tipoComprobantes = ["Factura", "Boleta", "Anonima"]
-  tipoDocumento = ["Dni", "Ruc"]
-
-
-  protected readonly maxLength: TuiDayLike = { month: 12 };
-
   protected showDialogVentaDetail(venta: Partial<Venta>): void {
-
-    this.dialogServiceVentaDetail.open(venta).subscribe()
-
+    this.dialogServiceVentaDetail.open(venta).subscribe();
   }
-
-
-  clearSearch() {
-    this.store.dispatch(clearVentaSearch());
-  }
-
-
-
-  getColorClass(cantidad: number): string {
-    if (cantidad >= 0 && cantidad <= 3) {
-      return 'text-red-500';
-    } else if (cantidad >= 4 && cantidad <= 10) {
-      return 'text-yellow-400';
-    } else {
-      return 'text-green-400';
-    }
-  }
-
-
-
-
-  activeTab:
-    | 'historial'
-    | 'ventas-hoy'
-    | 'ultima-venta'
-    | 'anuladas-hoy'
-    | 'top-productos-hoy'
-    = 'historial';
-
-  setTab(tab: typeof this.activeTab) {
-    this.activeTab = tab;
-  }
-
+  trackByVentaId = (_: number, v: any) => v?.id ?? _;
 }

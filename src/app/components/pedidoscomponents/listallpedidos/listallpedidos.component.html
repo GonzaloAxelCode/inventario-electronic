@@ -1,9 +1,9 @@
 <div>
-  <section>
+  <section class="sm:px-1">
     <!-- FILTROS DE BUSQUEDA -->
-    <search tuiSearch>
+    <search tuiSearch class="px-0 sm:px-2">
       <!-- Rango de fechas -->
-      <div class="mb-4 w-full">
+      <div class="mb-3 sm:mb-4 w-full">
         <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range"
           class="w-full">
           Escoje buscar los pedidos entre dos fechas
@@ -11,13 +11,13 @@
       </div>
 
       <!-- Toolbar: Resultados + Acciones -->
-      <fieldset class="mb-4">
-        <div class="flex items-center justify-between gap-3 bg-neutral-50 dark:bg-neutral-800/50 rounded-xl px-4 py-3">
+      <fieldset class="mb-3 sm:mb-4">
+        <div class="flex items-center justify-between gap-2 sm:gap-3 bg-neutral-50 dark:bg-neutral-800/50 rounded-xl px-3 sm:px-4 py-2 sm:py-3">
 
           <!-- Izquierda: Contador -->
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-neutral-500 dark:text-neutral-400">Resultados:</span>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-neutral-200 dark:bg-neutral-700 text-xs font-bold text-neutral-900 dark:text-white">
+          <div class="flex items-center gap-1 sm:gap-2">
+            <span class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">Resultados:</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-neutral-200 dark:bg-neutral-700 text-[10px] sm:text-xs font-bold text-neutral-900 dark:text-white">
               {{ count }}
             </span>
           </div>
@@ -65,19 +65,19 @@
       <form [formGroup]="form" (submit)="onSearch()">
         <tui-expand [expanded]="expanded">
           <!-- Filtros de Búsqueda -->
-          <div class="space-y-3 pb-3">
+          <div class="space-y-2 sm:space-y-3 pb-3">
             <!-- Fila 1: Busquedas de texto -->
-            <div class="flex flex-wrap xl:flex-nowrap gap-3 w-full">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full">
               <tui-textfield iconStart="@tui.search" class="w-full">
                 <input formControlName="numero_pedido" placeholder="N° Pedido" tuiTextfield size="s" />
               </tui-textfield>
 
               <tui-textfield iconStart="@tui.search" class="w-full">
-                <input formControlName="nombre_cliente" placeholder="Nombre del cliente" tuiTextfield size="s" />
+                <input formControlName="nombre_cliente" placeholder="Cliente" tuiTextfield size="s" />
               </tui-textfield>
 
               <tui-textfield iconStart="@tui.search" class="w-full">
-                <input formControlName="numero_documento_cliente" placeholder="DNI o RUC" tuiTextfield size="s" />
+                <input formControlName="numero_documento_cliente" placeholder="DNI/RUC" tuiTextfield size="s" />
               </tui-textfield>
 
               <tui-textfield iconStart="@tui.search" class="w-full">
@@ -86,18 +86,18 @@
             </div>
 
             <!-- Fila 2: Mas campos de texto -->
-            <div class="flex flex-wrap xl:flex-nowrap gap-3 w-full">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 w-full">
               <tui-textfield iconStart="@tui.search" class="w-full">
                 <input formControlName="email_cliente" placeholder="Email" tuiTextfield size="s" />
               </tui-textfield>
 
               <tui-textfield iconStart="@tui.search" class="w-full">
-                <input formControlName="referencia_externa" placeholder="Referencia externa" tuiTextfield size="s" />
+                <input formControlName="referencia_externa" placeholder="Referencia" tuiTextfield size="s" />
               </tui-textfield>
             </div>
 
             <!-- Fila 3: Selects -->
-            <div class="flex flex-wrap xl:flex-nowrap gap-3 w-full">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full">
               <tui-select class="w-full" formControlName="estado">
                 <ng-container ngProjectAs="tuiLabel">
                   <span>Estado</span>
@@ -107,28 +107,28 @@
 
               <tui-select class="w-full" formControlName="tipo_pedido">
                 <ng-container ngProjectAs="tuiLabel">
-                  <span>Tipo pedido</span>
+                  <span>Tipo</span>
                 </ng-container>
                 <select placeholder="Tipo" size="m" tuiSelect [items]="tiposPedido"></select>
               </tui-select>
 
               <tui-select class="w-full" formControlName="canal_venta">
                 <ng-container ngProjectAs="tuiLabel">
-                  <span>Canal venta</span>
+                  <span>Canal</span>
                 </ng-container>
                 <select placeholder="Canal" size="m" tuiSelect [items]="canalesVenta"></select>
               </tui-select>
 
               <tui-select class="w-full" formControlName="estado_pago">
                 <ng-container ngProjectAs="tuiLabel">
-                  <span>Estado pago</span>
+                  <span>Pago</span>
                 </ng-container>
                 <select placeholder="Pago" size="m" tuiSelect [items]="estadosPago"></select>
               </tui-select>
             </div>
 
             <!-- Fila 4: Mas selects -->
-            <div class="flex flex-wrap xl:flex-nowrap gap-3 w-full">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 w-full">
               <tui-select class="w-full" formControlName="prioridad">
                 <ng-container ngProjectAs="tuiLabel">
                   <span>Prioridad</span>
@@ -138,13 +138,10 @@
 
               <tui-select class="w-full" formControlName="metodo_pago">
                 <ng-container ngProjectAs="tuiLabel">
-                  <span>Metodo de Pago</span>
+                  <span>Metodo</span>
                 </ng-container>
                 <select placeholder="Metodo pago" size="m" tuiSelect [items]="metodos_pago"></select>
               </tui-select>
-
-              <div class="w-full"></div>
-              <div class="w-full"></div>
             </div>
 
             <div class="flex flex-row items-center gap-3">
@@ -177,24 +174,24 @@
     <tui-loader [overlay]="true" [showLoader]="loading">
 
       <!-- ==================== VISTA TABLA ==================== -->
-      <div *ngIf="viewMode === 'table'" class="space-y-2">
+      <div *ngIf="viewMode === 'table'" class="space-y-2 px-1">
         <div *ngFor="let pedido of pedidos"
           (click)="onPedidoClick(pedido)"
-          class="relative overflow-hidden rounded-2xl
+          class="relative overflow-hidden rounded-xl sm:rounded-2xl
             bg-white dark:bg-neutral-800
-            p-4
+            p-3 sm:p-4
             border border-neutral-200 dark:border-neutral-700
             hover:shadow-md transition-all duration-300
             cursor-pointer">
 
-          <div class="flex items-center justify-between gap-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
 
             <!-- INFO PRINCIPAL -->
-            <div class="flex items-center gap-4 flex-1 min-w-0">
+            <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
 
               <!-- ICONO -->
-              <div class="flex flex-col items-center justify-center gap-1 px-3 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
-                <svg class="w-4 h-4 text-neutral-700 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="flex flex-col items-center justify-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-700 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
                   </path>
@@ -206,39 +203,39 @@
 
               <div class="flex-1 min-w-0">
                 <!-- Numero Pedido -->
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="text-base font-extrabold text-neutral-900 dark:text-white">
+                <div class="flex items-center gap-2 mb-0.5 sm:mb-1">
+                  <span class="text-sm sm:text-base font-extrabold text-neutral-900 dark:text-white">
                     {{pedido.numero_pedido}}
                   </span>
-                  <span *ngIf="pedido.prioridad === 'URGENTE'" class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+                  <span *ngIf="pedido.prioridad === 'URGENTE'" class="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-md text-[9px] sm:text-[10px] font-semibold bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400">
                     URGENTE
                   </span>
                 </div>
 
                 <!-- Informacion secundaria -->
-                <div class="flex items-center gap-3 flex-wrap text-xs text-neutral-500 dark:text-neutral-400">
+                <div class="flex items-center gap-2 sm:gap-3 flex-wrap text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
                   <span class="flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
-                    {{ formatDate(pedido.fecha_hora) }} {{ formatTime(pedido.fecha_hora) }}
+                    {{ formatDate(pedido.fecha_hora) }}
                   </span>
-                  <span class="flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span class="hidden xs:flex items-center gap-1">
+                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
                     {{ getClienteNombre(pedido) }}
                   </span>
-                  <tui-badge size="m" tuiStatus appearance="neutral">{{ pedido.metodo_pago }}</tui-badge>
+                  <tui-badge size="s" tuiStatus appearance="neutral">{{ pedido.metodo_pago }}</tui-badge>
                 </div>
               </div>
             </div>
 
             <!-- TOTALES -->
-            <div class="flex items-center gap-6 flex-shrink-0">
-              <div class="text-right min-w-[100px]">
-                <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Total</p>
-                <p class="text-lg font-extrabold text-neutral-900 dark:text-white whitespace-nowrap">S/. {{pedido.total}}</p>
+            <div class="flex items-center gap-4 sm:gap-6 flex-shrink-0">
+              <div class="text-right min-w-[80px] sm:min-w-[100px]">
+                <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400 uppercase">Total</p>
+                <p class="text-base sm:text-lg font-extrabold text-neutral-900 dark:text-white whitespace-nowrap">S/. {{pedido.total}}</p>
               </div>
             </div>
           </div>

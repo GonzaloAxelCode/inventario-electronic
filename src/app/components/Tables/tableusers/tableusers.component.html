@@ -1,89 +1,86 @@
 <tui-loader [showLoader]="loadingUsers || loadingUpdateUser" [overlay]="true">
-<div class="w-full bg-transparent">
-  <!-- Toolbar Apple -->
-  <div class="flex items-center justify-between px-1 mb-4">
-    <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">
-      Personal
-    </p>
-    <button (click)="showDialogCreateUser(idtienda)"
-      class="inline-flex items-center gap-1.5 h-7 px-3.5 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white text-[12px] font-medium transition-colors">
-      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-      Agregar
-    </button>
-  </div>
-
-  <ng-container *ngIf="filteredUsers && filteredUsers.length > 0; else noUsers">
-    <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden divide-y divide-black/[0.06] dark:divide-white/[0.06]">
-      <div *ngFor="let user of filteredUsers; let i = index"
-        class="flex items-center gap-4 px-4 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors">
-        <!-- Avatar Apple -->
-        <div class="w-10 h-10 rounded-full bg-black/[0.06] dark:bg-white/[0.08] ring-1 ring-black/[0.08] dark:ring-white/[0.08] flex items-center justify-center text-[12px] font-semibold text-[#1d1d1f] dark:text-white shrink-0 uppercase">
-          {{ (user.first_name?.charAt(0) || user.username?.charAt(0) || '?') }}{{ (user.last_name?.charAt(0) || '') }}
-        </div>
-
-        <!-- Info -->
-        <div class="flex-1 min-w-0">
-          <p class="text-[14px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white truncate">
-            {{ user.first_name }} {{ user.last_name }}
-            <span *ngIf="!user.first_name && !user.last_name" class="font-normal text-[#86868b]">{{ user.username }}</span>
-          </p>
-          <p class="text-[11px] font-mono text-[#86868b] dark:text-[#a1a1a6] truncate">{{ '@' + user.username }}</p>
-          <div class="flex items-center gap-2 mt-1">
-            <span *ngIf="!isUserDeleted(user)" class="w-1.5 h-1.5 rounded-full" [ngClass]="user.is_active ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
-            <span *ngIf="isUserDeleted(user)" class="w-1.5 h-1.5 rounded-full bg-[#ff3b30]"></span>
-            <span *ngIf="!isUserDeleted(user)" class="text-[11px] font-medium" [ngClass]="user.is_active ? 'text-[#30d158]' : 'text-[#86868b]'">{{ user.is_active ? 'Activo' : 'Inactivo' }}</span>
-            <span *ngIf="isUserDeleted(user)" class="text-[11px] font-medium text-[#ff3b30]">Eliminado</span>
-            <span *ngIf="user.is_superuser" class="text-[10px] px-1.5 py-0.5 rounded-full bg-black text-white dark:bg-white dark:text-black font-semibold tracking-wide">SUPERUSER</span>
-          </div>
-        </div>
-
-        <!-- Actions trailing Apple — admin tienda no puede auto-desactivarse ni ver sus permisos -->
-        <div class="flex items-center gap-1.5 shrink-0">
-          <input tuiSwitch type="checkbox" [(ngModel)]="user.is_active" [disabled]="user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)" (click)="toggleUpdateStateUser($event, user)" />
-          <!-- Editar usuario -->
-          <button (click)="openEditUserDialog(user)"
-            class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#0071e3] border-[#0071e3]/20 bg-[#0071e3]/[0.06] hover:bg-[#0071e3]/10 transition-colors"
-            title="Editar">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            <span class="hidden sm:inline ml-1 text-[11px] font-medium">Editar</span>
-          </button>
-          <!-- Resetear contraseña — solo superusuarios -->
-          <button *ngIf="isSuperUser" (click)="openResetPasswordDialog(user)"
-            class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#ff9f0a] border-[#ff9f0a]/20 bg-[#ff9f0a]/[0.06] hover:bg-[#ff9f0a]/10 transition-colors"
-            title="Resetear contraseña">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-            <span class="hidden sm:inline ml-1 text-[11px] font-medium">Contraseña</span>
-          </button>
-          <button (click)="showDialogEditPermissions(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)"
-            class="hidden sm:inline-flex items-center gap-1 h-7 px-3 rounded-full border text-[11px] font-medium transition-colors"
-            [ngClass]="(user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)) ? 'border-black/[0.06] text-[#86868b]/50 bg-transparent cursor-not-allowed' : 'border-black/[0.08] dark:border-white/[0.08] text-[#1d1d1f] dark:text-white hover:bg-black/[0.04] bg-transparent'">
-            Permisos
-          </button>
-          <button (click)="showDialogEditPermissions(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)"
-            class="sm:hidden w-7 h-7 rounded-full border border-black/[0.08] dark:border-white/[0.08] flex items-center justify-center text-[#86868b] disabled:opacity-40">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1-1.51V13a2 2 0 014 0v.49c.27.07.54.17.8.3a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V18a2 2 0 01-4  0v-.09c.07-.27.17-.54.3-.8z"/></svg>
-          </button>
-          <!-- Eliminar — solo para usuarios no eliminados -->
-          <button *ngIf="!isUserDeleted(user)" (click)="openDeleteConfirm(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user)"
-            class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#ff3b30] border-[#ff3b30]/20 bg-[#ff3b30]/[0.06] hover:bg-[#ff3b30]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            title="Eliminar">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            <span class="hidden sm:inline ml-1 text-[11px] font-medium">Eliminar</span>
-          </button>
-          <!-- Restaurar — solo superusuarios para usuarios eliminados -->
-          <button *ngIf="isUserDeleted(user) && isSuperUser" (click)="openDeleteConfirm(user)"
-            class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#30d158] border-[#30d158]/20 bg-[#30d158]/[0.06] hover:bg-[#30d158]/10 transition-colors"
-            title="Restaurar">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            <span class="hidden sm:inline ml-1 text-[11px] font-medium">Restaurar</span>
-          </button>
-        </div>
-      </div>
+  <div class="w-full bg-transparent">
+    <!-- Toolbar Apple -->
+    <div class="flex items-center justify-between px-1 mb-4">
+      <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">
+        Personal
+      </p>
+      <button (click)="showDialogCreateUser(idtienda)"
+        class="inline-flex items-center gap-1.5 h-7 px-3.5 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white text-[12px] font-medium transition-colors">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+        Agregar
+      </button>
     </div>
 
-    <!-- Footnote -->
-    <p class="text-[11px] text-[#86868b] dark:text-[#a1a1a6] px-1 mt-3">Toca permisos para gestionar accesos. Desactiva con el switch.</p>
-  </ng-container>
+    <ng-container *ngIf="filteredUsers && filteredUsers.length > 0; else noUsers">
+      <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden divide-y divide-black/[0.06] dark:divide-white/[0.06]">
+        <div *ngFor="let user of filteredUsers; let i = index"
+          class="flex items-center gap-4 px-4 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors">
+          <!-- Avatar Apple -->
+          <div class="w-10 h-10 rounded-full bg-black/[0.06] dark:bg-white/[0.08] ring-1 ring-black/[0.08] dark:ring-white/[0.08] flex items-center justify-center text-[12px] font-semibold text-[#1d1d1f] dark:text-white shrink-0 uppercase">
+            {{ (user.first_name?.charAt(0) || user.username?.charAt(0) || '?') }}{{ (user.last_name?.charAt(0) || '') }}
+          </div>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <p class="text-[14px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white truncate">
+              {{ user.first_name }} {{ user.last_name }}
+              <span *ngIf="!user.first_name && !user.last_name" class="font-normal text-[#86868b]">{{ user.username }}</span>
+            </p>
+            <p class="text-[11px] font-mono text-[#86868b] dark:text-[#a1a1a6] truncate">{{ '@' + user.username }}</p>
+            <div class="flex items-center gap-2 mt-1">
+              <span *ngIf="!isUserDeleted(user)" class="w-1.5 h-1.5 rounded-full" [ngClass]="user.is_active ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
+              <span *ngIf="isUserDeleted(user)" class="w-1.5 h-1.5 rounded-full bg-[#ff3b30]"></span>
+              <span *ngIf="!isUserDeleted(user)" class="text-[11px] font-medium" [ngClass]="user.is_active ? 'text-[#30d158]' : 'text-[#86868b]'">{{ user.is_active ? 'Activo' : 'Inactivo' }}</span>
+              <span *ngIf="isUserDeleted(user)" class="text-[11px] font-medium text-[#ff3b30]">Eliminado</span>
+              <span *ngIf="user.is_superuser" class="text-[10px] px-1.5 py-0.5 rounded-full bg-black text-white dark:bg-white dark:text-black font-semibold tracking-wide">SUPERUSER</span>
+            </div>
+          </div>
+
+          <!-- Actions trailing Apple — admin tienda no puede auto-desactivarse ni ver sus permisos -->
+          <div class="flex items-center gap-1.5 shrink-0">
+            <input tuiSwitch type="checkbox" [(ngModel)]="user.is_active" [disabled]="user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)" (click)="toggleUpdateStateUser($event, user)" />
+            <!-- Editar usuario -->
+            <button (click)="openEditUserDialog(user)"
+              class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#0071e3] border-[#0071e3]/20 bg-[#0071e3]/[0.06] hover:bg-[#0071e3]/10 transition-colors"
+              title="Editar">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              <span class="hidden sm:inline ml-1 text-[11px] font-medium">Editar</span>
+            </button>
+            <!-- Resetear contraseña — solo superusuarios -->
+            <button *ngIf="isSuperUser" (click)="openResetPasswordDialog(user)"
+              class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#ff9f0a] border-[#ff9f0a]/20 bg-[#ff9f0a]/[0.06] hover:bg-[#ff9f0a]/10 transition-colors"
+              title="Resetear contraseña">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+              <span class="hidden sm:inline ml-1 text-[11px] font-medium">Contraseña</span>
+            </button>
+            <button (click)="showDialogEditPermissions(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)"
+              class="hidden sm:inline-flex items-center gap-1 h-7 px-3 rounded-full border text-[11px] font-medium transition-colors"
+              [ngClass]="(user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)) ? 'border-black/[0.06] text-[#86868b]/50 bg-transparent cursor-not-allowed' : 'border-black/[0.08] dark:border-white/[0.08] text-[#1d1d1f] dark:text-white hover:bg-black/[0.04] bg-transparent'">
+              Permisos
+            </button>
+            <button (click)="showDialogEditPermissions(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user) || isUserDeleted(user)"
+              class="sm:hidden w-7 h-7 rounded-full border border-black/[0.08] dark:border-white/[0.08] flex items-center justify-center text-[#86868b] disabled:opacity-40">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1-1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 012.83 2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1-1.51V13a2 2 0 014 0v.49c.27.07.54.17.8.3a1.65 1.65 0 001.82-.33l-.06.06a2 2 0 012.83 2.83l.06-.06a1.65 1.65 0 00-.33 1.82V18a2 2 0 01-4  0v-.09c.07-.27.17-.54.3-.8z"/></svg>
+            </button>
+            <!-- Eliminar — solo para usuarios no eliminados -->
+            <button *ngIf="!isUserDeleted(user)" (click)="openDeleteConfirm(user)" [disabled]="user.is_superuser || isSelfAdminTienda(user)"
+              class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#ff3b30] border-[#ff3b30]/20 bg-[#ff3b30]/[0.06] hover:bg-[#ff3b30]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              title="Eliminar">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <span class="hidden sm:inline ml-1 text-[11px] font-medium">Eliminar</span>
+            </button>
+            <!-- Restaurar — solo superusuarios para usuarios eliminados -->
+            <button *ngIf="isUserDeleted(user) && isSuperUser" (click)="openDeleteConfirm(user)"
+              class="inline-flex items-center justify-center w-7 h-7 sm:w-auto sm:h-7 sm:px-3 rounded-full border text-[#30d158] border-[#30d158]/20 bg-[#30d158]/[0.06] hover:bg-[#30d158]/10 transition-colors"
+              title="Restaurar">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span class="hidden sm:inline ml-1 text-[11px] font-medium">Restaurar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
 
   <ng-template #noUsers>
     <div class="py-12 text-center rounded-2xl border border-dashed border-black/[0.08] dark:border-white/[0.08] bg-transparent">

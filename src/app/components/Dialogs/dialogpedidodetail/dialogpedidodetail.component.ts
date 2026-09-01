@@ -1,8 +1,10 @@
 import { Pedido, PedidoProducto } from '@/app/models/pedido.models';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { PedidoSalaService } from '@/app/services/pedido-sala.service';
-import { actualizarPedido } from '@/app/state/actions/pedido.actions';
+import { actualizarPedido, eliminarPedido } from '@/app/state/actions/pedido.actions';
 import { AppState } from '@/app/state/app.state';
+import { selectPedidoState } from '@/app/state/selectors/pedido.selectors';
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, FormArray, Validators } from '@angular/forms';
@@ -12,6 +14,11 @@ import { TuiDialogContext, TuiButton, TuiAppearance, TuiAlertService, TuiLoader,
 import { TuiBadge, TuiInputNumber, TuiSelect, TuiDataListWrapper } from '@taiga-ui/kit';
 import { TuiSelectModule, TuiInputModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
+import { Observable, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
+import { ofType } from '@ngrx/effects';
+import { Actions } from '@ngrx/effects';
+import { eliminarPedidoExito } from '@/app/state/actions/pedido.actions';
 
 @Component({
   selector: 'app-dialogpedidodetail',
@@ -29,11 +36,17 @@ export class DialogpedidodetailComponent implements OnInit {
   private readonly store = inject(Store<AppState>);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly actions$ = inject(Actions);
+  private readonly destroy$ = new Subject<void>();
 
   enSala = this.pedidoSalaService.hasPedido(this.pedido.id);
   editMode = false;
   editForm!: FormGroup;
   saving = false;
+  deleting = false;
+  showDeleteConfirm = false;
+  pedidoState$!: Observable<any>;
+  URL_BASE = URL_BASE;
 
   readonly tiposPedido = ['MESA', 'DELIVERY', 'TAKEAWAY', 'MOSTRADOR'];
   readonly canalesVenta = ['PRESENCIAL', 'WHATSAPP', 'WEB', 'TELEFONO', 'TIKTOK'];
@@ -43,6 +56,7 @@ export class DialogpedidodetailComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
+    this.pedidoState$ = this.store.select(selectPedidoState);
   }
 
   initForm() {
@@ -205,6 +219,28 @@ export class DialogpedidodetailComponent implements OnInit {
     }
   }
 
+  getEstadoColor(estado: string): string {
+    switch (estado) {
+      case 'COTIZADO': return 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400';
+      case 'PENDIENTE': return 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400';
+      case 'CONFIRMADO': return 'bg-violet-50 text-violet-700 dark:bg-violet-900/20 dark:text-violet-400';
+      case 'EN_PREPARACION': return 'bg-sky-50 text-sky-700 dark:bg-sky-900/20 dark:text-sky-400';
+      case 'LISTO': return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400';
+      case 'ENTREGADO': return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400';
+      case 'CANCELADO': return 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400';
+      default: return 'bg-stone-50 text-stone-700 dark:bg-stone-900/20 dark:text-stone-400';
+    }
+  }
+
+  getEstadoPagoColor(estado: string): string {
+    switch (estado) {
+      case 'PAGADO': return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400';
+      case 'PARCIAL': return 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400';
+      case 'PENDIENTE': return 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400';
+      default: return 'bg-stone-50 text-stone-700 dark:bg-stone-900/20 dark:text-stone-400';
+    }
+  }
+
   getProductos(): PedidoProducto[] {
     if (this.pedido.productos?.length) return this.pedido.productos;
     if (this.pedido.productos_json?.length) return this.pedido.productos_json;
@@ -221,6 +257,14 @@ export class DialogpedidodetailComponent implements OnInit {
 
   getClienteDocumento(): string {
     return this.pedido.numero_documento_cliente || '-';
+  }
+
+  getImagenProducto(item: PedidoProducto): string {
+    const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
+    const raw = (item as any)?.producto_imagen ?? (item as any)?.img_url ?? (item as any)?.imagen;
+    if (!raw) return placeholder;
+    if (String(raw).startsWith('http')) return String(raw);
+    return URL_BASE + String(raw);
   }
 
   enviarASala(): void {
@@ -249,5 +293,26 @@ export class DialogpedidodetailComponent implements OnInit {
 
   close(): void {
     this.context.completeWith(true);
+  }
+
+  mostrarConfirmacionEliminar(): void {
+    this.showDeleteConfirm = true;
+  }
+
+  cancelarEliminar(): void {
+    this.showDeleteConfirm = false;
+  }
+
+  eliminarPedido(): void {
+    this.deleting = true;
+    this.store.dispatch(eliminarPedido({ pedidoId: this.pedido.id }));
+
+    this.actions$.pipe(
+      ofType(eliminarPedidoExito),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.deleting = false;
+      this.close();
+    });
   }
 }

@@ -3,49 +3,91 @@
   <!-- Contenido principal -->
   <div class="flex-1 flex flex-col lg:flex-row min-h-0">
 
-    <!-- Sidebar acciones -->
-    <div class="flex lg:flex-col items-center justify-center gap-2 p-3 border-b lg:border-b-0 lg:border-r border-stone-200/60 dark:border-stone-700/40 shrink-0">
+    <!-- Sidebar acciones - Estilo Apple -->
+    <div *ngIf="venta.estado !== 'ANULADA'" class="flex lg:flex-col gap-3 p-3 lg:p-4 lg:w-[168px] shrink-0 border-b lg:border-b-0 lg:border-r border-stone-200/60 dark:border-stone-700/40 bg-stone-50/40 dark:bg-stone-900/20 backdrop-blur-xl overflow-x-auto lg:overflow-visible" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;">
       <ng-container *ngIf="selectedState === 'original' && venta.comprobante.estado_sunat === 'ACEPTADO'">
-        <a [href]="stripDomain(comprobante.pdf_url)" target="_blank" class="group flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/50 transition-all">
-          <div class="w-9 h-9 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+        <!-- Grupo Documentos -->
+        <div class="flex lg:flex-col gap-2 shrink-0 w-full">
+          <p class="hidden lg:block text-[10px] font-semibold text-stone-400 uppercase tracking-widest px-1 mb-1">Documentos</p>
+          <div class="flex lg:flex-col gap-2 w-full">
+            <a [href]="stripDomain(comprobante.pdf_url)" target="_blank" class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white dark:bg-stone-800 border border-stone-200/60 dark:border-stone-700/40 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)] hover:scale-[1.01] active:scale-[0.98] transition-all">
+              <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm shrink-0">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0 text-left">
+                <p class="text-[13px] font-semibold tracking-tight text-stone-900 dark:text-white leading-none">PDF</p>
+                <p class="text-[10px] text-stone-500 dark:text-stone-400 leading-none mt-0.5">Comprobante</p>
+              </div>
+              <svg class="w-3.5 h-3.5 text-stone-300 dark:text-stone-600 group-hover:text-stone-400 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a [href]="stripDomain(comprobante.xml_url)" target="_blank" class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white dark:bg-stone-800 border border-stone-200/60 dark:border-stone-700/40 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)] hover:scale-[1.01] active:scale-[0.98] transition-all">
+              <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm shrink-0">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
+              </div>
+              <div class="flex-1 min-w-0 text-left">
+                <p class="text-[13px] font-semibold tracking-tight text-stone-900 dark:text-white leading-none">XML</p>
+                <p class="text-[10px] text-stone-500 dark:text-stone-400 leading-none mt-0.5">SUNAT</p>
+              </div>
+              <svg class="w-3.5 h-3.5 text-stone-300 dark:text-stone-600 group-hover:text-stone-400 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a [href]="stripDomain(comprobante.cdr_url)" target="_blank" class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white dark:bg-stone-800 border border-stone-200/60 dark:border-stone-700/40 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)] hover:scale-[1.01] active:scale-[0.98] transition-all">
+              <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-sm shrink-0">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0 text-left">
+                <p class="text-[13px] font-semibold tracking-tight text-stone-900 dark:text-white leading-none">CDR</p>
+                <p class="text-[10px] text-stone-500 dark:text-stone-400 leading-none mt-0.5">Respuesta</p>
+              </div>
+              <svg class="w-3.5 h-3.5 text-stone-300 dark:text-stone-600 group-hover:text-stone-400 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
           </div>
-          <span class="text-[9px] font-medium text-stone-400">PDF</span>
-        </a>
-        <a [href]="stripDomain(comprobante.xml_url)" target="_blank" class="group flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/50 transition-all">
-          <div class="w-9 h-9 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
+        </div>
+        <!-- Separador Apple -->
+        <div class="hidden lg:block h-px bg-stone-200/60 dark:bg-stone-700/40 my-1"></div>
+        <div class="w-px lg:hidden bg-stone-200/60 dark:bg-stone-700/40 mx-1 self-stretch"></div>
+        <!-- Grupo Compartir -->
+        <div class="flex lg:flex-col gap-2 shrink-0 w-full">
+          <p class="hidden lg:block text-[10px] font-semibold text-stone-400 uppercase tracking-widest px-1 mb-1">Compartir</p>
+          <div class="flex lg:flex-col gap-2 w-full">
+            <button (click)="abrirWhatsApp()" class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white dark:bg-stone-800 border border-stone-200/60 dark:border-stone-700/40 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:scale-[1.01] active:scale-[0.98] transition-all w-full text-left">
+              <div class="w-8 h-8 rounded-xl bg-[#25D366] flex items-center justify-center shadow-sm shrink-0">
+                <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0 text-left">
+                <p class="text-[13px] font-semibold tracking-tight text-stone-900 dark:text-white leading-none">WhatsApp</p>
+                <p class="text-[10px] text-stone-500 dark:text-stone-400 leading-none mt-0.5">Enviar</p>
+              </div>
+              <svg class="w-3.5 h-3.5 text-stone-300 dark:text-stone-600 group-hover:text-stone-400 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+            <button (click)="abrirEmail()" class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white dark:bg-stone-800 border border-stone-200/60 dark:border-stone-700/40 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:scale-[1.01] active:scale-[0.98] transition-all w-full text-left">
+              <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center shadow-sm shrink-0">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+              </div>
+              <div class="flex-1 min-w-0 text-left">
+                <p class="text-[13px] font-semibold tracking-tight text-stone-900 dark:text-white leading-none">Email</p>
+                <p class="text-[10px] text-stone-500 dark:text-stone-400 leading-none mt-0.5">Gmail</p>
+              </div>
+              <svg class="w-3.5 h-3.5 text-stone-300 dark:text-stone-600 group-hover:text-stone-400 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
           </div>
-          <span class="text-[9px] font-medium text-stone-400">XML</span>
-        </a>
-        <a [href]="stripDomain(comprobante.cdr_url)" target="_blank" class="group flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/50 transition-all">
-          <div class="w-9 h-9 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
-          </div>
-          <span class="text-[9px] font-medium text-stone-400">CDR</span>
-        </a>
-        <div class="w-6 h-px lg:w-px lg:h-6 bg-stone-200/60 dark:bg-stone-700/40"></div>
-        <button (click)="abrirWhatsApp()" class="group flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/50 transition-all">
-          <div class="w-9 h-9 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-            <svg class="w-4 h-4 text-emerald-500" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          </div>
-          <span class="text-[9px] font-medium text-stone-400">WhatsApp</span>
-        </button>
-        <button (click)="abrirEmail()" class="group flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/50 transition-all">
-          <div class="w-9 h-9 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
-          </div>
-          <span class="text-[9px] font-medium text-stone-400">Email</span>
-        </button>
-        <div class="w-6 h-px lg:w-px lg:h-6 bg-stone-200/60 dark:bg-stone-700/40"></div>
-        <button *ngIf="venta.estado !== 'ANULADA'" (click)="confirmarAnular()" [disabled]="loadingAnularVenta" class="group flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/50 transition-all">
-          <div class="w-9 h-9 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-            <tui-loader *ngIf="loadingAnularVenta" size="s"></tui-loader>
-            <svg *ngIf="!loadingAnularVenta" class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
-          </div>
-          <span class="text-[9px] font-medium text-red-500">Anular</span>
-        </button>
+        </div>
       </ng-container>
+      <!-- Grupo Acción peligrosa - siempre visible -->
+      <div class="flex lg:flex-col gap-2 shrink-0 w-full lg:mt-auto">
+        <p class="hidden lg:block text-[10px] font-semibold text-stone-400 uppercase tracking-widest px-1 mb-1">Acción</p>
+        <button *ngIf="venta.estado !== 'ANULADA'" (click)="confirmarAnular()" [disabled]="loadingAnularVenta" class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-800/30 shadow-sm hover:shadow-md hover:bg-red-100 dark:hover:bg-red-900/30 hover:scale-[1.01] active:scale-[0.98] transition-all w-full text-left disabled:opacity-50 disabled:cursor-not-allowed">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-sm shrink-0">
+            <tui-loader *ngIf="loadingAnularVenta" size="s" class="!text-white"></tui-loader>
+            <svg *ngIf="!loadingAnularVenta" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+          </div>
+          <div class="flex-1 min-w-0 text-left">
+            <p class="text-[13px] font-semibold tracking-tight text-red-700 dark:text-red-400 leading-none">Anular</p>
+            <p class="text-[10px] text-red-500/70 dark:text-red-400/70 leading-none mt-0.5">Irreversible</p>
+          </div>
+          <svg class="w-3.5 h-3.5 text-red-300 dark:text-red-700 group-hover:text-red-400 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <p *ngIf="venta.estado === 'ANULADA'" class="text-[11px] text-stone-400 text-center py-2">Venta anulada</p>
+      </div>
     </div>
 
     <!-- Contenido scrollable -->
@@ -73,11 +115,43 @@
             </div>
           </div>
 
-          <!-- Segmented anulado -->
+          <!-- Segmented anulado - Anulado primero -->
           <tui-segmented class="w-full" *ngIf="venta.comprobante_nota_credito">
-            <button (click)="selectedState = 'original'" type="button">Original</button>
             <button (click)="selectedState = 'anulado'" type="button">Anulado</button>
+            <button (click)="selectedState = 'original'" type="button">Original</button>
           </tui-segmented>
+
+          <!-- Nota credito - arriba primer orden cuando está anulado -->
+          <div *ngIf="selectedState === 'anulado' && venta.comprobante_nota_credito" class="rounded-xl p-4 border border-red-200/60 dark:border-red-800/40 bg-red-50/30 dark:bg-red-900/10 order-first">
+            <p class="text-[10px] font-medium text-red-400 uppercase tracking-widest mb-2">Nota de Credito</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <p class="text-[10px] text-red-400 uppercase">Serie-Correlativo</p>
+                <p class="text-sm font-medium text-red-900 dark:text-red-300">{{ venta.comprobante_nota_credito.serie }}-{{ venta.comprobante_nota_credito.correlativo }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] text-red-400 uppercase">Fecha Emision</p>
+                <p class="text-sm font-medium text-red-900 dark:text-red-300">{{ venta.comprobante_nota_credito.fecha_emision | date:'short' }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] text-red-400 uppercase">Tipo Motivo</p>
+                <p class="text-sm font-medium text-red-900 dark:text-red-300">{{ venta.comprobante_nota_credito.tipo_motivo }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] text-red-400 uppercase">Estado SUNAT</p>
+                <p class="text-sm font-medium text-red-900 dark:text-red-300">{{ venta.comprobante_nota_credito.estado_sunat }}</p>
+              </div>
+              <div class="col-span-2">
+                <p class="text-[10px] text-red-400 uppercase">Motivo</p>
+                <p class="text-sm text-red-700 dark:text-red-400">{{ venta.comprobante_nota_credito.motivo }}</p>
+              </div>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <a *ngIf="venta.comprobante_nota_credito.pdf_url" [href]="stripDomain(venta.comprobante_nota_credito.pdf_url)" target="_blank" class="text-xs font-medium text-red-600 hover:underline">PDF</a>
+              <a *ngIf="venta.comprobante_nota_credito.xml_url" [href]="stripDomain(venta.comprobante_nota_credito.xml_url)" target="_blank" class="text-xs font-medium text-red-600 hover:underline">XML</a>
+              <a *ngIf="venta.comprobante_nota_credito.cdr_url" [href]="stripDomain(venta.comprobante_nota_credito.cdr_url)" target="_blank" class="text-xs font-medium text-red-600 hover:underline">CDR</a>
+            </div>
+          </div>
 
           <!-- Grid info de la venta -->
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -130,19 +204,19 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 mt-2">
                   <div>
                     <p class="text-[10px] text-stone-400 uppercase">Documento</p>
-                    <p class="text-xs text-stone-600 dark:text-stone-300">{{ comprobante.tipo_documento_cliente === '6' ? 'RUC' : 'DNI' }}: {{ comprobante.numero_documento_cliente || '00000000' }}</p>
+                    <p class="text-xs text-stone-600 dark:text-stone-300">{{ clienteTipoDoc }}: {{ clienteNumero || '00000000' }}</p>
                   </div>
-                  <div *ngIf="venta.email_cliente || comprobante.nombre_cliente">
+                  <div>
                     <p class="text-[10px] text-stone-400 uppercase">Email</p>
-                    <p class="text-xs text-stone-600 dark:text-stone-300">{{ venta.email_cliente || venta.correo_cliente || 'Sin correo' }}</p>
+                    <p class="text-xs text-stone-600 dark:text-stone-300">{{ clienteEmail || 'Sin correo' }}</p>
                   </div>
-                  <div *ngIf="venta.telefono_cliente">
+                  <div>
                     <p class="text-[10px] text-stone-400 uppercase">Telefono</p>
-                    <p class="text-xs text-stone-600 dark:text-stone-300">{{ venta.telefono_cliente }}</p>
+                    <p class="text-xs text-stone-600 dark:text-stone-300">{{ clienteTelefono || 'Sin teléfono' }}</p>
                   </div>
-                  <div *ngIf="venta.direccion_cliente">
+                  <div>
                     <p class="text-[10px] text-stone-400 uppercase">Direccion</p>
-                    <p class="text-xs text-stone-600 dark:text-stone-300">{{ venta.direccion_cliente }}</p>
+                    <p class="text-xs text-stone-600 dark:text-stone-300">{{ clienteDireccion || 'Sin dirección' }}</p>
                   </div>
                 </div>
               </div>
@@ -152,34 +226,49 @@
           <!-- Separador -->
           <div class="h-px bg-stone-200/60 dark:bg-stone-700/40"></div>
 
-          <!-- Productos -->
+          <!-- Productos - Cards alargadas tipo tabla -->
           <div>
-            <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-2">Productos ({{ venta.productos?.length }})</p>
-            <div class="border border-stone-200/60 dark:border-stone-700/40 rounded-xl overflow-hidden">
-              <table class="w-full text-xs">
-                <thead class="border-b border-stone-200/60 dark:border-stone-700/40">
-                  <tr>
-                    <th class="text-left px-3 py-2 font-medium text-stone-400">#</th>
-                    <th class="text-left px-3 py-2 font-medium text-stone-400">Producto</th>
-                    <th class="text-right px-3 py-2 font-medium text-stone-400">Cant.</th>
-                    <th class="text-right px-3 py-2 font-medium text-stone-400 hidden sm:table-cell">P.Unit</th>
-                    <th class="text-right px-3 py-2 font-medium text-stone-400 hidden sm:table-cell">IGV</th>
-                    <th class="text-right px-3 py-2 font-medium text-stone-400">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let item of venta.productos; let i = index" class="border-t border-stone-200/60 dark:border-stone-700/40">
-                    <td class="px-3 py-2 text-stone-400">{{ i + 1 }}</td>
-                    <td class="px-3 py-2">
-                      <p class="font-medium text-stone-900 dark:text-white truncate max-w-[200px]">{{ item.producto_nombre }}</p>
-                    </td>
-                    <td class="px-3 py-2 text-right text-stone-600 dark:text-stone-300">{{ item.cantidad }}</td>
-                    <td class="px-3 py-2 text-right text-stone-600 dark:text-stone-300 hidden sm:table-cell">S/ {{ item.valor_unitario | number:'1.2-2' }}</td>
-                    <td class="px-3 py-2 text-right text-stone-400 hidden sm:table-cell">S/ {{ item.igv | number:'1.2-2' }}</td>
-                    <td class="px-3 py-2 text-right font-medium text-stone-900 dark:text-white">S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) | number:'1.2-2' }}</td>
-                  </tr>
-                </tbody>
-              </table>
+            <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-2">Productos ({{ productosDetalle.length }})</p>
+            <div class="space-y-2">
+              <!-- Header tipo tabla (solo desktop) - nombre en fila superior, por eso header sin Producto -->
+              <div class="hidden sm:grid gap-2 px-3 py-2 text-[10px] font-medium text-stone-400 uppercase tracking-widest"
+                   [style.gridTemplateColumns]="hasDescuento() ? '60px 90px 90px 90px 90px' : '60px 90px 90px 90px'">
+                <span class="text-right">Cant.</span>
+                <span class="text-right">P.Unit</span>
+                <span class="text-right">Descuento</span>
+                <span *ngIf="hasDescuento()" class="text-right">P.Orig</span>
+                <span class="text-right">Total</span>
+              </div>
+              <!-- Card por producto - imagen + nombre arriba en fila completa -->
+              <div *ngFor="let item of productosDetalle; let i = index"
+                   class="px-3 py-3 border rounded-xl space-y-2"
+                   [class]="isDeleted(item) ? 'border-red-300 dark:border-red-800 bg-red-50/50 dark:bg-red-900/10 opacity-90' : 'border-stone-200/60 dark:border-stone-700/40 bg-white dark:bg-stone-800/40'">
+                <!-- Fila 1: Imagen + Nombre producto arriba -->
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <img [src]="getImagenProducto(item)" [alt]="item.producto_nombre" class="w-9 h-9 rounded-lg object-cover border border-stone-200/60 dark:border-stone-700/40 shrink-0 bg-stone-50 dark:bg-stone-700" [class.grayscale]="isDeleted(item)" loading="lazy" />
+                  <p class="text-sm font-medium truncate flex-1" [class]="isDeleted(item) ? 'text-stone-400 dark:text-stone-500 line-through' : 'text-stone-900 dark:text-white'">{{ item.producto_nombre }}</p>
+                  <span *ngIf="isDeleted(item)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800 shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Producto no existe
+                  </span>
+                  <span *ngIf="!isDeleted(item) && isUpdated(item)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800 shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> El producto se actualizó
+                  </span>
+                </div>
+                <!-- Fila 2: Datos tipo tabla alargada -->
+                <div class="grid gap-2 items-center"
+                     [style.gridTemplateColumns]="hasDescuento() ? '60px 90px 90px 90px 90px' : '60px 90px 90px 90px'">
+                  <!-- Cant -->
+                  <span class="text-left sm:text-right text-xs text-stone-600 dark:text-stone-300"><span class="sm:hidden text-stone-400">Cant.: </span>{{ item.cantidad ?? item.cantidad_final }}</span>
+                  <!-- P.Unit -->
+                  <span class="text-right text-xs text-stone-600 dark:text-stone-300"><span class="sm:hidden text-stone-400 hidden">P.Unit: </span>S/ {{ getPrecioUnitarioVistaPrevia(item, i) | number:'1.2-2' }}</span>
+                  <!-- Descuento -->
+                  <span class="text-right text-xs text-stone-400">S/ {{ getDescuento(item) | number:'1.2-2' }}</span>
+                <!-- P.Orig solo si hay descuento -->
+                <span *ngIf="hasDescuento()" class="text-right text-xs text-amber-600 dark:text-amber-400 line-through">S/ {{ getPrecioOriginal(item, i) | number:'1.2-2' }}</span>
+                <!-- Total -->
+                <span class="text-right text-sm font-semibold text-stone-900 dark:text-white sm:text-xs">S/ {{ getTotalSinIgvVistaPrevia(item, i) | number:'1.2-2' }}</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -187,7 +276,7 @@
           <div class="rounded-xl p-4 space-y-2 border border-stone-200/60 dark:border-stone-700/40">
             <div class="flex justify-between text-xs">
               <span class="text-stone-400">Subtotal</span>
-              <span class="text-stone-600 dark:text-stone-300">S/ {{ venta.subtotal | number:'1.2-2' }}</span>
+              <span class="text-stone-600 dark:text-stone-300">S/ {{ getSubtotalSinIgv() | number:'1.2-2' }}</span>
             </div>
             <div class="flex justify-between text-xs">
               <span class="text-stone-400">Gravada</span>
@@ -208,89 +297,159 @@
             </div>
           </div>
 
-          <!-- Nota credito -->
-          <div *ngIf="selectedState === 'anulado' && venta.comprobante_nota_credito" class="rounded-xl p-4 border border-red-200/60 dark:border-red-800/40">
-            <p class="text-[10px] font-medium text-red-400 uppercase tracking-widest mb-2">Nota de Credito</p>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <p class="text-[10px] text-red-400 uppercase">Serie-Correlativo</p>
-                <p class="text-sm font-medium text-red-900 dark:text-red-300">{{ venta.comprobante_nota_credito.serie }}-{{ venta.comprobante_nota_credito.correlativo }}</p>
+          <!-- Vista previa mobile - abajo centrado -->
+          <div class="block lg:hidden mt-6 flex justify-center">
+            <div class="w-full max-w-[360px]">
+              <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-3 text-center">Vista previa</p>
+              <div class="rounded-2xl border border-stone-300/60 overflow-hidden bg-white shadow-sm">
+                <div class="p-5 bg-white text-black text-[12px] leading-relaxed" style="font-family: 'Courier New', Courier, monospace;">
+                  <div class="text-center border-b border-dashed border-stone-300 pb-3 mb-3">
+                    <img *ngIf="tiendaLogo" [src]="tiendaLogo" alt="Logo" class="w-12 h-12 mx-auto mb-2 object-contain" />
+                    <p class="text-sm font-bold uppercase tracking-wide text-black">{{ tiendaNombre }}</p>
+                    <p *ngIf="tiendaRuc" class="text-[10px] text-black mt-0.5">RUC: {{ tiendaRuc }}</p>
+                    <p *ngIf="tiendaDireccion" class="text-[10px] text-black">{{ tiendaDireccion }}</p>
+                    <p *ngIf="tiendaTelefono" class="text-[10px] text-black">Tel: {{ tiendaTelefono }}</p>
+                  </div>
+                  <div class="text-center border-b border-dashed border-stone-300 pb-3 mb-3">
+                    <p class="text-xs font-bold uppercase tracking-wide text-black">{{ venta.tipo_comprobante === '01' ? 'FACTURA DE VENTA ELECTRONICA' : 'BOLETA DE VENTA ELECTRONICA' }}</p>
+                    <p class="text-[10px] text-black mt-0.5">{{ comprobante.serie }} - {{ comprobante.correlativo }}</p>
+                  </div>
+                  <div class="border-b border-dashed border-stone-300 pb-3 mb-3 text-black">
+                    <p><span class="text-black">Cliente:</span> {{ comprobante.nombre_cliente || 'Varios' }}</p>
+                    <p><span class="text-black">Doc:</span> {{ comprobante.numero_documento_cliente || '00000000' }}</p>
+                    <p *ngIf="clienteTelefono"><span class="text-black">Tel:</span> {{ clienteTelefono }}</p>
+                  </div>
+                  <div class="border-b border-dashed border-stone-300 pb-3 mb-3 text-black">
+                    <p><span class="text-black">Fecha:</span> {{ venta.fecha_hora | date:'shortDate' }}</p>
+                    <p><span class="text-black">Hora:</span> {{ venta.fecha_hora | date:'shortTime' }}</p>
+                    <p><span class="text-black">Pago:</span> {{ venta.metodo_pago || 'Efectivo' }}</p>
+                  </div>
+                  <div class="border-b border-dashed border-stone-300 pb-3 mb-3">
+                    <div *ngFor="let item of productosDetalle; let i = index" class="mb-2 last:mb-0">
+                      <p class="truncate font-bold text-black">{{ item.producto_nombre }}</p>
+                      <div class="flex justify-between text-black">
+                        <span>{{ item.cantidad ?? item.cantidad_final }} × S/ {{ getPrecioUnitarioVistaPrevia(item, i) | number:'1.2-2' }}</span>
+                        <span>S/ {{ getTotalSinIgvVistaPrevia(item, i) | number:'1.2-2' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="space-y-1 text-black">
+                    <div class="flex justify-between"><span>Subtotal:</span><span>S/ {{ getSubtotalSinIgv() | number:'1.2-2' }}</span></div>
+                    <div class="flex justify-between"><span>Gravada:</span><span>S/ {{ comprobante.gravadas | number:'1.2-2' }}</span></div>
+                    <div class="flex justify-between"><span>IGV:</span><span>S/ {{ comprobante.igv | number:'1.2-2' }}</span></div>
+                    <div *ngIf="comprobante.descuento_total > 0" class="flex justify-between"><span>Descuento:</span><span>- S/ {{ comprobante.descuento_total | number:'1.2-2' }}</span></div>
+                    <div class="flex justify-between text-[11px]"><span>Cant. productos:</span><span>{{ getCantidadTotal() }}</span></div>
+                    <div class="flex justify-between text-sm font-bold border-t border-black pt-2 mt-2"><span>TOTAL:</span><span>S/ {{ comprobante.total }}</span></div>
+                  </div>
+                  <div class="text-center border-t border-dashed border-stone-300 pt-3 mt-3 text-black">
+                    <p class="text-[10px]">Representacion impresa de la</p>
+                    <p class="text-[10px]">{{ venta.tipo_comprobante === '01' ? 'FACTURA DE VENTA' : 'BOLETA DE VENTA' }} ELECTRONICA</p>
+                    <p class="text-[10px] mt-1">¡Gracias por su compra!</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p class="text-[10px] text-red-400 uppercase">Fecha Emision</p>
-                <p class="text-sm font-medium text-red-900 dark:text-red-300">{{ venta.comprobante_nota_credito.fecha_emision | date:'short' }}</p>
+              <!-- Botones Apple mobile -->
+              <div class="flex gap-2 mt-4" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;">
+                <button (click)="imprimirTicket()" type="button" class="flex-1 flex items-center gap-3 px-3 py-3 rounded-2xl bg-white border border-stone-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:scale-[1.01] active:scale-[0.98] transition-all text-left">
+                  <div class="w-8 h-8 rounded-xl bg-stone-900 flex items-center justify-center shadow-sm shrink-0">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.982 42.982 0 0110.56 0m-10.56 0L6.72 18.93m10.56-5.1l.72 5.07M8.25 9V6a2.25 2.25 0 012.25-2.25h3.75A2.25 2.25 0 0116.5 6v3m-8.25 0h8.25m-8.25 0l-.72 5.1m8.97-5.1l.72 5.07M6.375 21h11.25c.621 0 1.125-.504 1.125-1.125v-2.25c0-.621-.504-1.125-1.125-1.125H6.375c-.621 0-1.125.504-1.125 1.125v2.25c0 .621.504 1.125 1.125 1.125z"/></svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-[13px] font-semibold tracking-tight text-stone-900 leading-none">Imprimir</p>
+                    <p class="text-[10px] text-stone-500 leading-none mt-0.5">Ticket</p>
+                  </div>
+                  <svg class="w-3.5 h-3.5 text-stone-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+                <button (click)="verTicket()" type="button" class="flex-1 flex items-center gap-3 px-3 py-3 rounded-2xl bg-stone-900 border border-stone-900 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.12)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.16)] hover:scale-[1.01] active:scale-[0.98] transition-all text-left">
+                  <div class="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center shadow-sm shrink-0">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 13.5H9m12 0a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12v-.008zM9 13.5a3 3 0 106 0 3 3 0 00-6 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-[13px] font-semibold tracking-tight text-white leading-none">Ver Ticket</p>
+                    <p class="text-[10px] text-white/60 leading-none mt-0.5">Vista</p>
+                  </div>
+                  <svg class="w-3.5 h-3.5 text-white/40 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
               </div>
-              <div>
-                <p class="text-[10px] text-red-400 uppercase">Tipo Motivo</p>
-                <p class="text-sm font-medium text-red-900 dark:text-red-300">{{ venta.comprobante_nota_credito.tipo_motivo }}</p>
-              </div>
-              <div>
-                <p class="text-[10px] text-red-400 uppercase">Estado SUNAT</p>
-                <p class="text-sm font-medium text-red-900 dark:text-red-300">{{ venta.comprobante_nota_credito.estado_sunat }}</p>
-              </div>
-              <div class="col-span-2">
-                <p class="text-[10px] text-red-400 uppercase">Motivo</p>
-                <p class="text-sm text-red-700 dark:text-red-400">{{ venta.comprobante_nota_credito.motivo }}</p>
-              </div>
-            </div>
-            <div class="flex gap-2 mt-3">
-              <a *ngIf="venta.comprobante_nota_credito.pdf_url" [href]="stripDomain(venta.comprobante_nota_credito.pdf_url)" target="_blank" class="text-xs font-medium text-red-600 hover:underline">PDF</a>
-              <a *ngIf="venta.comprobante_nota_credito.xml_url" [href]="stripDomain(venta.comprobante_nota_credito.xml_url)" target="_blank" class="text-xs font-medium text-red-600 hover:underline">XML</a>
-              <a *ngIf="venta.comprobante_nota_credito.cdr_url" [href]="stripDomain(venta.comprobante_nota_credito.cdr_url)" target="_blank" class="text-xs font-medium text-red-600 hover:underline">CDR</a>
             </div>
           </div>
 
         </div>
       </div>
 
-      <!-- Columna derecha: Boleta Preview -->
+      <!-- Columna derecha: Boleta Preview - fondo blanco siempre, tipografía negra, fuente térmica -->
       <div class="hidden lg:block w-[360px] shrink-0 border-l border-stone-200/60 dark:border-stone-700/40 overflow-y-auto">
         <div class="p-5">
           <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-3 text-center">Vista previa</p>
-          <div class="rounded-2xl border border-stone-200/60 dark:border-stone-700/40 overflow-hidden">
-            <div class="p-5 font-mono text-[12px] leading-relaxed text-stone-800 dark:text-stone-200">
-              <div class="text-center border-b border-dashed border-stone-300/60 dark:border-stone-600/40 pb-3 mb-3">
-                <img *ngIf="tiendaLogo" [src]="tiendaLogo" alt="Logo" class="w-12 h-12 mx-auto mb-2 object-contain dark:invert" />
-                <p class="text-sm font-bold uppercase tracking-wide">{{ tiendaNombre }}</p>
-                <p *ngIf="tiendaRuc" class="text-[10px] text-stone-400 mt-0.5">RUC: {{ tiendaRuc }}</p>
-                <p *ngIf="tiendaDireccion" class="text-[10px] text-stone-400">{{ tiendaDireccion }}</p>
-                <p *ngIf="tiendaTelefono" class="text-[10px] text-stone-400">Tel: {{ tiendaTelefono }}</p>
+          <div class="rounded-2xl border border-stone-300/60 overflow-hidden bg-white shadow-sm">
+            <div class="p-5 bg-white text-black text-[12px] leading-relaxed" style="font-family: 'Courier New', Courier, monospace;">
+              <div class="text-center border-b border-dashed border-stone-300 pb-3 mb-3">
+                <img *ngIf="tiendaLogo" [src]="tiendaLogo" alt="Logo" class="w-12 h-12 mx-auto mb-2 object-contain" />
+                <p class="text-sm font-bold uppercase tracking-wide text-black">{{ tiendaNombre }}</p>
+                <p *ngIf="tiendaRuc" class="text-[10px] text-black mt-0.5">RUC: {{ tiendaRuc }}</p>
+                <p *ngIf="tiendaDireccion" class="text-[10px] text-black">{{ tiendaDireccion }}</p>
+                <p *ngIf="tiendaTelefono" class="text-[10px] text-black">Tel: {{ tiendaTelefono }}</p>
               </div>
-              <div class="text-center border-b border-dashed border-stone-300/60 dark:border-stone-600/40 pb-3 mb-3">
-                <p class="text-xs font-bold uppercase tracking-wide">{{ venta.tipo_comprobante === '01' ? 'FACTURA DE VENTA ELECTRONICA' : 'BOLETA DE VENTA ELECTRONICA' }}</p>
-                <p class="text-[10px] text-stone-400 mt-0.5">{{ comprobante.serie }} - {{ comprobante.correlativo }}</p>
+              <div class="text-center border-b border-dashed border-stone-300 pb-3 mb-3">
+                <p class="text-xs font-bold uppercase tracking-wide text-black">{{ venta.tipo_comprobante === '01' ? 'FACTURA DE VENTA ELECTRONICA' : 'BOLETA DE VENTA ELECTRONICA' }}</p>
+                <p class="text-[10px] text-black mt-0.5">{{ comprobante.serie }} - {{ comprobante.correlativo }}</p>
               </div>
-              <div class="border-b border-dashed border-stone-300/60 dark:border-stone-600/40 pb-3 mb-3">
-                <p><span class="text-stone-400">Cliente:</span> {{ comprobante.nombre_cliente || 'Varios' }}</p>
-                <p><span class="text-stone-400">Doc:</span> {{ comprobante.numero_documento_cliente || '00000000' }}</p>
-                <p *ngIf="venta.telefono_cliente"><span class="text-stone-400">Tel:</span> {{ venta.telefono_cliente }}</p>
+              <div class="border-b border-dashed border-stone-300 pb-3 mb-3 text-black">
+                <p><span class="text-black">Cliente:</span> {{ comprobante.nombre_cliente || 'Varios' }}</p>
+                <p><span class="text-black">Doc:</span> {{ comprobante.numero_documento_cliente || '00000000' }}</p>
+                <p *ngIf="venta.telefono_cliente"><span class="text-black">Tel:</span> {{ venta.telefono_cliente }}</p>
               </div>
-              <div class="border-b border-dashed border-stone-300/60 dark:border-stone-600/40 pb-3 mb-3">
-                <p><span class="text-stone-400">Fecha:</span> {{ venta.fecha_hora | date:'shortDate' }}</p>
-                <p><span class="text-stone-400">Hora:</span> {{ venta.fecha_hora | date:'shortTime' }}</p>
-                <p><span class="text-stone-400">Pago:</span> {{ venta.metodo_pago || 'Efectivo' }}</p>
+              <div class="border-b border-dashed border-stone-300 pb-3 mb-3 text-black">
+                <p><span class="text-black">Fecha:</span> {{ venta.fecha_hora | date:'shortDate' }}</p>
+                <p><span class="text-black">Hora:</span> {{ venta.fecha_hora | date:'shortTime' }}</p>
+                <p><span class="text-black">Pago:</span> {{ venta.metodo_pago || 'Efectivo' }}</p>
               </div>
-              <div class="border-b border-dashed border-stone-300/60 dark:border-stone-600/40 pb-3 mb-3">
-                <div *ngFor="let item of venta.productos" class="mb-2 last:mb-0">
-                  <p class="truncate font-medium">{{ item.producto_nombre }}</p>
-                  <div class="flex justify-between text-stone-400">
-                    <span>{{ item.cantidad }} × S/ {{ item.valor_unitario | number:'1.2-2' }}</span>
-                    <span>S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) | number:'1.2-2' }}</span>
+              <div class="border-b border-dashed border-stone-300 pb-3 mb-3">
+                <div *ngFor="let item of productosDetalle; let i = index" class="mb-2 last:mb-0">
+                  <p class="truncate font-bold text-black">{{ item.producto_nombre }}</p>
+                  <div class="flex justify-between text-black">
+                    <span>{{ item.cantidad ?? item.cantidad_final }} × S/ {{ getPrecioUnitarioVistaPrevia(item, i) | number:'1.2-2' }}</span>
+                    <span>S/ {{ getTotalSinIgvVistaPrevia(item, i) | number:'1.2-2' }}</span>
                   </div>
                 </div>
               </div>
-              <div class="space-y-1">
-                <div class="flex justify-between"><span class="text-stone-400">Gravada:</span><span>S/ {{ comprobante.gravadas | number:'1.2-2' }}</span></div>
-                <div class="flex justify-between"><span class="text-stone-400">IGV:</span><span>S/ {{ comprobante.igv | number:'1.2-2' }}</span></div>
-                <div *ngIf="comprobante.descuento_total > 0" class="flex justify-between text-red-500"><span>Descuento:</span><span>- S/ {{ comprobante.descuento_total | number:'1.2-2' }}</span></div>
-                <div class="flex justify-between text-sm font-bold border-t border-stone-300/60 dark:border-stone-600/40 pt-2 mt-2"><span>TOTAL:</span><span>S/ {{ comprobante.total }}</span></div>
+              <div class="space-y-1 text-black">
+                <div class="flex justify-between"><span>Subtotal:</span><span>S/ {{ getSubtotalSinIgv() | number:'1.2-2' }}</span></div>
+                <div class="flex justify-between"><span>Gravada:</span><span>S/ {{ comprobante.gravadas | number:'1.2-2' }}</span></div>
+                <div class="flex justify-between"><span>IGV:</span><span>S/ {{ comprobante.igv | number:'1.2-2' }}</span></div>
+                <div *ngIf="comprobante.descuento_total > 0" class="flex justify-between"><span>Descuento:</span><span>- S/ {{ comprobante.descuento_total | number:'1.2-2' }}</span></div>
+                <div class="flex justify-between text-[11px]"><span>Cant. productos:</span><span>{{ getCantidadTotal() }}</span></div>
+                <div class="flex justify-between text-sm font-bold border-t border-black pt-2 mt-2"><span>TOTAL:</span><span>S/ {{ comprobante.total }}</span></div>
               </div>
-              <div class="text-center border-t border-dashed border-stone-300/60 dark:border-stone-600/40 pt-3 mt-3">
-                <p class="text-[10px] text-stone-400">Representacion impresa de la</p>
-                <p class="text-[10px] text-stone-400">{{ venta.tipo_comprobante === '01' ? 'FACTURA DE VENTA' : 'BOLETA DE VENTA' }} ELECTRONICA</p>
-                <p class="text-[10px] text-stone-400 mt-1">¡Gracias por su compra!</p>
+              <div class="text-center border-t border-dashed border-stone-300 pt-3 mt-3 text-black">
+                <p class="text-[10px]">Representacion impresa de la</p>
+                <p class="text-[10px]">{{ venta.tipo_comprobante === '01' ? 'FACTURA DE VENTA' : 'BOLETA DE VENTA' }} ELECTRONICA</p>
+                <p class="text-[10px] mt-1">¡Gracias por su compra!</p>
               </div>
             </div>
+          </div>
+          <!-- Botones debajo de vista previa - Estilo Apple -->
+          <div class="flex gap-2 mt-4" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;">
+            <button (click)="imprimirTicket()" type="button" class="flex-1 flex items-center gap-3 px-3 py-3 rounded-2xl bg-white dark:bg-stone-800 border border-stone-200/60 dark:border-stone-700/40 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:scale-[1.01] active:scale-[0.98] transition-all text-left">
+              <div class="w-8 h-8 rounded-xl bg-stone-900 dark:bg-white flex items-center justify-center shadow-sm shrink-0">
+                <svg class="w-4 h-4 text-white dark:text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.982 42.982 0 0110.56 0m-10.56 0L6.72 18.93m10.56-5.1l.72 5.07M8.25 9V6a2.25 2.25 0 012.25-2.25h3.75A2.25 2.25 0 0116.5 6v3m-8.25 0h8.25m-8.25 0l-.72 5.1m8.97-5.1l.72 5.07M6.375 21h11.25c.621 0 1.125-.504 1.125-1.125v-2.25c0-.621-.504-1.125-1.125-1.125H6.375c-.621 0-1.125.504-1.125 1.125v2.25c0 .621.504 1.125 1.125 1.125z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[13px] font-semibold tracking-tight text-stone-900 dark:text-white leading-none">Imprimir</p>
+                <p class="text-[10px] text-stone-500 dark:text-stone-400 leading-none mt-0.5">Ticket</p>
+              </div>
+              <svg class="w-3.5 h-3.5 text-stone-300 dark:text-stone-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+            <button (click)="verTicket()" type="button" class="flex-1 flex items-center gap-3 px-3 py-3 rounded-2xl bg-stone-900 dark:bg-white border border-stone-900 dark:border-white shadow-[0_1px_2px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.12)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.16)] hover:scale-[1.01] active:scale-[0.98] transition-all text-left">
+              <div class="w-8 h-8 rounded-xl bg-white/15 dark:bg-stone-900/10 flex items-center justify-center shadow-sm shrink-0">
+                <svg class="w-4 h-4 text-white dark:text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 13.5H9m12 0a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12v-.008zM9 13.5a3 3 0 106 0 3 3 0 00-6 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[13px] font-semibold tracking-tight text-white dark:text-stone-900 leading-none">Ver Ticket</p>
+                <p class="text-[10px] text-white/60 dark:text-stone-500 leading-none mt-0.5">Vista</p>
+              </div>
+              <svg class="w-3.5 h-3.5 text-white/40 dark:text-stone-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
           </div>
         </div>
       </div>

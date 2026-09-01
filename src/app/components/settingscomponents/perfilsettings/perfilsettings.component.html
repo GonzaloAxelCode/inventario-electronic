@@ -1,33 +1,32 @@
 <div class="min-h-screen bg-white dark:bg-neutral-800">
   
   <!-- Hero Section con Imagen de Fondo -->
-  <div class="relative py-20">
+  <div class="relative py-10 sm:py-20">
     
-    
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <div class="inline-block mb-8">
+    <div class="relative max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 text-center">
+      <div class="inline-block mb-6 sm:mb-8">
         <img 
           [src]="tienda.logo_img" 
           alt="Logo"
-          class=" object-cover  dark:invert invert-0"
+          class="object-cover dark:invert invert-0 w-16 h-16 sm:w-20 sm:h-20"
         />
       </div>
       
-      <h1 class="text-2xl md:text-3xl font-bold dark:text-white mb-4">
+      <h1 class="text-xl sm:text-2xl md:text-3xl font-bold dark:text-white mb-3 sm:mb-4">
         {{ tienda.nombre }}
       </h1>
       
-      <div class="flex items-center justify-center gap-4 mt-6">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mt-4 sm:mt-6">
         <span 
           *ngIf="tienda.activo"
-          class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold bg-emerald-500 text-white shadow-lg"
+          class="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold bg-emerald-500 text-white shadow-lg"
         >
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
           </svg>
           Tienda Activa
         </span>
-        <span class="px-6 py-2.5 rounded-full text-sm font-medium bg-white/10 text-white border border-white/20">
+        <span class="px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium bg-white/10 text-white border border-white/20">
           {{ tienda.ruc || 'Sin ruc'}}
         </span>
       </div>
@@ -35,29 +34,29 @@
   </div>
 
   <!-- Contenido Principal -->
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-12">
     
     <!-- Información de la Empresa -->
-    <div class="mb-12">
-      <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-6 flex items-center gap-3">
-        <div class="w-1 h-8 bg-neutral-900 dark:bg-white rounded-full"></div>
-        Información de la Empresa
+    <div class="mb-8 sm:mb-12">
+      <h2 class="text-lg sm:text-2xl font-bold text-neutral-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+        <div class="w-1 h-6 sm:h-8 bg-neutral-900 dark:bg-white rounded-full"></div>
+        Empresa
       </h2>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         
         <!-- Razón Social -->
         <div class="group">
-          <div class="bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-750 transition-colors rounded-2xl p-6 h-full border-2 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600">
-            <div class="flex items-start gap-4">
-              <div class="flex-shrink-0 w-12 h-12 bg-neutral-900 dark:bg-white rounded-xl flex items-center justify-center">
-                <svg class="w-6 h-6 text-white dark:text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-750 transition-colors rounded-xl sm:rounded-2xl p-4 sm:p-6 h-full border-2 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600">
+            <div class="flex items-start gap-3 sm:gap-4">
+              <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-neutral-900 dark:bg-white rounded-lg sm:rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                 </svg>
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Razón Social</p>
-                <p class="text-lg font-medium text-neutral-900 dark:text-white truncate">
+                <p class="text-[10px] sm:text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Razón Social</p>
+                <p class="text-base sm:text-lg font-medium text-neutral-900 dark:text-white truncate">
                   {{ tienda.razon_social || 'Sin razón social' }}
                 </p>
               </div>
@@ -67,16 +66,16 @@
 
         <!-- RUC -->
         <div class="group">
-          <div class="bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-750 transition-colors rounded-2xl p-6 h-full border-2 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600">
-            <div class="flex items-start gap-4">
-              <div class="flex-shrink-0 w-12 h-12 bg-neutral-900 dark:bg-white rounded-xl flex items-center justify-center">
-                <svg class="w-6 h-6 text-white dark:text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-750 transition-colors rounded-xl sm:rounded-2xl p-4 sm:p-6 h-full border-2 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600">
+            <div class="flex items-start gap-3 sm:gap-4">
+              <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-neutral-900 dark:bg-white rounded-lg sm:rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">RUC</p>
-                <p class="text-lg font-medium text-neutral-900 dark:text-white font-mono">
+                <p class="text-[10px] sm:text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">RUC</p>
+                <p class="text-base sm:text-lg font-medium text-neutral-900 dark:text-white font-mono">
                   {{ tienda.ruc || 'Sin RUC' }}
                 </p>
               </div>
@@ -88,27 +87,27 @@
     </div>
 
     <!-- Ubicación y Contacto -->
-    <div class="mb-12">
-      <h2 class="text-2xl font-bold text-neutral-900 dark:text-white mb-6 flex items-center gap-3">
-        <div class="w-1 h-8 bg-neutral-900 dark:bg-white rounded-full"></div>
+    <div class="mb-8 sm:mb-12">
+      <h2 class="text-lg sm:text-2xl font-bold text-neutral-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+        <div class="w-1 h-6 sm:h-8 bg-neutral-900 dark:bg-white rounded-full"></div>
         Ubicación y Contacto
       </h2>
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
         
         <!-- Dirección -->
         <div class="group">
-          <div class="bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-750 transition-colors rounded-2xl p-6 h-full border-2 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600">
-            <div class="flex items-start gap-4">
-              <div class="flex-shrink-0 w-12 h-12 bg-neutral-900 dark:bg-white rounded-xl flex items-center justify-center">
-                <svg class="w-6 h-6 text-white dark:text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-750 transition-colors rounded-xl sm:rounded-2xl p-4 sm:p-6 h-full border-2 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600">
+            <div class="flex items-start gap-3 sm:gap-4">
+              <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-neutral-900 dark:bg-white rounded-lg sm:rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Dirección</p>
-                <p class="text-base font-medium text-neutral-900 dark:text-white">
+                <p class="text-[10px] sm:text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Dirección</p>
+                <p class="text-sm sm:text-base font-medium text-neutral-900 dark:text-white">
                   {{ tienda.direccion || 'Sin dirección' }}
                 </p>
               </div>
@@ -118,16 +117,16 @@
 
         <!-- Teléfono -->
         <div class="group">
-          <div class="bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-750 transition-colors rounded-2xl p-6 h-full border-2 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600">
-            <div class="flex items-start gap-4">
-              <div class="flex-shrink-0 w-12 h-12 bg-neutral-900 dark:bg-white rounded-xl flex items-center justify-center">
-                <svg class="w-6 h-6 text-white dark:text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-750 transition-colors rounded-xl sm:rounded-2xl p-4 sm:p-6 h-full border-2 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600">
+            <div class="flex items-start gap-3 sm:gap-4">
+              <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-neutral-900 dark:bg-white rounded-lg sm:rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                 </svg>
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Teléfono</p>
-                <p class="text-base font-medium text-neutral-900 dark:text-white">
+                <p class="text-[10px] sm:text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Teléfono</p>
+                <p class="text-sm sm:text-base font-medium text-neutral-900 dark:text-white">
                   {{ tienda.telefono || 'Sin teléfono' }}
                 </p>
               </div>
@@ -136,17 +135,17 @@
         </div>
 
         <!-- Email -->
-        <div class="group">
-          <div class="bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-750 transition-colors rounded-2xl p-6 h-full border-2 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600">
-            <div class="flex items-start gap-4">
-              <div class="flex-shrink-0 w-12 h-12 bg-neutral-900 dark:bg-white rounded-xl flex items-center justify-center">
-                <svg class="w-6 h-6 text-white dark:text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group sm:col-span-2 md:col-span-1">
+          <div class="bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-750 transition-colors rounded-xl sm:rounded-2xl p-4 sm:p-6 h-full border-2 border-transparent hover:border-neutral-300 dark:hover:border-neutral-600">
+            <div class="flex items-start gap-3 sm:gap-4">
+              <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-neutral-900 dark:bg-white rounded-lg sm:rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Email</p>
-                <p class="text-base font-medium text-neutral-900 dark:text-white truncate">
+                <p class="text-[10px] sm:text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Email</p>
+                <p class="text-sm sm:text-base font-medium text-neutral-900 dark:text-white truncate">
                   {{ tienda.email || 'Sin email' }}
                 </p>
               </div>

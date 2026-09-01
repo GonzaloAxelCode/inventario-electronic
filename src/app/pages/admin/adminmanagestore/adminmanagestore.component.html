@@ -47,7 +47,9 @@
 
       <!-- Tabla / Lista Apple -->
       <ng-container *ngIf="filteredTiendas$ | async as filtered">
-        <app-tabletiendas [tiendas]="filtered"></app-tabletiendas>
+        <div [tuiSkeleton]="(loadingTiendas$ | async) === true" class="rounded-2xl">
+          <app-tabletiendas [tiendas]="filtered"></app-tabletiendas>
+        </div>
         <p *ngIf="filtered.length === 0 && (isSuperUser$ | async) === false" class="text-[13px] text-[#86868b] dark:text-[#a1a1a6] mt-6 text-center">
           No se encontraron sucursales. Se muestra tu tienda principal.
         </p>

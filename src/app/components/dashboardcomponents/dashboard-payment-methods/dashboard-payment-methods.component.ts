@@ -76,9 +76,11 @@ export class DashboardPaymentMethodsComponent implements OnInit {
     this.loading = true;
     this.ventaService.getMetodosPago(this.selectedYear, this.selectedMonth).subscribe({
       next: (data) => {
-        this.totalVentas = data.total_ventas;
-        this.ringLabels = data.metodos_pago.map((m) => m.metodo_pago);
-        this.ringValue = data.metodos_pago.map((m) => m.cantidad);
+        this.totalVentas = (data as any)?.total_ventas ?? 0;
+        const pagos: any[] = (data as any)?.metodos_pago ?? [];
+        this.ringLabels = pagos.map((m: any) => m?.metodo_pago ?? m?.nombre ?? 'Otro');
+        // Backend puede devolver 'cantidad', 'num_ventas' o 'total_soles' según endpoint
+        this.ringValue = pagos.map((m: any) => Number(m?.cantidad ?? m?.num_ventas ?? m?.total_soles ?? m?.porcentaje ?? 0));
         this.loading = false;
       },
       error: () => {

@@ -71,11 +71,11 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
       .subscribe(reporte => {
         if (reporte) {
           this.resumenVentas = {
-            totalVentas: reporte.total_ventas,
-            totalTransacciones: reporte.num_comprobantes,
-            ticketPromedio: reporte.num_comprobantes > 0 ? reporte.total_ventas / reporte.num_comprobantes : 0,
-            clientesAtendidos: reporte.clientes_atendidos,
-            vsMesAnterior: reporte.porcentaje_vs_mes_anterior,
+            totalVentas: reporte.total_ventas ?? 0,
+            totalTransacciones: reporte.num_comprobantes ?? 0,
+            ticketPromedio: (reporte.num_comprobantes ?? 0) > 0 ? (reporte.total_ventas ?? 0) / (reporte.num_comprobantes ?? 1) : 0,
+            clientesAtendidos: reporte.clientes_atendidos ?? 0,
+            vsMesAnterior: reporte.porcentaje_vs_mes_anterior ?? 0,
           };
         }
       });
@@ -159,7 +159,8 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
   }
 
   loadReporteMensual(): void {
-    const monthIndex = this.monthNames.indexOf(this.selectedMonth);
+    let monthIndex = this.monthNames.indexOf(this.selectedMonth);
+    if (monthIndex < 0) monthIndex = new Date().getMonth();
     this.store.dispatch(cargarReporteMensual({ month: monthIndex, year: this.selectedYear }));
   }
 
@@ -172,12 +173,14 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
   }
 
   loadTopProductosMes(): void {
-    const monthIndex = this.monthNames.indexOf(this.selectedMonth);
+    let monthIndex = this.monthNames.indexOf(this.selectedMonth);
+    if (monthIndex < 0) monthIndex = new Date().getMonth();
     this.store.dispatch(cargarTopProductosMes({ month: monthIndex, year: this.selectedYear }));
   }
 
   loadTopCategoriasMes(): void {
-    const monthIndex = this.monthNames.indexOf(this.selectedMonth);
+    let monthIndex = this.monthNames.indexOf(this.selectedMonth);
+    if (monthIndex < 0) monthIndex = new Date().getMonth();
     this.store.dispatch(cargarTopCategoriasMes({ month: monthIndex, year: this.selectedYear }));
   }
 
@@ -201,8 +204,8 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  getComparisonClass(value: number): string {
-    return value >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+  getComparisonClass(value: number | undefined | null): string {
+    return (value ?? 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
   }
 
   getMargenClass(margen: number): string {

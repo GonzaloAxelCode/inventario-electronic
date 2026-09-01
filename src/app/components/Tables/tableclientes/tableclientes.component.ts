@@ -19,14 +19,13 @@ import { TUI_CONFIRM, TuiAvatar, TuiBadge, TuiChip, TuiConfirmData, TuiRadio, Tu
 import { TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
-import { ButtonupdateComponent } from '../../buttonupdate/buttonupdate.component';
 @Component({
   selector: 'app-tableclientes',
   standalone: true,
 
   imports: [CommonModule, TuiChip, ReactiveFormsModule, TuiTable, CommonModule,
     TuiAvatar, TuiLoader, TuiTextfield, TuiSearch,
-    TuiRadio, ButtonupdateComponent,
+    TuiRadio,
     FormsModule, TuiSkeleton, InfiniteScrollModule,
     TuiTable, TuiButton, TuiAppearance, TuiBadge, TuiBlockStatus
   ],
@@ -38,6 +37,7 @@ export class TableClientesComponent implements OnInit {
   userPermissions$ = this.store.select(selectPermissions);
 
   clientes: any[] = [];
+  viewMode: 'table' | 'grid' = 'table';
 
   constructor(private fb: FormBuilder, private store: Store<AppState>) { }
 
@@ -199,6 +199,7 @@ export class TableClientesComponent implements OnInit {
   trackByFn(index: number, item: any) {
     return item.id;
   }
+  trackByClienteId = (_: number, c: any) => c?.id ?? _;
 
   onScroll() {
     if (this.loading || !this.hasMore) {

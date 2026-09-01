@@ -59,4 +59,14 @@ export class PedidoService {
             })
         );
     }
+
+    eliminarPedido(pedidoId: number): Observable<any> {
+        return this.http.delete(`${this.siteURL}/pedidos/${pedidoId}/eliminar/`).pipe(
+            timeout(30000),
+            catchError((error) => {
+                console.error('Error al eliminar pedido', error);
+                return throwError(() => error);
+            })
+        );
+    }
 }

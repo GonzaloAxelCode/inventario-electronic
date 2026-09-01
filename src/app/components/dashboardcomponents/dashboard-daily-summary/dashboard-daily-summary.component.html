@@ -99,60 +99,60 @@
         <p class="text-xs text-neutral-400">No hay pagos registrados hoy</p>
       </div>
     </div>
+  </div>
 
-    <!-- Hora pico de ventas -->
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Hora Pico de Ventas</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Ventas en soles por hora</p>
+  <!-- ==================== HORA PICO DE VENTAS ==================== -->
+  <div class="p-3 sm:p-5 bg-white dark:bg-neutral-800 rounded-xl sm:rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-x-auto">
+    <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Hora Pico de Ventas</h4>
+    <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400 mb-3 sm:mb-4">Ventas por hora (8am - 11pm)</p>
 
-      <!-- Skeleton -->
-      <div *ngIf="loadingHoras" class="flex items-end justify-between gap-1" style="height: 128px;">
-        <div *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12]" class="flex-1 animate-pulse">
-          <div class="w-full rounded-t-lg bg-neutral-200 dark:bg-neutral-700" [style.height.px]="30 + (i * 5)"></div>
-        </div>
+    <!-- Skeleton -->
+    <div *ngIf="loadingHoras" class="flex items-end justify-between gap-1 min-w-[600px]" style="height: 128px;">
+      <div *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]" class="flex-1 animate-pulse">
+        <div class="w-full rounded-t-lg bg-neutral-200 dark:bg-neutral-700" [style.height.px]="30 + (i * 5)"></div>
       </div>
+    </div>
 
-      <!-- Data -->
-      <div *ngIf="!loadingHoras && horasPico.length > 0">
-        <div class="flex items-end justify-between gap-1" style="height: 128px;">
-          <div *ngFor="let h of horasPico" class="flex flex-col items-center gap-1 flex-1 group relative h-full justify-end">
-            <div class="w-full rounded-t-lg transition-all duration-500 cursor-pointer"
-              [style.height.px]="getBarHeight(h.monto)"
-              [ngClass]="h.monto === maxHoras ? 'bg-violet-500' : h.monto >= maxHoras * 0.7 ? 'bg-violet-400 dark:bg-violet-500' : h.monto >= maxHoras * 0.4 ? 'bg-violet-300 dark:bg-violet-400' : 'bg-neutral-200 dark:bg-neutral-600'">
+    <!-- Data -->
+    <div *ngIf="!loadingHoras && horasPico.length > 0" class="overflow-x-auto">
+      <div class="flex items-end justify-between gap-1 min-w-[600px]" style="height: 128px;">
+        <div *ngFor="let h of horasPico" class="flex flex-col items-center gap-1 flex-1 group relative h-full justify-end">
+          <div class="w-full rounded-t-lg transition-all duration-500 cursor-pointer"
+            [style.height.px]="getBarHeight(h.monto)"
+            [ngClass]="h.monto === maxHoras ? 'bg-violet-500' : h.monto >= maxHoras * 0.7 ? 'bg-violet-400 dark:bg-violet-500' : h.monto >= maxHoras * 0.4 ? 'bg-violet-300 dark:bg-violet-400' : 'bg-neutral-200 dark:bg-neutral-600'">
+          </div>
+          <span class="text-[8px] sm:text-[9px] text-neutral-400 dark:text-neutral-500 shrink-0">{{ h.hora }}</span>
+          <div class="absolute bottom-full mb-2 hidden group-hover:block z-10">
+            <div class="bg-neutral-900 dark:bg-neutral-700 text-white text-[10px] px-2 py-1 rounded-lg shadow-lg whitespace-nowrap">
+              <p class="font-bold">S/ {{ h.monto | number:'1.0-0' }}</p>
+              <p class="text-neutral-400">{{ h.hora }}</p>
             </div>
-            <span class="text-[9px] text-neutral-400 dark:text-neutral-500 shrink-0">{{ h.hora }}</span>
-            <div class="absolute bottom-full mb-2 hidden group-hover:block z-10">
-              <div class="bg-neutral-900 dark:bg-neutral-700 text-white text-[10px] px-2 py-1 rounded-lg shadow-lg whitespace-nowrap">
-                <p class="font-bold">S/ {{ h.monto | number:'1.0-0' }}</p>
-                <p class="text-neutral-400">{{ h.hora }}</p>
-              </div>
-            </div>
           </div>
-        </div>
-        <div class="flex justify-between mt-3">
-          <div class="flex items-center gap-2">
-            <div class="w-3 h-3 rounded-sm bg-neutral-200 dark:bg-neutral-600"></div>
-            <span class="text-[10px] text-neutral-400">Bajo</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="w-3 h-3 rounded-sm bg-violet-300 dark:bg-violet-400"></div>
-            <span class="text-[10px] text-neutral-400">Medio</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="w-3 h-3 rounded-sm bg-violet-500"></div>
-            <span class="text-[10px] text-neutral-400">Alto</span>
-          </div>
-          <span class="text-[10px] font-bold text-violet-600 dark:text-violet-400">Hora pico: {{ horaPicoLabel }}</span>
         </div>
       </div>
+      <div class="flex justify-between items-center mt-2 sm:mt-3 flex-wrap gap-1">
+        <div class="flex items-center gap-1">
+          <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-neutral-200 dark:bg-neutral-600"></div>
+          <span class="text-[9px] sm:text-[10px] text-neutral-400">Bajo</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-violet-300 dark:bg-violet-400"></div>
+          <span class="text-[9px] sm:text-[10px] text-neutral-400">Medio</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-violet-500"></div>
+          <span class="text-[9px] sm:text-[10px] text-neutral-400">Alto</span>
+        </div>
+        <span class="text-[9px] sm:text-[10px] font-bold text-violet-600 dark:text-violet-400">Hora pico: {{ horaPicoLabel }}</span>
+      </div>
+    </div>
 
-      <!-- Empty -->
-      <div *ngIf="!loadingHoras && horasPico.length === 0" class="text-center py-8">
-        <svg class="w-10 h-10 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <p class="text-xs text-neutral-400">No hay datos de horas hoy</p>
-      </div>
+    <!-- Empty -->
+    <div *ngIf="!loadingHoras && horasPico.length === 0" class="text-center py-6 sm:py-8">
+      <svg class="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <p class="text-xs sm:text-sm text-neutral-400">No hay datos de horas hoy</p>
     </div>
   </div>
 
@@ -229,10 +229,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let prod of topProductos; let i = index" class="border-b border-neutral-100 dark:border-neutral-700 last:border-0">
-              <td class="py-2 font-bold text-neutral-900 dark:text-white">{{ i + 1 }}</td>
-              <td class="py-2 text-neutral-700 dark:text-neutral-300 font-medium">{{ prod.nombre }}</td>
-              <td class="py-2 text-center text-neutral-600 dark:text-neutral-400">{{ prod.cantidad }}</td>
-              <td class="py-2 text-right font-bold text-neutral-900 dark:text-white">S/ {{ prod.total | number:'1.2-2' }}</td>
+              <td class="py-2 font-bold text-neutral-900 dark:text-white align-top">{{ i + 1 }}</td>
+              <td class="py-2 text-neutral-700 dark:text-neutral-300 font-medium max-w-[200px] break-words whitespace-normal leading-tight align-top pr-2" [attr.title]="prod.nombre">{{ prod.nombre }}</td>
+              <td class="py-2 text-center text-neutral-600 dark:text-neutral-400 align-top">{{ prod.cantidad }}</td>
+              <td class="py-2 text-right font-bold text-neutral-900 dark:text-white align-top">S/ {{ prod.total | number:'1.2-2' }}</td>
             </tr>
           </tbody>
         </table>
@@ -268,15 +268,22 @@
 
       <!-- Data -->
       <div *ngIf="!loadingVentas && ultimasVentas.length > 0" class="space-y-2">
-        <div *ngFor="let venta of ultimasVentas" class="flex items-center justify-between p-2.5 bg-neutral-50 dark:bg-neutral-700/50 rounded-xl">
-          <div class="flex items-center gap-3">
-            <span class="text-[10px] font-bold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/30 px-2 py-0.5 rounded-full">{{ venta.id }}</span>
-            <div>
-              <p class="text-xs font-medium text-neutral-900 dark:text-white">{{ venta.cliente }}</p>
+        <div *ngFor="let venta of ultimasVentas" class="flex items-center justify-between p-2.5 bg-neutral-50 dark:bg-neutral-700/50 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors cursor-pointer" (click)="openVentaDetail(venta)">
+          <div class="flex items-center gap-3 min-w-0 flex-1">
+            <span class="text-[10px] font-bold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/30 px-2 py-0.5 rounded-full shrink-0">{{ venta.id }}</span>
+            <div class="min-w-0">
+              <p class="text-xs font-medium text-neutral-900 dark:text-white truncate">{{ venta.cliente }}</p>
               <p class="text-[10px] text-neutral-400">{{ venta.hora }} · {{ venta.metodo }}</p>
             </div>
           </div>
-          <span class="text-sm font-extrabold text-neutral-900 dark:text-white">S/ {{ venta.total | number:'1.2-2' }}</span>
+          <div class="flex items-center gap-2 shrink-0 ml-3">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide border shadow-sm"
+              [ngClass]="isAnulada(venta) ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/60 dark:border-red-800/30' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/60 dark:border-emerald-800/30'">
+              <span class="w-1.5 h-1.5 rounded-full" [ngClass]="isAnulada(venta) ? 'bg-red-500' : 'bg-emerald-500'"></span>
+              {{ isAnulada(venta) ? 'Anulada' : 'Aceptada' }}
+            </span>
+            <span class="text-sm font-extrabold text-neutral-900 dark:text-white">S/ {{ venta.total | number:'1.2-2' }}</span>
+          </div>
         </div>
       </div>
 

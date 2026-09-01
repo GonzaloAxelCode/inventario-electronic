@@ -11,10 +11,11 @@
     <p class="text-sm text-neutral-400 dark:text-neutral-500">Las ventas realizadas hoy aparecerán aquí</p>
   </div>
 
-  <!-- LISTA DE VENTAS -->
+  <!-- LISTA DE VENTAS - Apple -->
   <div *ngIf="ventas.length > 0" class="space-y-3">
-    <div *ngFor="let venta of ventas; let i = index"
-      class="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
+    <div *ngFor="let venta of ventas; let i = index; trackBy: trackByVentaId"
+      class="bg-white/90 dark:bg-neutral-800/60 backdrop-blur-xl rounded-[24px] border border-stone-200/60 dark:border-neutral-700/40 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)] overflow-hidden hover:shadow-[0_8px_32px_rgba(0,0,0,0.10)] hover:scale-[1.01] transition-all cursor-pointer group"
+      style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;"
       (click)="showDialogVentaDetail(venta)">
 
       <!-- Anulado watermark -->
@@ -24,27 +25,24 @@
         </div>
       </div>
 
-      <!-- Header -->
-      <div class="flex items-center justify-between p-4 pb-3 border-b border-neutral-100 dark:border-neutral-700/50">
+      <!-- Header Apple -->
+      <div class="flex items-center justify-between p-4 pb-3 border-b border-stone-100 dark:border-neutral-700/40">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center">
-            <span class="text-sm font-bold text-neutral-500 dark:text-neutral-400">#{{ i + 1 }}</span>
+          <div class="w-10 h-10 rounded-xl bg-stone-900 dark:bg-white flex items-center justify-center shadow-sm">
+            <span class="text-xs font-bold text-white dark:text-stone-900">#{{ i + 1 }}</span>
           </div>
           <div>
-            <p class="text-sm font-extrabold text-neutral-900 dark:text-white">
+            <p class="text-sm font-bold tracking-tight text-stone-900 dark:text-white">
               <ng-container *ngIf="venta.comprobante">{{ venta.comprobante.serie }}-{{ venta.comprobante.correlativo }}</ng-container>
               <ng-container *ngIf="!venta.comprobante">Venta #{{ venta.id }}</ng-container>
             </p>
-            <p class="text-[10px] text-neutral-400">{{ formatoCorto(venta.fecha_hora) }} · {{ formatoHora12(venta.fecha_hora) }}</p>
+            <p class="text-[10px] text-stone-500 dark:text-stone-400">{{ formatoCorto(venta.fecha_hora) }} · {{ formatoHora12(venta.fecha_hora) }}</p>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <tui-badge [appearance]="venta.comprobante_nota_credito ? 'error' : 'positive'" tuiStatus size="s" class="text-[10px]">
-            {{ venta.comprobante_nota_credito ? 'ANULADA' : 'ACTIVA' }}
-          </tui-badge>
-          <tui-badge [appearance]="venta.comprobante.estado_sunat === 'RECHAZADO' ? 'error' : venta.comprobante.estado_sunat === 'ACEPTADO' ? 'positive' : 'warning'" tuiStatus size="s" class="text-[10px]">
+        <div class="flex items-center gap-1.5">
+          <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
             {{ venta.comprobante.estado_sunat }}
-          </tui-badge>
+          </span>
         </div>
       </div>
 
@@ -69,32 +67,33 @@
 
         <!-- Productos -->
         <div class="space-y-1.5">
-          <div *ngFor="let item of venta.productos?.slice(0, 3)" class="flex items-center gap-2 text-xs">
-            <img [src]="item.producto_imagen ? URL_BASE + item.producto_imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+          <div *ngFor="let item of getProductos(venta)?.slice(0, 3)" class="flex items-center gap-2 text-xs">
+            <img [src]="(item.img_url || item.producto_imagen) ? ( (item.img_url || item.producto_imagen).toString().startsWith('http') ? (item.img_url || item.producto_imagen) : URL_BASE + (item.img_url || item.producto_imagen) ) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
               class="w-7 h-7 rounded-md object-cover border border-neutral-200 dark:border-neutral-600 shrink-0" />
             <span class="flex-1 truncate text-neutral-700 dark:text-neutral-300">{{ item.producto_nombre }}</span>
-            <span class="text-neutral-400">x{{ item.cantidad }}</span>
+            <span class="text-neutral-400">x{{ item.cantidad ?? item.cantidad_final }}</span>
             <span class="font-semibold text-neutral-900 dark:text-white whitespace-nowrap">S/ {{ getValorVentaRedondeado((item?.valor_venta || 0) + (item?.igv || 0)) | number:'1.2-2' }}</span>
           </div>
-          <p *ngIf="(venta.productos?.length || 0) > 3" class="text-[10px] text-neutral-400 pl-9">
-            +{{ (venta.productos?.length || 0) - 3 }} productos mas
+          <p *ngIf="(getProductos(venta)?.length || 0) > 3" class="text-[10px] text-neutral-400 pl-9">
+            +{{ (getProductos(venta)?.length || 0) - 3 }} productos mas
           </p>
         </div>
       </div>
 
-      <!-- Footer -->
-      <div class="flex items-center justify-between px-4 py-3 bg-neutral-50 dark:bg-neutral-700/30 border-t border-neutral-100 dark:border-neutral-700/50">
-        <div class="flex items-center gap-3">
-          <span class="text-[10px] text-neutral-400">{{ venta.productos?.length || 0 }} productos</span>
-          <span class="text-[10px] text-neutral-400">·</span>
-          <span class="text-[10px] text-neutral-400">{{ periodoVenta(venta.fecha_hora) }}</span>
+      <!-- Footer Apple -->
+      <div class="flex items-center justify-between px-4 py-3 bg-stone-50/70 dark:bg-neutral-700/20 border-t border-stone-100 dark:border-neutral-700/40">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center px-2 py-1 rounded-full bg-stone-900 dark:bg-white text-white dark:text-stone-900 text-[10px] font-semibold">{{ getProductos(venta)?.length || 0 }} prod.</span>
+          <span class="text-[10px] text-stone-500 dark:text-stone-400">{{ venta.metodo_pago || 'Efectivo' }} · {{ periodoVenta(venta.fecha_hora) }}</span>
         </div>
-        <div class="flex items-center gap-3">
-          <p class="text-lg font-extrabold text-neutral-900 dark:text-white">S/. {{ venta.total }}</p>
-          <button tuiButton size="xs" appearance="primary-grayscale" iconStart="@tui.wallet-cards"
-            (click)="showDialogVentaDetail(venta); $event.stopPropagation()" class="text-[10px]">
-            Detalles
-          </button>
+        <div class="flex items-center gap-2">
+          <div class="text-right">
+            <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Total</p>
+            <p class="text-lg font-bold tracking-tight text-stone-900 dark:text-white">S/. {{ venta.total }}</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-stone-900 dark:bg-white flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+            <svg class="w-4 h-4 text-white dark:text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
         </div>
       </div>
     </div>

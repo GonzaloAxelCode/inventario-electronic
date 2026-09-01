@@ -22,7 +22,8 @@
         <div class="flex-1 min-w-0">
           <!-- Nombre del producto -->
           <div class="flex items-center gap-2 mb-1">
-            <span class="text-base font-extrabold text-neutral-900 dark:text-white truncate">
+            <span class="text-base font-extrabold text-neutral-900 dark:text-white break-words whitespace-normal leading-tight"
+                  [attr.title]="producto.nombre">
               {{ producto.nombre }}
             </span>
           </div>

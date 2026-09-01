@@ -13,6 +13,9 @@ import {
     cancelarPedido,
     cancelarPedidoExito,
     cancelarPedidoError,
+    eliminarPedido,
+    eliminarPedidoExito,
+    eliminarPedidoError,
 } from '../actions/pedido.actions';
 
 export interface PedidoState {
@@ -27,6 +30,7 @@ export interface PedidoState {
     loadingCreate: boolean;
     loadingCancel: boolean;
     loadingUpdate: boolean;
+    loadingDelete: boolean;
 }
 
 export const initialState: PedidoState = {
@@ -41,6 +45,7 @@ export const initialState: PedidoState = {
     loadingCreate: false,
     loadingCancel: false,
     loadingUpdate: false,
+    loadingDelete: false,
 };
 
 export const pedidoReducer = createReducer(
@@ -110,5 +115,20 @@ export const pedidoReducer = createReducer(
         ...state,
         error,
         loadingUpdate: false,
+    })),
+    on(eliminarPedido, (state) => ({
+        ...state,
+        loadingDelete: true,
+    })),
+    on(eliminarPedidoExito, (state, { pedidoId }) => ({
+        ...state,
+        pedidos: state.pedidos.filter((p) => p.id !== pedidoId),
+        count: Math.max(0, state.count - 1),
+        loadingDelete: false,
+    })),
+    on(eliminarPedidoError, (state, { error }) => ({
+        ...state,
+        error,
+        loadingDelete: false,
     })),
 );

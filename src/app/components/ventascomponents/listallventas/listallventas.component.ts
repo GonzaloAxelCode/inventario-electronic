@@ -83,6 +83,28 @@ export class ListallventasComponent {
     return valor ? parseFloat(valor.toFixed(2)) : 0.0;
   }
 
+  private __productosCache = new WeakMap<any, any[]>();
+  getProductos(venta: any): any[] {
+    if (!venta) return [];
+    if (this.__productosCache.has(venta)) return this.__productosCache.get(venta)!;
+    let result: any[] = [];
+    try {
+      const raw = (venta as any)?.productos_json;
+      if (raw) {
+        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        if (Array.isArray(parsed) && parsed.length) result = parsed;
+        else result = (venta as any)?.productos || [];
+      } else {
+        result = (venta as any)?.productos || [];
+      }
+    } catch {
+      result = (venta as any)?.productos || [];
+    }
+    this.__productosCache.set(venta, result);
+    return result;
+  }
+  trackByVentaId = (_: number, v: any) => v?.id ?? _;
+
 
 
 

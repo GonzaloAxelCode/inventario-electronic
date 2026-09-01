@@ -18,6 +18,9 @@ import {
     cancelarPedido,
     cancelarPedidoExito,
     cancelarPedidoError,
+    eliminarPedido,
+    eliminarPedidoExito,
+    eliminarPedidoError,
 } from '../actions/pedido.actions';
 import { AppState } from '../app.state';
 
@@ -100,6 +103,24 @@ export class PedidoEffects {
                     catchError((error) => {
                         this.alertService.showError('Error al actualizar el pedido', 'Error').subscribe();
                         return of(actualizarPedidoError({ error }));
+                    })
+                )
+            )
+        )
+    );
+
+    eliminarPedidoEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(eliminarPedido),
+            exhaustMap(({ pedidoId }) =>
+                this.pedidoService.eliminarPedido(pedidoId).pipe(
+                    map((response) => {
+                        this.alertService.showSuccess(response.mensaje || 'Pedido eliminado permanentemente', 'Exito').subscribe();
+                        return eliminarPedidoExito({ pedidoId, mensaje: response.mensaje });
+                    }),
+                    catchError((error) => {
+                        this.alertService.showError('Error al eliminar el pedido', 'Error').subscribe();
+                        return of(eliminarPedidoError({ error }));
                     })
                 )
             )
