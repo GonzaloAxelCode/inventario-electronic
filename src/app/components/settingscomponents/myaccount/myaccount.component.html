@@ -1,4 +1,4 @@
-<div class="max-w-3xl p-4 sm:p-6 space-y-6">
+<div class="max-w-3xl p-0 sm:p-0 space-y-6">
 
   <!-- Perfil -->
   <section class="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700/60 overflow-hidden">
@@ -103,7 +103,7 @@
       </div>
 
       <!-- Barra de navegacion -->
-      <div class="flex items-center justify-between py-3 border-b border-neutral-100 dark:border-neutral-700/60">
+      <div class="flex items-center justify-between py-3 border-b border-neutral-100 dark:border-neutral-700/60" [class.opacity-50]="isMobile" [class.pointer-events-none]="isMobile">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-lg flex items-center justify-center"
                [class]="user.navbar_type === 'top' ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-blue-100 dark:bg-blue-900/30'">
@@ -117,10 +117,13 @@
           </div>
           <div>
             <p class="text-sm font-medium text-neutral-900 dark:text-white">Barra de navegacion</p>
-            <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ navbarDisplay }}</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+              {{ navbarDisplay }}
+              <span *ngIf="isMobile" class="text-amber-600 dark:text-amber-400 ml-1">(No disponible en móvil)</span>
+            </p>
           </div>
         </div>
-        <div class="segmented-toggle">
+        <div class="segmented-toggle" *ngIf="!isMobile">
           <button class="segmented-option" [class.active]="user.navbar_type !== 'top'" (click)="user.navbar_type === 'top' && toggleNavbar()">Normal</button>
           <button class="segmented-option" [class.active]="user.navbar_type === 'top'" (click)="user.navbar_type !== 'top' && toggleNavbar()">Top</button>
         </div>

@@ -1,4 +1,4 @@
-<div tuiNavigationMain class="p-4 sm:p-6 bg-neutral-50 dark:bg-neutral-800 min-h-screen" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;">
+<main tuiNavigationMain class="p-2 sm:p-6 bg-neutral-50 dark:bg-neutral-800 scroll-smooth Optimize-scroll" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;">
 
   <header tuiSubheader class="bg-transparent border-none p-0 mb-4">
     <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Gestión de Clientes</h2>
@@ -13,30 +13,27 @@
   <ng-container *ngIf="activeTab === 'mis-clientes'">
     <div class="flex flex-col lg:flex-row gap-4 items-start">
 
-      <!-- LEFT 20% - ÚNICO CONTENEDOR APPLE -->
+      <!-- LEFT -->
       <div class="w-full lg:w-[32%] xl:w-[28%] 2xl:w-[22%] lg:shrink-0">
         <div class="bg-white dark:bg-neutral-800 rounded-[24px] border border-stone-200/30 dark:border-neutral-700/30 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col">
-          <!-- buscador sin borde propio -->
-          <div class="p-4">
-            <div class="flex gap-2">
-              <div class="flex-1 relative">
-                <input [(ngModel)]="search" (keyup.enter)="onSearch()" placeholder="Buscar cliente, DNI/RUC..."
-                       class="w-full h-10 pl-9 pr-3 rounded-xl bg-stone-100 dark:bg-neutral-700 border-0 focus:bg-white dark:focus:bg-neutral-600 focus:ring-1 focus:ring-stone-200 dark:focus:ring-neutral-500 outline-none text-sm transition-colors" />
-                <svg class="w-4 h-4 absolute left-3 top-3 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 110-16 8 8 0 010 16z"/></svg>
-              </div>
-              <button tuiButton appearance="primary" size="s" (click)="onSearch()" class="!rounded-xl">Buscar</button>
-            </div>
-            <div class="flex items-center justify-between mt-3">
-              <span class="text-xs text-stone-500">Clientes: <b class="text-stone-900 dark:text-white">{{ totalClientes }}</b> · Pág {{ page }}/{{ totalPages }}</span>
-              <button *ngIf="search" (click)="onClearSearch()" class="text-xs font-medium text-stone-500 hover:text-stone-900">Limpiar</button>
-            </div>
-          </div>
-
           <div class="h-px bg-stone-100 dark:bg-neutral-700/40 mx-4"></div>
 
-          <div class="px-4 py-2.5 flex items-center justify-between">
-            <span class="text-[11px] font-semibold tracking-widest uppercase text-stone-400">Lista</span>
-            <span class="text-[11px] text-stone-400">{{ clientes.length }} mostrados</span>
+          <div class="px-4 py-2.5 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-semibold tracking-widest uppercase text-stone-400">Lista</span>
+              <span class="text-[11px] text-stone-400">{{ clientes.length }} mostrados</span>
+            </div>
+            <div class="flex gap-2">
+              <div class="flex-1 relative">
+                <input [(ngModel)]="search" (keyup.enter)="onSearch()" placeholder="Buscar..."
+                       class="w-full h-9 pl-8 pr-3 rounded-xl bg-stone-100 dark:bg-neutral-700 border-0 focus:bg-white dark:focus:bg-neutral-600 focus:ring-1 focus:ring-stone-200 dark:focus:ring-neutral-500 outline-none text-xs transition-colors" />
+                <svg class="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 110-16 8 8 0 010 16z"/></svg>
+              </div>
+              <button *ngIf="search" (click)="onClearSearch()" class="text-xs font-medium text-stone-500 hover:text-stone-900 px-2">✕</button>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] text-stone-400">Clientes: <b>{{ totalClientes }}</b> · Pág {{ page }}/{{ totalPages }}</span>
+            </div>
           </div>
 
           <div *ngIf="loading && clientes.length===0" class="px-3 pb-3 space-y-2">
@@ -82,7 +79,7 @@
         </div>
       </div>
 
-      <!-- RIGHT - ÚNICO CONTENEDOR APPLE (solo desktop) -->
+      <!-- RIGHT (solo desktop) -->
       <div class="hidden lg:flex flex-1 min-w-0">
         <div class="bg-white dark:bg-neutral-800 rounded-[24px] border border-stone-200/30 dark:border-neutral-700/30 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col min-h-[480px] w-full">
           <div *ngIf="!selected" class="flex-1 flex flex-col items-center justify-center py-16 px-6 text-center">
@@ -94,7 +91,6 @@
           </div>
 
           <ng-container *ngIf="selected">
-            <!-- cliente header sin borde extra -->
             <div class="p-5">
               <div class="flex items-start gap-4">
                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0" [style.background]="getAvatarColor(selected.cliente.cliente_id || 1)">
@@ -119,22 +115,18 @@
                 <div class="p-3 rounded-2xl bg-stone-50 dark:bg-neutral-700/20">
                   <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Total ventas</p>
                   <p class="text-lg font-bold" [class]="hasVentas(selected) ? 'text-stone-900 dark:text-white' : 'text-stone-400'">{{ hasVentas(selected) ? selected.resumen.total_ventas : '—' }}</p>
-                  <p *ngIf="!hasVentas(selected)" class="text-[11px] text-stone-400">ninguna venta hecha</p>
                 </div>
                 <div class="p-3 rounded-2xl" [class]="hasVentas(selected) ? 'bg-emerald-50/70 dark:bg-emerald-900/10' : 'bg-stone-50 dark:bg-neutral-700/20 opacity-70'">
                   <p class="text-[10px] font-semibold tracking-widest uppercase" [class]="hasVentas(selected) ? 'text-emerald-600' : 'text-stone-400'">Monto total</p>
                   <p class="text-lg font-bold" [class]="hasVentas(selected) ? 'text-emerald-700 dark:text-emerald-400' : 'text-stone-400'">{{ hasVentas(selected) ? ('S/ ' + (selected.resumen.total_monto | number:'1.2-2')) : '—' }}</p>
-                  <p *ngIf="!hasVentas(selected)" class="text-[11px] text-stone-400">ninguna venta hecha</p>
                 </div>
                 <div class="p-3 rounded-2xl bg-stone-50 dark:bg-neutral-700/20" [class.opacity-60]="!hasVentas(selected)">
                   <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Primera compra</p>
                   <p class="text-xs font-semibold text-stone-900 dark:text-white mt-1">{{ hasVentas(selected) ? formatoCorto(selected.resumen.primera_compra) : '—' }}</p>
-                  <p class="text-[11px] text-stone-500">{{ hasVentas(selected) ? formatoHora(selected.resumen.primera_compra) : 'ninguna venta hecha' }}</p>
                 </div>
                 <div class="p-3 rounded-2xl bg-stone-50 dark:bg-neutral-700/20" [class.opacity-60]="!hasVentas(selected)">
                   <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Última compra</p>
                   <p class="text-xs font-semibold text-stone-900 dark:text-white mt-1">{{ hasVentas(selected) ? formatoCorto(selected.resumen.ultima_compra) : '—' }}</p>
-                  <p class="text-[11px] text-stone-500">{{ hasVentas(selected) ? formatoHora(selected.resumen.ultima_compra) : 'ninguna venta hecha' }}</p>
                 </div>
               </div>
             </div>
@@ -186,14 +178,10 @@
     </div>
   </ng-container>
 
-  <!-- MODAL MÓVIL - Detalle de cliente -->
+  <!-- MODAL MÓVIL -->
   <div *ngIf="showMobileModal && selected" class="fixed inset-0 z-50 lg:hidden">
-    <!-- Overlay -->
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeMobileModal()"></div>
-
-    <!-- Modal content -->
     <div class="absolute inset-x-0 bottom-0 bg-white dark:bg-neutral-800 rounded-t-[28px] max-h-[90vh] overflow-y-auto animate-slide-up">
-      <!-- Header con botón cerrar -->
       <div class="sticky top-0 bg-white dark:bg-neutral-800 px-5 pt-5 pb-3 border-b border-stone-100 dark:border-neutral-700/40 z-10">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-bold text-stone-900 dark:text-white">Detalle del Cliente</h3>
@@ -201,8 +189,6 @@
             <svg class="w-5 h-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
-
-        <!-- Info del cliente -->
         <div class="flex items-start gap-4">
           <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0" [style.background]="getAvatarColor(selected.cliente.cliente_id || 1)">
             {{ getInitials(selected.cliente.fullname) }}
@@ -216,8 +202,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Stats rápidas -->
         <div class="grid grid-cols-2 gap-3 mt-4">
           <div class="p-3 rounded-2xl bg-stone-50 dark:bg-neutral-700/20">
             <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Ventas</p>
@@ -229,18 +213,14 @@
           </div>
         </div>
       </div>
-
-      <!-- Historial de ventas -->
       <div class="px-5 py-4">
         <h4 class="text-sm font-semibold text-stone-900 dark:text-white mb-3">Historial de Ventas <span class="font-normal text-stone-400">({{ hasVentas(selected) ? selected.historial_ventas.length : 0 }})</span></h4>
-
         <div *ngIf="!hasVentas(selected) || selected.historial_ventas.length===0" class="py-10 text-center">
           <div class="w-12 h-12 rounded-2xl bg-stone-100 dark:bg-neutral-700 flex items-center justify-center mx-auto mb-3">
             <svg class="w-6 h-6 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6M9 16h6M12 8v8m-7 4h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           </div>
           <p class="text-sm font-semibold text-stone-700 dark:text-stone-300">Sin ventas registradas</p>
         </div>
-
         <div *ngIf="selected.historial_ventas.length>0" class="space-y-3 pb-4">
           <div *ngFor="let v of selected.historial_ventas; trackBy: trackByVenta" (click)="openVenta(v); closeMobileModal()"
                class="p-4 rounded-2xl bg-stone-50 dark:bg-neutral-700/20 border border-stone-200/30 dark:border-white/5 active:scale-[0.98] transition-all cursor-pointer">
@@ -271,4 +251,4 @@
     <app-sorteos-clientes></app-sorteos-clientes>
   </ng-container>
 
-</div>
+</main>

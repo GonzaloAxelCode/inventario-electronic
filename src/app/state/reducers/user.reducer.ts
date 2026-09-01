@@ -81,7 +81,7 @@ export const userInitial = {
         can_delete_proveedor: false,
     },
     theme: 'light',
-    navbar_type: 'normal',
+    navbar_type: 'top',
     modulos_habilitados: []
 }
 export const initialStateUser: UserState = {

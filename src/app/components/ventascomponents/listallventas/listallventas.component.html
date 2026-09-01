@@ -12,7 +12,7 @@
 
       <!-- Toolbar: Resultados + Acciones -->
       <fieldset class="mb-4">
-        <div class="flex items-center justify-between gap-3 bg-neutral-50 dark:bg-neutral-800/50 rounded-xl px-4 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 sm:gap-3 bg-neutral-50 dark:bg-neutral-800/50 rounded-xl px-3 sm:px-4 py-2 sm:py-3">
 
           <!-- Izquierda: Contador -->
           <div class="flex items-center gap-2">
@@ -188,10 +188,10 @@
         <div *ngIf="((ventasState$ | async)?.search_ventas_found) === '' || ((ventasState$ | async)?.search_ventas_found === 'ventas_found')">
 
           <!-- Vista de CARDS para móviles - Apple -->
-          <div class="block lg:hidden space-y-3 px-2">
+          <div class="block lg:hidden space-y-2 px-0.5">
             <div
               *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas); trackBy: trackByVentaId"
-              class="relative bg-white/90 dark:bg-neutral-800/70 backdrop-blur-xl rounded-[24px] border border-stone-200/60 dark:border-neutral-700/40 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)] p-5 cursor-pointer hover:shadow-[0_8px_32px_rgba(0,0,0,0.10)] hover:scale-[1.01] transition-all group"
+              class="relative bg-white/90 dark:bg-neutral-800/70 backdrop-blur-xl rounded-2xl border border-stone-200/60 dark:border-neutral-700/40 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] p-4 cursor-pointer hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] hover:scale-[1.01] transition-all group"
               style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;"
               (click)="showDialogVentaDetail(venta)">
               <div *ngIf="venta.comprobante_nota_credito" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.06] pointer-events-none z-10 rotate-[-12deg]">

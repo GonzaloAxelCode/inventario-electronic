@@ -19,7 +19,7 @@ export class LayoutService {
         if (stored === 'sidebar' || stored === 'topnav') {
             return stored;
         }
-        return 'sidebar';
+        return 'topnav';
     }
 
     setLayout(mode: LayoutMode): void {

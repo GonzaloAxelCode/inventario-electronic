@@ -1,32 +1,32 @@
-<div class="max-w-4xl p-6 space-y-8">
+<div class="max-w-4xl p-2 sm:p-6 space-y-6">
 
   <!-- Apariencia -->
   <section>
-    <h2 class="text-xl font-bold dark:text-white mb-1 flex items-center gap-2">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <h2 class="text-base sm:text-xl font-bold dark:text-white mb-1 flex items-center gap-2">
+      <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
       </svg>
       Apariencia
     </h2>
-    <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">Personaliza la apariencia de la interfaz.</p>
+    <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mb-3">Personaliza la apariencia de la interfaz.</p>
 
-    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 space-y-6">
+    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-4">
 
       <!-- Dark Mode Segmented Toggle -->
-      <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+      <div class="flex items-center justify-between py-2 sm:py-3 border-b border-neutral-200 dark:border-neutral-700">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
                [class]="isDarkMode ? 'bg-indigo-100 dark:bg-indigo-900/30' : 'bg-amber-100'">
-            <svg *ngIf="!isDarkMode" class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg *ngIf="!isDarkMode" class="w-4 h-4 sm:w-5 sm:h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
             </svg>
-            <svg *ngIf="isDarkMode" class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg *ngIf="isDarkMode" class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
             </svg>
           </div>
           <div>
-            <p class="text-sm font-medium dark:text-white">Modo Oscuro</p>
-            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+            <p class="text-xs sm:text-sm font-medium dark:text-white">Modo Oscuro</p>
+            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
               {{ isDarkMode ? 'Interfaz oscura' : 'Interfaz clara' }}
             </p>
           </div>
@@ -42,26 +42,27 @@
       </div>
 
       <!-- Layout Segmented Toggle -->
-      <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-2 sm:py-3 border-b border-neutral-200 dark:border-neutral-700" [class.opacity-50]="isMobile" [class.pointer-events-none]="isMobile">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
                [class]="isTopnavLayout ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-blue-100 dark:bg-blue-900/30'">
-            <svg *ngIf="!isTopnavLayout" class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg *ngIf="!isTopnavLayout" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6v12"/>
             </svg>
-            <svg *ngIf="isTopnavLayout" class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg *ngIf="isTopnavLayout" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
           </div>
           <div>
-            <p class="text-sm font-medium dark:text-white">Barra de Navegación</p>
-            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+            <p class="text-xs sm:text-sm font-medium dark:text-white">Barra de Navegación</p>
+            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
               {{ isTopnavLayout ? 'Navegación superior' : 'Navegación lateral' }}
+              <span *ngIf="isMobile" class="text-amber-600 dark:text-amber-400 ml-1">(No disponible en móvil)</span>
             </p>
           </div>
         </div>
-        <div class="segmented-toggle">
+        <div class="segmented-toggle" *ngIf="!isMobile">
           <button class="segmented-option" [class.active]="!isTopnavLayout" (click)="!isTopnavLayout || toggleLayout()">
             Lateral
           </button>
@@ -74,94 +75,33 @@
     </div>
   </section>
 
-  <!-- Configuración de Interfaz -->
+  <!-- Modulos -->
   <section>
-    <h2 class="text-xl font-bold dark:text-white mb-1 flex items-center gap-2">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
-      </svg>
-      Interfaz
-    </h2>
-    <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">Ajustes de la interfaz de usuario.</p>
-
-    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 space-y-4">
-      <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-neutral-200 dark:bg-neutral-700">
-            <svg class="w-5 h-5 text-neutral-600 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-sm font-medium dark:text-white">Sidebar Compacto</p>
-            <p class="text-xs text-neutral-500 dark:text-neutral-400">Mostrar solo iconos en la barra lateral</p>
-          </div>
-        </div>
-        <span class="text-xs text-neutral-400 bg-neutral-200 dark:bg-neutral-700 px-2 py-1 rounded">Próximamente</span>
-      </div>
-
-      <div class="flex items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-neutral-200 dark:bg-neutral-700">
-            <svg class="w-5 h-5 text-neutral-600 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-sm font-medium dark:text-white">Color de Acento</p>
-            <p class="text-xs text-neutral-500 dark:text-neutral-400">Color principal de la interfaz</p>
-          </div>
-        </div>
-        <span class="text-xs text-neutral-400 bg-neutral-200 dark:bg-neutral-700 px-2 py-1 rounded">Próximamente</span>
-      </div>
-
-      <div class="flex items-center justify-between py-3">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-neutral-200 dark:bg-neutral-700">
-            <svg class="w-5 h-5 text-neutral-600 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21h5m-2 4v-2M7 4h2M3 8h2m10-4h2M3 12h2m10 0h2M7 20h2"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-sm font-medium dark:text-white">Idioma</p>
-            <p class="text-xs text-neutral-500 dark:text-neutral-400">Español (predeterminado)</p>
-          </div>
-        </div>
-        <span class="text-xs text-neutral-400 bg-neutral-200 dark:bg-neutral-700 px-2 py-1 rounded">Próximamente</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Modulos — deshabilitado visualmente por ahora -->
-  <section class="relative">
-    <div class="absolute inset-0 z-10 flex items-start justify-end pointer-events-none pt-2 pr-2">
-      <span class="text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-black">Deshabilitado</span>
-    </div>
-    <h2 class="text-xl font-bold dark:text-white mb-1 flex items-center gap-2 opacity-60">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <h2 class="text-base sm:text-xl font-bold dark:text-white mb-1 flex items-center gap-2">
+      <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
       </svg>
       Modulos
     </h2>
-    <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4 opacity-60">Activa o desactiva modulos opcionales de la app. <span class="font-medium text-amber-600 dark:text-amber-400">Temporalmente deshabilitado</span></p>
+    <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mb-3">Activa o desactiva los módulos opcionales.</p>
 
-    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 space-y-4 opacity-50 pointer-events-none select-none grayscale">
+    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-3">
 
       <!-- Guias de Remision -->
-      <div class="flex items-center justify-between py-3">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-2 sm:py-3">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
                [class]="featureFlags.guiasRemisionEnabled() ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-neutral-200 dark:bg-neutral-700'">
-            <svg class="w-5 h-5" [class]="featureFlags.guiasRemisionEnabled() ? 'text-amber-600 dark:text-amber-400' : 'text-neutral-500 dark:text-neutral-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" [class]="featureFlags.guiasRemisionEnabled() ? 'text-amber-600 dark:text-amber-400' : 'text-neutral-500 dark:text-neutral-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
           </div>
           <div>
-            <p class="text-sm font-medium dark:text-white flex items-center gap-2">
+            <p class="text-xs sm:text-sm font-medium dark:text-white flex items-center gap-2">
               Guias de Remision
-              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Beta</span>
+              <span class="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Beta</span>
             </p>
-            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
               {{ featureFlags.guiasRemisionEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
             </p>
           </div>
@@ -177,20 +117,20 @@
       </div>
 
       <!-- TikTok -->
-      <div class="flex items-center justify-between py-3 border-t border-neutral-200 dark:border-neutral-700">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-2 sm:py-3 border-t border-neutral-200 dark:border-neutral-700">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
                [class]="featureFlags.tiktokEnabled() ? 'bg-red-100 dark:bg-red-900/30' : 'bg-neutral-200 dark:bg-neutral-700'">
-            <svg class="w-5 h-5" [class]="featureFlags.tiktokEnabled() ? 'text-red-600 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" [class]="featureFlags.tiktokEnabled() ? 'text-red-600 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
             </svg>
           </div>
           <div>
-            <p class="text-sm font-medium dark:text-white flex items-center gap-2">
+            <p class="text-xs sm:text-sm font-medium dark:text-white flex items-center gap-2">
               TikTok
-              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Beta</span>
+              <span class="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Beta</span>
             </p>
-            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
               {{ featureFlags.tiktokEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
             </p>
           </div>
@@ -206,17 +146,20 @@
       </div>
 
       <!-- Compras -->
-      <div class="flex items-center justify-between py-3 border-t border-neutral-200 dark:border-neutral-700">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-2 sm:py-3 border-t border-neutral-200 dark:border-neutral-700">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
                [class]="featureFlags.comprasEnabled() ? 'bg-violet-100 dark:bg-violet-900/30' : 'bg-neutral-200 dark:bg-neutral-700'">
-            <svg class="w-5 h-5" [class]="featureFlags.comprasEnabled() ? 'text-violet-600 dark:text-violet-400' : 'text-neutral-500 dark:text-neutral-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" [class]="featureFlags.comprasEnabled() ? 'text-violet-600 dark:text-violet-400' : 'text-neutral-500 dark:text-neutral-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
             </svg>
           </div>
           <div>
-            <p class="text-sm font-medium dark:text-white">Compras</p>
-            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+            <p class="text-xs sm:text-sm font-medium dark:text-white flex items-center gap-2">
+              Compras
+              <span class="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400">Beta</span>
+            </p>
+            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
               {{ featureFlags.comprasEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
             </p>
           </div>

@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-6 p-4 h-full">
+<div class="flex flex-col gap-4 p-2 sm:p-4 overflow-hidden">
 
   <div>
     <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Estadísticas de Clientes</h3>
@@ -81,9 +81,9 @@
     </select>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm h-full flex flex-col">
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col">
       <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Clientes Más Frecuentes</h4>
       <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Por número de compras realizadas</p>
 
@@ -102,7 +102,7 @@
         </div>
       </div>
       <ng-template [ngIf]="!loadingFrecuentes">
-        <div *ngIf="clientesFrecuentes.length > 0; else emptyFrecuentes" class="space-y-3">
+        <div *ngIf="clientesFrecuentes.length > 0; else emptyFrecuentes" class="space-y-3 overflow-auto">
           <div *ngFor="let cliente of clientesFrecuentes; let i = index" class="flex items-center gap-3">
             <span class="text-xs font-bold text-neutral-400 w-4">{{ i + 1 }}</span>
             <div class="flex-1">
@@ -126,7 +126,7 @@
       </ng-template>
     </div>
 
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm h-full flex flex-col">
+    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col">
       <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Clientes Que Más Compraron</h4>
       <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Por monto total gastado en soles</p>
 
@@ -145,7 +145,7 @@
         </div>
       </div>
       <ng-template [ngIf]="!loadingTop">
-        <div *ngIf="topClientes.length > 0; else emptyTop" class="space-y-3">
+        <div *ngIf="topClientes.length > 0; else emptyTop" class="space-y-3 overflow-auto">
           <div *ngFor="let cliente of topClientes; let i = index" class="flex items-center gap-3">
             <span class="text-xs font-bold text-neutral-400 w-4">{{ i + 1 }}</span>
             <div class="flex-1">

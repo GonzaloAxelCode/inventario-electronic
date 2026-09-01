@@ -1,4 +1,4 @@
-<div class="p-4 sm:p-6">
+<div class="p-2 sm:p-6">
 
     <header tuiSubheader class="p-0 mb-4">
         <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Hacer Venta</h2>
@@ -11,7 +11,7 @@
         </nav>
     </header>
 
-    <div class="p-6 pt-0 pb-12">
+    <div class="p-2 sm:p-6 pt-0 pb-12">
         <div class="py-4 pb-8">
 
     <tui-loader [showLoader]="loaderSearchCliente || (loadingCreateVenta$ | async)?.loadingCreateVenta"
@@ -28,7 +28,7 @@
                 <div class="p-4 order-1 overflow-y-auto" #containerAreaProducts tabindex="0" (click)="clickedInside()">
 
                     <!-- Header de productos -->
-                    <div class="flex items-center justify-between mb-6">
+                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4 sm:mb-6">
                         <div class="flex items-center gap-3">
                             <svg class="w-6 h-6 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>

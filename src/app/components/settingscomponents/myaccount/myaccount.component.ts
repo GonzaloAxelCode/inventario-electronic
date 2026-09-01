@@ -29,9 +29,11 @@ export class MyaccountComponent implements OnInit {
   private readonly key = inject(TUI_DARK_MODE_KEY);
   private readonly storage = inject(WA_LOCAL_STORAGE);
   private readonly media = inject(WA_WINDOW).matchMedia('(prefers-color-scheme: dark)');
+  private readonly mobileMedia = inject(WA_WINDOW).matchMedia('(max-width: 768px)');
   protected readonly darkMode = inject(TUI_DARK_MODE);
   private isDarkMode = false;
   private isTopnavLayout = false;
+  isMobile = false;
 
   constructor(
     private store: Store<AppState>,
@@ -48,6 +50,7 @@ export class MyaccountComponent implements OnInit {
       this.tienda = userState.user?.tienda_data || {} as Tienda;
       this.syncPreferencesFromUser();
     });
+    this.isMobile = this.mobileMedia.matches;
   }
 
   private syncPreferencesFromUser(): void {

@@ -1,18 +1,17 @@
-<main tuiNavigationMain class="p-4 sm:p-6">
+<main tuiNavigationMain class="p-2 sm:p-6">
     <header tuiSubheader class="p-0 mb-4">
         <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Gestión de Ventas</h2>
         <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Administra tus ventas, comprobantes y clientes</p>
 
         <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap">
-            <button tuiTab type="button" (click)="setTab('historial')" [class.active-link]="activeTab === 'historial'">Historial de Ventas</button>
+            <button tuiTab type="button" (click)="setTab('historial')" [class.active-link]="activeTab === 'historial'">Historial</button>
             <button tuiTab type="button" (click)="setTab('ventas-hoy')" [class.active-link]="activeTab === 'ventas-hoy'">Ventas Hoy</button>
-            <button tuiTab type="button" (click)="setTab('anuladas-hoy')" [class.active-link]="activeTab === 'anuladas-hoy'">Anuladas Hoy</button>
+            <button tuiTab type="button" (click)="setTab('anuladas-hoy')" [class.active-link]="activeTab === 'anuladas-hoy'">Anuladas</button>
         </nav>
     </header>
 
     <ng-container *ngIf="activeTab === 'historial'">
         <div class="pb-12">
-            <h2 class="text-lg font-bold text-neutral-900 dark:text-white mb-4">Historial de Ventas</h2>
             <app-listallventas></app-listallventas>
         </div>
     </ng-container>

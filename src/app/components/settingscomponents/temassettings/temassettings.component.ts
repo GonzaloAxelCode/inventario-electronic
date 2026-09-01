@@ -21,8 +21,9 @@ export class TemasSettingsComponent implements OnInit {
   private readonly key = inject(TUI_DARK_MODE_KEY);
   private readonly storage = inject(WA_LOCAL_STORAGE);
   private readonly media = inject(WA_WINDOW).matchMedia('(prefers-color-scheme: dark)');
+  private readonly mobileMedia = inject(WA_WINDOW).matchMedia('(max-width: 768px)');
   protected readonly darkMode = inject(TUI_DARK_MODE);
-  
+
   constructor(
     public layoutService: LayoutService,
     public featureFlags: FeatureFlagsService,
@@ -31,6 +32,7 @@ export class TemasSettingsComponent implements OnInit {
 
   isDarkMode = false;
   isTopnavLayout = false;
+  isMobile = false;
 
   ngOnInit(): void {
     const saved = this.storage.getItem(this.key);
@@ -40,8 +42,9 @@ export class TemasSettingsComponent implements OnInit {
       this.isDarkMode = this.media.matches;
     }
     this.darkMode.set(this.isDarkMode);
-    
+
     this.isTopnavLayout = this.layoutService.isTopnav();
+    this.isMobile = this.mobileMedia.matches;
   }
 
   toggleDarkMode(): void {
