@@ -17,7 +17,7 @@ export class DialogUpdateCategoriaService {
         const component = new PolymorpheusComponent(DialogupdatecategoriaComponent);
         const options: Partial<any> = {
             dismissible: true,
-            size: "auto",
+            size: "l",
             data,
             label: "Actualizar categoria"
         };

@@ -1,393 +1,268 @@
 <div class="flex flex-col w-full" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;">
 
-  <!-- HEADER Apple Style -->
-  <div class="flex items-start justify-between gap-4 p-5">
-    <div class="flex items-center gap-3">
-      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
-        </svg>
-      </div>
-      <div>
-        <div class="flex items-center gap-2 flex-wrap">
-          <h2 class="text-xl font-semibold tracking-tight text-stone-900 dark:text-white">{{ pedido.numero_pedido }}</h2>
-          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
-            [class]="getEstadoColor(pedido.estado)">
-            {{ pedido.estado }}
-          </span>
-        </div>
-        <p class="text-xs text-stone-400 mt-0.5">{{ formatDateTime(pedido.fecha_hora) }}</p>
-      </div>
-    </div>
-    <div class="text-right">
-      <p class="text-2xl font-semibold text-stone-900 dark:text-white">S/ {{ pedido.total | number:'1.2-2' }}</p>
-      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium mt-1"
-        [class]="getEstadoPagoColor(pedido.estado_pago)">
-        {{ pedido.estado_pago }}
-      </span>
-    </div>
-  </div>
+   <!-- HEADER Apple Style -->
+   <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 p-4 sm:p-5">
+     <div class="flex items-center gap-3">
+       <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm shrink-0">
+         <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.7">
+           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c-.621 0-1.125-.504-1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
+         </svg>
+       </div>
+       <div class="min-w-0">
+         <div class="flex items-center gap-2 flex-wrap">
+           <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white truncate">{{ pedido.numero_pedido }}</h2>
+           <tui-select size="s" class="min-w-[180px] sm:min-w-[200px]" [(ngModel)]="pedido.estado" (ngModelChange)="actualizarCampo('estado', $event)">
+             <ng-container ngProjectAs="tuiLabel">
+               <span>Estado</span>
+             </ng-container>
+             <tui-data-list *tuiDataList>
+               <button *ngFor="let est of estados" tuiOption [value]="est">{{ est }}</button>
+             </tui-data-list>
+           </tui-select>
+         </div>
+         <p class="text-xs text-stone-400 mt-0.5">{{ formatDateTime(pedido.fecha_hora) }}</p>
+       </div>
+     </div>
+     <div class="text-left sm:text-right">
+       <p class="text-xl sm:text-2xl font-semibold text-stone-900 dark:text-white">S/ {{ pedido.total | number:'1.2-2' }}</p>
+       <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium mt-1"
+         [class]="getEstadoPagoColor(pedido.estado_pago)">
+         {{ pedido.estado_pago }}
+       </span>
+     </div>
+   </div>
 
-  <!-- CONTENT -->
-  <div class="flex-1 p-5 space-y-5">
+   <!-- CONTENT -->
+   <div class="flex-1 p-4 sm:p-5 space-y-4 sm:space-y-5">
 
-    <!-- ==================== MODO VISTA ==================== -->
-    <ng-container *ngIf="!editMode">
-      <!-- Grid info del pedido -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="space-y-0.5">
-          <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Tipo</p>
-          <p class="text-sm font-medium text-stone-900 dark:text-white">{{ pedido.tipo_pedido }}</p>
-        </div>
-        <div class="space-y-0.5">
-          <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Canal</p>
-          <p class="text-sm font-medium text-stone-900 dark:text-white">{{ pedido.canal_venta }}</p>
-        </div>
-        <div class="space-y-0.5">
-          <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Metodo Pago</p>
-          <p class="text-sm font-medium text-stone-900 dark:text-white">{{ pedido.metodo_pago }}</p>
-        </div>
-        <div class="space-y-0.5">
-          <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Prioridad</p>
-          <p class="text-sm font-medium text-stone-900 dark:text-white">{{ pedido.prioridad }}</p>
-        </div>
-      </div>
+     <!-- ==================== DETALLE PEDIDO ==================== -->
+     <!-- Cliente -->
+       <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+         <div class="space-y-0.5">
+           <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Tipo</p>
+           <tui-select size="s" [(ngModel)]="pedido.tipo_pedido" (ngModelChange)="actualizarCampo('tipo_pedido', $event)">
+             <ng-container ngProjectAs="tuiLabel">
+               <span>Tipo</span>
+             </ng-container>
+             <tui-data-list *tuiDataList>
+               <button *ngFor="let tipo of tiposPedido" tuiOption [value]="tipo">{{ tipo }}</button>
+             </tui-data-list>
+           </tui-select>
+         </div>
+         <div class="space-y-0.5">
+           <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Canal</p>
+           <tui-select size="s" [(ngModel)]="pedido.canal_venta" (ngModelChange)="actualizarCampo('canal_venta', $event)">
+             <ng-container ngProjectAs="tuiLabel">
+               <span>Canal</span>
+             </ng-container>
+             <tui-data-list *tuiDataList>
+               <button *ngFor="let canal of canalesVenta" tuiOption [value]="canal">{{ canal }}</button>
+             </tui-data-list>
+           </tui-select>
+         </div>
+         <div class="space-y-0.5">
+           <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Prioridad</p>
+           <tui-select size="s" [(ngModel)]="pedido.prioridad" (ngModelChange)="actualizarCampo('prioridad', $event)">
+             <ng-container ngProjectAs="tuiLabel">
+               <span>Prioridad</span>
+             </ng-container>
+             <tui-data-list *tuiDataList>
+               <button *ngFor="let prio of prioridades" tuiOption [value]="prio">{{ prio }}</button>
+             </tui-data-list>
+           </tui-select>
+         </div>
+       </div>
 
-      <!-- Cliente -->
-      <div>
-        <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-3">Cliente</p>
-        <div class="flex items-start gap-4">
-          <div class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-700 flex items-center justify-center text-lg font-semibold text-stone-500 dark:text-stone-400 shrink-0">
-            {{ getClienteNombre().charAt(0) }}
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-base font-medium text-stone-900 dark:text-white">{{ getClienteNombre() }}</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 mt-2">
-              <div>
-                <p class="text-[10px] text-stone-400 uppercase">Documento</p>
-                <p class="text-xs text-stone-600 dark:text-stone-300">{{ getClienteDocumento() }}</p>
-              </div>
-              <div>
-                <p class="text-[10px] text-stone-400 uppercase">Email</p>
-                <p class="text-xs text-stone-600 dark:text-stone-300">{{ pedido.email_cliente || 'Sin correo' }}</p>
-              </div>
-              <div>
-                <p class="text-[10px] text-stone-400 uppercase">Telefono</p>
-                <p class="text-xs text-stone-600 dark:text-stone-300">{{ pedido.telefono_cliente || 'Sin telefono' }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+       <!-- Cliente -->
+       <div>
+         <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-3">Cliente</p>
+         <div class="flex items-start gap-3 sm:gap-4">
+           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-stone-100 dark:bg-stone-700 flex items-center justify-center text-base sm:text-lg font-semibold text-stone-500 dark:text-stone-400 shrink-0">
+             {{ getClienteNombre().charAt(0) }}
+           </div>
+           <div class="flex-1 min-w-0">
+             <p class="text-sm sm:text-base font-medium text-stone-900 dark:text-white">{{ getClienteNombre() }}</p>
+             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-1 mt-2">
+               <div>
+                 <p class="text-[10px] text-stone-400 uppercase">Documento</p>
+                 <p class="text-xs text-stone-600 dark:text-stone-300">{{ getClienteDocumento() }}</p>
+               </div>
+               <div>
+                 <p class="text-[10px] text-stone-400 uppercase">Email</p>
+                 <p class="text-xs text-stone-600 dark:text-stone-300">{{ pedido.email_cliente || 'Sin correo' }}</p>
+               </div>
+               <div>
+                 <p class="text-[10px] text-stone-400 uppercase">Telefono</p>
+                 <p class="text-xs text-stone-600 dark:text-stone-300">{{ pedido.telefono_cliente || 'Sin telefono' }}</p>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
 
-      <!-- Direccion de envio -->
-      <div *ngIf="pedido.direccion_envio">
-        <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-2">Direccion de Envio</p>
-        <div>
-          <p class="text-sm text-stone-900 dark:text-white">{{ pedido.direccion_envio }}</p>
-          <p *ngIf="pedido.referencia_ubicacion" class="text-xs text-stone-500 dark:text-stone-400 mt-1">Ref: {{ pedido.referencia_ubicacion }}</p>
-          <p *ngIf="pedido.costo_envio > 0" class="text-xs text-stone-500 dark:text-stone-400 mt-1">Costo envio: S/ {{ pedido.costo_envio | number:'1.2-2' }}</p>
-        </div>
-      </div>
+       <!-- Direccion de envio -->
+       <div *ngIf="pedido.direccion_envio">
+         <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-2">Direccion de Envio</p>
+         <div>
+           <p class="text-xs sm:text-sm text-stone-900 dark:text-white">{{ pedido.direccion_envio }}</p>
+           <p *ngIf="pedido.referencia_ubicacion" class="text-xs text-stone-500 dark:text-stone-400 mt-1">Ref: {{ pedido.referencia_ubicacion }}</p>
+           <p *ngIf="pedido.costo_envio > 0" class="text-xs text-stone-500 dark:text-stone-400 mt-1">Costo envio: S/ {{ pedido.costo_envio | number:'1.2-2' }}</p>
+         </div>
+       </div>
 
-      <!-- Productos -->
-      <div *ngIf="getProductos().length">
-        <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-2">Productos ({{ getProductos().length }})</p>
-        <div class="space-y-3">
-          <div *ngFor="let item of getProductos(); let i = index"
-               class="flex items-start gap-3 py-2">
-            <!-- Imagen producto -->
-            <img [src]="getImagenProducto(item)" [alt]="item.producto_nombre" class="w-11 h-11 rounded-lg object-cover border border-stone-200/60 dark:border-stone-700/40 shrink-0 bg-stone-50 dark:bg-stone-700" loading="lazy" />
-            <!-- Info -->
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-stone-900 dark:text-white">{{ item.producto_nombre }}</p>
-              <div class="flex items-center gap-3 mt-1">
-                <span class="text-xs text-stone-500">x{{ item.cantidad }}</span>
-                <span class="text-xs text-stone-500">S/ {{ (item.valor_unitario || item.precio_unitario || 0) | number:'1.2-2' }}</span>
-                <span *ngIf="item.descuento" class="text-xs text-red-500">-S/ {{ item.descuento | number:'1.2-2' }}</span>
-              </div>
-            </div>
-            <!-- Total -->
-            <span class="text-sm font-semibold text-stone-900 dark:text-white">S/ {{ getProductSubtotal(item) | number:'1.2-2' }}</span>
-          </div>
-        </div>
-      </div>
+       <!-- Productos -->
+       <div *ngIf="getProductos().length">
+         <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-2">Productos ({{ getProductos().length }})</p>
+         <div class="space-y-2 sm:space-y-3">
+           <div *ngFor="let item of getProductos(); let i = index"
+                class="flex items-start gap-2 sm:gap-3 py-2">
+             <!-- Imagen producto -->
+             <img [src]="getImagenProducto(item)" [alt]="item.producto_nombre" class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg object-cover border border-stone-200/60 dark:border-stone-700/40 shrink-0 bg-stone-50 dark:bg-stone-700" loading="lazy" />
+             <!-- Info -->
+             <div class="flex-1 min-w-0">
+               <p class="text-sm font-medium text-stone-900 dark:text-white truncate">{{ item.producto_nombre }}</p>
+               <div class="flex items-center gap-2 sm:gap-3 mt-1">
+                 <span class="text-xs text-stone-500">x{{ item.cantidad }}</span>
+                 <span class="text-xs text-stone-500">S/ {{ (item.valor_unitario || item.precio_unitario || 0) | number:'1.2-2' }}</span>
+                 <span *ngIf="item.descuento" class="text-xs text-red-500">-S/ {{ item.descuento | number:'1.2-2' }}</span>
+               </div>
+             </div>
+             <!-- Total -->
+             <span class="text-xs sm:text-sm font-semibold text-stone-900 dark:text-white shrink-0">S/ {{ getProductSubtotal(item) | number:'1.2-2' }}</span>
+           </div>
+         </div>
+       </div>
 
-      <!-- Resumen montos -->
-      <div class="space-y-2 pt-3">
-        <div class="flex justify-between text-xs">
-          <span class="text-stone-400">Subtotal</span>
-          <span class="text-stone-600 dark:text-stone-300">S/ {{ pedido.subtotal | number:'1.2-2' }}</span>
-        </div>
-        <div class="flex justify-between text-xs">
-          <span class="text-stone-400">IGV (18%)</span>
-          <span class="text-stone-600 dark:text-stone-300">S/ {{ pedido.igv_total | number:'1.2-2' }}</span>
-        </div>
-        <div *ngIf="pedido.descuento_total > 0" class="flex justify-between text-xs">
-          <span class="text-stone-400">Descuento</span>
-          <span class="text-red-500">- S/ {{ pedido.descuento_total | number:'1.2-2' }}</span>
-        </div>
-        <div *ngIf="pedido.costo_envio > 0" class="flex justify-between text-xs">
-          <span class="text-stone-400">Costo Envio</span>
-          <span class="text-stone-600 dark:text-stone-300">S/ {{ pedido.costo_envio | number:'1.2-2' }}</span>
-        </div>
-        <div class="flex justify-between items-baseline pt-2">
-          <span class="text-sm font-medium text-stone-900 dark:text-white">Total</span>
-          <span class="text-xl font-semibold text-stone-900 dark:text-white">S/ {{ pedido.total | number:'1.2-2' }}</span>
-        </div>
-      </div>
+       <!-- Resumen montos -->
+       <div class="space-y-1.5 sm:space-y-2 pt-2 sm:pt-3">
+         <div class="flex justify-between text-xs">
+           <span class="text-stone-400">Subtotal</span>
+           <span class="text-stone-600 dark:text-stone-300">S/ {{ pedido.subtotal | number:'1.2-2' }}</span>
+         </div>
+         <div class="flex justify-between text-xs">
+           <span class="text-stone-400">IGV (18%)</span>
+           <span class="text-stone-600 dark:text-stone-300">S/ {{ pedido.igv_total | number:'1.2-2' }}</span>
+         </div>
+         <div *ngIf="pedido.descuento_total > 0" class="flex justify-between text-xs">
+           <span class="text-stone-400">Descuento</span>
+           <span class="text-red-500">- S/ {{ pedido.descuento_total | number:'1.2-2' }}</span>
+         </div>
+         <div *ngIf="pedido.costo_envio > 0" class="flex justify-between text-xs">
+           <span class="text-stone-400">Costo Envio</span>
+           <span class="text-stone-600 dark:text-stone-300">S/ {{ pedido.costo_envio | number:'1.2-2' }}</span>
+         </div>
+         <div class="flex justify-between items-baseline pt-1.5 sm:pt-2">
+           <span class="text-xs sm:text-sm font-medium text-stone-900 dark:text-white">Total</span>
+           <span class="text-lg sm:text-xl font-semibold text-stone-900 dark:text-white">S/ {{ pedido.total | number:'1.2-2' }}</span>
+         </div>
+       </div>
 
-      <!-- Observaciones -->
-      <div *ngIf="pedido.observaciones">
-        <p class="text-[10px] font-medium text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-2">Observaciones</p>
-        <p class="text-sm text-stone-700 dark:text-stone-300">{{ pedido.observaciones }}</p>
-      </div>
+       <!-- Observaciones -->
+       <div *ngIf="pedido.observaciones">
+         <p class="text-[10px] font-medium text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-2">Observaciones</p>
+         <p class="text-xs sm:text-sm text-stone-700 dark:text-stone-300">{{ pedido.observaciones }}</p>
+       </div>
 
-      <!-- Notas internas -->
-      <div *ngIf="pedido.notas_internas">
-        <p class="text-[10px] font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">Notas Internas</p>
-        <p class="text-sm text-stone-700 dark:text-stone-300">{{ pedido.notas_internas }}</p>
-      </div>
-    </ng-container>
+       <!-- Notas internas -->
+       <div *ngIf="pedido.notas_internas">
+         <p class="text-[10px] font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">Notas Internas</p>
+         <p class="text-xs sm:text-sm text-stone-700 dark:text-stone-300">{{ pedido.notas_internas }}</p>
+       </div>
 
-    <!-- ==================== MODO EDICION ==================== -->
-    <ng-container *ngIf="editMode">
-      <form [formGroup]="editForm" class="space-y-5">
+       <!-- ACCIONES -->
+       <div *ngIf="pedido.estado_pago !== 'PAGADO'" class="pt-3 sm:pt-4 border-t border-stone-200 dark:border-stone-700 space-y-3">
+         <div *ngIf="!enSala" class="flex gap-3">
+           <button tuiButton appearance="primary" size="m" type="button" (click)="guardarCambios()" class="flex-1 !rounded-xl">
+             <span class="flex items-center justify-center gap-2">
+               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+               Actualizar
+             </span>
+           </button>
+           <button tuiButton appearance="primary-grayscale" size="m" type="button" (click)="enviarASala()" class="flex-1 !rounded-xl">
+             <span class="flex items-center justify-center gap-2">
+               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+               Enviar a Ventas
+             </span>
+           </button>
+         </div>
 
-        <!-- CLIENTE -->
-        <div formGroupName="cliente" class="p-4 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-3">
-          <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Cliente</p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <tui-textfield class="w-full">
-              <input tuiTextfield size="s" formControlName="nombre_completo" placeholder="Nombre completo" class="text-sm" />
-            </tui-textfield>
-            <tui-textfield class="w-full">
-              <input tuiTextfield size="s" formControlName="numero" placeholder="DNI / RUC" class="text-sm" />
-            </tui-textfield>
-            <tui-textfield class="w-full">
-              <input tuiTextfield size="s" formControlName="telefono_cliente" placeholder="Telefono" class="text-sm" />
-            </tui-textfield>
-            <tui-textfield class="w-full">
-              <input tuiTextfield size="s" type="email" formControlName="correo_cliente" placeholder="Email" class="text-sm" />
-            </tui-textfield>
-          </div>
-        </div>
+         <div *ngIf="enSala" class="text-center py-2">
+           <div class="flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400">
+             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+             </svg>
+             <p class="text-sm font-semibold">Este pedido ya esta en Sala de Ventas</p>
+           </div>
+           <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">Ve a Hacer Venta > Vender por pedido para procesarlo</p>
+         </div>
 
-        <!-- TIPO, CANAL, PRIORIDAD -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <tui-select formControlName="tipo_pedido" class="w-full">
-            Tipo de pedido
-            <tui-data-list *tuiDataList>
-              <button *ngFor="let tipo of tiposPedido" tuiOption [value]="tipo">{{ tipo }}</button>
-            </tui-data-list>
-          </tui-select>
-          <tui-select formControlName="canal_venta" class="w-full">
-            Canal de venta
-            <tui-data-list *tuiDataList>
-              <button *ngFor="let canal of canalesVenta" tuiOption [value]="canal">{{ canal }}</button>
-            </tui-data-list>
-          </tui-select>
-          <tui-select formControlName="prioridad" class="w-full">
-            Prioridad
-            <tui-data-list *tuiDataList>
-              <button *ngFor="let prio of prioridades" tuiOption [value]="prio">{{ prio }}</button>
-            </tui-data-list>
-          </tui-select>
-        </div>
+         <button tuiButton appearance="flat" size="m" type="button" (click)="mostrarConfirmacionEliminar()" class="w-full !rounded-xl !text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/20">
+           <span class="flex items-center justify-center gap-2">
+             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2.25 2.25 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+             </svg>
+             Eliminar Pedido
+           </span>
+         </button>
+       </div>
 
-        <!-- PAGO -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <tui-select formControlName="metodo_pago" class="w-full">
-            Metodo de pago
-            <tui-data-list *tuiDataList>
-              <button *ngFor="let met of metodosPago" tuiOption [value]="met">{{ met }}</button>
-            </tui-data-list>
-          </tui-select>
-          <tui-select formControlName="estado_pago" class="w-full">
-            Estado de pago
-            <tui-data-list *tuiDataList>
-              <button *ngFor="let ep of estadosPago" tuiOption [value]="ep">{{ ep }}</button>
-            </tui-data-list>
-          </tui-select>
-        </div>
+       <!-- Botón eliminar pedido cuando esta PAGADO -->
+       <div *ngIf="pedido.estado_pago === 'PAGADO'" class="pt-3 sm:pt-4 border-t border-stone-200 dark:border-stone-700">
+         <button tuiButton appearance="flat" size="m" type="button" (click)="mostrarConfirmacionEliminar()" class="w-full !rounded-xl !text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/20">
+           <span class="flex items-center justify-center gap-2">
+             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2.25 2.25 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+             </svg>
+             Eliminar Pedido
+           </span>
+         </button>
+       </div>
 
-        <!-- ADELANTO -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <tui-textfield class="w-full">
-            <label tuiLabel class="text-[11px]">Monto adelanto</label>
-            <input formControlName="monto_adelanto" prefix="S/. " tuiInputNumber [min]="0" [step]="1" class="text-sm" />
-          </tui-textfield>
-          <tui-textfield class="w-full">
-            <input tuiTextfield size="s" formControlName="metodo_pago_adelanto" placeholder="Metodo pago adelanto" class="text-sm" />
-          </tui-textfield>
-        </div>
-
-        <!-- DIRECCION -->
-        <tui-textfield class="w-full">
-          <input tuiTextfield size="s" formControlName="direccion_envio" placeholder="Direccion de envio" class="text-sm" />
-        </tui-textfield>
-        <tui-textfield class="w-full">
-          <input tuiTextfield size="s" formControlName="referencia_ubicacion" placeholder="Referencia de ubicacion" class="text-sm" />
-        </tui-textfield>
-
-        <!-- ENVIO Y REFERENCIA -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <tui-textfield class="w-full">
-            <label tuiLabel class="text-[11px]">Costo envio</label>
-            <input formControlName="costo_envio" prefix="S/. " tuiInputNumber [min]="0" [step]="1" class="text-sm" />
-          </tui-textfield>
-          <tui-textfield class="w-full">
-            <input tuiTextfield size="s" formControlName="referencia_externa" placeholder="Referencia externa" class="text-sm" />
-          </tui-textfield>
-        </div>
-
-        <!-- PRODUCTOS -->
-        <div class="p-4 bg-white dark:bg-neutral-700/50 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-3">
-          <div class="flex items-center justify-between">
-            <p class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Productos</p>
-            <button tuiButton appearance="primary-grayscale" size="xs" type="button" (click)="agregarProductoDialog()" class="!rounded-lg !text-[10px]">
-              + Agregar
-            </button>
-          </div>
-          <div formArrayName="productos">
-            <div *ngFor="let prod of productosFormArray.controls; let i = index" [formGroup]="prod"
-              class="bg-neutral-50 dark:bg-neutral-600/30 rounded-xl p-3 mb-2 border border-neutral-200 dark:border-neutral-600">
-              <div class="flex items-start justify-between gap-2 mb-2">
-                <p class="text-sm font-semibold text-neutral-900 dark:text-white flex-1 min-w-0 truncate">{{ prod.get('producto_nombre')?.value }}</p>
-                <button tuiIconButton iconStart="@tui.x" type="button" appearance="flat" size="xs"
-                  (click)="eliminarProducto(i)" class="!text-red-400 hover:!text-red-600 shrink-0">
-                </button>
-              </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider block mb-1">Cantidad</label>
-                  <input formControlName="cantidad_final" type="number" [min]="1" [step]="1"
-                    class="w-full px-3 py-2 text-sm font-bold text-neutral-900 dark:text-white bg-white dark:bg-neutral-700 rounded-lg border border-neutral-200 dark:border-neutral-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none" />
-                </div>
-                <div>
-                  <label class="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider block mb-1">Descuento (S/.)</label>
-                  <input formControlName="descuento" type="number" [min]="0" [step]="1"
-                    class="w-full px-3 py-2 text-sm font-bold text-neutral-900 dark:text-white bg-white dark:bg-neutral-700 rounded-lg border border-neutral-200 dark:border-neutral-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- NOTAS -->
-        <tui-textfield class="w-full">
-          <textarea tuiTextfield formControlName="observaciones" rows="2" placeholder="Observaciones" class="text-sm resize-none"></textarea>
-        </tui-textfield>
-        <tui-textfield class="w-full">
-          <textarea tuiTextfield formControlName="notas_internas" rows="2" placeholder="Notas internas" class="text-sm resize-none"></textarea>
-        </tui-textfield>
-      </form>
-    </ng-container>
-  </div>
-
-  <!-- ACCIONES -->
-  <div class="p-4">
-    <tui-loader [showLoader]="saving || deleting" [overlay]="true">
-      <!-- Si NO esta en sala: mostrar Actualizar y Enviar a Ventas -->
-      <div *ngIf="!enSala && !editMode" class="flex gap-3">
-        <button tuiButton appearance="primary" size="m" type="button" (click)="toggleEdit()" class="flex-1 !rounded-xl">
-          <span class="flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
-            Actualizar
-          </span>
-        </button>
-        <button tuiButton appearance="primary-grayscale" size="m" type="button" (click)="enviarASala()" class="flex-1 !rounded-xl">
-          <span class="flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-            Enviar a Ventas
-          </span>
-        </button>
-      </div>
-
-      <!-- Si esta en sala: NO mostrar botones -->
-      <div *ngIf="enSala && !editMode" class="text-center py-2">
-        <div class="flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <p class="text-sm font-semibold">Este pedido ya esta en Sala de Ventas</p>
-        </div>
-        <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">Ve a Hacer Venta > Vender por pedido para procesarlo</p>
-      </div>
-
-      <!-- Modo edicion -->
-      <div *ngIf="editMode" class="flex gap-3">
-        <button tuiButton appearance="primary" size="m" type="button" (click)="guardarCambios()" class="flex-1 !rounded-xl" [disabled]="saving">
-          <span class="flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 12.75l6 6 9-13.5"/></svg>
-            Guardar
-          </span>
-        </button>
-        <button tuiButton appearance="flat" size="m" type="button" (click)="toggleEdit()" class="!rounded-xl">Cancelar</button>
-      </div>
-
-      <!-- Botón eliminar pedido (solo si no está en modo edición) -->
-      <div *ngIf="!editMode" class="mt-4 pt-4 border-t border-stone-200 dark:border-stone-700">
-        <button
-          tuiButton
-          appearance="flat"
-          size="m"
-          type="button"
-          (click)="mostrarConfirmacionEliminar()"
-          class="w-full !rounded-xl !text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/20">
-          <span class="flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-            </svg>
-            Eliminar Pedido
-          </span>
-        </button>
-      </div>
-    </tui-loader>
-  </div>
+   </div>
 </div>
 
 <!-- Modal de confirmación de eliminación -->
 <div *ngIf="showDeleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-  <div class="bg-white dark:bg-neutral-800 rounded-2xl p-6 max-w-sm mx-4 shadow-2xl">
-    <div class="flex items-center gap-3 mb-4">
-      <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-        <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-        </svg>
-      </div>
-      <div>
-        <h3 class="text-lg font-semibold text-stone-900 dark:text-white">Eliminar Pedido</h3>
-        <p class="text-sm text-stone-500 dark:text-stone-400">Esta acción no se puede deshacer</p>
-      </div>
-    </div>
-    <p class="text-sm text-stone-600 dark:text-stone-300 mb-6">
-      ¿Estás seguro de que deseas eliminar permanentemente el pedido <strong>{{ pedido.numero_pedido }}</strong>?
-    </p>
-    <div class="flex gap-3">
-      <button
-        tuiButton
-        appearance="flat"
-        size="m"
-        type="button"
-        (click)="cancelarEliminar()"
-        class="flex-1 !rounded-xl">
-        Cancelar
-      </button>
-      <button
-        tuiButton
-        appearance="primary"
-        size="m"
-        type="button"
-        (click)="eliminarPedido()"
-        class="flex-1 !rounded-xl !bg-red-600 hover:!bg-red-700">
-        <span class="flex items-center justify-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-          </svg>
-          Eliminar
-        </span>
-      </button>
-    </div>
-  </div>
-</div>
+   <div class="bg-white dark:bg-neutral-800 rounded-2xl p-4 sm:p-6 max-w-sm mx-4 shadow-2xl">
+     <div class="flex items-center gap-3 mb-4">
+       <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+         <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+         </svg>
+       </div>
+       <div>
+         <h3 class="text-lg font-semibold text-stone-900 dark:text-white">Eliminar Pedido</h3>
+         <p class="text-sm text-stone-500 dark:text-stone-400">Esta acción no se puede deshacer</p>
+       </div>
+     </div>
+     <p class="text-sm text-stone-600 dark:text-stone-300 mb-6">
+       ¿Estás seguro de que deseas eliminar permanentemente el pedido <strong>{{ pedido.numero_pedido }}</strong>?
+     </p>
+     <div class="flex gap-3">
+       <button
+         tuiButton
+         appearance="flat"
+         size="m"
+         type="button"
+         (click)="cancelarEliminar()"
+         class="flex-1 !rounded-xl">
+         Cancelar
+       </button>
+       <button
+         tuiButton
+         appearance="primary"
+         size="m"
+         type="button"
+         (click)="eliminarPedido()"
+         class="flex-1 !rounded-xl !bg-red-600 hover:!bg-red-700"
+         [disabled]="deleting">
+         <span class="flex items-center justify-center gap-2">
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2.25 2.25 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+           </svg>
+           Eliminar
+         </span>
+       </button>
+     </div>
+   </div>
+ </div>

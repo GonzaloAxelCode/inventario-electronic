@@ -1,4 +1,4 @@
-<div class="form-container mt-5">
+﻿<div class="form-container mt-5">
   <form [formGroup]="tiendaForm" (ngSubmit)="onSubmit()" class="space-y-4">
     <!-- Banner sucursal para admin tienda — Apple sin fondo pesado -->
     <div *ngIf="isAdminTienda" class="rounded-2xl border border-[#0071e3]/15 bg-[#0071e3]/[0.06] dark:bg-[#0071e3]/[0.10] px-4 py-3 flex gap-3">
@@ -31,11 +31,11 @@
       </div>
 <!-- Razon Social -->
       <div>
-        <tui-input 
-          formControlName="razon_social" 
-          class="w-full"
-          [readOnly]="isAdminTienda"
-        >
+         <tui-input 
+           formControlName="razon_social" 
+           class="w-full"
+           [readOnly]="isAdminTienda || esSucursal"
+         >
           Razón Social
         </tui-input>
         <p *ngIf="isAdminTienda" class="text-[10px] text-[#86868b] mt-1">Se hereda de la tienda padre</p>
@@ -63,11 +63,11 @@
 
       <!-- RUC -->
       <div>
-        <tui-input 
-          formControlName="ruc" 
-          class="w-full"
-          [readOnly]="isAdminTienda"
-        >
+         <tui-input 
+           formControlName="ruc" 
+           class="w-full"
+           [readOnly]="isAdminTienda || esSucursal"
+         >
           RUC
         </tui-input>
         <p *ngIf="isAdminTienda" class="text-[10px] text-[#86868b] mt-1">Se hereda de la tienda padre</p>
@@ -110,35 +110,45 @@
         </tui-input>
       </div>
 
-      <!-- Credenciales SOL SUNAT — solo superusuarios -->
-      <div *ngIf="isSuperUser" class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <tui-input formControlName="sol_user" placeholder="Usuario SOL" class="w-full">Usuario SOL</tui-input>
-        </div>
-        <div>
-          <tui-input formControlName="sol_password" placeholder="Clave SOL" type="password" class="w-full">Clave SOL</tui-input>
-        </div>
-      </div>
+       <!-- Credenciales SOL SUNAT — solo superusuarios -->
+       <div *ngIf="isSuperUser" class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+         <div>
+           <tui-input formControlName="sol_user" placeholder="Usuario SOL" class="w-full" [readOnly]="esSucursal">Usuario SOL</tui-input>
+         </div>
+         <div>
+           <tui-input formControlName="sol_password" placeholder="Clave SOL" type="password" class="w-full" [readOnly]="esSucursal">Clave SOL</tui-input>
+         </div>
+       </div>
 
-      <!-- Archivo clave SUNAT — solo superusuarios -->
-      <div *ngIf="isSuperUser" class="lg:col-span-2 rounded-2xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-4">
-        <div class="flex gap-3">
-          <div class="w-9 h-9 rounded-xl bg-[#0071e3]/10 flex items-center justify-center shrink-0">
-            <svg class="w-4.5 h-4.5 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11c0 3.517-1.009 6.797-2.753 9.579a.5.5 0 01-.86-.49A9.001 9.001 0 0012 3a9.001 9.001 0 003.613 17.09.5.5 0 01-.86.49A10.97 10.97 0 0112 11z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11V7a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-[12px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white">Archivo clave SUNAT</p>
-            <p class="text-[11px] leading-4 text-[#86868b] dark:text-[#a1a1a6]">Certificado .p12/.pfx para validar credenciales SUNAT</p>
-            <div class="mt-3 flex flex-wrap items-center gap-2">
-              <button type="button" (click)="certInputCreate.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
-              <span *ngIf="certFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[180px]">{{ certFileName }}</span>
-              <span *ngIf="!certFileName" class="text-[11px] text-[#86868b]">Ningún archivo</span>
-              <button *ngIf="certFileName" type="button" (click)="selectedCert=null; certFileName=null; certInputCreate.value=''" class="text-[11px] text-[#ff3b30] hover:underline">Quitar</button>
+       <!-- Certificados clave privada y pública SUNAT — se envían como string -->
+       <div class="lg:col-span-2 rounded-2xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-4" [class.opacity-50]="esSucursal" [class.pointer-events-none]="esSucursal">
+         <p class="text-[12px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white mb-1">Certificados clave SUNAT
+           <span *ngIf="esSucursal" class="text-[10px] text-[#86868b] dark:text-[#a1a1a6] ml-1">(Heredado del padre)</span>
+         </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">Clave privada</p>
+            <p class="text-[10px] leading-3 text-[#86868b] dark:text-[#a1a1a6]">Archivo de certificado .key/.pem/.p12/.pfx</p>
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+              <button type="button" (click)="certPrivadaInput.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
+              <span *ngIf="certPrivadaFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[160px]">{{ certPrivadaFileName }}</span>
+              <span *ngIf="!certPrivadaFileName" class="text-[11px] text-[#86868b]">Ningún archivo</span>
+              <button *ngIf="certPrivadaFileName" type="button" (click)="selectedCertPrivada=null; certPrivadaString=null; certPrivadaFileName=null; certPrivadaInput.value=''" class="text-[11px] text-[#ff3b30] hover:underline">Quitar</button>
             </div>
+            <input type="file" #certPrivadaInput (change)="onCertPrivadaSelected($event)" accept=".pem,.key,.p12,.pfx,.crt,.cer,.txt" class="hidden" />
+          </div>
+          <div>
+            <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">Clave pública</p>
+            <p class="text-[10px] leading-3 text-[#86868b] dark:text-[#a1a1a6]">Archivo de certificado .crt/.cer/.pem/.pub</p>
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+              <button type="button" (click)="certPublicaInput.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
+              <span *ngIf="certPublicaFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[160px]">{{ certPublicaFileName }}</span>
+              <span *ngIf="!certPublicaFileName" class="text-[11px] text-[#86868b]">Ningún archivo</span>
+              <button *ngIf="certPublicaFileName" type="button" (click)="selectedCertPublica=null; certPublicaString=null; certPublicaFileName=null; certPublicaInput.value=''" class="text-[11px] text-[#ff3b30] hover:underline">Quitar</button>
+            </div>
+            <input type="file" #certPublicaInput (change)="onCertPublicaSelected($event)" accept=".crt,.cer,.pem,.pub,.key,.p12,.pfx,.txt" class="hidden" />
           </div>
         </div>
-        <input type="file" #certInputCreate (change)="onCertSelected($event)" accept=".p12,.pfx,.pem,.key,.crt,.cer" class="hidden" />
-        <p class="text-[10px] text-[#86868b] mt-2">Solo superusuarios. Se enviará como <span class="font-mono">certificado</span> junto a SOL.</p>
       </div>
 
       <!-- Imágenes — Apple elegante sin fondos, con instrucciones -->
@@ -187,47 +197,29 @@
             <button *ngIf="selectedLogoDark" type="button" (click)="selectedLogoDark=null; logoDarkPreview=null; fileInputDark.value=''" class="text-[10px] text-[#ff3b30] mt-1 self-start">Quitar</button>
             <input type="file" #fileInputDark (change)="onLogoDarkSelected($event)" accept="image/png,image/jpeg,image/webp" class="hidden"/>
           </div>
-
-          <!-- Banner -->
-          <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3 flex flex-col">
-            <div class="flex items-center gap-2 mb-2">
-              <div class="w-7 h-7 rounded-lg bg-[#30d158]/15 flex items-center justify-center"><svg class="w-4 h-4 text-[#30d158]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.608-4.608a2 2 0 012.828 0L16 16m-2-2l1.5-1.5a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
-              <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Banner</p>
-              <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Opcional</span>
-            </div>
-            <div class="w-full aspect-[3/1] rounded-xl overflow-hidden bg-white dark:bg-[#1c1c1e] ring-1 ring-black/[0.06] cursor-pointer flex items-center justify-center" (click)="fileInputBanner.click()">
-              <img *ngIf="bannerPreview" [src]="bannerPreview" alt="Banner Preview" class="w-full h-full object-cover"/>
-              <div *ngIf="!bannerPreview" class="text-center p-3">
-                <svg class="w-6 h-6 mx-auto text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.608-4.608a2 2 0 012.828 0L16 16m-2-2l1.5-1.5a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white mt-1">Subir banner</p>
-                <p class="text-[10px] text-[#86868b]">1200×400</p>
-              </div>
-            </div>
-            <p class="text-[10px] leading-3 text-[#86868b] mt-2">Recomendado <b class="text-[#1d1d1f] dark:text-white">1200×400 px</b> 3:1 · JPG/PNG · <b>Máx 5MB</b> · Se recorta como cover</p>
-            <p *ngIf="selectedBanner" class="text-[10px] font-mono truncate mt-1 px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08]">{{ selectedBanner.name }}</p>
-            <button *ngIf="selectedBanner" type="button" (click)="selectedBanner=null; bannerPreview=null; fileInputBanner.value=''" class="text-[10px] text-[#ff3b30] mt-1 self-start">Quitar</button>
-            <input type="file" #fileInputBanner (change)="onBannerSelected($event)" accept="image/png,image/jpeg,image/webp" class="hidden"/>
-          </div>
         </div>
       </div>
 
 
     </div>
 
-      <!-- Jerarquía — solo superusuario, obligatorio final -->
+    <!-- Jerarquía — solo superusuario, obligatorio final -->
       <div *ngIf="isSuperUser" class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
         <div class="px-4 py-2.5 flex items-center justify-between"><p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Jerarquía</p><span class="text-[10px] px-2 py-1 rounded-full bg-[#ff3b30]/10 text-[#ff3b30] font-medium">Obligatorio</span></div>
         <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
-        <div class="p-4">
-          <label class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">¿Registrar como tienda padre o sucursal?</label>
-          <select formControlName="tienda_padre_select" class="mt-2 w-full h-10 rounded-xl border border-black/[0.12] dark:border-white/[0.12] bg-transparent px-3 text-[13px] text-[#1d1d1f] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0071e3]/20">
-            <option value="" disabled>Selecciona una opción</option>
-            <option value="padre">Registrar como tienda Padre</option>
-            <option *ngFor="let t of tiendasList" [value]="t.id">{{ t.nombre }} — RUC {{ t.ruc || '—' }} · ID {{ t.id }}</option>
-          </select>
-          <p *ngIf="tiendaForm.get('tienda_padre_select')?.touched && tiendaForm.get('tienda_padre_select')?.invalid" class="text-[#ff3b30] text-[11px] mt-1">Debes elegir si es tienda padre o seleccionar una tienda padre existente.</p>
-          <p class="text-[10px] leading-3 text-[#86868b] mt-2">Si eliges una tienda, la nueva se creará como <b class="text-[#1d1d1f] dark:text-white">sucursal</b> bajo esa padre. <b>Registrar como tienda Padre</b> la crea como principal.</p>
-        </div>
+          <div class="p-4">
+            <label class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">¿Registrar como tienda padre o sucursal?</label>
+            <tui-select formControlName="tienda_padre_select" class="w-full" [stringify]="getJerarquiaLabel">
+              <tui-data-list *tuiDataList>
+                <button tuiOption [value]="''" [disabled]="true">Selecciona una opción</button>
+                <button tuiOption [value]="'padre'">Registrar como tienda Padre</button>
+                <button *ngFor="let t of tiendasList" tuiOption [value]="t.id">
+                  {{ t.nombre }} — RUC {{ t.ruc || '—' }} · ID {{ t.id }}
+                </button>
+              </tui-data-list>
+            </tui-select>
+            <p *ngIf="tiendaForm.get('tienda_padre_select')?.touched && tiendaForm.get('tienda_padre_select')?.invalid" class="text-[#ff3b30] text-[11px] mt-1">Debes elegir si es tienda padre o seleccionar una tienda padre existente.</p>
+          </div>
       </div>
 
     <!-- Botón -->

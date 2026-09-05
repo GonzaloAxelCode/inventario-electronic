@@ -14,7 +14,7 @@ import { URL_BASE } from "@/app/services/utils/endpoints";
 import { loadClientes } from "@/app/state/actions/cliente.actions";
 import { crearVenta, crearVentaExito, crearVentaError } from "@/app/state/actions/venta.actions";
 import { eliminarPedido } from "@/app/state/actions/pedido.actions";
-import { actualizarPedido } from "@/app/state/actions/pedido.actions";
+import { actualizarPedido, pagarPedido } from "@/app/state/actions/pedido.actions";
 import { AppState } from '@/app/state/app.state';
 import { selectClienteState } from "@/app/state/selectors/cliente.selectors";
 import { selectInventario } from '@/app/state/selectors/inventario.selectors';
@@ -143,7 +143,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
           productoId: prod.producto || prod.inventarioId,
           producto_nombre: prod.producto_nombre || 'Producto',
           producto_sku: prod.producto_sku || '',
-          imagen_producto: prod.imagen_producto || this.placeholderImg,
+          imagen_producto: this.onSetImageProduct(prod.imagen || prod.imagen_producto),
           nombre_categoria: prod.nombre_categoria || '',
           cantidad: prod.cantidad,
           costo_original: prod.costo_original || prod.valor_unitario || prod.precio_unitario || 0,
@@ -167,6 +167,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   protected expanded = false;
   private destroy$ = new Subject<void>();
   errorClientNotFound = false;
+  rucRequiredError = signal(false);
   selectCurrentStep = signal("Start Up");
   protected readonly units = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
   protected value = this.units[0]!;
@@ -589,8 +590,16 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
   buscarCliente() {
     this.errorClientNotFound = false
+    this.rucRequiredError.set(false)
+    const documento = this.ventaForm.get('documento_cliente')!.value;
+    const tipoComprobante = this.ventaForm.get('tipoComprobante')?.value;
+
+    if (!documento) {
+      return;
+    }
+
     const clienteSearh = this.clientes.find((el: Cliente) => {
-      return el.document === this.ventaForm.get('documento_cliente')!.value;
+      return el.document === documento;
     })
     if (clienteSearh) {
       const clienteForm = {
@@ -607,12 +616,6 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       });
       this.is_client_exists = true
       this.clienteSelected = clienteSearh
-      return;
-    }
-    this.errorClientNotFound = false;
-    const documento = this.ventaForm.get('documento_cliente')!.value;
-
-    if (!documento) {
       return;
     }
 
@@ -681,6 +684,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
   borrarCliente() {
     this.expanded = false
+    this.rucRequiredError.set(false);
     this.ventaForm.patchValue({
       documento_cliente: '',
       nombre_cliente: '',
@@ -714,7 +718,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
         cantidad_final: [String(prod.cantidad), [Validators.required]],
         producto_nombre: [prod.producto_nombre],
         producto_sku: [prod.producto_sku],
-        imagen_producto: [prod.imagen_producto || this.placeholderImg],
+        imagen_producto: [this.onSetImageProduct(prod.imagen || prod.imagen_producto)],
         nombre_categoria: [prod.nombre_categoria],
         costo_venta: [prod.costo_original],
         productoId: [prod.productoId],
@@ -783,16 +787,11 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       // Remover de la sala de ventas
       this.pedidoSalaService.removePedido(this.pedidoSeleccionado.id);
 
-      // Si la venta fue ACEPTADA por SUNAT, eliminar el pedido permanentemente
-      if (venta?.comprobante?.estado_sunat === 'ACEPTADO') {
-        this.store.dispatch(eliminarPedido({ pedidoId: this.pedidoSeleccionado.id }));
-      } else {
-        // Si no fue aceptada, solo actualizar estado a ENTREGADO
-        this.store.dispatch(actualizarPedido({
-          pedidoId: this.pedidoSeleccionado.id,
-          data: { estado: 'ENTREGADO' }
-        }));
-      }
+      // Marcar pedido como pagado
+      this.store.dispatch(pagarPedido({
+        pedidoId: this.pedidoSeleccionado.id,
+        data: { estado: 'PAGADO', estado_pago: 'PAGADO' }
+      }));
 
       this.alerts.open('Venta realizada', {
         label: `${this.pedidoSeleccionado.numero_pedido} procesado como venta correctamente`,
@@ -855,6 +854,20 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   }
 
   hacerVenta() {
+    this.rucRequiredError.set(false);
+
+    const tipoComprobante = this.ventaForm.get('tipoComprobante')?.value;
+    const documento = this.ventaForm.get('documento_cliente')?.value?.toString() || '';
+
+    const isFactura = tipoComprobante === 'Factura';
+    const isDNI = documento.length === 8;
+
+    if (isFactura && isDNI) {
+      this.rucRequiredError.set(true);
+      this.cdr.detectChanges();
+      return;
+    }
+
     const preparedData = {
       ...this.ventaForm.value,
       correo_cliente: this.ventaForm.get('correo_cliente')?.value || '',
@@ -889,14 +902,11 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
 
   onSetImageProduct(img: any) {
-
     const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
-
-    const imagenFinal = img == null
-      ? URL_BASE + img
-      : placeholder;
-
-    return imagenFinal;
+    if (!img) return placeholder;
+    const imgStr = String(img);
+    if (imgStr.startsWith('http')) return imgStr;
+    return URL_BASE + imgStr;
   }
 
 

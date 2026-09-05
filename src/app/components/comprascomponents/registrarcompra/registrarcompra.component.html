@@ -1,21 +1,229 @@
 <tui-loader [showLoader]="!!(loading$ | async)?.loadingCreate">
-  <form [formGroup]="compraForm" class="p-4 space-y-4">
+
+    <!-- Toggle BOLETA / FACTURA -->
+   <div *ngIf="pasoActual === 1" class="flex flex-col items-center justify-center py-16 gap-8">
+  <div class="text-center">
+    <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200">Selecciona el tipo de comprobante</h3>
+    <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">El tipo determina los datos que vas a pedir al cliente</p>
+  </div>
+
+  <div class="flex flex-col sm:flex-row gap-5">
+
+    <!-- FACTURA -->
+    <div role="button" tabindex="0"
+      (click)="seleccionarTipoComprobante('01')"
+      (keydown.enter)="seleccionarTipoComprobante('01')"
+      [class.border-blue-500]="tipoComprobanteSeleccionado === '01'"
+      [class.border-neutral-200]="tipoComprobanteSeleccionado !== '01'"
+      [class.dark:border-neutral-700]="tipoComprobanteSeleccionado !== '01'"
+      class="relative w-72 text-left rounded-2xl border-2 bg-white dark:bg-neutral-800 p-6 transition-all cursor-pointer hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+
+      <div class="absolute top-4 right-4 h-5 w-5 rounded-full border-2 flex items-center justify-center transition-colors"
+        [class.border-blue-600]="tipoComprobanteSeleccionado === '01'"
+        [class.bg-blue-600]="tipoComprobanteSeleccionado === '01'"
+        [class.border-neutral-300]="tipoComprobanteSeleccionado !== '01'"
+        [class.dark:border-neutral-600]="tipoComprobanteSeleccionado !== '01'">
+        <svg *ngIf="tipoComprobanteSeleccionado === '01'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
+
+      <div class="h-11 w-11 rounded-xl bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2h9l3 3v17H6z"/><path d="M9 8h6M9 12h6M9 16h4"/>
+        </svg>
+      </div>
+
+      <p class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">Factura</p>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1 leading-snug">Para empresas que necesitan sustentar gasto o costo</p>
+
+      <div class="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-full px-2.5 py-1">
+        Requiere RUC
+      </div>
+    </div>
+
+    <!-- BOLETA -->
+    <div role="button" tabindex="0"
+      (click)="seleccionarTipoComprobante('03')"
+      (keydown.enter)="seleccionarTipoComprobante('03')"
+      [class.border-emerald-500]="tipoComprobanteSeleccionado === '03'"
+      [class.border-neutral-200]="tipoComprobanteSeleccionado !== '03'"
+      [class.dark:border-neutral-700]="tipoComprobanteSeleccionado !== '03'"
+      class="relative w-72 text-left rounded-2xl border-2 bg-white dark:bg-neutral-800 p-6 transition-all cursor-pointer hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+
+      <div class="absolute top-4 right-4 h-5 w-5 rounded-full border-2 flex items-center justify-center transition-colors"
+        [class.border-emerald-600]="tipoComprobanteSeleccionado === '03'"
+        [class.bg-emerald-600]="tipoComprobanteSeleccionado === '03'"
+        [class.border-neutral-300]="tipoComprobanteSeleccionado !== '03'"
+        [class.dark:border-neutral-600]="tipoComprobanteSeleccionado !== '03'">
+        <svg *ngIf="tipoComprobanteSeleccionado === '03'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
+
+      <div class="h-11 w-11 rounded-xl bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2h12v19l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6"/>
+        </svg>
+      </div>
+
+      <p class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">Boleta</p>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1 leading-snug">Para personas naturales, consumidor final</p>
+
+      <div class="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 rounded-full px-2.5 py-1">
+        Requiere DNI
+      </div>
+    </div>
+
+   </div>
+  </div>
+
+  <!-- Botón Continuar -->
+  <div *ngIf="tipoComprobanteSeleccionado && pasoActual === 1" class="mt-6 flex justify-center">
+    <button type="button" (click)="irAlMetodoSeleccion()"
+      class="px-8 py-3 rounded-xl bg-blue-600 text-white font-semibold text-lg hover:bg-blue-700 transition-all shadow-lg">
+      Continuar
+    </button>
+   </div>
+
+   <!-- Step Indicator -->
+  <div *ngIf="pasoActual >= 2" class="px-4 py-4 border-b border-neutral-200 dark:border-neutral-700">
+    <nav class="flex items-center justify-center gap-2 text-sm">
+      <ng-container *ngIf="metodoSeleccionado === 'formulario'; else archivoStepsHeader">
+        <span
+          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+          [class]="pasoActual >= 1 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-neutral-400'">Tipo de comprobante</span>
+        <span class="text-neutral-400">›</span>
+        <span
+          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+          [class]="pasoActual >= 2 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-neutral-400'">Método de registro</span>
+        <span class="text-neutral-400">›</span>
+        <span
+          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+          [class]="pasoActual >= 3 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-neutral-400'">Datos del comprobante</span>
+        <span class="text-neutral-400">›</span>
+        <span
+          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+          [class]="pasoActual >= 4 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-neutral-400'">Productos</span>
+        <span class="text-neutral-400">›</span>
+        <span
+          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+          [class]="pasoActual >= 5 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-neutral-400'">Confirmar y registrar</span>
+      </ng-container>
+      <ng-template #archivoStepsHeader>
+        <span
+          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+          [class]="pasoActual >= 1 ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'text-neutral-400'">Tipo de comprobante</span>
+        <span class="text-neutral-400">›</span>
+        <span
+          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+          [class]="pasoActual >= 2 ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'text-neutral-400'">Método de registro</span>
+        <span class="text-neutral-400">›</span>
+        <span
+          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+          [class]="pasoActual >= 3 ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'text-neutral-400'">Subir archivos</span>
+        <span class="text-neutral-400">›</span>
+        <span
+          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+          [class]="pasoActual >= 4 ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'text-neutral-400'">Confirmar y registrar</span>
+      </ng-template>
+    </nav>
+  </div>
+
+  <!-- Seleccion de Metodo -->
+  <div *ngIf="pasoActual === 2"
+    class="flex flex-col items-center justify-center py-16 gap-8">
+    <div class="text-center">
+      <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200">¿Cómo quieres registrar la compra?</h3>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Selecciona el método de registro</p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-5">
+      <!-- Llenar formulario -->
+      <div role="button" tabindex="0"
+        (click)="seleccionarMetodo('formulario')"
+        (keydown.enter)="seleccionarMetodo('formulario')"
+        [class.border-blue-500]="metodoSeleccionado === 'formulario'"
+        [class.border-neutral-200]="metodoSeleccionado !== 'formulario'"
+        [class.dark:border-neutral-700]="metodoSeleccionado !== 'formulario'"
+        class="relative w-72 text-center rounded-2xl border-2 bg-white dark:bg-neutral-800 p-6 transition-all cursor-pointer hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+
+        <div class="h-12 w-12 rounded-xl bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 mx-auto">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M9 13h6M9 17h6M9 9h6"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+
+        <p class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">Llenar formulario</p>
+        <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Completa los datos manualmente</p>
+      </div>
+
+      <!-- Subir PDF y XML -->
+      <div role="button" tabindex="0"
+        (click)="seleccionarMetodo('archivo')"
+        (keydown.enter)="seleccionarMetodo('archivo')"
+        [class.border-emerald-500]="metodoSeleccionado === 'archivo'"
+        [class.border-neutral-200]="metodoSeleccionado !== 'archivo'"
+        [class.dark:border-neutral-700]="metodoSeleccionado !== 'archivo'"
+        class="relative w-72 text-center rounded-2xl border-2 bg-white dark:bg-neutral-800 p-6 transition-all cursor-pointer hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+
+        <div class="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4 mx-auto">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2v4a2 2 0 0 0 2 2h4l-6 6-4-4z"/><path d="M20 12l-6 6v-4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v4l6 6-6 6h12"/>
+          </svg>
+        </div>
+
+        <p class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">Subir PDF y XML</p>
+        <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Importa datos desde archivos</p>
+      </div>
+    </div>
+
+    <!-- Volver -->
+    <button type="button" (click)="tipoComprobanteSeleccionado = ''"
+      class="text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 underline">
+      Volver
+    </button>
+   </div>
+
+      <form *ngIf="metodoSeleccionado === 'formulario' && pasoActual >= 3" [formGroup]="compraForm" (ngSubmit)="registrarCompra()" class="p-4 space-y-4">
+
+      <!-- Step 3: Datos del comprobante -->
+      <div *ngIf="pasoActual === 3" class="space-y-4">
+        <!-- Server Error Banner -->
+        <div *ngIf="(compraError$ | async) && getServerError()"
+          class="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 flex items-start gap-2">
+          <svg class="w-4 h-4 text-red-500 dark:text-red-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <span class="text-xs text-red-700 dark:text-red-300">{{ getServerError() }}</span>
+        </div>
+
+        <!-- Botón para cambiar tipo de comprobante -->
+        <div class="flex justify-between items-center">
+          <button type="button" (click)="metodoSeleccionado = ''; tipoComprobanteSeleccionado = ''"
+            class="text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 underline">
+            ← Volver
+          </button>
+          <button type="button" (click)="tipoComprobanteSeleccionado = ''; metodoSeleccionado = ''; pasoActual = 1"
+            class="text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 underline">
+            Cambiar tipo de comprobante
+          </button>
+        </div>
 
     <!-- Fila 1: Tipo + Serie + Correlativo -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      <!-- Tipo Comprobante -->
+      <!-- Tipo Comprobante (seleccionado vía toggle) -->
       <div>
         <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
-          Tipo Comprobante <span class="text-red-500">*</span>
+          Tipo Comprobante
         </label>
-        <tui-select formControlName="tipo_comprobante" class="w-full" tuiTextfieldSize="m"
-          [tuiTextfieldLabelOutside]="true">
-          <tui-data-list *tuiDataList>
-            <button *ngFor="let tipo of tipoComprobantes" tuiOption [value]="tipo">
-              {{ tipoComprobanteLabels[tipo] }}
-            </button>
-          </tui-data-list>
-        </tui-select>
+        <div class="w-full px-3 py-2 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-200 text-sm">
+          {{ tipoComprobanteLabels[tipoComprobanteSeleccionado] || f['tipo_comprobante'].value }}
+        </div>
+        <p *ngIf="(compraError$ | async)?.tipo_comprobante?.[0]" class="text-[11px] text-red-500 dark:text-red-400 mt-1">
+          {{ (compraError$ | async)?.tipo_comprobante?.[0] }}
+        </p>
         <p class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-1">
           {{ f['tipo_comprobante'].value === '01' ? 'Proveedor debe tener RUC' : 'Proveedor puede tener DNI o RUC' }}
         </p>
@@ -184,27 +392,38 @@
         <!-- Nro. Documento -->
         <div>
           <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nro. Documento</label>
-          <tui-textfield tuiTextfieldSize="m">
-            <input formControlName="numero_documento_proveedor"
-              [placeholder]="f['tipo_documento_proveedor'].value ? longitudesDocProveedor[f['tipo_documento_proveedor'].value]?.label : 'Seleccione tipo'"
-              tuiTextfield
-              (blur)="f['numero_documento_proveedor'].markAsTouched()" />
-          </tui-textfield>
-          <p *ngIf="getNroDocProveedorError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
-            <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-            </svg>
-            {{ getNroDocProveedorError() }}
-          </p>
+            <tui-textfield tuiTextfieldSize="m">
+              <input formControlName="numero_documento_proveedor"
+                [placeholder]="f['tipo_documento_proveedor'].value ? longitudesDocProveedor[f['tipo_documento_proveedor'].value]?.label : 'Seleccione tipo'"
+                tuiTextfield
+                (blur)="f['numero_documento_proveedor'].markAsTouched()" />
+              <span *ngIf="consultandoDocumento" class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></span>
+           </tui-textfield>
+           <p *ngIf="getNroDocProveedorError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
+             <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 011-1z" clip-rule="evenodd"/>
+             </svg>
+             {{ getNroDocProveedorError() }}
+           </p>
+           <!-- Server-side error for numero_documento -->
+           <p *ngIf="(compraError$ | async)?.numero_documento_proveedor?.[0]"
+             class="text-[11px] text-red-500 dark:text-red-400 mt-1">
+             {{ (compraError$ | async)?.numero_documento_proveedor?.[0] }}
+           </p>
+           <!-- Proveedor no encontrado -->
+           <p *ngIf="proveedorNoEncontrado"
+             class="text-[11px] text-amber-600 dark:text-amber-400 mt-1">
+             No se encontro informacion para este documento. Complete los datos manualmente.
+           </p>
         </div>
 
         <!-- Nombre Proveedor -->
         <div>
           <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nombre / Razon Social</label>
-          <tui-textfield tuiTextfieldSize="m">
-            <input formControlName="nombre_proveedor" placeholder="Nombre del proveedor" tuiTextfield
-              (blur)="f['nombre_proveedor'].markAsTouched()" />
-          </tui-textfield>
+            <tui-textfield tuiTextfieldSize="m">
+              <input formControlName="nombre_proveedor" placeholder="Se completara automaticamente" tuiTextfield
+                [disabled]="true" />
+            </tui-textfield>
         </div>
       </div>
 
@@ -262,7 +481,19 @@
           </svg>
         </button>
       </div>
-    </div>
+     </div>
+
+        <!-- Navegación Step 3 -->
+        <div class="flex justify-end pt-2">
+          <button type="button" (click)="pasoSiguiente()"
+            class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors">
+            Siguiente →
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 4: Productos -->
+      <div *ngIf="pasoActual === 4" class="space-y-4">
 
     <!-- Productos -->
     <div>
@@ -360,9 +591,24 @@
           <p class="text-xs text-neutral-500 dark:text-neutral-400">Haz clic en "Agregar producto" para comenzar</p>
         </div>
       </div>
-    </div>
+     </div>
 
-    <!-- Totales solo lectura -->
+        <!-- Navegación Step 4 -->
+        <div class="flex justify-between pt-2">
+          <button type="button" (click)="pasoAnterior()"
+            class="px-4 py-2 rounded-lg bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-semibold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">
+            ← Anterior
+          </button>
+          <button type="button" (click)="pasoSiguiente()"
+            class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors">
+            Siguiente →
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 5: Totales y Confirmar -->
+      <div *ngIf="pasoActual === 5" class="space-y-4">
+     <!-- Totales solo lectura -->
     <div class="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl p-4 border border-neutral-200 dark:border-neutral-700 space-y-2">
       <h3 class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">Resumen de montos</h3>
       <div class="flex justify-between items-center">
@@ -402,19 +648,138 @@
         <span class="text-3xl font-extrabold">S/. {{ totales.total | number:'1.2-2' }}</span>
       </div>
       <div class="flex gap-2">
-        <button tuiButton type="button" (click)="registrarCompra()" appearance="primary-grayscale" size="m" class="flex-1">
+        <button tuiButton type="button" (click)="registrarCompra()" [disabled]="!puedeRegistrar" appearance="primary-grayscale" size="m" class="flex-1">
           <span class="flex items-center justify-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            Registrar Comprobante
-          </span>
-        </button>
-        <button tuiButton type="button" (click)="limpiarFormulario()" appearance="flat" size="m">
-          Limpiar
-        </button>
+           Registrar Comprobante
+           </span>
+         </button>
+       </div>
+      </div>
+
+        <!-- Navegación Step 5 -->
+        <div class="pt-2">
+          <button type="button" (click)="pasoAnterior()"
+            class="px-4 py-2 rounded-lg bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-semibold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors mb-3">
+            ← Anterior
+          </button>
+        </div>
+      </div>
+
+   </form>
+
+    <!-- Subir PDF y XML -->
+    <div *ngIf="metodoSeleccionado === 'archivo' && pasoActual === 3" class="p-4 space-y-4">
+
+     <div class="flex items-center justify-between mb-4">
+       <h3 class="text-lg font-semibold text-neutral-800 dark:text-neutral-200">Subir PDF y XML</h3>
+     </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- PDF -->
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Archivo PDF</label>
+        <div *ngIf="!archivoPdf"
+          class="border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg p-4 text-center cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
+          (click)="pdfInput.click()">
+          <input #pdfInput type="file" accept=".pdf" class="hidden" (change)="onPdfSelected($event)" />
+          <svg class="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">Click para subir PDF</p>
+        </div>
+        <div *ngIf="archivoPdf"
+          class="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 border border-blue-200 dark:border-blue-700">
+          <svg class="w-5 h-5 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span class="text-sm text-blue-700 dark:text-blue-300 truncate flex-1">{{ archivoPdf.name }}</span>
+          <button type="button" (click)="archivoPdf = null"
+            class="text-red-400 hover:text-red-600 text-sm font-bold p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- XML -->
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Archivo XML</label>
+        <div *ngIf="!archivoFile"
+          class="border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg p-4 text-center cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
+          (click)="archivoInput.click()">
+          <input #archivoInput type="file" accept=".xml" class="hidden" (change)="onArchivoSelected($event)" />
+          <svg class="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+          </svg>
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">Click para subir XML</p>
+          <p class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-1">El XML se parseara automaticamente</p>
+        </div>
+        <div *ngIf="archivoFile"
+          class="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3 border border-emerald-200 dark:border-emerald-700">
+          <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span class="text-sm text-emerald-700 dark:text-emerald-300 truncate flex-1">{{ archivoFile.name }}</span>
+          <button type="button" (click)="archivoFile = null"
+            class="text-red-400 hover:text-red-600 text-sm font-bold p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
 
-  </form>
+    <!-- Navegación -->
+    <div class="flex justify-between pt-2">
+      <button type="button" (click)="metodoSeleccionado = ''; pasoActual = 2"
+        class="px-4 py-2 rounded-lg bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-semibold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">
+        ← Volver
+      </button>
+      <button type="button" (click)="pasoSiguiente()"
+        [disabled]="!archivoFile && !archivoPdf"
+        class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        Siguiente →
+      </button>
+     </div>
+   </div>
+
+    <!-- Step 4: Confirmar y Registrar (metodo archivo) -->
+    <div *ngIf="metodoSeleccionado === 'archivo' && pasoActual === 4" class="p-4 space-y-4">
+      <!-- Archivos adjuntos -->
+      <div class="flex flex-col gap-2">
+        <div *ngIf="archivoPdf" class="flex items-center gap-2 text-xs text-neutral-600 dark:text-neutral-400">
+          <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span> PDF: {{ archivoPdf.name }}</span>
+        </div>
+        <div *ngIf="archivoFile" class="flex items-center gap-2 text-xs text-neutral-600 dark:text-neutral-400">
+          <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span> XML: {{ archivoFile.name }}</span>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex gap-2">
+        <button type="button" (click)="pasoAnterior()"
+          class="px-4 py-2 rounded-lg bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-semibold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">
+          ← Anterior
+        </button>
+        <button tuiButton type="button" (click)="guardarComprobante()" [disabled]="!puedeRegistrar" appearance="primary-grayscale" size="m" class="flex-1">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+           Guardar Comprobante
+          </span>
+        </button>
+      </div>
+    </div>
 </tui-loader>

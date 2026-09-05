@@ -1,5 +1,5 @@
 import { Tienda } from '@/app/models/tienda.models';
-import { URL_BASE } from '@/app/services/utils/endpoints';
+import { URL_BASE, imageUrl } from '@/app/services/utils/endpoints';
 import { eliminarTiendaPermanently, eliminarTiendaPermanentlySuccess, updateTiendaAction } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
@@ -29,11 +29,18 @@ export class DialogdetailtiendaComponent implements OnInit {
   protected readonly context = injectContext<TuiDialogContext<boolean, Tienda>>();
   public tienda: Tienda = this.context.data ?? {};
   tiendaForm!: FormGroup;
-  URL_BASE = URL_BASE
+  URL_BASE = URL_BASE;
+  imageUrl = imageUrl;
   private destroy$ = new Subject<void>();
   selectedLogo: File | null = null;
-  logoPreview: string | null = URL_BASE + this.tienda.logo_img;
+  logoPreview: string | null = imageUrl(this.tienda.logo_img);
   loadingUpdateTienda: boolean = false
+  selectedCertPrivada: File | null = null;
+  certPrivadaFileName: string | null = null;
+  certPrivadaString: string | null = null;
+  selectedCertPublica: File | null = null;
+  certPublicaFileName: string | null = null;
+  certPublicaString: string | null = null;
   activeTab:
     | 'update'
     | 'config'
@@ -79,6 +86,36 @@ export class DialogdetailtiendaComponent implements OnInit {
       this.logoPreview = null;
     }
   }
+
+  onCertPrivadaSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedCertPrivada = input.files[0];
+      this.certPrivadaFileName = this.selectedCertPrivada.name;
+      const reader = new FileReader();
+      reader.onload = () => this.certPrivadaString = reader.result as string;
+      reader.readAsText(this.selectedCertPrivada);
+    } else {
+      this.selectedCertPrivada = null;
+      this.certPrivadaFileName = null;
+      this.certPrivadaString = null;
+    }
+  }
+
+  onCertPublicaSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedCertPublica = input.files[0];
+      this.certPublicaFileName = this.selectedCertPublica.name;
+      const reader = new FileReader();
+      reader.onload = () => this.certPublicaString = reader.result as string;
+      reader.readAsText(this.selectedCertPublica);
+    } else {
+      this.selectedCertPublica = null;
+      this.certPublicaFileName = null;
+      this.certPublicaString = null;
+    }
+  }
   onSubmit() {
     if (this.tiendaForm.valid) {
       // Creamos FormData
@@ -92,6 +129,14 @@ export class DialogdetailtiendaComponent implements OnInit {
       // Agregamos el logo si existe
       if (this.selectedLogo) {
         formData.append('logo_img', this.selectedLogo);
+      }
+
+      // Convertimos los archivos de cert_clave_privada y cert_clave_publica a string y los enviamos en el payload
+      if (this.certPrivadaString) {
+        formData.append('cert_clave_privada', this.certPrivadaString);
+      }
+      if (this.certPublicaString) {
+        formData.append('cert_clave_publica', this.certPublicaString);
       }
 
       // Despachamos la acción con FormData

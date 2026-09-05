@@ -1,5 +1,5 @@
 <tui-loader [showLoader]="loading || deleteTiendaLoader" [overlay]="true">
-  <div class="h-screen h-dvh bg-transparent" style="overflow-y: auto;">
+  <div class="h-screen h-dvh bg-transparent">
     <div class="max-w-[980px] mx-auto px-6 md:px-8 py-8">
       <!-- Back Apple -->
       <button (click)="goBack()" class="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#0071e3] hover:text-[#0077ed] transition-colors mb-6">
@@ -8,10 +8,10 @@
       </button>
 
       <!-- Header Apple — sin fondo pesado -->
-      <div class="flex gap-5 mb-6">
+      <div class="flex flex-col sm:flex-row sm:gap-5 sm:items-start mb-6">
         <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden ring-1 ring-black/[0.08] dark:ring-white/[0.08] bg-white dark:bg-[#2c2c2e] shrink-0">
           <img loading="lazy"
-            [src]="tienda?.logo_img ? URL_BASE + tienda.logo_img : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+            [src]="tienda?.logo_img ? imageUrl(tienda.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
             [alt]="tienda.nombre"
             class="w-full h-full object-cover" />
         </div>
@@ -29,9 +29,7 @@
             <span *ngIf="tienda.razon_social">{{ tienda.razon_social }} · </span>RUC {{ tienda.ruc || '—' }} · {{ tienda.direccion || 'Sin dirección' }}
           </p>
           <div class="flex flex-wrap gap-2 mt-2 text-[11px]">
-            <span class="px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white font-mono">ID {{ tienda.id }}</span>
             <span *ngIf="tienda.serie" class="px-2 py-1 rounded-full border border-black/[0.08] dark:border-white/[0.08] text-[#86868b] font-mono">Serie {{ tienda.serie }}</span>
-            <span *ngIf="tienda.propietario" class="px-2 py-1 rounded-full border border-black/[0.08] dark:border-white/[0.08] text-[#86868b]">Prop. #{{ tienda.propietario }}</span>
             <span *ngIf="tienda.date_created" class="px-2 py-1 rounded-full bg-transparent border border-black/[0.06] dark:border-white/[0.08] text-[#86868b]">Creada {{ tienda.date_created | date:'mediumDate' }}</span>
           </div>
         </div>
@@ -50,27 +48,29 @@
 
       <ng-container *ngIf="tienda?.id">
       <!-- Segmented Control Apple -->
-      <div class="inline-flex p-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] backdrop-blur mb-6">
+      <div class="overflow-x-auto scrollbar-hide -mx-1 mb-6">
+        <div class="inline-flex items-center p-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] backdrop-blur min-w-max">
         <button (click)="setTab('update')"
-          class="px-4 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
+          class="px-3 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
           [ngClass]="activeTab === 'update' ? 'bg-white dark:bg-[#3a3a3c] text-[#1d1d1f] dark:text-white shadow-sm ring-1 ring-black/[0.04]' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white'">
           Información de la tienda
         </button>
         <button (click)="setTab('personal')"
-          class="px-4 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
+          class="px-3 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
           [ngClass]="activeTab === 'personal' ? 'bg-white dark:bg-[#3a3a3c] text-[#1d1d1f] dark:text-white shadow-sm ring-1 ring-black/[0.04]' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white'">
           Personal
         </button>
         <button (click)="setTab('diseno')"
-          class="px-4 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
+          class="px-3 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
           [ngClass]="activeTab === 'diseno' ? 'bg-white dark:bg-[#3a3a3c] text-[#1d1d1f] dark:text-white shadow-sm ring-1 ring-black/[0.04]' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white'">
           Diseño
         </button>
         <button *ngIf="isSuperUser" (click)="setTab('config')"
-          class="px-4 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
+          class="px-3 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
           [ngClass]="activeTab === 'config' ? 'bg-white dark:bg-[#3a3a3c] text-[#1d1d1f] dark:text-white shadow-sm ring-1 ring-black/[0.04]' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white'">
           Configuración
         </button>
+        </div>
       </div>
 
       <!-- TAB: Información de la tienda -->
@@ -108,7 +108,7 @@
               <div class="px-5 py-3 text-center"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Nota créd.</p><p class="font-mono text-[13px] font-semibold text-[#1d1d1f] dark:text-white">{{ tienda.correlativo_inicial_nota_credito }}</p></div>
             </div>
             <div class="px-5 py-3 flex flex-wrap gap-2 text-[11px]">
-              <span class="px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white">Propietario #{{ tienda.propietario ?? '—' }}</span>
+              <span class="px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white">Propietario: {{ getPropietarioNombre(tienda) }}</span>
               <span class="px-2 py-1 rounded-full border border-black/[0.08] dark:border-white/[0.08] text-[#86868b]">Creada {{ tienda.date_created | date:'medium' }}</span>
               <span class="px-2 py-1 rounded-full border border-black/[0.08] dark:border-white/[0.08] text-[#86868b]">Logo {{ tienda.logo_img ? 'sí' : 'no' }}</span>
             </div>
@@ -127,20 +127,18 @@
             <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3">
               <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#0071e3]"></span>Logo</p>
               <div class="mt-2 w-full aspect-square rounded-xl overflow-hidden bg-white dark:bg-[#1c1c1e] ring-1 ring-black/[0.06] flex items-center justify-center">
-                <img *ngIf="tienda.logo_img" [src]="URL_BASE + tienda.logo_img" alt="Logo" class="w-full h-full object-contain p-2"/>
+                <img *ngIf="tienda.logo_img" [src]="imageUrl(tienda.logo_img)" alt="Logo" class="w-full h-full object-contain p-2"/>
                 <div *ngIf="!tienda.logo_img" class="text-center p-4">
                   <svg class="w-6 h-6 mx-auto text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.608-4.608a2 2 0 012.828 0L16 16m-2-2l1.5-1.5a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                   <p class="text-[10px] text-[#86868b] mt-1">Previa 512×512</p>
                 </div>
-              </div>
-              <p class="text-[10px] leading-3 text-[#86868b] mt-2">512×512 · 1:1 · PNG transp/JPG · Máx 2MB</p>
-              <p class="text-[10px] font-mono truncate mt-1 text-[#1d1d1f] dark:text-white">{{ tienda.logo_img || '—' }}</p>
+               </div>
             </div>
             <!-- Logo dark -->
             <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3">
               <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#1d1d1f] dark:bg-white"></span>Logo dark</p>
               <div class="mt-2 w-full aspect-square rounded-xl overflow-hidden bg-[#1d1d1f] dark:bg-white ring-1 ring-black/[0.06] flex items-center justify-center">
-                <img *ngIf="$any(tienda).logo_dark || $any(tienda).logo_dark_img" [src]="URL_BASE + ($any(tienda).logo_dark || $any(tienda).logo_dark_img)" alt="Logo dark" class="w-full h-full object-contain p-2"/>
+                <img *ngIf="$any(tienda).logo_dark || $any(tienda).logo_dark_img" [src]="imageUrl($any(tienda).logo_dark || $any(tienda).logo_dark_img)" alt="Logo dark" class="w-full h-full object-contain p-2"/>
                 <div *ngIf="!$any(tienda).logo_dark && !$any(tienda).logo_dark_img" class="text-center p-4">
                   <svg class="w-6 h-6 mx-auto text-white/60 dark:text-black/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                   <p class="text-[10px] text-white/60 dark:text-black/50 mt-1">Previa dark</p>
@@ -149,31 +147,8 @@
               <p class="text-[10px] leading-3 text-[#86868b] mt-2">512×512 · Blanca · Máx 2MB · Para dark mode</p>
               <p class="text-[10px] font-mono truncate mt-1 text-[#1d1d1f] dark:text-white">{{ $any(tienda).logo_dark || $any(tienda).logo_dark_img || '—' }}</p>
             </div>
-            <!-- Banner -->
-            <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3">
-              <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#30d158]"></span>Banner</p>
-              <div class="mt-2 w-full aspect-[3/1] rounded-xl overflow-hidden bg-white dark:bg-[#1c1c1e] ring-1 ring-black/[0.06] flex items-center justify-center">
-                <img *ngIf="$any(tienda).banner || $any(tienda).banner_img" [src]="URL_BASE + ($any(tienda).banner || $any(tienda).banner_img)" alt="Banner" class="w-full h-full object-cover"/>
-                <div *ngIf="!$any(tienda).banner && !$any(tienda).banner_img" class="text-center p-3">
-                  <svg class="w-6 h-6 mx-auto text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.608-4.608a2 2 0 012.828 0L16 16m-2-2l1.5-1.5a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                  <p class="text-[10px] text-[#86868b] mt-1">Previa 1200×400</p>
-                </div>
-              </div>
-              <p class="text-[10px] leading-3 text-[#86868b] mt-2">1200×400 · 3:1 · JPG/PNG · Máx 5MB · Cover</p>
-              <p class="text-[10px] font-mono truncate mt-1 text-[#1d1d1f] dark:text-white">{{ $any(tienda).banner || $any(tienda).banner_img || '—' }}</p>
-            </div>
           </div>
-          <div class="px-4 pb-4">
-            <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3 flex gap-3">
-              <div class="w-8 h-8 rounded-lg bg-[#0071e3]/10 flex items-center justify-center shrink-0"><svg class="w-4 h-4 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11c0 3.517-1.009 6.797-2.753 9.579a.5.5 0 01-.86-.49A9.001 9.001 0 0012 3a9.001 9.001 0 003.613 17.09.5.5 0 01-.86.49A10.97 10.97 0 0112 11z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11V7a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
-              <div class="flex-1 min-w-0">
-                <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Archivo clave SUNAT</p>
-                <p class="text-[11px] font-mono truncate text-[#86868b]">{{ $any(tienda).certificado || $any(tienda).clave || $any(tienda).archivo_sunat || '— no cargado (previa)' }}</p>
-                <p class="text-[10px] text-[#86868b]">Previa local · .p12/.pfx/.pem · Se sube en editar</p>
-              </div>
-            </div>
           </div>
-        </div>
 
       </div>
 
@@ -191,177 +166,415 @@
         </div>
       </div>
 
-      <!-- TAB: Diseño — ambos perfiles, 3 boletas 80mm + 3 facturas PDF, solo previa en cards -->
+      <!-- TAB: Diseño — ambos perfiles, 6 boletas 80mm + 3 facturas PDF, solo previa en cards -->
       <div *ngIf="activeTab === 'diseno'" class="space-y-6">
         <!-- Boletas 80mm -->
         <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
           <div class="px-5 py-3 flex items-center justify-between">
             <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">Boletas — Ticket 80mm</p>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">3 diseños · térmica</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">6 diseños · térmica</span>
           </div>
           <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
-          <div class="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <!-- Ticket 1 — Minimal -->
-            <div (click)="selectedTicket='t80_1'" class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all" [ngClass]="selectedTicket==='t80_1' ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
+          <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div *ngFor="let tpl of ticketTemplates"
+                 (click)="selectTicket(tpl.key)"
+                 class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all"
+                 [ngClass]="selectedTicket===tpl.key ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
               <div class="flex items-center justify-between mb-2">
-                <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Minimal</p>
-                <span *ngIf="selectedTicket==='t80_1'" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
-                <span *ngIf="selectedTicket!=='t80_1'" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
-              </div>
-              <div class="mx-auto w-[140px] bg-white dark:bg-[#1c1c1e] border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
-                <div class="p-2 text-center border-b border-dashed border-black/[0.08]">
-                  <div class="w-6 h-6 mx-auto rounded bg-black/[0.06]"></div>
-                  <p class="text-[7px] font-bold tracking-wide mt-1">{{ tienda.nombre || 'TIENDA' }}</p>
-                  <p class="text-[5px] text-[#86868b]">RUC {{ tienda.ruc || '20123456789' }}</p>
+                <div class="flex items-center gap-2">
+                  <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">{{ tpl.label }}</p>
+                  <span *ngIf="tpl.key==='t80_1'" class="text-[9px] px-1.5 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3] font-semibold">Default</span>
                 </div>
-                <div class="p-2 space-y-1">
-                  <div class="flex justify-between text-[5px]"><span class="text-[#86868b]">B001-00012</span><span>12/05/24</span></div>
-                  <div class="h-px bg-black/[0.06]"></div>
-                  <div class="space-y-0.5 text-[5px] leading-3">
-                    <div class="flex justify-between"><span>Producto A x1</span><span>10.00</span></div>
-                    <div class="flex justify-between"><span>Producto B x2</span><span>20.00</span></div>
-                  </div>
-                  <div class="h-px bg-black/[0.06]"></div>
-                  <div class="flex justify-between text-[6px] font-bold"><span>Total</span><span>S/ 30.00</span></div>
-                  <div class="mt-1 h-3 bg-black/[0.08] rounded"></div>
-                  <p class="text-[4px] text-center text-[#86868b] mt-1">¡Gracias por su compra!</p>
-                </div>
+                <span *ngIf="selectedTicket===tpl.key" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
+                <span *ngIf="selectedTicket!==tpl.key" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
               </div>
-              <p class="text-[10px] text-[#86868b] mt-2 text-center">80mm · Minimal · Centrado</p>
-            </div>
-            <!-- Ticket 2 — Detallado -->
-            <div (click)="selectedTicket='t80_2'" class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all" [ngClass]="selectedTicket==='t80_2' ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
-              <div class="flex items-center justify-between mb-2">
-                <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Detallado</p>
-                <span *ngIf="selectedTicket==='t80_2'" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
-                <span *ngIf="selectedTicket!=='t80_2'" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
-              </div>
-              <div class="mx-auto w-[140px] bg-white dark:bg-[#1c1c1e] border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
-                <div class="p-2 flex gap-2 border-b border-black/[0.08]">
-                  <div class="w-7 h-7 rounded bg-black/[0.06]"></div>
-                  <div class="flex-1"><p class="text-[6px] font-bold">{{ tienda.nombre || 'TIENDA' }}</p><p class="text-[5px] text-[#86868b]">{{ tienda.direccion || 'Av. Principal 123' }}</p></div>
-                </div>
-                <div class="p-2">
-                  <div class="grid grid-cols-3 text-[4px] font-semibold border-b border-black/[0.08] pb-1"><span>Cant</span><span>Desc</span><span class="text-right">Imp</span></div>
-                  <div class="space-y-1 text-[5px] pt-1">
-                    <div class="grid grid-cols-3"><span>1</span><span>Prod A</span><span class="text-right">10.00</span></div>
-                    <div class="grid grid-cols-3"><span>2</span><span>Prod B</span><span class="text-right">20.00</span></div>
+              <div class="mx-auto w-[120px] sm:w-[140px] bg-white dark:bg-[#1c1c1e] border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
+                <ng-container [ngSwitch]="tpl.key">
+                  <!-- Ticket 1 — Clásico -->
+                  <div *ngSwitchCase="'t80_1'">
+                    <div class="h-1 bg-black"></div>
+                    <div class="p-2 text-center">
+                      <p class="text-[7px] font-black tracking-widest">{{ tienda.nombre || 'TIENDA' }}</p>
+                      <p class="text-[5px] text-[#86868b]">BOLETA DE VENTA</p>
+                      <div class="mt-1 border-t border-b border-dashed border-black/[0.08] py-1 text-[5px] leading-3">
+                        <div class="flex justify-between"><span>Cajero:</span><span>Juan</span></div>
+                        <div class="flex justify-between"><span>Cliente:</span><span>Consumidor</span></div>
+                      </div>
+                      <div class="text-[5px] text-left mt-1 space-y-0.5">
+                        <div class="flex justify-between"><span>1 Prod A</span><span>10.00</span></div>
+                        <div class="flex justify-between font-bold border-t border-black pt-1"><span>TOTAL</span><span>30.00</span></div>
+                      </div>
+                      <p class="text-[4px] text-[#86868b] mt-2">Política de devolución 7 días</p>
+                    </div>
                   </div>
-                  <div class="mt-1 space-y-0.5 text-[5px] border-t border-black/[0.06] pt-1">
-                    <div class="flex justify-between"><span>Subtotal</span><span>25.42</span></div>
-                    <div class="flex justify-between"><span>IGV</span><span>4.58</span></div>
-                    <div class="flex justify-between font-bold"><span>Total</span><span>30.00</span></div>
+                  <!-- Ticket 2 — Minimal -->
+                  <div *ngSwitchCase="'t80_2'">
+                    <div class="p-2 text-center border-b border-dashed border-black/[0.08]">
+                      <div class="w-6 h-6 mx-auto rounded bg-black/[0.06]"></div>
+                      <p class="text-[7px] font-bold tracking-wide mt-1">{{ tienda.nombre || 'TIENDA' }}</p>
+                      <p class="text-[5px] text-[#86868b]">RUC {{ tienda.ruc || '20123456789' }}</p>
+                    </div>
+                    <div class="p-2 space-y-1">
+                      <div class="flex justify-between text-[5px]"><span class="text-[#86868b]">B001-00012</span><span>12/05/24</span></div>
+                      <div class="h-px bg-black/[0.06]"></div>
+                      <div class="space-y-0.5 text-[5px] leading-3">
+                        <div class="flex justify-between"><span>Producto A x1</span><span>10.00</span></div>
+                        <div class="flex justify-between"><span>Producto B x2</span><span>20.00</span></div>
+                      </div>
+                      <div class="h-px bg-black/[0.06]"></div>
+                      <div class="flex justify-between text-[6px] font-bold"><span>Total</span><span>S/ 30.00</span></div>
+                      <div class="mt-1 h-3 bg-black/[0.08] rounded"></div>
+                      <p class="text-[4px] text-center text-[#86868b] mt-1">¡Gracias por su compra!</p>
+                    </div>
                   </div>
-                  <div class="mt-1 flex justify-center"><div class="w-10 h-10 border border-black/[0.08] grid grid-cols-4 gap-px p-1"><div class="bg-black w-full h-full" *ngFor="let i of [1,2,3,4,5,6,7,8]"></div></div></div>
-                </div>
-              </div>
-              <p class="text-[10px] text-[#86868b] mt-2 text-center">80mm · Detallado · QR</p>
-            </div>
-            <!-- Ticket 3 — Clásico -->
-            <div (click)="selectedTicket='t80_3'" class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all" [ngClass]="selectedTicket==='t80_3' ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
-              <div class="flex items-center justify-between mb-2">
-                <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Clásico</p>
-                <span *ngIf="selectedTicket==='t80_3'" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
-                <span *ngIf="selectedTicket!=='t80_3'" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
-              </div>
-              <div class="mx-auto w-[140px] bg-white dark:bg-[#1c1c1e] border-2 border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
-                <div class="h-1 bg-black"></div>
-                <div class="p-2 text-center">
-                  <p class="text-[7px] font-black tracking-widest">{{ tienda.nombre || 'TIENDA' }}</p>
-                  <p class="text-[5px] text-[#86868b]">BOLETA DE VENTA</p>
-                  <div class="mt-1 border-t border-b border-dashed border-black/[0.08] py-1 text-[5px] leading-3">
-                    <div class="flex justify-between"><span>Cajero:</span><span>Juan</span></div>
-                    <div class="flex justify-between"><span>Cliente:</span><span>Consumidor</span></div>
+                  <!-- Ticket 3 — Bold -->
+                  <div *ngSwitchCase="'t80_3'">
+                    <div class="bg-black p-2 text-center">
+                      <p class="text-[8px] font-black tracking-widest text-white">{{ tienda.nombre || 'TIENDA' }}</p>
+                      <p class="text-[5px] text-white/70 font-semibold tracking-wide">★ BOLETA DE VENTA ★</p>
+                    </div>
+                    <div class="p-2 bg-white">
+                      <div class="bg-black/[0.04] p-1 rounded mb-1">
+                        <p class="text-[5px] text-center font-bold">B001-00012</p>
+                      </div>
+                      <div class="space-y-0.5 text-[5px] font-semibold">
+                        <div class="flex justify-between border-b border-black/[0.08] pb-0.5"><span>PROD A x1</span><span>S/ 10.00</span></div>
+                        <div class="flex justify-between border-b border-black/[0.08] pb-0.5"><span>PROD B x2</span><span>S/ 20.00</span></div>
+                      </div>
+                      <div class="mt-1 bg-black text-white text-center py-1 rounded">
+                        <p class="text-[4px] font-bold tracking-wider">TOTAL A PAGAR</p>
+                        <p class="text-[8px] font-black">S/ 30.00</p>
+                      </div>
+                      <p class="text-[4px] text-center mt-1 font-bold">¡GRACIAS POR SU COMPRA!</p>
+                    </div>
                   </div>
-                  <div class="text-[5px] text-left mt-1 space-y-0.5">
-                    <div class="flex justify-between"><span>1 Prod A</span><span>10.00</span></div>
-                    <div class="flex justify-between font-bold border-t border-black pt-1"><span>TOTAL</span><span>30.00</span></div>
+                  <!-- Ticket 4 — Punteado -->
+                  <div *ngSwitchCase="'t80_4'">
+                    <div class="p-2 text-center border-dashed border-2 border-black/[0.15] m-1">
+                      <p class="text-[7px] font-bold tracking-wide">{{ tienda.nombre || 'TIENDA' }}</p>
+                      <p class="text-[4px] text-[#86868b] tracking-widest">· BOLETA ·</p>
+                    </div>
+                    <div class="px-2 pb-2">
+                      <div class="border-t border-dashed border-black/[0.15] border-b py-1 text-[5px]">
+                        <div class="flex justify-between"><span>Prod A · 1u</span><span>10.00</span></div>
+                        <div class="flex justify-between"><span>Prod B · 2u</span><span>20.00</span></div>
+                      </div>
+                      <div class="flex justify-between text-[6px] font-bold pt-1">
+                        <span>TOTAL</span><span>S/ 30.00</span>
+                      </div>
+                      <p class="text-[4px] text-center text-[#86868b] mt-1 border-t border-dashed border-black/[0.15] pt-1">····· gracias ·····</p>
+                    </div>
                   </div>
-                  <p class="text-[4px] text-[#86868b] mt-2">Política de devolución 7 días</p>
-                </div>
+                  <!-- Ticket 5 — Condensado -->
+                  <div *ngSwitchCase="'t80_5'">
+                    <div class="p-1.5 text-center border-b border-black/[0.12]">
+                      <p class="text-[6px] font-bold">{{ tienda.nombre || 'TIENDA' }}</p>
+                    </div>
+                    <div class="p-1.5 text-[4px] leading-tight">
+                      <div class="grid grid-cols-3 font-bold border-b border-black/[0.12] pb-0.5">
+                        <span>Cant</span><span>Desc</span><span class="text-right">Importe</span>
+                      </div>
+                      <div class="grid grid-cols-3 py-0.5 border-b border-black/[0.06]">
+                        <span>1</span><span>ProdA</span><span class="text-right">10.00</span>
+                      </div>
+                      <div class="grid grid-cols-3 py-0.5 border-b border-black/[0.06]">
+                        <span>2</span><span>ProdB</span><span class="text-right">20.00</span>
+                      </div>
+                      <div class="flex justify-between font-bold pt-0.5"><span>TOTAL</span><span>S/ 30.00</span></div>
+                    </div>
+                  </div>
+                  <!-- Ticket 6 — Enmarcado -->
+                  <div *ngSwitchCase="'t80_6'">
+                    <div class="m-1 border-2 border-black/[0.15] rounded">
+                      <div class="p-2 text-center border-b border-black/[0.08]">
+                        <div class="w-6 h-6 mx-auto rounded-full bg-black/[0.08] mb-1"></div>
+                        <p class="text-[7px] font-bold">{{ tienda.nombre || 'TIENDA' }}</p>
+                        <p class="text-[4px] text-[#86868b]">RUC {{ tienda.ruc || '20123456789' }}</p>
+                      </div>
+                      <div class="p-2 text-[5px]">
+                        <div class="flex justify-between"><span>Cliente:</span><span>Consumidor</span></div>
+                        <div class="flex justify-between"><span>Fecha:</span><span>12/05/24</span></div>
+                        <div class="my-1 border-t border-black/[0.08]"></div>
+                        <div class="flex justify-between"><span>Prod A</span><span>10.00</span></div>
+                        <div class="flex justify-between"><span>Prod B</span><span>20.00</span></div>
+                        <div class="my-1 border-t border-black/[0.08]"></div>
+                        <div class="flex justify-between font-bold text-[6px]"><span>TOTAL</span><span>S/ 30.00</span></div>
+                      </div>
+                    </div>
+                    <p class="text-[4px] text-center text-[#86868b] -mt-1">¡Gracias!</p>
+                  </div>
+                </ng-container>
               </div>
-              <p class="text-[10px] text-[#86868b] mt-2 text-center">80mm · Clásico · Doble línea</p>
+              <p class="text-[10px] text-[#86868b] mt-2 text-center">{{ tpl.desc }}</p>
             </div>
           </div>
         </div>
         <!-- Facturas PDF -->
         <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
           <div class="px-5 py-3 flex items-center justify-between">
-            <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">Facturas — PDF</p>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">3 estilos · A4</span>
+            <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">Diseño de Facturas PDF</p>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">6 estilos · A4</span>
           </div>
           <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
-          <div class="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <!-- PDF 1 Moderna -->
-            <div (click)="selectedInvoice='pdf_1'" class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all" [ngClass]="selectedInvoice==='pdf_1' ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
+          <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div *ngFor="let tpl of invoiceTemplates"
+                 (click)="selectInvoice(tpl.key)"
+                 class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all"
+                 [ngClass]="selectedInvoice===tpl.key ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
               <div class="flex items-center justify-between mb-2">
-                <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Moderna</p>
-                <span *ngIf="selectedInvoice==='pdf_1'" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
-                <span *ngIf="selectedInvoice!=='pdf_1'" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
+                <div class="flex items-center gap-2">
+                  <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">{{ tpl.label }}</p>
+                  <span *ngIf="tpl.key==='pdf_1'" class="text-[9px] px-1.5 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3] font-semibold">Default</span>
+                </div>
+                <span *ngIf="selectedInvoice===tpl.key" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
+                <span *ngIf="selectedInvoice!==tpl.key" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
               </div>
-              <div class="mx-auto w-[150px] bg-white border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
-                <div class="h-2 bg-[#0071e3]"></div>
-                <div class="p-2">
-                  <div class="flex justify-between items-start">
-                    <div class="w-6 h-6 bg-black/[0.06] rounded"></div>
-                    <div class="text-right"><p class="text-[6px] font-bold">FACTURA</p><p class="text-[5px] text-[#86868b]">F001-00012</p></div>
+              <div class="mx-auto w-[120px] sm:w-[150px] bg-white border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
+                <ng-container [ngSwitch]="tpl.key">
+                  <!-- PDF 1 — Corporate -->
+                  <div *ngSwitchCase="'pdf_1'">
+                    <div class="h-2 bg-[#0071e3]"></div>
+                    <div class="p-2">
+                      <div class="flex justify-between items-start">
+                        <div class="w-6 h-6 bg-black/[0.06] rounded"></div>
+                        <div class="text-right"><p class="text-[6px] font-bold">FACTURA</p><p class="text-[5px] text-[#86868b]">F001-00012</p></div>
+                      </div>
+                      <div class="mt-2 h-px bg-black/[0.06]"></div>
+                      <div class="mt-1 grid grid-cols-3 text-[4px] font-semibold bg-black/[0.04] rounded px-1 py-0.5"><span>Desc</span><span class="text-center">Cant</span><span class="text-right">Total</span></div>
+                      <div class="space-y-1 text-[5px] p-1">
+                        <div class="flex justify-between"><span>Producto A</span><span>10.00</span></div>
+                        <div class="flex justify-between font-bold border-t pt-1"><span>Total</span><span>S/ 30.00</span></div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="mt-2 h-px bg-black/[0.06]"></div>
-                  <div class="mt-1 grid grid-cols-3 text-[4px] font-semibold bg-black/[0.04] rounded px-1 py-0.5"><span>Desc</span><span class="text-center">Cant</span><span class="text-right">Total</span></div>
-                  <div class="space-y-1 text-[5px] p-1">
-                    <div class="flex justify-between"><span>Producto A</span><span>10.00</span></div>
-                    <div class="flex justify-between font-bold border-t pt-1"><span>Total</span><span>S/ 30.00</span></div>
+                  <!-- PDF 2 — Minimal -->
+                  <div *ngSwitchCase="'pdf_2'">
+                    <div class="p-2 border-b border-black/[0.08] flex justify-between">
+                      <div class="w-8 h-4 border border-black/[0.08]"></div>
+                      <p class="text-[5px] font-mono border border-black px-1">RUC {{ tienda.ruc || '20123456789' }}</p>
+                    </div>
+                    <div class="p-2">
+                      <div class="border border-black/[0.08] rounded">
+                        <div class="grid grid-cols-3 text-[4px] font-bold border-b bg-black/[0.02] px-1 py-0.5"><span>Item</span><span>Precio</span><span class="text-right">Importe</span></div>
+                        <div class="text-[5px] p-1 space-y-0.5"><div class="flex justify-between"><span>Prod A</span><span>10.00</span></div><div class="flex justify-between font-bold"><span>Total</span><span>30.00</span></div></div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <p class="text-[10px] text-[#86868b] mt-2 text-center">PDF · Moderna · Barra color</p>
-            </div>
-            <!-- PDF 2 Clásica -->
-            <div (click)="selectedInvoice='pdf_2'" class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all" [ngClass]="selectedInvoice==='pdf_2' ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
-              <div class="flex items-center justify-between mb-2">
-                <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Clásica</p>
-                <span *ngIf="selectedInvoice==='pdf_2'" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
-                <span *ngIf="selectedInvoice!=='pdf_2'" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
-              </div>
-              <div class="mx-auto w-[150px] bg-white border border-black/[0.15] rounded-lg overflow-hidden shadow-sm">
-                <div class="p-2 border-b border-black/[0.08] flex justify-between">
-                  <div class="w-8 h-4 border border-black/[0.08]"></div>
-                  <p class="text-[5px] font-mono border border-black px-1">RUC {{ tienda.ruc || '20123456789' }}</p>
-                </div>
-                <div class="p-2">
-                  <div class="border border-black/[0.08] rounded">
-                    <div class="grid grid-cols-3 text-[4px] font-bold border-b bg-black/[0.02] px-1 py-0.5"><span>Item</span><span>Precio</span><span class="text-right">Importe</span></div>
-                    <div class="text-[5px] p-1 space-y-0.5"><div class="flex justify-between"><span>Prod A</span><span>10.00</span></div><div class="flex justify-between font-bold"><span>Total</span><span>30.00</span></div></div>
+                  <!-- PDF 3 — Executive -->
+                  <div *ngSwitchCase="'pdf_3'">
+                    <div class="bg-[#1d1d1f] text-white p-2 flex justify-between items-center">
+                      <div class="w-6 h-6 bg-white/20 rounded"></div>
+                      <p class="text-[6px] font-bold tracking-widest">FACTURA</p>
+                    </div>
+                    <div class="p-2">
+                      <div class="text-[5px] space-y-1">
+                        <div class="flex justify-between"><span class="text-[#86868b]">Cliente</span><span>Consumidor Final</span></div>
+                        <div class="h-px bg-black/[0.06]"></div>
+                        <div class="flex justify-between font-bold"><span>Total</span><span class="text-[#0071e3]">S/ 30.00</span></div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <p class="text-[10px] text-[#86868b] mt-2 text-center">PDF · Clásica · Rejilla</p>
-            </div>
-            <!-- PDF 3 Elegante -->
-            <div (click)="selectedInvoice='pdf_3'" class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all" [ngClass]="selectedInvoice==='pdf_3' ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
-              <div class="flex items-center justify-between mb-2">
-                <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Elegante</p>
-                <span *ngIf="selectedInvoice==='pdf_3'" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
-                <span *ngIf="selectedInvoice!=='pdf_3'" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
-              </div>
-              <div class="mx-auto w-[150px] bg-white border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
-                <div class="bg-[#1d1d1f] text-white p-2 flex justify-between items-center">
-                  <div class="w-6 h-6 bg-white/20 rounded"></div>
-                  <p class="text-[6px] font-bold tracking-widest">FACTURA</p>
-                </div>
-                <div class="p-2">
-                  <div class="text-[5px] space-y-1">
-                    <div class="flex justify-between"><span class="text-[#86868b]">Cliente</span><span>Consumidor Final</span></div>
-                    <div class="h-px bg-black/[0.06]"></div>
-                    <div class="flex justify-between font-bold"><span>Total</span><span class="text-[#0071e3]">S/ 30.00</span></div>
+                  <!-- PDF 4 — Modern -->
+                  <div *ngSwitchCase="'pdf_4'">
+                    <div class="p-2 flex justify-between items-center border-b-2 border-[#0071e3]">
+                      <div>
+                        <div class="w-6 h-6 bg-[#0071e3]/15 rounded mb-1"></div>
+                        <p class="text-[5px] font-bold leading-tight">{{ tienda.nombre || 'EMPRESA S.A.C.' }}</p>
+                        <p class="text-[4px] text-[#86868b]">Av. Principal 123</p>
+                      </div>
+                      <div class="text-right">
+                        <p class="text-[7px] font-black text-[#0071e3] tracking-wider">FACTURA</p>
+                        <p class="text-[4px] text-[#86868b]">F001-00012</p>
+                      </div>
+                    </div>
+                    <div class="p-2 space-y-1">
+                      <div class="bg-[#0071e3]/[0.06] grid grid-cols-3 text-[4px] font-bold rounded px-1 py-0.5">
+                        <span>Descripción</span><span class="text-center">Cant</span><span class="text-right">Total</span>
+                      </div>
+                      <div class="text-[5px] space-y-0.5">
+                        <div class="flex justify-between"><span>Producto A</span><span>10.00</span></div>
+                        <div class="flex justify-between"><span>Producto B</span><span>20.00</span></div>
+                      </div>
+                      <div class="bg-[#0071e3] text-white text-[5px] font-bold rounded px-1 py-0.5 flex justify-between">
+                        <span>TOTAL</span><span>S/ 30.00</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                  <!-- PDF 5 — Ledger -->
+                  <div *ngSwitchCase="'pdf_5'">
+                    <div class="p-2 border-b border-double border-black/[0.2] flex justify-between">
+                      <p class="text-[5px] font-mono font-bold">{{ tienda.nombre || 'EMPRESA' }}</p>
+                      <p class="text-[5px] font-mono">FACTURA N° 00012</p>
+                    </div>
+                    <div class="p-2 text-[5px]">
+                      <div class="grid grid-cols-2 border border-black/[0.15]">
+                        <div class="border-b border-r border-black/[0.15] px-1 py-0.5"><p class="text-[4px] text-[#86868b]">CLIENTE</p><p>Consumidor Final</p></div>
+                        <div class="border-b border-black/[0.15] px-1 py-0.5"><p class="text-[4px] text-[#86868b]">FECHA</p><p>12/05/2024</p></div>
+                        <div class="border-r border-black/[0.15] px-1 py-0.5"><p class="text-[4px] text-[#86868b]">RUC</p><p>{{ tienda.ruc || '20123456789' }}</p></div>
+                        <div class="px-1 py-0.5"><p class="text-[4px] text-[#86868b]">MONEDA</p><p>SOLES</p></div>
+                      </div>
+                      <table class="w-full mt-1 border border-black/[0.15] border-collapse text-[4px]">
+                        <thead class="bg-black/[0.06]"><tr><th class="border border-black/[0.15] p-0.5 text-left">Cta</th><th class="border border-black/[0.15] p-0.5 text-left">Detalle</th><th class="border border-black/[0.15] p-0.5 text-right">Debe</th><th class="border border-black/[0.15] p-0.5 text-right">Haber</th></tr></thead>
+                        <tbody><tr><td class="border border-black/[0.15] p-0.5">701</td><td class="border border-black/[0.15] p-0.5">Ventas</td><td class="border border-black/[0.15] p-0.5 text-right">30.00</td><td class="border border-black/[0.15] p-0.5"></td></tr><tr><td class="border border-black/[0.15] p-0.5">101</td><td class="border border-black/[0.15] p-0.5">Caja</td><td class="border border-black/[0.15] p-0.5"></td><td class="border border-black/[0.15] p-0.5 text-right">30.00</td></tr></tbody>
+                      </table>
+                      <div class="flex justify-between font-bold pt-1 border-t border-black/[0.15] mt-1"><span>S/ TOTAL</span><span>30.00</span></div>
+                    </div>
+                  </div>
+                  <!-- PDF 6 — Bold -->
+                  <div *ngSwitchCase="'pdf_6'">
+                    <div class="bg-black p-2 flex justify-between items-center">
+                      <p class="text-[8px] font-black tracking-widest text-white">FACTURA</p>
+                      <p class="text-[5px] text-white/70 font-bold">F001-00012</p>
+                    </div>
+                    <div class="p-2 space-y-1">
+                      <div class="bg-black/[0.06] p-1 rounded text-[5px] font-bold uppercase tracking-wide">Resumen</div>
+                      <div class="text-[5px] flex justify-between"><span>Producto A · 1u</span><span>S/ 10.00</span></div>
+                      <div class="text-[5px] flex justify-between"><span>Producto B · 2u</span><span>S/ 20.00</span></div>
+                      <div class="bg-black text-white p-1.5 rounded mt-1 text-center">
+                        <p class="text-[4px] font-bold tracking-widest">TOTAL A PAGAR</p>
+                        <p class="text-[10px] font-black">S/ 30.00</p>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
               </div>
-              <p class="text-[10px] text-[#86868b] mt-2 text-center">PDF · Elegante · Header oscuro</p>
+              <p class="text-[10px] text-[#86868b] mt-2 text-center">{{ tpl.desc }}</p>
             </div>
           </div>
         </div>
-        <p class="text-[11px] text-center text-[#86868b] dark:text-[#a1a1a6]">Solo previa en cards — el cambio de diseño se guardará próximamente.</p>
+        <!-- Boletas PDF -->
+        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
+          <div class="px-5 py-3 flex items-center justify-between">
+            <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">Diseño de Boletas PDF</p>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">6 estilos · A4</span>
+          </div>
+          <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
+          <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div *ngFor="let tpl of boletaTemplates"
+                 (click)="selectBoleta(tpl.key)"
+                 class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all"
+                 [ngClass]="selectedBoleta===tpl.key ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">{{ tpl.label }}</p>
+                  <span *ngIf="tpl.key==='boleta_v1'" class="text-[9px] px-1.5 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3] font-semibold">Default</span>
+                </div>
+                <span *ngIf="selectedBoleta===tpl.key" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
+                <span *ngIf="selectedBoleta!==tpl.key" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
+              </div>
+              <div class="mx-auto w-[120px] sm:w-[150px] bg-white border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
+                <ng-container [ngSwitch]="tpl.key">
+                  <!-- BOLETA 1 — Corporate -->
+                  <div *ngSwitchCase="'boleta_v1'">
+                    <div class="h-2 bg-[#0071e3]"></div>
+                    <div class="p-2">
+                      <div class="flex justify-between items-start">
+                        <div class="w-6 h-6 bg-black/[0.06] rounded"></div>
+                        <div class="text-right"><p class="text-[6px] font-bold">BOLETA</p><p class="text-[5px] text-[#86868b]">B001-00012</p></div>
+                      </div>
+                      <div class="mt-2 h-px bg-black/[0.06]"></div>
+                      <div class="mt-1 grid grid-cols-3 text-[4px] font-semibold bg-black/[0.04] rounded px-1 py-0.5"><span>Desc</span><span class="text-center">Cant</span><span class="text-right">Total</span></div>
+                      <div class="space-y-1 text-[5px] p-1">
+                        <div class="flex justify-between"><span>Producto A</span><span>10.00</span></div>
+                        <div class="flex justify-between font-bold border-t pt-1"><span>Total</span><span>S/ 30.00</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- BOLETA 2 — Minimal -->
+                  <div *ngSwitchCase="'boleta_v2'">
+                    <div class="p-2 border-b border-black/[0.08] flex justify-between">
+                      <div class="w-8 h-4 border border-black/[0.08]"></div>
+                      <p class="text-[5px] font-mono border border-black px-1">RUC {{ tienda.ruc || '20123456789' }}</p>
+                    </div>
+                    <div class="p-2">
+                      <div class="border border-black/[0.08] rounded">
+                        <div class="grid grid-cols-3 text-[4px] font-bold border-b bg-black/[0.02] px-1 py-0.5"><span>Item</span><span>Precio</span><span class="text-right">Importe</span></div>
+                        <div class="text-[5px] p-1 space-y-0.5"><div class="flex justify-between"><span>Prod A</span><span>10.00</span></div><div class="flex justify-between font-bold"><span>Total</span><span>30.00</span></div></div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- BOLETA 3 — Executive -->
+                  <div *ngSwitchCase="'boleta_v3'">
+                    <div class="bg-[#1d1d1f] text-white p-2 flex justify-between items-center">
+                      <div class="w-6 h-6 bg-white/20 rounded"></div>
+                      <p class="text-[6px] font-bold tracking-widest">BOLETA</p>
+                    </div>
+                    <div class="p-2">
+                      <div class="text-[5px] space-y-1">
+                        <div class="flex justify-between"><span class="text-[#86868b]">Cliente</span><span>Consumidor Final</span></div>
+                        <div class="h-px bg-black/[0.06]"></div>
+                        <div class="flex justify-between font-bold"><span>Total</span><span class="text-[#0071e3]">S/ 30.00</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- BOLETA 4 — Modern -->
+                  <div *ngSwitchCase="'boleta_v4'">
+                    <div class="p-2 flex justify-between items-center border-b-2 border-[#0071e3]">
+                      <div>
+                        <div class="w-6 h-6 bg-[#0071e3]/15 rounded mb-1"></div>
+                        <p class="text-[5px] font-bold leading-tight">{{ tienda.nombre || 'EMPRESA S.A.C.' }}</p>
+                        <p class="text-[4px] text-[#86868b]">Av. Principal 123</p>
+                      </div>
+                      <div class="text-right">
+                        <p class="text-[7px] font-black text-[#0071e3] tracking-wider">BOLETA</p>
+                        <p class="text-[4px] text-[#86868b]">B001-00012</p>
+                      </div>
+                    </div>
+                    <div class="p-2 space-y-1">
+                      <div class="bg-[#0071e3]/[0.06] grid grid-cols-3 text-[4px] font-bold rounded px-1 py-0.5">
+                        <span>Descripción</span><span class="text-center">Cant</span><span class="text-right">Total</span>
+                      </div>
+                      <div class="text-[5px] space-y-0.5">
+                        <div class="flex justify-between"><span>Producto A</span><span>10.00</span></div>
+                        <div class="flex justify-between"><span>Producto B</span><span>20.00</span></div>
+                      </div>
+                      <div class="bg-[#0071e3] text-white text-[5px] font-bold rounded px-1 py-0.5 flex justify-between">
+                        <span>TOTAL</span><span>S/ 30.00</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- BOLETA 5 — Ledger -->
+                  <div *ngSwitchCase="'boleta_v5'">
+                    <div class="p-2 border-b border-double border-black/[0.2] flex justify-between">
+                      <p class="text-[5px] font-mono font-bold">{{ tienda.nombre || 'EMPRESA' }}</p>
+                      <p class="text-[5px] font-mono">BOLETA N° 00012</p>
+                    </div>
+                    <div class="p-2 text-[5px]">
+                      <div class="grid grid-cols-2 border border-black/[0.15]">
+                        <div class="border-b border-r border-black/[0.15] px-1 py-0.5"><p class="text-[4px] text-[#86868b]">CLIENTE</p><p>Consumidor Final</p></div>
+                        <div class="border-b border-black/[0.15] px-1 py-0.5"><p class="text-[4px] text-[#86868b]">FECHA</p><p>12/05/2024</p></div>
+                        <div class="border-r border-black/[0.15] px-1 py-0.5"><p class="text-[4px] text-[#86868b]">RUC</p><p>{{ tienda.ruc || '20123456789' }}</p></div>
+                        <div class="px-1 py-0.5"><p class="text-[4px] text-[#86868b]">MONEDA</p><p>SOLES</p></div>
+                      </div>
+                      <table class="w-full mt-1 border border-black/[0.15] border-collapse text-[4px]">
+                        <thead class="bg-black/[0.06]"><tr><th class="border border-black/[0.15] p-0.5 text-left">Cta</th><th class="border border-black/[0.15] p-0.5 text-left">Detalle</th><th class="border border-black/[0.15] p-0.5 text-right">Debe</th><th class="border border-black/[0.15] p-0.5 text-right">Haber</th></tr></thead>
+                        <tbody><tr><td class="border border-black/[0.15] p-0.5">701</td><td class="border border-black/[0.15] p-0.5">Ventas</td><td class="border border-black/[0.15] p-0.5 text-right">30.00</td><td class="border border-black/[0.15] p-0.5"></td></tr><tr><td class="border border-black/[0.15] p-0.5">101</td><td class="border border-black/[0.15] p-0.5">Caja</td><td class="border border-black/[0.15] p-0.5"></td><td class="border border-black/[0.15] p-0.5 text-right">30.00</td></tr></tbody>
+                      </table>
+                      <div class="flex justify-between font-bold pt-1 border-t border-black/[0.15] mt-1"><span>S/ TOTAL</span><span>30.00</span></div>
+                    </div>
+                  </div>
+                  <!-- BOLETA 6 — Bold -->
+                  <div *ngSwitchCase="'boleta_v6'">
+                    <div class="bg-black p-2 flex justify-between items-center">
+                      <p class="text-[8px] font-black tracking-widest text-white">BOLETA</p>
+                      <p class="text-[5px] text-white/70 font-bold">B001-00012</p>
+                    </div>
+                    <div class="p-2 space-y-1">
+                      <div class="bg-black/[0.06] p-1 rounded text-[5px] font-bold uppercase tracking-wide">Resumen</div>
+                      <div class="text-[5px] flex justify-between"><span>Producto A · 1u</span><span>S/ 10.00</span></div>
+                      <div class="text-[5px] flex justify-between"><span>Producto B · 2u</span><span>S/ 20.00</span></div>
+                      <div class="bg-black text-white p-1.5 rounded mt-1 text-center">
+                        <p class="text-[4px] font-bold tracking-widest">TOTAL A PAGAR</p>
+                        <p class="text-[10px] font-black">S/ 30.00</p>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+              <p class="text-[10px] text-[#86868b] mt-2 text-center">{{ tpl.desc }}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- TAB: Configuración — solo superusuarios (admin tienda no ve eliminar ni config) -->

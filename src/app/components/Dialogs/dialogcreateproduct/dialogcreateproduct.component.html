@@ -2,42 +2,46 @@
   <div class="max-w-6xl mx-auto pt-6 rounded-lg">
     <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-      <!-- Columna izquierda: Nombre y Categoría -->
+      <!-- Categoría (arriba, ancho completo) -->
+      <div class="lg:col-span-3 flex flex-col">
+        <tui-select formControlName="categoria" class="w-full" [stringify]="getCategoriaNombre">
+          Categoría
+          <tui-data-list *tuiDataList>
+            <button *ngFor="let categoria of categorias" tuiOption [value]="categoria.id">
+              {{ categoria.nombre }}
+            </button>
+          </tui-data-list>
+        </tui-select>
+        <p *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched" class="text-red-500 text-sm mt-1">
+          Debe seleccionar una categoría
+        </p>
+        <p *ngIf="(productoError$ | async)?.categoria?.[0]" class="text-red-500 text-sm mt-1">
+          {{ (productoError$ | async)?.categoria?.[0] }}
+        </p>
+      </div>
+
+      <!-- Columna izquierda: Nombre y Características -->
       <div class="lg:col-span-2 col-span-1 space-y-6">
         <!-- Nombre -->
         <div class="flex flex-col">
           <tui-input formControlName="nombre" class="w-full" placeholder="Ingrese el nombre del producto">
             Nombre del Producto
           </tui-input>
-          <tui-error *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched">
+          <p *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched" class="text-red-500 text-sm mt-1">
             Este campo es obligatorio
-          </tui-error>
+          </p>
+          <p *ngIf="(productoError$ | async)?.nombre?.[0]" class="text-red-500 text-sm mt-1">
+            {{ (productoError$ | async)?.nombre?.[0] }}
+          </p>
         </div>
 
-        <!-- Categoría -->
-        <div class="flex flex-col">
-          <tui-select formControlName="categoria" class="w-full" [stringify]="getCategoriaNombre">
-            Categoría
-            <tui-data-list *tuiDataList>
-              <button *ngFor="let categoria of categorias" tuiOption [value]="categoria.id">
-                {{ categoria.nombre }}
-              </button>
-            </tui-data-list>
-          </tui-select>
-          <tui-error *ngIf="productoForm.get('categoria')?.invalid || productoForm.get('categoria')?.touched">
-            Debe seleccionar una categoría
-          </tui-error>
-        </div>
-        <div class="flex flex-col border-dashed border-1 border border-neutral-500 px-5 py-2 rounded-xl">
-            <p class="cursor-pointer py-1"     (click)="expandedCaracteristicas = !expandedCaracteristicas"
->Características <tui-icon      [style.font-size.rem]="1" icon="@tui.chevron-down" />
- </p>
-  <p *ngIf="emptyCaracteristicas" class="py-4 text-center w-full text-neutral-700 dark:text-neutral-400">Esta categoria no tiene caracteristicas</p>
+        <!-- Características (sin expand, 2 columnas) -->
+        <div *ngIf="productoForm.get('categoria')?.value" class="flex flex-col bg-neutral-50 dark:bg-neutral-800 px-5 py-2 rounded-xl">
+          <h3 class="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Características</h3>
 
-           	<tui-expand *ngIf="!emptyCaracteristicas"  [expanded]="expandedCaracteristicas">
+          <p *ngIf="emptyCaracteristicas" class="py-4 text-center w-full text-neutral-700 dark:text-neutral-400">Esta categoria no tiene caracteristicas</p>
 
-
-          <div formGroupName="caracteristicas" class="grid gap-4 mt-4">
+          <div *ngIf="!emptyCaracteristicas" formGroupName="caracteristicas" class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             <ng-container *ngFor="let key of getCaracteristicasKeys()">
 
@@ -50,7 +54,7 @@
               </tui-textfield>
 
             </ng-container>
-          </div>             </tui-expand>
+          </div>                  
         </div>
 
 
@@ -97,9 +101,12 @@
               <button *ngFor="let marca of marcas" tuiOption [value]="marca">{{ marca }}</button>
             </tui-data-list>
           </tui-select>
-          <tui-error *ngIf="productoForm.get('marca')?.invalid && productoForm.get('marca')?.touched">
+          <p *ngIf="productoForm.get('marca')?.invalid && productoForm.get('marca')?.touched" class="text-red-500 text-sm mt-1">
             Este campo es obligatorio
-          </tui-error>
+          </p>
+          <p *ngIf="(productoError$ | async)?.marca?.[0]" class="text-red-500 text-sm mt-1">
+            {{ (productoError$ | async)?.marca?.[0] }}
+          </p>
         </div>
 
         <!-- Modelo -->
@@ -110,9 +117,44 @@
               <button *ngFor="let modelo of modelos" tuiOption [value]="modelo">{{ modelo }}</button>
             </tui-data-list>
           </tui-select>
-          <tui-error *ngIf="productoForm.get('modelo')?.invalid && productoForm.get('modelo')?.touched">
+          <p *ngIf="productoForm.get('modelo')?.invalid && productoForm.get('modelo')?.touched" class="text-red-500 text-sm mt-1">
             Este campo es obligatorio
-          </tui-error>
+          </p>
+          <p *ngIf="(productoError$ | async)?.modelo?.[0]" class="text-red-500 text-sm mt-1">
+            {{ (productoError$ | async)?.modelo?.[0] }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Inventario (Stock y Costos) -->
+      <div class="lg:col-span-3 p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+        <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-3">Inventario inicial</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="flex flex-col">
+            <tui-textfield class="w-full">
+              <label tuiLabel>Stock</label>
+              <input [min]="0" [max]="15000" [step]="1" tuiInputNumber formControlName="stock" />
+            </tui-textfield>
+            <p *ngIf="productoForm.get('stock')?.invalid && productoForm.get('stock')?.touched" class="text-red-500 text-xs mt-1">Requerido ≥0</p>
+            <p *ngIf="(productoError$ | async)?.stock?.[0]" class="text-red-500 text-xs mt-1">{{ (productoError$ | async)?.stock?.[0] }}</p>
+            <p *ngIf="(productoError$ | async)?.cantidad?.[0]" class="text-red-500 text-xs mt-1">{{ (productoError$ | async)?.cantidad?.[0] }}</p>
+          </div>
+          <div class="flex flex-col">
+            <tui-textfield class="w-full">
+              <label tuiLabel>Costo Compra (S/)</label>
+              <input [min]="0" tuiInputNumber formControlName="costo_compra" [tuiNumberFormat]="{precision: 2}" />
+            </tui-textfield>
+            <p *ngIf="productoForm.get('costo_compra')?.invalid && productoForm.get('costo_compra')?.touched" class="text-red-500 text-xs mt-1">Requerido ≥0</p>
+            <p *ngIf="(productoError$ | async)?.costo_compra?.[0]" class="text-red-500 text-xs mt-1">{{ (productoError$ | async)?.costo_compra?.[0] }}</p>
+          </div>
+          <div class="flex flex-col">
+            <tui-textfield class="w-full">
+              <label tuiLabel>Costo Venta (S/)</label>
+              <input [min]="0" tuiInputNumber formControlName="costo_venta" [tuiNumberFormat]="{precision: 2}" />
+            </tui-textfield>
+            <p *ngIf="productoForm.get('costo_venta')?.invalid && productoForm.get('costo_venta')?.touched" class="text-red-500 text-xs mt-1">Requerido ≥0</p>
+            <p *ngIf="(productoError$ | async)?.costo_venta?.[0]" class="text-red-500 text-xs mt-1">{{ (productoError$ | async)?.costo_venta?.[0] }}</p>
+          </div>
         </div>
       </div>
 
@@ -121,9 +163,12 @@
         <tui-textarea formControlName="descripcion" class="w-full" placeholder="Ingrese la descripción">
           Descripción
         </tui-textarea>
-        <tui-error *ngIf="productoForm.get('descripcion')?.invalid && productoForm.get('descripcion')?.touched">
+        <p *ngIf="productoForm.get('descripcion')?.invalid && productoForm.get('descripcion')?.touched" class="text-red-500 text-sm mt-1">
           La descripción es obligatoria
-        </tui-error>
+        </p>
+        <p *ngIf="(productoError$ | async)?.descripcion?.[0]" class="text-red-500 text-sm mt-1">
+          {{ (productoError$ | async)?.descripcion?.[0] }}
+        </p>
       </div>
 
       <!-- Mensaje de permisos -->

@@ -1,12 +1,12 @@
 <!-- Vista para ventas que si se enviaro-->
 <div class="p-0 flex flex-col sm:flex-row " *ngIf="venta">
 
-  <div class=" p-3" *ngIf="selectedState === 'original' && venta.comprobante.estado_sunat === 'ACEPTADO'">
+  <div class="p-3" *ngIf="selectedState === 'original' && venta.comprobante.estado_sunat === 'ACEPTADO'">
 
-    <div class="flex flex-row sm:flex-col gap-2 mb-4">
+    <div class="flex flex-row sm:flex-col gap-2 mb-4 overflow-x-auto sm:overflow-visible -mx-3 px-3 sm:mx-0 sm:px-0">
 
       <!-- PDF -->
-      <a [href]="stripDomain(comprobante.pdf_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2
+      <a [href]="stripDomain(comprobante.pdf_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2 shrink-0
          px-3 sm:px-4 py-2 sm:py-3
          bg-yellow-100 hover:bg-yellow-200
          dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50
@@ -21,7 +21,7 @@
         </span>
       </a>
       <!-- XML -->
-      <a [href]="stripDomain(comprobante.xml_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2
+      <a [href]="stripDomain(comprobante.xml_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2 shrink-0
              px-3 sm:px-4 py-2 sm:py-3
              bg-blue-100 hover:bg-blue-200
              dark:bg-blue-900/30 dark:hover:bg-blue-900/50
@@ -35,7 +35,7 @@
       </a>
 
       <!-- CDR -->
-      <a [href]="stripDomain(comprobante.cdr_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2
+      <a [href]="stripDomain(comprobante.cdr_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2 shrink-0
              px-3 sm:px-4 py-2 sm:py-3
              bg-green-100 hover:bg-green-200
              dark:bg-green-900/30 dark:hover:bg-green-900/50
@@ -49,7 +49,7 @@
       </a>
 
       <!-- Ticket -->
-      <a [href]="stripDomain(comprobante.ticket_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2
+      <a [href]="stripDomain(comprobante.ticket_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2 shrink-0
              px-3 sm:px-4 py-2 sm:py-3
              bg-purple-100 hover:bg-purple-200
              dark:bg-purple-900/30 dark:hover:bg-purple-900/50
@@ -64,7 +64,7 @@
 
       <!-- Anular -->
       <button *ngIf="venta.estado !== 'ANULADA'" (click)="anularVenta(venta.id,venta.numero_documento_cliente)"
-        [disabled]="loadingAnularVenta" class="flex flex-col items-center justify-center gap-1 sm:gap-2
+        [disabled]="loadingAnularVenta" class="flex flex-col items-center justify-center gap-1 sm:gap-2 shrink-0
              px-3 sm:px-4 py-2 sm:py-3
              bg-red-100 hover:bg-red-200
              dark:bg-red-900/30 dark:hover:bg-red-900/50
@@ -83,7 +83,7 @@
 
   <div class="p-3" *ngIf="selectedState === 'anulado' && venta.comprobante.estado_sunat === 'ACEPTADO'">
 
-    <div class="flex flex-row sm:flex-col gap-2 mb-4">
+    <div class="flex flex-row sm:flex-col gap-2 mb-4 overflow-x-auto sm:overflow-visible -mx-3 px-3 sm:mx-0 sm:px-0">
 
       <!-- PDF -->
       <a [href]="stripDomain(venta.comprobante_nota_credito.pdf_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2
@@ -133,7 +133,7 @@
 
       <!-- Anular -->
       <button *ngIf="venta.estado !== 'ANULADA'" (click)="anularVenta(venta.id,venta.numero_documento_cliente)"
-        [disabled]="loadingAnularVenta" class="flex flex-col items-center justify-center gap-1 sm:gap-2
+        [disabled]="loadingAnularVenta" class="flex flex-col items-center justify-center gap-1 sm:gap-2 shrink-0
              px-3 sm:px-4 py-2 sm:py-3
              bg-red-100 hover:bg-red-200
              dark:bg-red-900/30 dark:hover:bg-red-900/50
@@ -149,7 +149,7 @@
 
     </div>
   </div>
-  <div class="flex flex-col flex-1 col-span-3 ">
+  <div class="flex flex-col flex-1 min-w-0">
  <div class="flex flex-col gap-6 ">
 
             <!-- Sello de anulado -->
@@ -175,7 +175,7 @@
           <div class="flex w-full flex-col lg:flex-row items-start justify-between gap-4">
             <div class="flex flex-col gap-3 sm:gap-5 items-start  w-full lg:w-auto">
 
-              <tui-segmented class="w-[300px]" *ngIf="venta.comprobante_nota_credito">
+              <tui-segmented class="w-full max-w-full sm:max-w-[300px]" *ngIf="venta.comprobante_nota_credito">
                 <button (click)="selectedState = 'original'" type="button">Comprobante Original</button>
                 <button (click)="selectedState = 'anulado'" type="button">
                   <span tuiFade>Comprobante Anulado</span>
@@ -237,13 +237,13 @@
                   </div>
 
                   <!-- Nombre y documento -->
-                  <div class="min-w-0">
-                    <p class="text-sm sm:text-base font-semibold
-                text-neutral-900 dark:text-neutral-100 truncate">
+                  <div class="min-w-0 flex-1">
+                    <p class="text-sm sm:text-base font-semibold break-words
+                text-neutral-900 dark:text-neutral-100">
                       {{ comprobante.nombre_cliente || 'CLIENTE ANÓNIMO' }}
                     </p>
 
-                    <p class="text-xs font-mono text-neutral-500 dark:text-neutral-400">
+                    <p class="text-xs font-mono text-neutral-500 dark:text-neutral-400 break-words">
                       Doc: {{ comprobante.numero_documento_cliente || '00000000' }}
                     </p>
                   </div>
@@ -266,8 +266,8 @@
                     <strong>Direccion:</strong> {{ venta.direccion_cliente || 'Sin dirección' }}
                   </span>
                   <p class="strong text-md py-2">Enviar pdf al cliente</p>
-                  <div class="flex items-center gap-2 shrink">
-                    <tui-textfield class="w-[230px]" iconStart="@tui.phone">
+                  <div class="flex items-center gap-2 shrink w-full sm:w-auto">
+                    <tui-textfield class="flex-1 sm:w-[230px] sm:flex-none" iconStart="@tui.phone">
                       <label tuiLabel>Numero</label>
                       <input placeholder="Ingrese el numero de 9 dijitos" tuiTextfield [(ngModel)]="numeroTelefonico" />
 
@@ -276,10 +276,11 @@
                     <button tuiButton appearance="positive" (click)="enviarWhatsApp(
     $event,
     stripDomain(comprobante.pdf_url),numeroTelefonico
-  )" class="inline-flex flex-col h-full items-center justify-center gap-1 sm:gap-2 p-4
-         
-         
-         rounded-lg transition-colors cursor-pointer">
+  )" class="inline-flex flex-col h-full items-center justify-center gap-1 sm:gap-2 p-3 sm:p-4
+
+
+
+         rounded-lg transition-colors cursor-pointer shrink-0">
 
                       <svg xmlns="http://www.w3.org/2000/svg"
                         viewBox="-0.003 -293.41895027729095 1172.923 1474.5159502772908" fill-rule="evenodd"
@@ -311,7 +312,7 @@
           <div class="py-4 sm:py-6 flex flex-col lg:flex-row gap-6">
 
 
-            <div class="flex flex-wrap gap-x-8 gap-y-4">
+            <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-x-4 sm:gap-x-8 gap-y-3 sm:gap-y-4">
 
               <!-- Método -->
               <div class="flex flex-col">

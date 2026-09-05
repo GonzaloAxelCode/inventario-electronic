@@ -1,7 +1,7 @@
 import { Tienda, TiendaState } from '@/app/models/tienda.models';
 import { DialogDetailTiendaService } from '@/app/services/dialogs-services/dialog-detailtienda.service';
 import { DialogUpdateTiendaService } from '@/app/services/dialogs-services/dialog-updatetienda.service';
-import { URL_BASE } from '@/app/services/utils/endpoints';
+import { URL_BASE, imageUrl } from '@/app/services/utils/endpoints';
 import { desactivateTiendaAction } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
@@ -26,7 +26,8 @@ import { Observable, tap } from 'rxjs';
 })
 export class TabletiendasComponent implements OnInit {
   @Input() tiendas: Tienda[] | null = null;
-  URL_BASE = URL_BASE
+  URL_BASE = URL_BASE;
+  imageUrl = imageUrl;
   tiendasState$?: Observable<TiendaState>;
   allColumns = [
     { key: 'id', label: 'ID' },
@@ -163,12 +164,18 @@ export class TabletiendasComponent implements OnInit {
       if (!map.has(key)) {
         let label = 'Sin propietario';
         if (t.propietario != null) {
-          const ownerUser = t.users_tienda?.find(u => u.id === t.propietario);
-          if (ownerUser) {
-            const full = `${ownerUser.first_name || ''} ${ownerUser.last_name || ''}`.trim();
-            label = full || ownerUser.username || `Propietario #${t.propietario}`;
+          const ownerData = t.propietario_data;
+          if (ownerData) {
+            const full = `${ownerData.first_name || ''} ${ownerData.last_name || ''}`.trim();
+            label = full || ownerData.username || `Propietario #${t.propietario}`;
           } else {
-            label = `Propietario #${t.propietario}`;
+            const ownerUser = t.users_tienda?.find(u => u.id === t.propietario);
+            if (ownerUser) {
+              const full = `${ownerUser.first_name || ''} ${ownerUser.last_name || ''}`.trim();
+              label = full || ownerUser.username || `Propietario #${t.propietario}`;
+            } else {
+              label = `Propietario #${t.propietario}`;
+            }
           }
         }
         map.set(key, { ownerId: t.propietario, ownerLabel: label, tiendas: [] });

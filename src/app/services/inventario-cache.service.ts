@@ -1,19 +1,25 @@
 import { Inventario } from '@/app/models/inventario.models';
 import { Injectable } from '@angular/core';
-import { openDB } from 'idb';
+import { deleteDB, openDB } from 'idb';
 
 @Injectable({ providedIn: 'root' })
 export class InventarioCacheService {
-    private dbPromise = openDB('inventario-db', 1, {
-        upgrade(db) {
-            if (!db.objectStoreNames.contains('inventarios')) {
-                db.createObjectStore('inventarios', { keyPath: 'id' });
+    private static readonly DB_NAME = 'inventario-db';
+
+    private dbPromise = this.createDbPromise();
+
+    private createDbPromise() {
+        return openDB(InventarioCacheService.DB_NAME, 1, {
+            upgrade(db) {
+                if (!db.objectStoreNames.contains('inventarios')) {
+                    db.createObjectStore('inventarios', { keyPath: 'id' });
+                }
+                if (!db.objectStoreNames.contains('meta')) {
+                    db.createObjectStore('meta');
+                }
             }
-            if (!db.objectStoreNames.contains('meta')) {
-                db.createObjectStore('meta');
-            }
-        }
-    });
+        });
+    }
 
     async getAll(): Promise<Inventario[]> {
         const db = await this.dbPromise;
@@ -30,6 +36,22 @@ export class InventarioCacheService {
     async clear() {
         const db = await this.dbPromise;
         await db.clear('inventarios');
+    }
+
+    async clearAll() {
+        const db = await this.dbPromise;
+        const tx = db.transaction(['inventarios', 'meta'], 'readwrite');
+        await Promise.all([
+            tx.objectStore('inventarios').clear(),
+            tx.objectStore('meta').clear(),
+            tx.done
+        ]);
+    }
+async deleteDatabase() {
+        const db = await this.dbPromise;
+        db.close();
+        await deleteDB(InventarioCacheService.DB_NAME);
+        this.dbPromise = this.createDbPromise();
     }
 
     async setLastSync(date: string) {

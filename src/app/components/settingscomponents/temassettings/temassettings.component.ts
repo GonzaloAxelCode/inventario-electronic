@@ -66,11 +66,6 @@ export class TemasSettingsComponent implements OnInit {
     this.saveModulosConfig();
   }
 
-  toggleTiktok(): void {
-    this.featureFlags.toggleTiktok();
-    this.saveModulosConfig();
-  }
-
   toggleCompras(): void {
     this.featureFlags.toggleCompras();
     this.saveModulosConfig();
@@ -80,9 +75,6 @@ export class TemasSettingsComponent implements OnInit {
     const modulos: string[] = [];
     if (this.featureFlags.guiasRemisionEnabled()) {
       modulos.push('guias-de-remision');
-    }
-    if (this.featureFlags.tiktokEnabled()) {
-      modulos.push('tiktok');
     }
     if (this.featureFlags.comprasEnabled()) {
       modulos.push('compras');

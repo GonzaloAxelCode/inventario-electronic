@@ -1,4 +1,6 @@
 import { AuthService } from '@/app/services/auth.service';
+import { ClienteCacheService } from '@/app/services/cliente-cache.service';
+import { InventarioCacheService } from '@/app/services/inventario-cache.service';
 
 import { saveAuthDataToLocalStorage, saveLoginUserDataToLocalStorage } from '@/app/services/utils/localstorage-functions';
 import { Injectable } from '@angular/core';
@@ -13,6 +15,7 @@ import {
     checkTokenAction,
     checkTokenActionFail,
     checkTokenActionSuccess,
+    clearTokensAction,
     loginInAction,
     loginInActionFail,
     loginInActionSuccess,
@@ -24,7 +27,13 @@ import {
 @Injectable()
 export class AuthEffects {
 
-    constructor(private actions$: Actions, private authService: AuthService, private store: Store<AppState>) { }
+    constructor(
+        private actions$: Actions,
+        private authService: AuthService,
+        private store: Store<AppState>,
+        private inventarioCache: InventarioCacheService,
+        private clienteCache: ClienteCacheService
+    ) { }
 
 
     loginEffect = createEffect(() =>
@@ -122,6 +131,24 @@ export class AuthEffects {
                 filter(([_, user]) => !!user?.is_superuser),
                 tap(() => {
                     this.store.dispatch(loadTiendasAction());
+                })
+            ),
+        { dispatch: false }
+    );
+
+    clearIdxDBCacheOnLogout$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(clearTokensAction),
+                tap(async () => {
+                    try {
+                        await Promise.all([
+                            this.inventarioCache.deleteDatabase(),
+                            this.clienteCache.deleteDatabase()
+                        ]);
+                    } catch (error) {
+                        console.error('Error al eliminar las bases de datos IndexedDB al cerrar sesión', error);
+                    }
                 })
             ),
         { dispatch: false }

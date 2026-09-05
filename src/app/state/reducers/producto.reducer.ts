@@ -70,12 +70,14 @@ export const productoReducer = createReducer(
     // Creación de producto
     on(createProductoAction, state => ({
         ...state,
-        loadingCreate: true
+        loadingCreate: true,
+        errors: undefined
     })),
     on(createProductoSuccess, (state, { producto }) => ({
         ...state,
         productos: [...state.productos, { ...producto }],
-        loadingCreate: false
+        loadingCreate: false,
+        errors: undefined
     })),
     on(createProductoFail, (state, { error }) => ({
         ...state,
@@ -86,12 +88,14 @@ export const productoReducer = createReducer(
     // Actualización de producto
     on(updateProductoAction, state => ({
         ...state,
-        loadingUpdate: true
+        loadingUpdate: true,
+        errors: undefined
     })),
     on(updateProductoSuccess, (state, { producto }) => ({
         ...state,
         productos: state.productos.map(p => p.id === producto.id ? producto : p),
-        loadingUpdate: false
+        loadingUpdate: false,
+        errors: undefined
     })),
     on(updateProductoFail, (state, { error }) => ({
         ...state,

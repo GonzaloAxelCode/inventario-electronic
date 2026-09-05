@@ -19,9 +19,14 @@ export interface Tienda {
     activo: boolean;
     is_deleted: boolean;
     propietario: number | null;
+    propietario_data?: import("./user.models").User;
+    tienda_padre: number | null;
     correlativo_inicial_boleta: number;
     correlativo_inicial_factura: number;
     correlativo_inicial_nota_credito: number;
+    tipo_style_boleta_ticket?: string | null;
+    tipo_style_boleta_pdf?: string | null;
+    tipo_style_factura_pdf?: string | null;
     date_created: string;
     users_tienda: User[];
 }

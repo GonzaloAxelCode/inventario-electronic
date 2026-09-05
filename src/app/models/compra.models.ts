@@ -68,3 +68,40 @@ export interface CreateCompra {
     items?: CompraItem[];
     archivo_xml?: File;
 }
+
+export interface ComprobanteFile {
+    id: number;
+    tienda: number;
+    tipo_comprobante: string;
+    tipo_comprobante_codigo: string;
+    xml_url: string | null;
+    pdf_url: string | null;
+    observaciones: string;
+    date_created: string;
+}
+
+export interface SubirFileResponse {
+    message: string;
+    data: {
+        id: number;
+        tienda: number;
+        tipo_comprobante: string;
+        xml_url: string | null;
+        pdf_url: string | null;
+        observaciones: string;
+        date_created: string;
+    };
+}
+
+export interface ComprobanteFilesResponse {
+    message: string;
+    data: {
+        id: number;
+        tienda: number;
+        tipo_comprobante: string;
+        xml_url: string | null;
+        pdf_url: string | null;
+        observaciones: string;
+        date_created: string;
+    };
+}

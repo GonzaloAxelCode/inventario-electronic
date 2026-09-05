@@ -18,7 +18,7 @@
             <div
               class="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-sm">
               <img loading="lazy"
-                [src]="tienda?.logo_img ? URL_BASE + tienda.logo_img : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                [src]="tienda?.logo_img ? imageUrl(tienda.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
                 [alt]="tienda.nombre"
                 class="w-full h-full object-cover cursor-pointer active:scale-95 transition-transform" />
             </div>
@@ -208,6 +208,36 @@
 
               <!-- Input oculto -->
               <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" class="hidden" />
+            </div>
+
+            <!-- Certificados clave privada y pública SUNAT -->
+            <div class="lg:col-span-2 rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-4">
+              <p class="text-[12px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white mb-1">Certificados clave SUNAT</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">Clave privada</p>
+                  <p class="text-[10px] leading-3 text-[#86868b] dark:text-[#a1a1a6]">Archivo de certificado .key/.pem/.p12/.pfx</p>
+                  <div class="mt-2 flex flex-wrap items-center gap-2">
+                    <button type="button" (click)="certPrivadaInput.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
+                    <span *ngIf="certPrivadaFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[160px]">{{ certPrivadaFileName }}</span>
+                    <span *ngIf="!certPrivadaFileName" class="text-[11px] text-[#86868b]">Ningún archivo</span>
+                    <button *ngIf="certPrivadaFileName" type="button" (click)="selectedCertPrivada=null; certPrivadaString=null; certPrivadaFileName=null; certPrivadaInput.value=''" class="text-[11px] text-[#ff3b30] hover:underline">Quitar</button>
+                  </div>
+                  <input type="file" #certPrivadaInput (change)="onCertPrivadaSelected($event)" accept=".pem,.key,.p12,.pfx,.crt,.cer,.txt" class="hidden" />
+                </div>
+                <div>
+                  <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">Clave pública</p>
+                  <p class="text-[10px] leading-3 text-[#86868b] dark:text-[#a1a1a6]">Archivo de certificado .crt/.cer/.pem/.pub</p>
+                  <div class="mt-2 flex flex-wrap items-center gap-2">
+                    <button type="button" (click)="certPublicaInput.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
+                    <span *ngIf="certPublicaFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[160px]">{{ certPublicaFileName }}</span>
+                    <span *ngIf="!certPublicaFileName" class="text-[11px] text-[#86868b]">Ningún archivo</span>
+                    <button *ngIf="certPublicaFileName" type="button" (click)="selectedCertPublica=null; certPublicaString=null; certPublicaFileName=null; certPublicaInput.value=''" class="text-[11px] text-[#ff3b30] hover:underline">Quitar</button>
+                  </div>
+                  <input type="file" #certPublicaInput (change)="onCertPublicaSelected($event)" accept=".crt,.cer,.pem,.pub,.key,.p12,.pfx,.txt" class="hidden" />
+                </div>
+              </div>
+              <p class="text-[10px] text-[#86868b] mt-2">Se envían como texto string en <span class="font-mono">cert_clave_privada</span> y <span class="font-mono">cert_clave_publica</span>.</p>
             </div>
 
 

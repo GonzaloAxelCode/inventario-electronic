@@ -1,4 +1,4 @@
-import { ComprobanteCompra, CreateCompra } from '@/app/models/compra.models';
+import { ComprobanteCompra, ComprobanteFile, CreateCompra, SubirFileResponse } from '@/app/models/compra.models';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -12,6 +12,10 @@ export interface CompraResponse {
     index_page: number;
     length_pages: number;
     results: ComprobanteCompra[];
+}
+
+export interface ComprobanteFilesResponse {
+    results: ComprobanteFile[];
 }
 
 export interface QuerySearchCompra {
@@ -109,6 +113,42 @@ export class CompraService {
             timeout(30000),
             catchError((error) => {
                 console.error('Error al crear comprobante de compra', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    subirFilesComprobante(
+        tipoComprobante: string,
+        xmlFile: File | null,
+        pdfFile: File | null,
+        observaciones?: string
+    ): Observable<SubirFileResponse> {
+        const formData = new FormData();
+        formData.append('tipo_comprobante', tipoComprobante);
+        if (xmlFile) formData.append('xml', xmlFile);
+        if (pdfFile) formData.append('pdf', pdfFile);
+        if (observaciones) formData.append('observaciones', observaciones);
+
+        return this.http.post<SubirFileResponse>(
+            `${this.siteURL}/compras/comprobante/subir-files/`,
+            formData
+        ).pipe(
+            timeout(30000),
+            catchError((error) => {
+                console.error('Error al subir archivos de comprobante', error);
+                return throwError(() => error);
+             })
+        );
+    }
+
+    getComprobantesFiles(): Observable<ComprobanteFilesResponse> {
+        return this.http.get<ComprobanteFilesResponse>(
+            `${this.siteURL}/compras/comprobante/files/`
+        ).pipe(
+            timeout(30000),
+            catchError((error) => {
+                console.error('Error al obtener comprobantes files', error);
                 return throwError(() => error);
             })
         );

@@ -21,6 +21,10 @@ export enum PedidoActionTypes {
     ELIMINAR_PEDIDO = '[Pedido] Eliminar Pedido',
     ELIMINAR_PEDIDO_EXITO = '[Pedido] Eliminar Pedido Exito',
     ELIMINAR_PEDIDO_ERROR = '[Pedido] Eliminar Pedido Error',
+
+    PAGAR_PEDIDO = '[Pedido] Pagar Pedido',
+    PAGAR_PEDIDO_EXITO = '[Pedido] Pagar Pedido Exito',
+    PAGAR_PEDIDO_ERROR = '[Pedido] Pagar Pedido Error',
 }
 
 export const cargarPedidos = createAction(
@@ -102,5 +106,20 @@ export const eliminarPedidoExito = createAction(
 
 export const eliminarPedidoError = createAction(
     PedidoActionTypes.ELIMINAR_PEDIDO_ERROR,
+    props<{ error: any }>()
+);
+
+export const pagarPedido = createAction(
+    PedidoActionTypes.PAGAR_PEDIDO,
+    props<{ pedidoId: number; data: Partial<any> }>()
+);
+
+export const pagarPedidoExito = createAction(
+    PedidoActionTypes.PAGAR_PEDIDO_EXITO,
+    props<{ pedido: Pedido; mensaje: string }>()
+);
+
+export const pagarPedidoError = createAction(
+    PedidoActionTypes.PAGAR_PEDIDO_ERROR,
     props<{ error: any }>()
 );

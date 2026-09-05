@@ -15,6 +15,12 @@ import {
     searchCompras,
     searchComprasExito,
     searchComprasError,
+    subirFiles,
+    subirFilesExito,
+    subirFilesError,
+    cargarFiles,
+    cargarFilesExito,
+    cargarFilesError,
 } from '../actions/compra.actions';
 import { AppState } from '../app.state';
 
@@ -83,6 +89,40 @@ export class CompraEffects {
                         })
                     ),
                     catchError((error) => of(searchComprasError({ error })))
+                )
+            )
+        )
+    );
+
+    subirFilesEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(subirFiles),
+            exhaustMap(({ tipoComprobante, xml, pdf, observaciones }) =>
+                this.compraService.subirFilesComprobante(tipoComprobante, xml || null, pdf || null, observaciones).pipe(
+                    map((response) => {
+                        this.alertService.showSuccess('Comprobante guardado exitosamente', 'Exito').subscribe();
+                        return subirFilesExito({ response });
+                    }),
+                    catchError((error) => {
+                        this.alertService.showError('Error al subir los archivos', 'Error').subscribe();
+                        return of(subirFilesError({ error }));
+                    })
+                )
+            )
+        )
+    );
+
+    cargarFilesEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(cargarFiles),
+            switchMap(() =>
+                this.compraService.getComprobantesFiles().pipe(
+                    map((response) =>
+                        cargarFilesExito({
+                            files: response.results || [],
+                        })
+                    ),
+                    catchError((error) => of(cargarFilesError({ error })))
                 )
             )
         )

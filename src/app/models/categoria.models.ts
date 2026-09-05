@@ -12,7 +12,6 @@ export interface Categoria {
     parent?: number | null;
     destacado: boolean;
     color?: string;
-    siglas_nombre_categoria?: string,
     date_created?: any
     caracteristicas_template: string[]
 }

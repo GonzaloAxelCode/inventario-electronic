@@ -47,8 +47,8 @@ export class ComprasComponent implements OnInit {
   private location = inject(Location);
   private cdr = inject(ChangeDetectorRef);
 
-  validTabs = ['historial', 'comprobantes', 'graficos'] as const;
-  activeTab: 'historial' | 'comprobantes' | 'graficos' = 'historial';
+  validTabs = ['historial', 'comprobantes'] as const;
+  activeTab: 'historial' | 'comprobantes' = 'historial';
   activeTabIndex = 0;
 
   ngOnInit() {

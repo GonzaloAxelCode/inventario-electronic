@@ -6,14 +6,15 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { TuiAppearance, TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TuiAppearance, TuiButton, TuiDataList, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
+import { TuiDataListWrapper } from '@taiga-ui/kit';
 import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-formaddstore',
   standalone: true,
-  imports: [TuiLoader, CommonModule, ReactiveFormsModule, TuiTextfield, TuiInputModule, TuiSelectModule, TuiAppearance, TuiButton],
+  imports: [TuiLoader, CommonModule, ReactiveFormsModule, TuiTextfield, TuiInputModule, TuiSelectModule, TuiDataList, TuiDataListWrapper, TuiAppearance, TuiButton],
   templateUrl: './formaddstore.component.html',
   styleUrl: './formaddstore.component.scss'
 })
@@ -24,8 +25,6 @@ export class FormaddstoreComponent implements OnInit {
   logoPreview: string | null = null;
   selectedLogoDark: File | null = null;
   logoDarkPreview: string | null = null;
-  selectedBanner: File | null = null;
-  bannerPreview: string | null = null;
   readonly seriesOptions = ['001', '002', '003', '004', '005', '006', '007', '008', '009', '010'];
 
   isAdminTienda = false;
@@ -36,7 +35,14 @@ export class FormaddstoreComponent implements OnInit {
   isSuperUser = false;
   selectedCert: File | null = null;
   certFileName: string | null = null;
+  selectedCertPrivada: File | null = null;
+  certPrivadaFileName: string | null = null;
+  certPrivadaString: string | null = null;
+  selectedCertPublica: File | null = null;
+  certPublicaFileName: string | null = null;
+  certPublicaString: string | null = null;
   tiendasList: any[] = [];
+  esSucursal = false;
 
   constructor(private store: Store<AppState>, private fb: FormBuilder) {
 
@@ -105,6 +111,22 @@ export class FormaddstoreComponent implements OnInit {
         this.store.dispatch(loadTiendasAction());
       }
     });
+
+    // Detectar cambio en Jerarquía: si se selecciona una tienda (sucursal), heredar datos del padre
+    this.tiendaForm.get('tienda_padre_select')?.valueChanges.subscribe(value => {
+      this.esSucursal = !!value && value !== 'padre';
+      if (this.esSucursal) {
+        const selectedTienda = this.tiendasList?.find((t: any) => t.id === value);
+        if (selectedTienda) {
+          this.tiendaForm.patchValue({
+            razon_social: selectedTienda.razon_social || '',
+            ruc: selectedTienda.ruc || '',
+            sol_user: '',
+            sol_password: ''
+          });
+        }
+      }
+    });
   }
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -132,19 +154,6 @@ export class FormaddstoreComponent implements OnInit {
     }
   }
 
-  onBannerSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedBanner = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => this.bannerPreview = reader.result as string;
-      reader.readAsDataURL(this.selectedBanner);
-    } else {
-      this.selectedBanner = null;
-      this.bannerPreview = null;
-    }
-  }
-
   onCertSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -156,6 +165,46 @@ export class FormaddstoreComponent implements OnInit {
     }
   }
 
+  onCertPrivadaSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedCertPrivada = input.files[0];
+      this.certPrivadaFileName = this.selectedCertPrivada.name;
+      const reader = new FileReader();
+      reader.onload = () => this.certPrivadaString = reader.result as string;
+      reader.readAsText(this.selectedCertPrivada);
+    } else {
+      this.selectedCertPrivada = null;
+      this.certPrivadaFileName = null;
+      this.certPrivadaString = null;
+    }
+  }
+
+  onCertPublicaSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedCertPublica = input.files[0];
+      this.certPublicaFileName = this.selectedCertPublica.name;
+      const reader = new FileReader();
+      reader.onload = () => this.certPublicaString = reader.result as string;
+      reader.readAsText(this.selectedCertPublica);
+    } else {
+      this.selectedCertPublica = null;
+      this.certPublicaFileName = null;
+      this.certPublicaString = null;
+    }
+  }
+
+
+  getJerarquiaLabel(value: string | number | null): string {
+    if (!value) return 'Selecciona una opción';
+    if (value === 'padre') return 'Registrar como tienda Padre';
+    const tienda = this.tiendasList?.find((t: any) => t.id === value);
+    if (tienda) {
+      return `${tienda.nombre} — RUC ${tienda.ruc || '—'} · ID ${tienda.id}`;
+    }
+    return '';
+  }
 
   onSubmit() {
     if (this.tiendaForm.valid) {
@@ -192,7 +241,7 @@ export class FormaddstoreComponent implements OnInit {
         formData.append('tienda_padre_id', String(this.parentTiendaId));
       }
 
-      // Agregamos logos y banner si existen
+      // Agregamos logos si existen
       if (this.selectedLogo) {
         formData.append('logo_img', this.selectedLogo);
         formData.append('logo', this.selectedLogo);
@@ -202,16 +251,19 @@ export class FormaddstoreComponent implements OnInit {
         formData.append('logo_dark_img', this.selectedLogoDark);
         formData.append('logo_oscuro', this.selectedLogoDark);
       }
-      if (this.selectedBanner) {
-        formData.append('banner', this.selectedBanner);
-        formData.append('banner_img', this.selectedBanner);
-        formData.append('banner_image', this.selectedBanner);
-      }
       if (this.selectedCert && this.isSuperUser) {
         formData.append('certificado', this.selectedCert);
         formData.append('clave', this.selectedCert);
         formData.append('archivo_sunat', this.selectedCert);
         formData.append('sunat_cert', this.selectedCert);
+      }
+
+      // Convertimos los archivos de cert_clave_privada y cert_clave_publica a texto string y los enviamos en el payload
+      if (this.certPrivadaString) {
+        formData.append('cert_clave_privada', this.certPrivadaString);
+      }
+      if (this.certPublicaString) {
+        formData.append('cert_clave_publica', this.certPublicaString);
       }
 
       // Despachamos la acción con FormData
@@ -235,11 +287,14 @@ export class FormaddstoreComponent implements OnInit {
       this.selectedLogo = null;
       this.selectedLogoDark = null;
       this.logoDarkPreview = null;
-      this.selectedBanner = null;
-      this.bannerPreview = null;
-      this.logoPreview = null;
       this.selectedCert = null;
       this.certFileName = null;
+      this.selectedCertPrivada = null;
+      this.certPrivadaFileName = null;
+      this.certPrivadaString = null;
+      this.selectedCertPublica = null;
+      this.certPublicaFileName = null;
+      this.certPublicaString = null;
     }
   }
 

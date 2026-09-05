@@ -53,6 +53,15 @@ export class TiendaService {
             })
         );
     }
+
+    updateTiendaStyles(id: number, body: { tipo_style_boleta_ticket: string; tipo_style_boleta_pdf: string; tipo_style_factura_pdf: string }): Observable<any> {
+        return this.http.patch(`${this.siteURL}/tiendas/styles/${id}/`, body).pipe(
+            catchError(error => {
+                printError(error)
+                return throwError(error)
+            })
+        );
+    }
     eliminarTiendaPermanently(id: number): Observable<any> {
         return this.http.delete(`${this.siteURL}/tiendas/delete/${id}/`).pipe(
             catchError(error => {

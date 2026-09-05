@@ -1,5 +1,5 @@
 import { Tienda } from '@/app/models/tienda.models';
-import { URL_BASE } from '@/app/services/utils/endpoints';
+import { URL_BASE, imageUrl } from '@/app/services/utils/endpoints';
 import { updateTiendaAction, updateTiendaSuccess } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
@@ -31,13 +31,20 @@ export class DialogupdattiendaComponent implements OnInit, OnDestroy {
   logoPreview: string | null = null;
   selectedLogoDark: File | null = null;
   logoDarkPreview: string | null = null;
-  selectedBanner: File | null = null;
-  bannerPreview: string | null = null;
-  selectedCert: File | null = null;
-  certFileName: string | null = null;
+  selectedCertPrivada: File | null = null;
+  certPrivadaFileName: string | null = null;
+  certPrivadaString: string | null = null;
+  selectedCertPublica: File | null = null;
+  certPublicaFileName: string | null = null;
+  certPublicaString: string | null = null;
   loadingUpdateTienda = false;
   isSuperUser = false;
   isAdminTienda = false;
+
+  get esSucursal(): boolean {
+    return !!(this.tienda as any).tienda_padre;
+  }
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -46,7 +53,7 @@ export class DialogupdattiendaComponent implements OnInit, OnDestroy {
     private actions$: Actions,
     private cdRef: ChangeDetectorRef
   ) {
-    this.logoPreview = this.tienda.logo_img ? URL_BASE + this.tienda.logo_img : null;
+    this.logoPreview = imageUrl(this.tienda.logo_img);
     this.tiendaForm = this.fb.group({
       nombre: [this.tienda.nombre || '', Validators.required],
       razon_social: [this.tienda.razon_social || '', Validators.required],
@@ -74,11 +81,21 @@ export class DialogupdattiendaComponent implements OnInit, OnDestroy {
       const u: any = user as any;
       this.isSuperUser = !!u?.is_superuser;
       this.isAdminTienda = !this.isSuperUser && u?.es_propietario === true;
-      if (this.isAdminTienda) {
-        this.tiendaForm.get('ruc')?.disable({ emitEvent: false });
-      } else {
-        this.tiendaForm.get('ruc')?.enable({ emitEvent: false });
-      }
+    if (this.isAdminTienda || this.esSucursal) {
+      this.tiendaForm.get('ruc')?.disable({ emitEvent: false });
+    } else {
+      this.tiendaForm.get('ruc')?.enable({ emitEvent: false });
+    }
+
+    if (this.esSucursal) {
+      this.tiendaForm.get('razon_social')?.disable({ emitEvent: false });
+      this.tiendaForm.get('sol_user')?.disable({ emitEvent: false });
+      this.tiendaForm.get('sol_password')?.disable({ emitEvent: false });
+    } else {
+      this.tiendaForm.get('razon_social')?.enable({ emitEvent: false });
+      this.tiendaForm.get('sol_user')?.enable({ emitEvent: false });
+      this.tiendaForm.get('sol_password')?.enable({ emitEvent: false });
+    }
       this.cdRef.markForCheck();
     });
 
@@ -101,7 +118,7 @@ export class DialogupdattiendaComponent implements OnInit, OnDestroy {
       reader.readAsDataURL(this.selectedLogo);
     } else {
       this.selectedLogo = null;
-      this.logoPreview = this.tienda.logo_img ? URL_BASE + this.tienda.logo_img : null;
+      this.logoPreview = imageUrl(this.tienda.logo_img);
     }
   }
 
@@ -118,27 +135,34 @@ export class DialogupdattiendaComponent implements OnInit, OnDestroy {
     }
   }
 
-  onBannerSelected(event: Event): void {
+  onCertPrivadaSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.selectedBanner = input.files[0];
+      this.selectedCertPrivada = input.files[0];
+      this.certPrivadaFileName = this.selectedCertPrivada.name;
       const reader = new FileReader();
-      reader.onload = () => this.bannerPreview = reader.result as string;
-      reader.readAsDataURL(this.selectedBanner);
+      reader.onload = () => this.certPrivadaString = reader.result as string;
+      reader.readAsText(this.selectedCertPrivada);
     } else {
-      this.selectedBanner = null;
-      this.bannerPreview = null;
+      this.selectedCertPrivada = null;
+      this.certPrivadaFileName = null;
+      this.certPrivadaString = null;
     }
+    this.cdRef.markForCheck();
   }
 
-  onCertSelected(event: Event): void {
+  onCertPublicaSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.selectedCert = input.files[0];
-      this.certFileName = this.selectedCert.name;
+      this.selectedCertPublica = input.files[0];
+      this.certPublicaFileName = this.selectedCertPublica.name;
+      const reader = new FileReader();
+      reader.onload = () => this.certPublicaString = reader.result as string;
+      reader.readAsText(this.selectedCertPublica);
     } else {
-      this.selectedCert = null;
-      this.certFileName = null;
+      this.selectedCertPublica = null;
+      this.certPublicaFileName = null;
+      this.certPublicaString = null;
     }
     this.cdRef.markForCheck();
   }
@@ -149,8 +173,10 @@ export class DialogupdattiendaComponent implements OnInit, OnDestroy {
       return;
     }
     const formData = new FormData();
-    const raw = (this.tiendaForm as any).getRawValue ? this.tiendaForm.getRawValue() : this.tiendaForm.value;
+    const raw = (this.tiendaForm as any).getRawValue ? (this.tiendaForm as any).getRawValue() : this.tiendaForm.value;
+
     Object.entries(raw).forEach(([key, value]) => {
+      if (this.esSucursal && (key === 'ruc' || key === 'razon_social')) return;
       formData.append(key, value as any);
     });
     if (this.selectedLogo) {
@@ -161,15 +187,11 @@ export class DialogupdattiendaComponent implements OnInit, OnDestroy {
       formData.append('logo_dark', this.selectedLogoDark);
       formData.append('logo_dark_img', this.selectedLogoDark);
     }
-    if (this.selectedBanner) {
-      formData.append('banner', this.selectedBanner);
-      formData.append('banner_img', this.selectedBanner);
+    if (this.certPrivadaString) {
+      formData.append('cert_clave_privada', this.certPrivadaString);
     }
-    if (this.selectedCert) {
-      formData.append('certificado', this.selectedCert);
-      formData.append('clave', this.selectedCert);
-      formData.append('archivo_sunat', this.selectedCert);
-      formData.append('sunat_cert', this.selectedCert);
+    if (this.certPublicaString) {
+      formData.append('cert_clave_publica', this.certPublicaString);
     }
     this.store.dispatch(updateTiendaAction({ newTienda: formData, id: this.tienda.id as number }));
   }

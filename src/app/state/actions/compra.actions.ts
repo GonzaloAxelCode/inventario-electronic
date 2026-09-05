@@ -1,4 +1,4 @@
-import { ComprobanteCompra, CreateCompra } from '@/app/models/compra.models';
+import { ComprobanteCompra, ComprobanteFile, ComprobanteFilesResponse, CreateCompra } from '@/app/models/compra.models';
 import { QuerySearchCompra } from '@/app/services/compra.service';
 import { createAction, props } from '@ngrx/store';
 
@@ -11,11 +11,19 @@ export enum CompraActionTypes {
     CREAR_COMPRA_EXITO = '[Compra] Crear Compra Exito',
     CREAR_COMPRA_ERROR = '[Compra] Crear Compra Error',
 
+    SUBIR_FILES = '[Compra] Subir Files',
+    SUBIR_FILES_EXITO = '[Compra] Subir Files Exito',
+    SUBIR_FILES_ERROR = '[Compra] Subir Files Error',
+
     SEARCH_COMPRAS = '[Compra] Search Compras',
     SEARCH_COMPRAS_EXITO = '[Compra] Search Compras Exito',
     SEARCH_COMPRAS_ERROR = '[Compra] Search Compras Error',
 
     CLEAR_SEARCH_COMPRAS = '[Compra] Clear Search Compras',
+
+    CARGAR_FILES = '[Compra] Cargar Files',
+    CARGAR_FILES_EXITO = '[Compra] Cargar Files Exito',
+    CARGAR_FILES_ERROR = '[Compra] Cargar Files Error',
 }
 
 export const cargarCompras = createAction(
@@ -79,4 +87,33 @@ export const searchComprasError = createAction(
 
 export const clearSearchCompras = createAction(
     CompraActionTypes.CLEAR_SEARCH_COMPRAS
+);
+
+export const cargarFiles = createAction(
+    CompraActionTypes.CARGAR_FILES
+);
+
+export const cargarFilesExito = createAction(
+    CompraActionTypes.CARGAR_FILES_EXITO,
+    props<{ files: ComprobanteFile[] }>()
+);
+
+export const cargarFilesError = createAction(
+    CompraActionTypes.CARGAR_FILES_ERROR,
+    props<{ error: any }>()
+);
+
+export const subirFiles = createAction(
+    CompraActionTypes.SUBIR_FILES,
+    props<{ tipoComprobante: string; xml?: File; pdf?: File; observaciones?: string }>()
+);
+
+export const subirFilesExito = createAction(
+    CompraActionTypes.SUBIR_FILES_EXITO,
+    props<{ response: ComprobanteFilesResponse }>()
+);
+
+export const subirFilesError = createAction(
+    CompraActionTypes.SUBIR_FILES_ERROR,
+    props<{ error: any }>()
 );

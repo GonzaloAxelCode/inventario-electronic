@@ -1,4 +1,4 @@
-import { ComprobanteCompra } from '@/app/models/compra.models';
+import { ComprobanteCompra, ComprobanteFile } from '@/app/models/compra.models';
 import { createReducer, on } from '@ngrx/store';
 import {
     cargarCompras,
@@ -11,6 +11,12 @@ import {
     searchComprasExito,
     searchComprasError,
     clearSearchCompras,
+    subirFiles,
+    subirFilesExito,
+    subirFilesError,
+    cargarFiles,
+    cargarFilesExito,
+    cargarFilesError,
 } from '../actions/compra.actions';
 
 export interface CompraState {
@@ -26,6 +32,9 @@ export interface CompraState {
     index_page: any;
     length_pages: any;
     loadingCreate: boolean;
+    loadingUpload: boolean;
+    comprobantes_files: ComprobanteFile[];
+    loadingFiles: boolean;
 }
 
 export const initialState: CompraState = {
@@ -41,6 +50,9 @@ export const initialState: CompraState = {
     index_page: null,
     length_pages: null,
     loadingCreate: false,
+    loadingUpload: false,
+    comprobantes_files: [],
+    loadingFiles: false,
 };
 
 export const compraReducer = createReducer(
@@ -67,11 +79,13 @@ export const compraReducer = createReducer(
     on(crearCompra, (state) => ({
         ...state,
         loadingCreate: true,
+        error: undefined
     })),
     on(crearCompraExito, (state, { comprobante }) => ({
         ...state,
         comprobantes: [comprobante, ...state.comprobantes],
         loadingCreate: false,
+        error: undefined
     })),
     on(crearCompraError, (state, { error }) => ({
         ...state,
@@ -102,5 +116,34 @@ export const compraReducer = createReducer(
         ...state,
         comprobantes_search: [],
         search_found: false,
+    })),
+    on(subirFiles, (state) => ({
+        ...state,
+        loadingUpload: true,
+        error: undefined,
+    })),
+    on(subirFilesExito, (state) => ({
+        ...state,
+        loadingUpload: false,
+        error: undefined,
+    })),
+    on(subirFilesError, (state, { error }) => ({
+        ...state,
+        error,
+        loadingUpload: false,
+    })),
+    on(cargarFiles, (state) => ({
+        ...state,
+        loadingFiles: true,
+    })),
+    on(cargarFilesExito, (state, { files }) => ({
+        ...state,
+        comprobantes_files: files,
+        loadingFiles: false,
+    })),
+    on(cargarFilesError, (state, { error }) => ({
+        ...state,
+        error,
+        loadingFiles: false,
     })),
 );

@@ -5,10 +5,13 @@ import { Store } from '@ngrx/store';
 import { TuiAlertService, TuiButton, TuiDataList, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { Actions, ofType } from '@ngrx/effects';
-import { takeUntil, Subject, startWith } from 'rxjs';
-import { crearCompra, crearCompraExito } from '@/app/state/actions/compra.actions';
+  import { takeUntil, Subject, switchMap, filter, distinctUntilChanged, of, timeout, finalize } from 'rxjs';
+  import { catchError, map } from 'rxjs/operators';
+import { crearCompra, crearCompraExito, subirFiles, subirFilesExito } from '@/app/state/actions/compra.actions';
 import { AppState } from '@/app/state/app.state';
+import { CompraState } from '@/app/state/reducers/compra.reducer';
 import { selectCompra } from '@/app/state/selectors/compra.selectors';
+  import { ConsultaService } from '@/app/services/consultas.service';
 import { parseXmlCompra } from '@/app/utils/xml-parser';
 
 @Component({
@@ -39,9 +42,20 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
-  loading$ = this.store.select(selectCompra);
+   loading$ = this.store.select(selectCompra);
+   compraError$ = this.store.select(selectCompra).pipe(
+     map((state: CompraState) => state.error?.error || {})
+   );
+  tipoComprobanteSeleccionado = '';
+   metodoSeleccionado: string = '';
+   pasoActual: number = 1;
+
+   private consultaService = inject(ConsultaService);
 
   submitted = false;
+  consultandoDocumento = false;
+  proveedorNoEncontrado = false;
+  compraServerError: string | null = null;
 
   tipoComprobantes = ['01', '03'];
   tipoComprobanteLabels: Record<string, string> = {
@@ -54,28 +68,25 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     'CONTADO': 'Contado',
     'CREDITO': 'Credito'
   };
-  tiposDocProveedor = ['01', '04', '07', '11'];
-  tiposDocProveedorLabels: Record<string, string> = {
-    '01': 'DNI',
-    '04': 'Carnet de Extranjeria',
-    '07': 'RUC',
-    '11': 'Pasaporte'
-  };
+   tiposDocProveedor = ['07', '01'];
+   tiposDocProveedorLabels: Record<string, string> = {
+     '07': 'RUC',
+     '01': 'DNI'
+   };
 
-  tiposDocProveedorPermitidos: Record<string, string[]> = {
-    '01': ['07'],
-    '03': ['01', '04', '07', '11']
-  };
+   tiposDocProveedorPermitidos: Record<string, string[]> = {
+     '01': ['07'],
+     '03': ['07', '01']
+   };
 
-  longitudesDocProveedor: Record<string, { min: number; max: number; label: string }> = {
-    '01': { min: 8, max: 8, label: 'DNI (8 digitos)' },
-    '04': { min: 9, max: 12, label: 'Carnet (9-12 caracteres)' },
-    '07': { min: 11, max: 11, label: 'RUC (11 digitos)' },
-    '11': { min: 8, max: 12, label: 'Pasaporte (8-12 caracteres)' }
-  };
+   longitudesDocProveedor: Record<string, { min: number; max: number; label: string }> = {
+     '01': { min: 8, max: 8, label: 'DNI (8 digitos)' },
+     '07': { min: 11, max: 11, label: 'RUC (11 digitos)' }
+   };
 
-  archivoFile: File | null = null;
-  parseando = false;
+   archivoFile: File | null = null;
+   archivoPdf: File | null = null;
+   parseando = false;
 
   compraForm: FormGroup = this.fb.group({
     tipo_comprobante: ['01', Validators.required],
@@ -95,20 +106,115 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
   }, { validators: [this.fechaVencimientoValidator, this.proveedorValidator] });
 
   ngOnInit() {
-    this.compraForm.get('tipo_comprobante')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.onTipoComprobanteChange();
-      });
+     this.compraForm.get('tipo_comprobante')?.valueChanges
+       .pipe(takeUntil(this.destroy$))
+       .subscribe(() => {
+         this.onTipoComprobanteChange();
+       });
+
+     this.compraError$
+       .pipe(takeUntil(this.destroy$))
+       .subscribe((errObj: any) => {
+         this.compraServerError = errObj?.detail || errObj?.non_field_errors?.[0] || null;
+       });
 
     this.compraForm.get('tipo_documento_proveedor')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.onTipoDocProveedorChange();
       });
+
+    this.compraForm.get('numero_documento_proveedor')?.valueChanges
+      .pipe(
+        takeUntil(this.destroy$),
+        distinctUntilChanged(),
+        filter((valor: string) => !!valor && valor.length >= 8)
+      )
+      .subscribe(() => {
+        this.consultarProveedor();
+      });
   }
 
-  get items(): FormArray {
+   seleccionarTipoComprobante(tipo: string): void {
+     this.tipoComprobanteSeleccionado = tipo;
+     this.compraForm.get('tipo_comprobante')?.setValue(tipo, { emitEvent: true });
+   }
+
+   irAlMetodoSeleccion(): void {
+     this.metodoSeleccionado = '';
+     this.pasoActual = 2;
+   }
+
+   seleccionarMetodo(metodo: 'formulario' | 'archivo'): void {
+     this.metodoSeleccionado = metodo;
+     this.pasoActual = 3;
+   }
+
+   pasoSiguiente(): void {
+     this.pasoActual++;
+   }
+
+    pasoAnterior(): void {
+      this.pasoActual--;
+    }
+
+    get puedeRegistrar(): boolean {
+      if (this.metodoSeleccionado === 'formulario') {
+        return this.compraForm.valid && this.items.length > 0;
+      }
+      if (this.metodoSeleccionado === 'archivo') {
+        return !!this.archivoFile || !!this.archivoPdf;
+      }
+      return false;
+    }
+
+   consultarProveedor(): void {
+     const tipoDoc = this.compraForm.get('tipo_documento_proveedor')?.value;
+     const nroDoc = this.compraForm.get('numero_documento_proveedor')?.value;
+
+     if (!tipoDoc || !nroDoc) return;
+
+     const info = this.longitudesDocProveedor[tipoDoc];
+     if (!info || nroDoc.length < info.min || nroDoc.length > info.max) return;
+
+     const consultaObservable =
+       nroDoc.length === 8
+         ? this.consultaService.consultarDNI(nroDoc)
+         : nroDoc.length === 11
+           ? this.consultaService.consultarRUC(nroDoc)
+           : null;
+
+     if (!consultaObservable) return;
+
+     this.consultandoDocumento = true;
+     this.proveedorNoEncontrado = false;
+
+     consultaObservable.pipe(
+       timeout(5000),
+       takeUntil(this.destroy$),
+       finalize(() => {
+         this.consultandoDocumento = false;
+         this.cdr.detectChanges();
+       }),
+       catchError((error) => {
+         console.error('Error al consultar documento:', error);
+         this.proveedorNoEncontrado = true;
+         return of(null);
+       })
+     ).subscribe(response => {
+       const nombre = response?.nombre_completo || response?.nombre_o_razon_social || '';
+
+       if (nombre) {
+         this.proveedorNoEncontrado = false;
+         this.compraForm.patchValue({ nombre_proveedor: nombre });
+       } else {
+         this.proveedorNoEncontrado = true;
+         this.compraForm.patchValue({ nombre_proveedor: '' });
+       }
+      });
+   }
+
+   get items(): FormArray {
     return this.compraForm.get('items') as FormArray;
   }
 
@@ -253,14 +359,18 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  getProveedorGroupError(): string {
-    const group = this.compraForm;
-    if (!group.errors) return '';
-    if (group.errors['proveedorIncompleto'] === 'numero') return 'Ingrese el numero de documento del proveedor';
-    if (group.errors['proveedorIncompleto'] === 'tipo') return 'Seleccione el tipo de documento';
-    if (group.errors['proveedorIncompleto'] === 'nombre') return 'Ingrese el nombre del proveedor';
-    return '';
-  }
+   getProveedorGroupError(): string {
+     const group = this.compraForm;
+     if (!group.errors) return '';
+     if (group.errors['proveedorIncompleto'] === 'numero') return 'Ingrese el numero de documento del proveedor';
+     if (group.errors['proveedorIncompleto'] === 'tipo') return 'Seleccione el tipo de documento';
+      if (group.errors['proveedorIncompleto'] === 'nombre') return 'No se pudo obtener el nombre. Verifique el documento ingresado';
+     return '';
+   }
+
+   getServerError(): string {
+     return this.compraServerError || '';
+   }
 
   getVencimientoGroupError(): string {
     const group = this.compraForm;
@@ -379,22 +489,39 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
 
   // ==================== ARCHIVO XML ====================
 
-  onArchivoSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      const isXml = file.type === 'text/xml' || file.name.endsWith('.xml');
+   onArchivoSelected(event: Event) {
+     const input = event.target as HTMLInputElement;
+     if (input.files && input.files.length > 0) {
+       const file = input.files[0];
+       const isXml = file.type === 'text/xml' || file.name.endsWith('.xml');
 
-      if (isXml) {
-        this.archivoFile = file;
-      } else {
-        this.alerts.open('Archivo invalido', {
-          label: 'Solo se permiten archivos .xml',
-          appearance: 'warning'
-        }).subscribe();
-      }
-    }
-  }
+       if (isXml) {
+         this.archivoFile = file;
+       } else {
+         this.alerts.open('Archivo invalido', {
+           label: 'Solo se permiten archivos .xml',
+           appearance: 'warning'
+         }).subscribe();
+       }
+     }
+   }
+
+   onPdfSelected(event: Event) {
+     const input = event.target as HTMLInputElement;
+     if (input.files && input.files.length > 0) {
+       const file = input.files[0];
+       const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
+
+       if (isPdf) {
+         this.archivoPdf = file;
+       } else {
+         this.alerts.open('Archivo invalido', {
+           label: 'Solo se permiten archivos .pdf',
+           appearance: 'warning'
+         }).subscribe();
+       }
+     }
+   }
 
   async sincronizar() {
     if (!this.archivoFile) return;
@@ -520,6 +647,27 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     });
   }
 
+  guardarComprobante() {
+    const f = this.compraForm.value;
+    const tipoComprobante = f.tipo_comprobante || this.tipoComprobanteSeleccionado;
+
+    this.store.dispatch(subirFiles({
+      tipoComprobante,
+      xml: this.archivoFile || undefined,
+      pdf: this.archivoPdf || undefined,
+      observaciones: f.observaciones || undefined,
+    }));
+
+    this.actions$.pipe(
+      ofType(subirFilesExito),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.limpiarFormulario();
+      this.pasoActual = 1;
+      this.metodoSeleccionado = '';
+    });
+  }
+
   limpiarFormulario() {
     this.submitted = false;
     this.items.clear();
@@ -539,6 +687,7 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
       observaciones: '',
     });
     this.archivoFile = null;
+    this.archivoPdf = null;
   }
 
   ngOnDestroy() {

@@ -41,6 +41,8 @@ export interface ResumenClientes {
 export interface ClienteFrecuente {
     nombre: string;
     celular: string;
+    dni?: string;
+    ruc?: string;
     total_compras: number;
 }
 
@@ -53,6 +55,8 @@ export interface ClientesFrecuentesResponse {
 export interface TopClienteCompra {
     nombre: string;
     celular: string;
+    dni?: string;
+    ruc?: string;
     total_gastado: number;
 }
 

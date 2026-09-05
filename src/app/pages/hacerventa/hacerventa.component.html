@@ -463,6 +463,9 @@
                                             Finalizar Venta
                                         </span>
                                     </button>
+                                    <p *ngIf="rucRequiredError()" class="text-red-500 text-xs mt-2 text-center bg-red-50 dark:bg-red-900/20 rounded-lg px-3 py-2 font-medium">
+                                        Para facturas solo se permite RUC (11 dígitos). No se puede continuar con DNI.
+                                    </p>
 
                                     <button *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'"
                                         [disabled]="ventaForm.get('productos')?.value.length === 0"
@@ -583,6 +586,15 @@
                                     </div>
                                 </div>
 
+                                <!-- Miniaturas de productos -->
+                                <div class="flex items-center gap-2 mb-4" *ngIf="pedido.productos?.length">
+                                    <div *ngFor="let prod of pedido.productos.slice(0, 4)" class="w-10 h-10 rounded-lg border border-neutral-200 dark:border-neutral-600 overflow-hidden bg-neutral-100 dark:bg-neutral-700 shrink-0">
+                                        <img [src]="prod.imagen_producto || 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                                             class="w-full h-full object-cover" />
+                                    </div>
+                                    <span *ngIf="pedido.productos.length > 4" class="text-xs text-neutral-400">+{{ pedido.productos.length - 4 }}</span>
+                                </div>
+
                                 <!-- Info del cliente -->
                                 <div class="mb-4">
                                     <p class="text-sm font-semibold text-neutral-900 dark:text-white truncate">
@@ -684,7 +696,7 @@
                                             </span>
                                             <span class="text-[10px] text-neutral-400">{{ pedidoSeleccionado?.fecha | date:'mediumDate' }}</span>
                                         </div>
-                                        <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-neutral-900 dark:text-white">B001-00000000</h2>
+                                        <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-neutral-900 dark:text-white">{{ pedidoSeleccionado?.numero_pedido || '---' }}</h2>
                                     </div>
                                     <div class="text-right shrink-0">
                                         <p class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">S/ {{ salesTotals.total | number:'1.2-2' }}</p>

@@ -216,10 +216,12 @@ export class DialogventadetailComponent implements OnInit {
   showWhatsApp = false;
   whatsappNumero = '';
   whatsappMensaje = '';
+  whatsAppPlantillaActiva = '';
   showEmail = false;
   emailDestino = '';
   emailAsunto = '';
   emailMensaje = '';
+  emailPlantillaActiva = '';
   protected titles = ["Producto Sin Imagen"]
   protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
 
@@ -426,9 +428,108 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
     this.showConfirmAnular = false;
   }
 
+  // ─── Mensajes predefinidos (con datos de la tienda) ─────────────────────────
+  whatsAppPlantillas: { id: string; nombre: string }[] = [
+    { id: 'comprobante', nombre: 'Comprobante electrónico' },
+    { id: 'agradecimiento', nombre: 'Agradecimiento' },
+    { id: 'confirmacion', nombre: 'Confirmación de compra' },
+  ];
+
+  emailPlantillas: { id: string; nombre: string }[] = [
+    { id: 'comprobante', nombre: 'Comprobante electrónico' },
+    { id: 'agradecimiento', nombre: 'Agradecimiento' },
+    { id: 'confirmacion', nombre: 'Confirmación de compra' },
+    { id: 'promocion', nombre: 'Promoción' },
+  ];
+
+  get comprobanteNumero(): string {
+    const s = this.comprobante?.serie ?? '';
+    const c = this.comprobante?.correlativo ?? '';
+    return s && c ? `${s}-${c}` : (s || c || this.comprobante?.numero || '');
+  }
+
+  get clienteNombre(): string {
+    return this.venta?.nombre_cliente || this.comprobante?.nombre_cliente || 'cliente';
+  }
+
+  get comprobanteLink(): string {
+    const raw = (this.comprobante as any)?.ticket_url || this.comprobante.pdf_url;
+    return this.stripDomain(raw) || '';
+  }
+
+  get comprobanteTotal(): number {
+    return this.comprobante?.total ?? this.venta?.total ?? 0;
+  }
+
+  private generarMensajeWhatsApp(id: string): string {
+    const t = this.tiendaNombre || 'nuestra tienda';
+    const dir = this.tiendaDireccion || '';
+    const tel = this.tiendaTelefono || '';
+    const ruc = this.tiendaRuc || '';
+    const num = this.comprobanteNumero;
+    const link = this.comprobanteLink;
+    const total = this.comprobanteTotal;
+    const cliente = this.clienteNombre;
+
+    const pie = [tel ? `📞 ${tel}` : '', dir ? `📍 ${dir}` : '', ruc ? `RUC: ${ruc}` : '']
+      .filter(Boolean)
+      .join(' · ');
+
+    switch (id) {
+      case 'agradecimiento':
+        return `Hola ${cliente}! Gracias por preferir ${t}.\nTu comprobante electrónico ${num}:\n${link}\n\nCualquier consulta, estaremos encantados de atenderte.\n${pie ? pie + '\n' : ''}¡Vuelve pronto!`;
+      case 'confirmacion':
+        return `Estimado(a) ${cliente},\nConfirmamos tu compra en ${t}.\nComprobante: ${num}\nTotal: S/ ${total}\n\nPuedes ver tu documento aquí:\n${link}\n\n${pie ? pie + '\n' : ''}¡Gracias por tu preferencia!`;
+      case 'comprobante':
+      default:
+        return `Hola ${cliente}! Te saluda ${t}.\nTe envío tu comprobante electrónico ${num}:\n${link}\n\nGracias por tu compra. ¡Te esperamos de nuevo pronto!\n${pie ? pie : ''}`;
+    }
+  }
+
+  private generarMensajeEmail(id: string): string {
+    const t = this.tiendaNombre || 'nuestra tienda';
+    const dir = this.tiendaDireccion || '';
+    const tel = this.tiendaTelefono || '';
+    const ruc = this.tiendaRuc || '';
+    const num = this.comprobanteNumero;
+    const link = this.comprobanteLink;
+    const total = this.comprobanteTotal;
+    const cliente = this.clienteNombre;
+
+    const datosTienda = [
+      t,
+      dir,
+      tel ? `Teléfono: ${tel}` : '',
+      ruc ? `RUC: ${ruc}` : '',
+    ].filter(Boolean).join('\n');
+
+    switch (id) {
+      case 'agradecimiento':
+        return `Hola ${cliente},\n\nGracias por preferir ${t}. Te enviamos tu comprobante electrónico ${num}:\n${link}\n\nCualquier consulta contáctanos.\n\nSaludos,\n${datosTienda}`;
+      case 'confirmacion':
+        return `Estimado(a) ${cliente},\n\nTe confirmamos tu compra en ${t}.\nComprobante: ${num}\nTotal: S/ ${total}\n\nPuedes descargar tu documento en el siguiente enlace:\n${link}\n\nGracias por tu preferencia.\n\nSaludos,\n${datosTienda}`;
+      case 'promocion':
+        return `Estimado(a) ${cliente},\n\nGracias por tu reciente compra en ${t}. Queremos invitarte a conocer nuestras novedades y promociones.\n\nTu comprobante ${num} lo puedes ver aquí:\n${link}\n\nPara más información contáctanos.\n\nSaludos,\n${datosTienda}`;
+      case 'comprobante':
+      default:
+        return `Hola ${cliente},\n\nTe enviamos tu comprobante electrónico ${num} de ${t}:\n${link}\n\nGracias por tu compra. ¡Te esperamos de nuevo pronto!\n\nSaludos,\n${datosTienda}`;
+    }
+  }
+
+  aplicarMensajeWhatsApp(id: string): void {
+    this.whatsappMensaje = this.generarMensajeWhatsApp(id);
+    this.whatsAppPlantillaActiva = id;
+  }
+
+  aplicarMensajeEmail(id: string): void {
+    this.emailMensaje = this.generarMensajeEmail(id);
+    this.emailPlantillaActiva = id;
+  }
+
   abrirWhatsApp() {
-    this.whatsappNumero = this.venta.telefono_cliente || '';
-    this.whatsappMensaje = `Hola te saluda Movil Axel,\nTe envío tu comprobante electrónico:\n${this.stripDomain(this.comprobante.pdf_url)}\n\nGracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
+    this.whatsappNumero = this.venta.telefono_cliente || this.clienteTelefono || '';
+    this.whatsappMensaje = this.generarMensajeWhatsApp('comprobante');
+    this.whatsAppPlantillaActiva = 'comprobante';
     this.showWhatsApp = true;
   }
 
@@ -445,9 +546,10 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
   }
 
   abrirEmail() {
-    this.emailDestino = this.venta.email_cliente || this.venta.correo_cliente || '';
-    this.emailAsunto = `Comprobante ${this.comprobante.serie}-${this.comprobante.correlativo} - Movil Axel`;
-    this.emailMensaje = `Hola,\n\nTe envío tu comprobante electrónico.\n\nPuedes descargarlo en el siguiente enlace:\n${this.stripDomain(this.comprobante.pdf_url)}\n\nGracias por tu compra. ¡Esperamos verte de nuevo pronto!\n\nSaludos,\nMovil Axel`;
+    this.emailDestino = this.venta.email_cliente || this.venta.correo_cliente || this.clienteEmail || '';
+    this.emailAsunto = `Comprobante ${this.comprobanteNumero} - ${this.tiendaNombre || 'Mi Tienda'}`;
+    this.emailMensaje = this.generarMensajeEmail('comprobante');
+    this.emailPlantillaActiva = 'comprobante';
     this.showEmail = true;
   }
 

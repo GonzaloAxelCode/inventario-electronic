@@ -106,9 +106,20 @@
           <div *ngFor="let cliente of clientesFrecuentes; let i = index" class="flex items-center gap-3">
             <span class="text-xs font-bold text-neutral-400 w-4">{{ i + 1 }}</span>
             <div class="flex-1">
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-sm font-medium text-neutral-900 dark:text-white">{{ cliente.nombre }}</span>
-                <span class="text-sm font-bold text-neutral-600 dark:text-neutral-300">{{ cliente.total_compras }} compras</span>
+              <div class="flex justify-between items-center mb-1 gap-2">
+                <div class="min-w-0">
+                  <span class="text-sm font-medium text-neutral-900 dark:text-white truncate block">{{ cliente.nombre }}</span>
+                  <span class="block text-xs text-neutral-500 dark:text-neutral-400 truncate">
+                    <ng-container *ngIf="cliente.dni">DNI: {{ cliente.dni }}</ng-container>
+                    <ng-container *ngIf="cliente.dni && cliente.ruc"> · </ng-container>
+                    <ng-container *ngIf="cliente.ruc">RUC: {{ cliente.ruc }}</ng-container>
+                    <ng-container *ngIf="!cliente.dni && !cliente.ruc">
+                      <ng-container *ngIf="cliente.celular">Cel: {{ cliente.celular }}</ng-container>
+                      <ng-container *ngIf="!cliente.celular">—</ng-container>
+                    </ng-container>
+                  </span>
+                </div>
+                <span class="text-sm font-bold text-neutral-600 dark:text-neutral-300 shrink-0">{{ cliente.total_compras }} compras</span>
               </div>
               <div class="w-full bg-neutral-100 dark:bg-neutral-700 rounded-full h-2">
                 <div class="bg-blue-500 h-2 rounded-full transition-all duration-700"
@@ -149,9 +160,20 @@
           <div *ngFor="let cliente of topClientes; let i = index" class="flex items-center gap-3">
             <span class="text-xs font-bold text-neutral-400 w-4">{{ i + 1 }}</span>
             <div class="flex-1">
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-sm font-medium text-neutral-900 dark:text-white">{{ cliente.nombre }}</span>
-                <span class="text-sm font-bold text-green-600 dark:text-green-400">S/ {{ cliente.total_gastado | number:'1.2-2' }}</span>
+              <div class="flex justify-between items-center mb-1 gap-2">
+                <div class="min-w-0">
+                  <span class="text-sm font-medium text-neutral-900 dark:text-white truncate block">{{ cliente.nombre }}</span>
+                  <span class="block text-xs text-neutral-500 dark:text-neutral-400 truncate">
+                    <ng-container *ngIf="cliente.dni">DNI: {{ cliente.dni }}</ng-container>
+                    <ng-container *ngIf="cliente.dni && cliente.ruc"> · </ng-container>
+                    <ng-container *ngIf="cliente.ruc">RUC: {{ cliente.ruc }}</ng-container>
+                    <ng-container *ngIf="!cliente.dni && !cliente.ruc">
+                      <ng-container *ngIf="cliente.celular">Cel: {{ cliente.celular }}</ng-container>
+                      <ng-container *ngIf="!cliente.celular">—</ng-container>
+                    </ng-container>
+                  </span>
+                </div>
+                <span class="text-sm font-bold text-green-600 dark:text-green-400 shrink-0">S/ {{ cliente.total_gastado | number:'1.2-2' }}</span>
               </div>
               <div class="w-full bg-neutral-100 dark:bg-neutral-700 rounded-full h-2">
                 <div class="bg-green-500 h-2 rounded-full transition-all duration-700"

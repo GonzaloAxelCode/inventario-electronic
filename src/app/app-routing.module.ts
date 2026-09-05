@@ -66,13 +66,9 @@ const routes: Routes = [
 			{
 				path: 'guia-remision',
 				loadComponent: () => import('./pages/guia-remision/guia-remision.component').then(m => m.GuiaRemisionComponent)
-			},
-			{
-				path: 'tiktok',
-				loadComponent: () => import('./pages/tiktok/tiktok.component').then(m => m.TiktokComponent)
-			},
-			{
-				path: 'settings',
+		},
+		{
+			path: 'settings',
 				loadComponent: () => import('./components/settingscomponents/settingslayout/settingslayout.component').then(m => m.SettingslayoutComponent),
 				children: [
 					{ path: '', redirectTo: 'cuenta', pathMatch: 'full' },

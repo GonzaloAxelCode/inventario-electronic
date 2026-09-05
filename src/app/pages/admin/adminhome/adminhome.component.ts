@@ -46,21 +46,4 @@ export class AdminhomeComponent implements OnInit {
     if (a || b) return (a + b).toUpperCase();
     return (user.username?.charAt(0) || 'U').toUpperCase();
   }
-
-  getPermissionEntries(user: User | null): { key: string; value: boolean }[] {
-    if (!user?.permissions) return [];
-    return Object.entries(user.permissions).map(([key, value]) => ({ key, value: !!value }));
-  }
-
-  countGranted(user: User | null): number {
-    return this.getPermissionEntries(user).filter(p => p.value).length;
-  }
-
-  formatLabel(key: string): string {
-    return key.replace(/_/g, ' ');
-  }
-
-  trackByKey(_: number, item: { key: string }): string {
-    return item.key;
-  }
 }

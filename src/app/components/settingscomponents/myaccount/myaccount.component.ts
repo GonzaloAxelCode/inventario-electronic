@@ -102,10 +102,6 @@ export class MyaccountComponent implements OnInit {
     return this.user.modulos_habilitados?.includes('guias de remision') ?? false;
   }
 
-  get tiktokActive(): boolean {
-    return this.user.modulos_habilitados?.includes('tiktok') ?? false;
-  }
-
   get comprasActive(): boolean {
     return this.user.modulos_habilitados?.includes('compras') ?? false;
   }
@@ -137,9 +133,6 @@ export class MyaccountComponent implements OnInit {
     switch (modulo) {
       case 'guias de remision':
         this.featureFlags.toggleGuiasRemision();
-        break;
-      case 'tiktok':
-        this.featureFlags.toggleTiktok();
         break;
       case 'compras':
         this.featureFlags.toggleCompras();

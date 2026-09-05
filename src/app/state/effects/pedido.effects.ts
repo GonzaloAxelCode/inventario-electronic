@@ -21,6 +21,9 @@ import {
     eliminarPedido,
     eliminarPedidoExito,
     eliminarPedidoError,
+    pagarPedido,
+    pagarPedidoExito,
+    pagarPedidoError,
 } from '../actions/pedido.actions';
 import { AppState } from '../app.state';
 
@@ -121,6 +124,24 @@ export class PedidoEffects {
                     catchError((error) => {
                         this.alertService.showError('Error al eliminar el pedido', 'Error').subscribe();
                         return of(eliminarPedidoError({ error }));
+                    })
+                )
+            )
+        )
+    );
+
+    pagarPedidoEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(pagarPedido),
+            exhaustMap(({ pedidoId, data }) =>
+                this.pedidoService.pagarPedido(pedidoId, data).pipe(
+                    map((response) => {
+                        this.alertService.showSuccess(response.mensaje || 'Pedido marcado como pagado', 'Exito').subscribe();
+                        return pagarPedidoExito({ pedido: response.pedido, mensaje: response.mensaje });
+                    }),
+                    catchError((error) => {
+                        this.alertService.showError('Error al pagar el pedido', 'Error').subscribe();
+                        return of(pagarPedidoError({ error }));
                     })
                 )
             )

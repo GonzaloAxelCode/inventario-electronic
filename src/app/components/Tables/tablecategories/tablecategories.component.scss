@@ -8,3 +8,24 @@ table {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+:host ::ng-deep .tui-table thead th[tuiTh] {
+  background: transparent;
+  border-bottom-color: var(--tui-default-border);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+:host ::ng-deep .tui-table tbody tr[tuiTr] {
+  border-bottom-color: var(--tui-default-border);
+}
+
+:host ::ng-deep .tui-table tbody tr[tuiTr]:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+:host ::ng-deep .tui-table-dark tbody tr[tuiTr]:hover {
+  background: rgba(255, 255, 255, 0.03);
+}

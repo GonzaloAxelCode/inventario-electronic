@@ -1,10 +1,10 @@
-import { ComprobanteCompra } from '@/app/models/compra.models';
+import { ComprobanteCompra, ComprobanteFile } from '@/app/models/compra.models';
 import { PAGE_SIZE_COMPRAS } from '@/app/services/utils/pages-sizes';
 import { QuerySearchCompra } from '@/app/services/compra.service';
 import { DialogCompraDetailService } from '@/app/services/dialogs-services/dialog-compra-detail.service';
-import { cargarCompras, searchCompras, clearSearchCompras } from '@/app/state/actions/compra.actions';
+import { cargarCompras, cargarFiles, searchCompras, clearSearchCompras } from '@/app/state/actions/compra.actions';
 import { AppState } from '@/app/state/app.state';
-import { selectCompra } from '@/app/state/selectors/compra.selectors';
+import { selectCompra, selectCompraFiles } from '@/app/state/selectors/compra.selectors';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -52,6 +52,8 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
   private dialogCompraDetail = inject(DialogCompraDetailService);
 
   compras: ComprobanteCompra[] = [];
+  files: ComprobanteFile[] = [];
+  viewMode: string = 'registrados';
   loading = false;
   loadingSearch = false;
   indexPage = 0;
@@ -87,8 +89,20 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
     total_max: new FormControl(''),
   });
 
+  get esViewSubidos(): boolean {
+    return this.viewMode === 'subidos';
+  }
+
+  get esViewRegistrados(): boolean {
+    return this.viewMode === 'registrados';
+  }
+
   ngOnInit() {
     this.store.dispatch(cargarCompras({ page: 1, page_size: PAGE_SIZE_COMPRAS }));
+
+    if (this.viewMode === 'subidos') {
+      this.store.dispatch(cargarFiles());
+    }
 
     this.store.select(selectCompra)
       .pipe(takeUntil(this.destroy$))
@@ -115,6 +129,14 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
         this.indexPage = state.index_page ?? 0;
         this.lengthPages = state.length_pages ?? 0;
         this.searchActive = state.search_found;
+        this.cdr.markForCheck();
+      });
+
+    this.store.select(selectCompraFiles)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((state) => {
+        this.files = state.files;
+        this.loading = state.loadingFiles;
         this.cdr.markForCheck();
       });
   }
@@ -193,7 +215,38 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
     return 'Sin proveedor';
   }
 
+  cambiarViewMode(mode: string): void {
+    if (this.viewMode === mode) return;
+    this.viewMode = mode;
+    this.form.reset({
+      nombre: '',
+      tipo_comprobante: '',
+      serie: '',
+      correlativo: '',
+      moneda: '',
+      forma_pago: '',
+      proveedor: '',
+      fecha_desde: '',
+      fecha_hasta: '',
+      total_min: '',
+      total_max: '',
+    });
+    this.expanded = false;
+    this.searchActive = false;
+    this.store.dispatch(clearSearchCompras());
+
+    if (this.viewMode === 'subidos') {
+      this.store.dispatch(cargarFiles());
+    } else {
+      this.store.dispatch(cargarCompras({ page: 1, page_size: PAGE_SIZE_COMPRAS }));
+    }
+  }
+
   goToPage(index: number): void {
+    if (this.viewMode === 'subidos') {
+      this.store.dispatch(cargarFiles());
+      return;
+    }
     if (this.searchActive) {
       const f = this.form.value;
       const query: Partial<QuerySearchCompra> = {};
@@ -216,5 +269,9 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
 
   showCompraDetail(compra: ComprobanteCompra): void {
     this.dialogCompraDetail.open(compra).subscribe();
+  }
+
+  verArchivo(url: string, tipo: 'pdf' | 'xml'): void {
+    window.open(url, '_blank');
   }
 }

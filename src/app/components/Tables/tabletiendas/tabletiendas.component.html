@@ -7,13 +7,11 @@
   <ng-container *ngIf="visibleTiendas.length; else noTiendas">
 
     <!-- Apple inset header — sin fondo, solo tipografía -->
-    <div class="flex items-baseline justify-between px-1 mb-3">
-      <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">
-        {{ visibleTiendas.length }} {{ visibleTiendas.length === 1 ? 'tienda' : 'tiendas' }}
-        <span *ngIf="tiendas !== null" class="normal-case tracking-normal font-normal text-[#86868b]/70"> · filtrado</span>
-      </p>
-      <span class="text-[11px] text-[#86868b] dark:text-[#a1a1a6]">Desliza para ver</span>
-    </div>
+     <div class="flex items-baseline justify-between px-1 mb-3">
+       <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">
+         {{ visibleTiendas.length }} {{ visibleTiendas.length === 1 ? 'tienda' : 'tiendas' }}
+       </p>
+     </div>
 
     <!-- Apple agrupado por dueño — sin fondos, solo hairlines -->
     <div class="space-y-5">
@@ -37,7 +35,7 @@
             <!-- Logo — Apple 44pt, sin sombra pesada -->
             <div class="w-11 h-11 rounded-xl overflow-hidden ring-1 ring-black/[0.08] dark:ring-white/[0.08] bg-white dark:bg-[#2c2c2e] shrink-0 flex items-center justify-center">
               <img loading="lazy"
-                [src]="tienda?.logo_img ? URL_BASE + tienda.logo_img : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                [src]="tienda?.logo_img ? imageUrl(tienda.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
                 [alt]="tienda.nombre"
                 class="w-full h-full object-cover" />
             </div>
@@ -78,11 +76,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Footnote Apple -->
-    <p class="text-[11px] leading-4 text-[#86868b] dark:text-[#a1a1a6] px-1 mt-3">
-      Toca una tienda para ver detalles. <span *ngIf="tiendas !== null">Vista filtrada para sucursales.</span>
-    </p>
 
   </ng-container>
 

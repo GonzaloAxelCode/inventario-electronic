@@ -183,13 +183,7 @@
                                             Eliminar
                                         </button>
 
-                                        <button
-                                            *ngIf="!!(userPermissions$ | async)?.can_update_inventory || !!(userPermissions$ | async)?.can_modify_inventory"
-                                            iconStart="@tui.pencil" tuiButton appearance="textfield" size="m"
-                                            class="col-span-2 w-full text-xs"
-                                            (click)="showDialogEditInventario(producto.inventario)">
-                                            Editar Inventario
-                                        </button>
+
                                     </div>
                                 </div>
                             </div>
@@ -327,14 +321,7 @@
                                                     Eliminar
                                                 </button>
 
-                                                <button
-                                                    *ngIf="!!(userPermissions$ | async)?.can_update_inventory || !!(userPermissions$ | async)?.can_modify_inventory"
-                                                    iconStart="@tui.pencil" tuiButton appearance="textfield"
-                                                    type="submit" size="s"
-                                                    class="px-6 py-2 transition whitespace-nowrap"
-                                                    (click)="showDialogEditInventario(producto.inventario)">
-                                                    Inventario
-                                                </button>
+
                                             </div>
                                         </td>
                                     </tr>

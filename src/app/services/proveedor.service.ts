@@ -46,4 +46,12 @@ export class ProveedorService {
             })
         );
     }
+
+    consultarDocumentoDniRuc(tipoDocumento: string, numeroDocumento: string): Observable<any> {
+        return this.http.get(`${this.siteURL}/proveedores/consultar/`, {
+            params: { tipo_documento: tipoDocumento, numero_documento: numeroDocumento }
+        }).pipe(
+            catchError(error => throwError(() => error))
+        );
+    }
 }

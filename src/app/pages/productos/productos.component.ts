@@ -27,6 +27,7 @@ import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
 import { TablecategoriesComponent } from "../../components/Tables/tablecategories/tablecategories.component";
 import { SubircsvproductosComponent } from "../../components/productoscomponents/subircsvproductos/subircsvproductos.component";
 import { GraficosProductosComponent } from "../../components/productoscomponents/graficos-productos/graficos-productos.component";
+import { ImprimirCodBarrasComponent } from "../../components/productoscomponents/imprimir-cod-barras/imprimir-cod-barras.component";
 
 
 @Component({
@@ -53,7 +54,7 @@ import { GraficosProductosComponent } from "../../components/productoscomponents
     TuiTextfield, ButtonupdateComponent,
     TuiTitle, TuiIcon, TuiAvatar, ButtonupdateComponent,
     SubircsvproductosComponent,
-    GraficosProductosComponent],
+    GraficosProductosComponent, ImprimirCodBarrasComponent],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -71,8 +72,8 @@ export class ProductosComponent implements OnInit {
 
   loading: any = false;
 
-  validTabs = ['productos', 'categorias', 'graficos', 'excel'] as const;
-  activeTab: 'productos' | 'categorias' | 'graficos' | 'excel' = 'productos';
+  validTabs = ['productos', 'categorias', 'graficos', 'barras'] as const;
+  activeTab: 'productos' | 'categorias' | 'graficos' | 'barras' = 'productos';
   activeTabIndex = 0;
 
   onTabChange(index: number) {

@@ -44,32 +44,34 @@ export const categoriaReducer = createReducer(
   })),
   on(createCategoriaAction, (state) => ({
     ...state,
-    loadingCreateCategoria: true
+    loadingCreateCategoria: true,
+    errors: undefined
   })),
   on(createCategoriaSuccess, (state, { categoria }) => ({
     ...state,
     categorias: [...state.categorias, categoria],
-
-    loadingCreateCategoria: false
+    loadingCreateCategoria: false,
+    errors: undefined
   })),
   on(createCategoriaFail, (state, { error }) => ({
     ...state,
     errors: error,
     loadingCreateCategoria: false
-  })), on(updateCategoriaAction, (state, { categoria }) => ({
+  })),   on(updateCategoriaAction, (state, { categoria }) => ({
     ...state,
-    loadingUpdateCategoria: true
+    loadingUpdateCategoria: true,
+    errors: undefined
   })),
   on(updateCategoriaFail, (state, { error }) => ({
     ...state,
     errors: error,
     loadingUpdateCategoria: false
-
   })),
   on(updateCategoriaSuccess, (state, { categoria }) => ({
     ...state,
     categorias: state.categorias.map(cat => cat.id === categoria.id ? categoria : cat),
-    loadingUpdateCategoria: false
+    loadingUpdateCategoria: false,
+    errors: undefined
   })),
   on(deleteCategoriaAction, (state) => ({
     ...state,

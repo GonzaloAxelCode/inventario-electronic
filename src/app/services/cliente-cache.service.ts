@@ -1,19 +1,25 @@
 import { Injectable } from '@angular/core';
-import { openDB } from 'idb';
+import { deleteDB, openDB } from 'idb';
 import { Cliente } from '../models/cliente.models';
 
 @Injectable({ providedIn: 'root' })
 export class ClienteCacheService {
-    private dbPromise = openDB('clientes-db', 1, {
-        upgrade(db) {
-            if (!db.objectStoreNames.contains('clientes')) {
-                db.createObjectStore('clientes', { keyPath: 'id' });
+    private static readonly DB_NAME = 'clientes-db';
+
+    private dbPromise = this.createDbPromise();
+
+    private createDbPromise() {
+        return openDB(ClienteCacheService.DB_NAME, 1, {
+            upgrade(db) {
+                if (!db.objectStoreNames.contains('clientes')) {
+                    db.createObjectStore('clientes', { keyPath: 'id' });
+                }
+                if (!db.objectStoreNames.contains('meta')) {
+                    db.createObjectStore('meta');
+                }
             }
-            if (!db.objectStoreNames.contains('meta')) {
-                db.createObjectStore('meta');
-            }
-        }
-    });
+        });
+    }
 
     async getAll(): Promise<Cliente[]> {
         const db = await this.dbPromise;
@@ -30,6 +36,22 @@ export class ClienteCacheService {
     async clear() {
         const db = await this.dbPromise;
         await db.clear('clientes');
+    }
+
+    async clearAll() {
+        const db = await this.dbPromise;
+        const tx = db.transaction(['clientes', 'meta'], 'readwrite');
+        await Promise.all([
+            tx.objectStore('clientes').clear(),
+            tx.objectStore('meta').clear(),
+            tx.done
+        ]);
+    }
+async deleteDatabase() {
+        const db = await this.dbPromise;
+        db.close();
+        await deleteDB(ClienteCacheService.DB_NAME);
+        this.dbPromise = this.createDbPromise();
     }
 
     async setLastSync(date: string) {

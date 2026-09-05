@@ -51,10 +51,20 @@ export class PedidoService {
     }
 
     actualizarPedido(pedidoId: number, data: Partial<any>): Observable<any> {
-        return this.http.put(`${this.siteURL}/pedidos/${pedidoId}/actualizar/`, data).pipe(
+        return this.http.put(`${this.siteURL}/pedidos/${pedidoId}/actualizar_estados/`, data).pipe(
             timeout(30000),
             catchError((error) => {
                 console.error('Error al actualizar pedido', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    pagarPedido(pedidoId: number, data: Partial<any>): Observable<any> {
+        return this.http.put(`${this.siteURL}/pedidos/${pedidoId}/pagar/`, data).pipe(
+            timeout(30000),
+            catchError((error) => {
+                console.error('Error al pagar pedido', error);
                 return throwError(() => error);
             })
         );

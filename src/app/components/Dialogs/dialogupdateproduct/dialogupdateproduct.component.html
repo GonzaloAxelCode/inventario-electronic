@@ -31,7 +31,7 @@
         </div>
         
         <!-- Características -->
-        <div class="flex flex-col border-dashed border-1 border border-neutral-500 px-5 py-2 rounded-xl">
+        <div class="flex flex-col bg-neutral-50 dark:bg-neutral-800 px-5 py-2 rounded-xl">
           <p class="cursor-pointer py-1"     (click)="expandedCaracteristicas = !expandedCaracteristicas"
 >Actualizar características <tui-icon      [style.font-size.rem]="1" icon="@tui.chevron-down" />
  </p>
@@ -111,6 +111,40 @@
         
       </div>
 
+      <!-- Sección Inventario movida aquí (antes en dialogeditinventario) -->
+      <div *ngIf="hasInventario" class="lg:col-span-3 p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+        <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-3">Inventario</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col">
+            <tui-textfield class="w-full">
+              <label tuiLabel>Stock Actual</label>
+              <input [max]="15000" [min]="0" [step]="1" tuiInputNumber [formControl]="$any(inventarioFormEdit.get('cantidad'))" />
+            </tui-textfield>
+            <tui-error *ngIf="inventarioFormEdit.get('cantidad')?.invalid && inventarioFormEdit.get('cantidad')?.touched">
+              Stock requerido (≥0)
+            </tui-error>
+          </div>
+          <div class="hidden md:block"></div>
+          <tui-textfield class="w-full">
+            <label tuiLabel>Costo Compra</label>
+            <input [min]="0" tuiInputNumber [formControl]="$any(inventarioFormEdit.get('costo_compra'))" [tuiNumberFormat]="{precision: 2}" />
+            <span tuiHintUnstyled class="text-xs text-neutral-400">S/</span>
+          </tui-textfield>
+          <tui-textfield class="w-full">
+            <label tuiLabel>Costo Venta</label>
+            <input [min]="0" tuiInputNumber [formControl]="$any(inventarioFormEdit.get('costo_venta'))" [tuiNumberFormat]="{precision: 2}" />
+            <span tuiHintUnstyled class="text-xs text-neutral-400">S/</span>
+          </tui-textfield>
+        </div>
+        <div *ngIf="!(userPermissions$ | async)?.can_modify_inventory" class="mt-2">
+          <span class="text-yellow-500 text-xs">* Permisos insuficientes para editar inventario — solo se actualizará el producto</span>
+        </div>
+      </div>
+
+      <div *ngIf="!hasInventario" class="lg:col-span-3 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+        <p class="text-xs text-amber-700 dark:text-amber-300">Este producto no tiene inventario asociado. Se actualizará solo el producto.</p>
+      </div>
+
       <!-- Descripción (Fila completa) -->
       <div class="lg:col-span-3">
         <tui-textarea formControlName="descripcion" class="w-full" placeholder="Ingrese la descripción">
@@ -126,14 +160,14 @@
         <span class="text-yellow-400">* Permisos insuficientes para editar un producto</span>
       </div>
 
-      <!-- Botón de envío -->
+      <!-- Botón único: Actualiza Producto + Inventario -->
       <div *ngIf="(userPermissions$ | async)?.can_update_product" class="lg:col-span-3">
         <button tuiButton type="submit" iconStart="@tui.pencil" appearance="positive"
-          [disabled]="productoForm.invalid || loadingUpdateProducto" class="w-full px-6 py-2 transition">
-          <span *ngIf="loadingUpdateProducto">
-            <tui-loader [showLoader]="true"></tui-loader>
+          [disabled]="productoForm.invalid || (hasInventario && inventarioFormEdit.invalid) || isUpdating" class="w-full px-6 py-2 transition">
+          <span *ngIf="isUpdating">
+            <tui-loader [showLoader]="true" size="s"></tui-loader>
           </span>
-          <span>Actualizar</span>
+          <span>{{ hasInventario ? 'Actualizar Producto e Inventario' : 'Actualizar Producto' }}</span>
         </button>
       </div>
 

@@ -35,8 +35,6 @@ export class TablecategoriesComponent implements OnInit {
     { key: 'id', label: 'ID' },
     { key: 'nombre', label: 'Nombre' },
     { key: 'descripcion', label: 'Descripción' },
-    { key: 'siglas_nombre_categoria', label: 'Abre' },
-
   ];
   filteredData: any = []
   allColumnKeys = this.allColumns.map(c => c.key);
@@ -55,8 +53,7 @@ export class TablecategoriesComponent implements OnInit {
     if (!this.searchTerm.trim()) return categorias;
     const term = this.searchTerm.toLowerCase();
     return categorias.filter(c =>
-      c.nombre?.toLowerCase().includes(term) ||
-      c.siglas_nombre_categoria?.toLowerCase().includes(term)
+      c.nombre?.toLowerCase().includes(term)
     );
   }
   getCategoriaValue(proveedor: Categoria, key: string): any {

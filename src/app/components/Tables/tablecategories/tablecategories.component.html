@@ -1,4 +1,4 @@
-<section class="py-3 sm:py-4 md:py-6 rounded-lg">
+<section class="py-3 sm:py-4 md:py-6">
     <tui-block-status
         *ngIf="(selectCategorias$ | async)?.categorias?.length === 0 && !(selectCategorias$ | async)?.loadingCategorias else tabla"
         size="m" class="m-auto">
@@ -13,141 +13,136 @@
     <div>
         <ng-template #tabla>
             <tui-loader [overlay]="true" [showLoader]="!!(selectCategorias$ | async)?.loadingCategorias">
-                <div class="rounded-lg overflow-hidden">
-                    <div *ngIf="(selectCategorias$ | async)?.categorias?.length || 0 > 0">
+                <div class="rounded-2xl overflow-hidden">
 
-                        <!-- Barra de búsqueda -->
-                        <div class="px-2 mb-4">
-                            <div class="relative">
-                                <input
-                                    type="text"
-                                    [(ngModel)]="searchTerm"
-                                    placeholder="Buscar por nombre o código..."
-                                    class="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400 transition-all"
-                                />
-                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                            </div>
+                    <!-- Barra de búsqueda -->
+                    <div class="px-2 mb-4" *ngIf="(selectCategorias$ | async)?.categorias?.length || 0 > 0">
+                        <div class="relative">
+                            <input
+                                type="text"
+                                [(ngModel)]="searchTerm"
+                                placeholder="Buscar por nombre..."
+                                class="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:focus:ring-blue-400/30 transition-all shadow-sm"
+                            />
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
                         </div>
+                    </div>
 
-                        <!-- Vista de CARDS para móviles -->
-                        <div class="block lg:hidden space-y-3 px-2">
-                            <div *ngFor="let categoria of filtrarCategorias((selectCategorias$ | async)?.categorias || [])"
-                                class="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-3 border border-neutral-200 dark:border-neutral-700">
+                    <!-- Vista de CARDS para móviles -->
+                    <div class="block lg:hidden space-y-3 px-2">
+                        <div *ngFor="let categoria of filtrarCategorias((selectCategorias$ | async)?.categorias || [])"
+                            class="bg-white dark:bg-neutral-800 rounded-2xl shadow-md border border-neutral-200 dark:border-neutral-700 p-4 transition-all">
 
-                                <!-- Header con ID y nombre -->
-                                <div class="flex gap-3 mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-2 mb-1">
-                                            <span class="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                                                #{{ categoria.id }}
-                                            </span>
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                                                [ngClass]="categoria.activo ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'">
-                                                {{ categoria.activo ? 'Activo' : 'Inactivo' }}
-                                            </span>
-                                        </div>
-                                        <p class="font-semibold text-lg mb-1 truncate">{{ categoria.nombre }}</p>
-                                        <tui-chip size="s" class="mb-1">
-                                            {{ categoria.siglas_nombre_categoria }}
-                                        </tui-chip>
-                                    </div>
+                            <!-- Header con ID y estado -->
+                            <div class="flex items-center justify-between mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                                        #{{ categoria.id }}
+                                    </span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium"
+                                        [ngClass]="categoria.activo ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'">
+                                        {{ categoria.activo ? 'Activo' : 'Inactivo' }}
+                                    </span>
                                 </div>
-
-                                <!-- Descripción -->
-                                <div class="mb-3" *ngIf="categoria.descripcion">
-                                    <p class="text-xs text-neutral-600 dark:text-neutral-400 line-clamp-2">
-                                        {{ categoria.descripcion }}
-                                    </p>
-                                </div>
-
-                                <!-- Botones de acción -->
-                                <div class="grid grid-cols-2 gap-2">
-                    <button appearance="positive" iconStart="@tui.pencil" tuiButton type="button"
-                        (click)="showDialogUpdate(categoria)"
-                        [disabled]="!(userPermissions$ | async)?.can_modify_category" size="m"
-                        class="w-full text-xs">
-                        Editar
-                    </button>
-
-                                    <button [disabled]="!(userPermissions$ | async)?.can_delete_category"
-                                        [appearance]="(userPermissions$ | async)?.can_delete_category ? 'error' : 'secondary-neutralscale'"
-                                        iconStart="@tui.trash" tuiButton type="button"
-                                        (click)="onDeleteCategoria(categoria.id)" size="m" class="w-full text-xs">
-                                        Eliminar
-                                    </button>
-                                </div>
+                                <span class="text-xs text-neutral-400 dark:text-neutral-500">
+                                    {{ categoria.date_created | date:'shortDate' }}
+                                </span>
                             </div>
-                        </div>
 
-                        <!-- Vista de TABLA para desktop -->
-                        <div class="hidden lg:block overflow-x-auto">
-                            <table tuiTable size="s" class="w-full min-w-[700px]">
-                                <thead>
-                                    <tr>
-                                        <th tuiTh class="text-center whitespace-nowrap">ID</th>
-                                        <th tuiTh class="whitespace-nowrap">Nombre</th>
-                                        <th tuiTh class="whitespace-nowrap">Siglas</th>
-                                        <th tuiTh class="whitespace-nowrap">Descripción</th>
-                                        <th tuiTh class="text-center whitespace-nowrap">Estado</th>
-                                        <th tuiTh class="text-center whitespace-nowrap">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="transition-colors"
-                                        *ngFor="let categoria of filtrarCategorias((selectCategorias$ | async)?.categorias || [])">
+                            <!-- Nombre -->
+                            <p class="font-semibold text-lg text-neutral-900 dark:text-neutral-100 mb-1 truncate">
+                                {{ categoria.nombre }}
+                            </p>
 
-                                        <td tuiTd class="text-center">
-                                            <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                                                {{ categoria.id }}
-                                            </span>
-                                        </td>
+                            <!-- Descripción -->
+                            <div class="mb-3" *ngIf="categoria.descripcion">
+                                <p class="text-xs text-neutral-600 dark:text-neutral-400 line-clamp-2">
+                                    {{ categoria.descripcion }}
+                                </p>
+                            </div>
 
-                                        <td tuiTd>
-                                            <span class="font-semibold text-sm">{{ categoria.nombre }}</span>
-                                        </td>
-
-                                        <td tuiTd>
-                                            <tui-chip iconStart="@tui.tag" size="s">
-                                                {{ categoria.siglas_nombre_categoria }}
-                                            </tui-chip>
-                                        </td>
-
-                                        <td tuiTd>
-                                            <p class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 max-w-[200px]">
-                                                {{ categoria.descripcion }}
-                                            </p>
-                                        </td>
-
-                                        <td tuiTd class="text-center">
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
-                                                [ngClass]="categoria.activo ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'">
-                                                {{ categoria.activo ? 'Activo' : 'Inactivo' }}
-                                            </span>
-                                        </td>
-
-                                        <td tuiTd>
-                                            <div class="flex flex-col gap-2 justify-center">
-                                <button appearance="positive" iconStart="@tui.pencil" tuiButton
-                                    type="button" (click)="showDialogUpdate(categoria)"
-                                    [disabled]="!(userPermissions$ | async)?.can_modify_category"
-                                    class="whitespace-nowrap">
+                            <!-- Botones de acción -->
+                            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-neutral-200 dark:border-neutral-700">
+                                <button appearance="positive" iconStart="@tui.pencil" tuiButton type="button"
+                                    (click)="showDialogUpdate(categoria)"
+                                    [disabled]="!(userPermissions$ | async)?.can_modify_category" size="m"
+                                    class="w-full text-xs rounded-xl">
                                     Editar
                                 </button>
 
-                                                <button [disabled]="!(userPermissions$ | async)?.can_delete_category"
+                                <button [disabled]="!(userPermissions$ | async)?.can_delete_category"
+                                    [appearance]="(userPermissions$ | async)?.can_delete_category ? 'error' : 'secondary-neutralscale'"
+                                    iconStart="@tui.trash" tuiButton type="button"
+                                    (click)="onDeleteCategoria(categoria.id)" size="m" class="w-full text-xs rounded-xl">
+                                    Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vista de TABLA para desktop -->
+                    <div class="hidden lg:block overflow-x-auto">
+                        <table tuiTable size="s" class="w-full min-w-[700px]">
+                            <thead>
+                                <tr>
+                                    <th tuiTh class="text-center whitespace-nowrap">ID</th>
+                                    <th tuiTh class="whitespace-nowrap">Nombre</th>
+                                    <th tuiTh class="whitespace-nowrap">Descripción</th>
+                                    <th tuiTh class="text-center whitespace-nowrap">Estado</th>
+                                    <th tuiTh class="text-center whitespace-nowrap">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="transition-colors"
+                                    *ngFor="let categoria of filtrarCategorias((selectCategorias$ | async)?.categorias || [])">
+
+                                    <td tuiTd class="text-center">
+                                        <span class="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                                            #{{ categoria.id }}
+                                        </span>
+                                    </td>
+
+                                    <td tuiTd>
+                                        <span class="font-semibold text-sm text-neutral-900 dark:text-neutral-100">
+                                            {{ categoria.nombre }}
+                                        </span>
+                                    </td>
+
+                                    <td tuiTd>
+                                        <p class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 max-w-[200px]">
+                                            {{ categoria.descripcion }}
+                                        </p>
+                                    </td>
+
+                                    <td tuiTd class="text-center">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                            [ngClass]="categoria.activo ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'">
+                                            {{ categoria.activo ? 'Activo' : 'Inactivo' }}
+                                        </span>
+                                    </td>
+
+                                    <td tuiTd>
+                                        <div class="flex gap-2 justify-center">
+                                            <button appearance="positive" iconStart="@tui.pencil" tuiButton
+                                                type="button" (click)="showDialogUpdate(categoria)"
+                                                [disabled]="!(userPermissions$ | async)?.can_modify_category"
+                                                class="whitespace-nowrap text-xs rounded-xl">
+                                                Editar
+                                            </button>
+
+                                            <button [disabled]="!(userPermissions$ | async)?.can_delete_category"
                                                     [appearance]="(userPermissions$ | async)?.can_delete_category ? 'error' : 'secondary-neutralscale'"
                                                     iconStart="@tui.trash" tuiButton type="button"
-                                                    (click)="onDeleteCategoria(categoria.id)" class="whitespace-nowrap">
+                                                    (click)="onDeleteCategoria(categoria.id)" class="whitespace-nowrap text-xs rounded-xl">
                                                     Eliminar
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </tui-loader>

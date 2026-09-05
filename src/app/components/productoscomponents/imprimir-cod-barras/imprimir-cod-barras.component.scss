@@ -1,0 +1,19 @@
+@media print {
+  .no-print { display: none !important; }
+}
+
+.preview-paper {
+  scrollbar-width: thin;
+}
+
+.label-preview {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

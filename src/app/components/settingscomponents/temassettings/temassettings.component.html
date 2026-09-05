@@ -116,35 +116,6 @@
         </div>
       </div>
 
-      <!-- TikTok -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-2 sm:py-3 border-t border-neutral-200 dark:border-neutral-700">
-        <div class="flex items-center gap-2 sm:gap-3">
-          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
-               [class]="featureFlags.tiktokEnabled() ? 'bg-red-100 dark:bg-red-900/30' : 'bg-neutral-200 dark:bg-neutral-700'">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5" [class]="featureFlags.tiktokEnabled() ? 'text-red-600 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-xs sm:text-sm font-medium dark:text-white flex items-center gap-2">
-              TikTok
-              <span class="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Beta</span>
-            </p>
-            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
-              {{ featureFlags.tiktokEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
-            </p>
-          </div>
-        </div>
-        <div class="segmented-toggle">
-          <button class="segmented-option" [class.active]="!featureFlags.tiktokEnabled()" (click)="featureFlags.tiktokEnabled() && toggleTiktok()">
-            No
-          </button>
-          <button class="segmented-option" [class.active]="featureFlags.tiktokEnabled()" (click)="!featureFlags.tiktokEnabled() && toggleTiktok()">
-            Si
-          </button>
-        </div>
-      </div>
-
       <!-- Compras -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-2 sm:py-3 border-t border-neutral-200 dark:border-neutral-700">
         <div class="flex items-center gap-2 sm:gap-3">
