@@ -216,14 +216,13 @@ export class DialogupdateproductComponent implements OnInit {
         if (typeof value === 'string') {
           return;
         }
-        if (key === "caracteristicas") {
-          formData.append("caracteristicas", JSON.stringify(value));
-          return;
-        }
         if (value instanceof File) {
           formData.append(key, value);
           return;
         }
+      }
+      if (key === "caracteristicas") {
+        formData.append("caracteristicas", JSON.stringify(value));
         return;
       }
       if (value !== null && value !== undefined) {

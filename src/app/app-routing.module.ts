@@ -60,6 +60,10 @@ const routes: Routes = [
 				loadComponent: () => import('./pages/proveedores/proveedores.component').then(m => m.ProveedoresComponent)
 			},
 			{
+				path: 'ganancias',
+				loadComponent: () => import('./pages/ganancias/ganancias.component').then(m => m.GananciasComponent)
+			},
+			{
 				path: 'guia-remision/nueva',
 				loadComponent: () => import('./pages/guia-remision/nueva-guia/nueva-guia.component').then(m => m.NuevaGuiaComponent)
 			},

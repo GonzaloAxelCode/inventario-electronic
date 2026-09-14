@@ -59,9 +59,6 @@ import {
     generarComprobanteVenta,
     generarComprobanteVentaError,
     generarComprobanteVentaExito,
-    searchVenta,
-    searchVentaFail,
-    searchVentaSuccess
 } from '../actions/venta.actions';
 import { AppState } from '../app.state';
 
@@ -150,18 +147,18 @@ export class VentaEffects {
     loadVentasTiendaEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cargarVentasTienda),
-            exhaustMap(({ from_date, to_date, page, page_size }) =>
-                this.ventaService.getVentasPorTienda(from_date, to_date, page, page_size).pipe(
+            exhaustMap(({ from_date, to_date, page, page_size, query }) =>
+                this.ventaService.getVentasPorTienda(from_date, to_date, page, page_size, query).pipe(
                     map(response => {
-
+                        const ventas = response.results.filter((venta: any) => venta.estado !== 'PENDIENTE');
                         return cargarVentasTiendaExito({
-
-                            ventas: response.results.filter((venta: any) => venta.estado !== 'PENDIENTE'),
+                            ventas,
                             count: response.count,
                             next: response.next,
                             previous: response.previous,
                             index_page: response.index_page,
-                            length_pages: response.length_pages
+                            length_pages: response.length_pages,
+                            search_ventas_found: query ? (ventas.length > 0 ? 'ventas_found' : 'ventas_not_found') : ''
                         });
                     }),
                     catchError(error => {
@@ -273,32 +270,6 @@ export class VentaEffects {
 
 
 
-
-    searchVentasEffect = createEffect(() =>
-        this.actions$.pipe(
-            ofType(searchVenta),
-            exhaustMap((action) =>
-                this.ventaService.fetchSearchVentas(action.query, action.page || 1, action.page_size || 30).pipe(
-                    map(response => {
-
-                        return searchVentaSuccess({
-                            ventas: response.results.filter((venta: any) => venta.estado !== 'PENDIENTE'),
-                            search_ventas_found: response.search_ventas_found,
-                            count: response.count,
-                            next: response.next,
-                            previous: response.previous,
-                            index_page: response.index_page,
-                            length_pages: response.length_pages
-                        });
-                    }),
-                    catchError(error => {
-                        this.alertService.showError('Error al buscar las ventas', 'Error').subscribe();
-                        return of(searchVentaFail({ error }));
-                    })
-                )
-            )
-        )
-    );
 
     anularVentaEffect = createEffect(() =>
         this.actions$.pipe(

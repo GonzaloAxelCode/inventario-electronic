@@ -1,0 +1,103 @@
+<main class="p-2 sm:p-6 max-w-6xl mx-auto">
+  <header class="mb-4">
+    <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+      Ganancias
+      <span class="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">Beta</span>
+    </h2>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">
+      Utilidad estimada por rango de fechas: ingresos menos costo original. No incluye impuestos ni gastos operativos.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-2 sm:items-end bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 sm:p-4">
+      <label class="flex flex-col gap-1 text-xs font-medium text-neutral-600 dark:text-neutral-300">
+        Desde
+        <input type="date" [ngModel]="fromDate()" (ngModelChange)="fromDate.set($event)"
+          class="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-2 py-1.5 text-sm dark:text-white" />
+      </label>
+      <label class="flex flex-col gap-1 text-xs font-medium text-neutral-600 dark:text-neutral-300">
+        Hasta
+        <input type="date" [ngModel]="toDate()" (ngModelChange)="toDate.set($event)"
+          class="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-2 py-1.5 text-sm dark:text-white" />
+      </label>
+      <label class="flex flex-col gap-1 text-xs font-medium text-neutral-600 dark:text-neutral-300 flex-1">
+        Buscar producto
+        <input type="text" placeholder="Nombre del producto..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
+          class="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-2 py-1.5 text-sm dark:text-white" />
+      </label>
+      <button (click)="cargar()" [disabled]="loading()"
+        class="rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2">
+        {{ loading() ? 'Calculando...' : 'Calcular' }}
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="error()" class="mb-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm px-3 py-2">
+    {{ error() }}
+  </div>
+
+  <!-- Resumen -->
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-4">
+    <div class="rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-3">
+      <p class="text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">Ingresos</p>
+      <p class="text-lg sm:text-2xl font-bold text-neutral-900 dark:text-white">S/ {{ totalIngresos() | number:'1.2-2' }}</p>
+      <p class="text-[11px] text-neutral-500">{{ numVentas() }} ventas · ticket S/ {{ ticketPromedio() | number:'1.2-2' }}</p>
+    </div>
+    <div class="rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-3">
+      <p class="text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">Costos</p>
+      <p class="text-lg sm:text-2xl font-bold text-amber-600 dark:text-amber-400">S/ {{ totalCostos() | number:'1.2-2' }}</p>
+      <p class="text-[11px] text-neutral-500">Costo original × cantidad</p>
+    </div>
+    <div class="rounded-xl bg-white dark:bg-neutral-800 border border-emerald-200 dark:border-emerald-800 p-3">
+      <p class="text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">Ganancia bruta</p>
+      <p class="text-lg sm:text-2xl font-bold" [class.text-emerald-600]="totalGanancia() >= 0" [class.text-red-500]="totalGanancia() < 0">
+        S/ {{ totalGanancia() | number:'1.2-2' }}
+      </p>
+      <p class="text-[11px] text-neutral-500">Ingresos − costos</p>
+    </div>
+    <div class="rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-3">
+      <p class="text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">Margen</p>
+      <p class="text-lg sm:text-2xl font-bold text-neutral-900 dark:text-white">{{ margenPromedio() | number:'1.1-1' }}%</p>
+      <p class="text-[11px] text-neutral-500">Ganancia / ingresos</p>
+    </div>
+  </section>
+
+  <!-- Detalle por producto -->
+  <section class="rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+    <div class="px-3 sm:px-4 py-3 border-b border-neutral-200 dark:border-neutral-700">
+      <h3 class="text-sm font-semibold text-neutral-900 dark:text-white">Detalle por producto</h3>
+      <p class="text-[11px] text-neutral-500">Ordenado por mayor ganancia. Ventas anuladas/canceladas excluidas.</p>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm min-w-[640px]">
+        <thead>
+          <tr class="text-left text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400 border-b border-neutral-200 dark:border-neutral-700">
+            <th class="px-3 py-2">Producto</th>
+            <th class="px-3 py-2 text-right">Und.</th>
+            <th class="px-3 py-2 text-right">Ingresos</th>
+            <th class="px-3 py-2 text-right">Costos</th>
+            <th class="px-3 py-2 text-right">Ganancia</th>
+            <th class="px-3 py-2 text-right">Margen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of porProducto()" class="border-b border-neutral-100 dark:border-neutral-700/60 last:border-0">
+            <td class="px-3 py-2 text-neutral-900 dark:text-white">{{ p.nombre }}</td>
+            <td class="px-3 py-2 text-right text-neutral-600 dark:text-neutral-300">{{ p.unidades }}</td>
+            <td class="px-3 py-2 text-right text-neutral-600 dark:text-neutral-300">S/ {{ p.ingresos | number:'1.2-2' }}</td>
+            <td class="px-3 py-2 text-right text-neutral-600 dark:text-neutral-300">S/ {{ p.costos | number:'1.2-2' }}</td>
+            <td class="px-3 py-2 text-right font-semibold" [class.text-emerald-600]="p.ganancia >= 0" [class.text-red-500]="p.ganancia < 0">
+              S/ {{ p.ganancia | number:'1.2-2' }}
+            </td>
+            <td class="px-3 py-2 text-right text-neutral-600 dark:text-neutral-300">{{ p.margen | number:'1.1-1' }}%</td>
+          </tr>
+          <tr *ngIf="!loading() && porProducto().length === 0">
+            <td colspan="6" class="px-3 py-6 text-center text-neutral-500 text-sm">Sin datos en el rango seleccionado.</td>
+          </tr>
+          <tr *ngIf="loading()">
+            <td colspan="6" class="px-3 py-6 text-center text-neutral-500 text-sm">Calculando ganancias...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

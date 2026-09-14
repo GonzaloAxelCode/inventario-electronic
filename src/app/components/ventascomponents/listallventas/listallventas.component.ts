@@ -4,13 +4,13 @@ import { QuerySearchVenta } from '@/app/services/venta.service';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
 import { URL_BASE } from "@/app/services/utils/endpoints";
 import { PAGE_SIZE_VENTAS } from "@/app/services/utils/pages-sizes";
-import { cargarVentasTienda, clearVentaSearch, searchVenta } from '@/app/state/actions/venta.actions';
+import { cargarVentasTienda, clearVentaSearch } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVentaState } from '@/app/state/selectors/venta.selectors';
 import { AsyncPipe, CommonModule, NgForOf, NgIf } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -63,7 +63,7 @@ dayjs.locale('es');
   ],
   styleUrl: './listallventas.component.scss'
 })
-export class ListallventasComponent {
+export class ListallventasComponent implements OnDestroy {
   protected expanded = false;
   viewMode = 'table' as string;
   ventasState$!: Observable<Partial<VentaState>>;
@@ -174,18 +174,12 @@ export class ListallventasComponent {
     this.form.reset();
 
   }
-  refreshVentas() {
-    const initialRange = this.range;
-    this.store.dispatch(cargarVentasTienda({
-      from_date: [initialRange.from.year, initialRange.from.month, initialRange.from.day],
-      to_date: [initialRange.to.year, initialRange.to.month, initialRange.to.day],
-      page: 1,
-      page_size: PAGE_SIZE_VENTAS
-
-    }))
-  }
-
   ngOnInit() {
+    this.checkDesktop();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', this.checkDesktop);
+    }
+
     this.store.select(selectUsersState).pipe(
       map(userState => userState.user.tienda)
     ).subscribe(tienda => {
@@ -198,6 +192,12 @@ export class ListallventasComponent {
 
     })
   }
+
+  isDesktop = false;
+  private checkDesktop = () => {
+    this.isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1024;
+    if (this.isDesktop) this.expanded = true;
+  };
   getVentaValue(venta: Venta, key: string): any {
     return venta[key as keyof Venta];
   }
@@ -216,9 +216,9 @@ export class ListallventasComponent {
 
     return texto.charAt(0).toUpperCase() + texto.slice(1);
   }
-  estados_sunat = ["Pendiente", "Aceptado", "Rechazado"]
-  metodos_pago = ["YAPE", "Efectivo", "Deposito", "Plin"]
-  tipoComprobantes = ["Factura", "Boleta", "Anonima"]
+  estados_sunat = ["Todos", "Pendiente", "Aceptado", "Rechazado"]
+  metodos_pago = ["Todos", "YAPE", "Efectivo", "Deposito", "Plin"]
+  tipoComprobantes = ["Todos", "Factura", "Boleta", "Anonima"]
   tipoDocumento = ["Dni", "Ruc"]
 
 
@@ -249,6 +249,7 @@ export class ListallventasComponent {
 
 
   clearSearch() {
+    this.form.reset();
     this.store.dispatch(clearVentaSearch());
 
     const initialRange = this.range;
@@ -263,27 +264,24 @@ export class ListallventasComponent {
   }
 
   onSubmitSearch() {
-    const currentDate = this.range
-    const searchQuery: Partial<QuerySearchVenta> = {
-      metodo_pago: this.form.value.metodo_pago || "",
-      tipo_comprobante: this.form.value.tipo_comprobante || "",
+    const currentDate = this.range;
+    const val = (v: string | null | undefined) => v && v !== 'Todos' ? v : '';
+    const query: Partial<QuerySearchVenta> = {
+      metodo_pago: val(this.form.value.metodo_pago),
+      tipo_comprobante: val(this.form.value.tipo_comprobante),
+      nombre_cliente: val(this.form.value.nombre_cliente),
+      numero_documento_cliente: val(this.form.value.numero_documento_cliente),
+      numero_comprobante: val(this.form.value.numero_comprobante),
+      estado_sunat: val(this.form.value.estado_sunat),
+    };
+
+    this.store.dispatch(cargarVentasTienda({
       from_date: [currentDate.from.year, currentDate.from.month, currentDate.from.day],
       to_date: [currentDate.to.year, currentDate.to.month, currentDate.to.day],
-      serie: this.form.value.serie || "",
-      nombre_cliente: this.form.value.nombre_cliente || "",
-      numero_documento_cliente: this.form.value.numero_documento_cliente || "",
-      tipo_documento_cliente: this.form.value.tipo_documento_cliente === "Dni" ? "1" : "6",
-      estado_sunat: this.form.value.estado_sunat || "",
-      numero_comprobante: this.form.value.numero_comprobante || "",
-    }
-
-
-    this.store.dispatch(searchVenta({
-      query: searchQuery,
       page: 1,
-      page_size: PAGE_SIZE_VENTAS
-    }))
-
+      page_size: PAGE_SIZE_VENTAS,
+      query
+    }));
   }
 
   getColorClass(cantidad: number): string {
@@ -299,30 +297,31 @@ export class ListallventasComponent {
 
   protected goToPage(index: number): void {
     this.ventasState$?.pipe(take(1)).subscribe(state => {
+      const initialRange = this.range;
       if (state?.search_ventas_found === '') {
-
-        const initialRange = this.range;
         this.store.dispatch(cargarVentasTienda({
           from_date: [initialRange.from.year, initialRange.from.month, initialRange.from.day],
           to_date: [initialRange.to.year, initialRange.to.month, initialRange.to.day],
           page: index + 1,
           page_size: PAGE_SIZE_VENTAS
-
-        }))
+        }));
       } else {
-        const currentDate = this.range
-        const searchQuery: Partial<QuerySearchVenta> = {
-          metodo_pago: this.form.value.metodo_pago || "",
-          tipo_comprobante: this.form.value.tipo_comprobante || "",
-          from_date: [currentDate.from.year, currentDate.from.month, currentDate.from.day],
-          to_date: [currentDate.to.year, currentDate.to.month, currentDate.to.day],
-          serie: this.form.value.serie || "",
-          nombre_cliente: this.form.value.nombre_cliente || "",
-          numero_documento_cliente: this.form.value.numero_documento_cliente || "",
-          tipo_documento_cliente: this.form.value.tipo_documento_cliente === "Dni" ? "1" : "6",
-          estado_sunat: this.form.value.estado_sunat || ""
-        }
-        this.store.dispatch(searchVenta({ query: searchQuery, page: index + 1, page_size: PAGE_SIZE_VENTAS }));
+        const val = (v: string | null | undefined) => v && v !== 'Todos' ? v : '';
+        const query: Partial<QuerySearchVenta> = {
+          metodo_pago: val(this.form.value.metodo_pago),
+          tipo_comprobante: val(this.form.value.tipo_comprobante),
+          nombre_cliente: val(this.form.value.nombre_cliente),
+          numero_documento_cliente: val(this.form.value.numero_documento_cliente),
+          numero_comprobante: val(this.form.value.numero_comprobante),
+          estado_sunat: val(this.form.value.estado_sunat),
+        };
+        this.store.dispatch(cargarVentasTienda({
+          from_date: [initialRange.from.year, initialRange.from.month, initialRange.from.day],
+          to_date: [initialRange.to.year, initialRange.to.month, initialRange.to.day],
+          page: index + 1,
+          page_size: PAGE_SIZE_VENTAS,
+          query
+        }));
       }
     });
   }
@@ -337,5 +336,11 @@ export class ListallventasComponent {
 
   setTab(tab: typeof this.activeTab) {
     this.activeTab = tab;
+  }
+
+  ngOnDestroy() {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('resize', this.checkDesktop);
+    }
   }
 }

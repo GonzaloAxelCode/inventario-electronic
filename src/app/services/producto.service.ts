@@ -64,7 +64,24 @@ export class ProductoService {
         );
     }
     updateProducto(producto: FormData): Observable<Producto> {
-        return this.http.put<Producto>(`${this.siteURL}/productos/update/${producto.get('id')}/`, producto).pipe(
+        const id = producto.get('id');
+        if (!id) {
+            return throwError(() => new Error('Product ID is required'));
+        }
+
+        // Create a new FormData for the request to avoid modifying the original
+        const requestData = new FormData();
+        
+        // Copy all fields from the original FormData
+        producto.forEach((value, key) => {
+            requestData.append(key, value);
+        });
+        
+        // Remove ID from body since it's in the URL
+        requestData.delete('id');
+        
+        // Send PUT request to the correct endpoint
+        return this.http.put<Producto>(`${this.siteURL}/productos/update/${id}/`, requestData).pipe(
             catchError(error => {
                 printError(error);
                 return throwError(error);

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators, ValidationErrors } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiLabel, TuiLoader, TuiNumberFormat, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule, TuiTextareaModule } from '@taiga-ui/legacy';
@@ -45,8 +45,6 @@ export class DialogcreateproductComponent implements OnInit, OnDestroy {
   productoForm: FormGroup;
   categorias: Categoria[] = [];
   emptyCaracteristicas = false
-  marcas = ['Genérico', 'Samsung', 'Apple', 'Xiaomi', 'Huawei'];
-  modelos = ['Genérico', 'Modelo A', 'Modelo B', 'Modelo C'];
   tiendaUser!: number
   private destroy$ = new Subject<void>();
   loadingCreateProduct$!: Observable<boolean>
@@ -55,15 +53,25 @@ export class DialogcreateproductComponent implements OnInit, OnDestroy {
     this.productoForm = this.fb.group({
       nombre: ['', Validators.required],
       descripcion: [''],
-      marca: ['Genérico', Validators.required],
-      modelo: ['Genérico', Validators.required],
       categoria: [null, Validators.required],
       imagen: [null],
       caracteristicas: this.fb.group({}),
       stock: [0, [Validators.required, Validators.min(0)]],
       costo_compra: [0, [Validators.required, Validators.min(0)]],
       costo_venta: [0, [Validators.required, Validators.min(0)]],
+    }, {
+      validators: this.costoCompraMenorIgualCostoVenta
     });
+  }
+  costoCompraMenorIgualCostoVenta(group: FormGroup): ValidationErrors | null {
+    const costoCompra = group.get('costo_compra')?.value;
+    const costoVenta = group.get('costo_venta')?.value;
+    
+    if (costoCompra === null || costoCompra === '' || costoVenta === null || costoVenta === '') {
+      return null; // Let other validators handle empty values
+    }
+    
+    return costoCompra > costoVenta ? { costoCompraMayor: true } : null;
   }
   previewImage: string | ArrayBuffer | null = null;
 
@@ -89,7 +97,6 @@ export class DialogcreateproductComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.store.select(selectCategoriaState).subscribe((state) => {
       this.categorias = state.categorias;
-
     });
 
     //  tiendaUser!: number
@@ -111,15 +118,40 @@ export class DialogcreateproductComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
 
       this.context.completeWith(true);
-    });
+});
 
 
-    this.productoForm.get('categoria')!.valueChanges.subscribe(catId => {
-
+    this.productoForm.get('categoria')!.valueChanges.subscribe(value => {
+      if (!value) {
+        return;
+      }
+      
+      let catId: number | null = null;
+      
+      // If it's already a number (programmatic change), use it directly
+      if (typeof value === 'number') {
+        catId = value;
+      } 
+      // If it's a string from the dropdown selection, extract the ID
+      else if (typeof value === 'string' && value.includes(' - ')) {
+        const idPart = value.split(' - ')[0];
+        catId = parseInt(idPart, 10);
+        // If parsing fails, reset to null
+        if (isNaN(catId)) {
+          catId = null;
+        }
+      }
+      // Fallback: try to parse as number directly
+      else {
+        const parsedId = parseInt(value, 10);
+        if (!isNaN(parsedId)) {
+          catId = parsedId;
+        } else {
+          catId = null;
+        }
+      }
 
       if (!catId) {
-
-
         return;
       }
 
@@ -130,7 +162,6 @@ export class DialogcreateproductComponent implements OnInit, OnDestroy {
         if (categoriaSeleccionada.caracteristicas_template.length === 0) {
           this.emptyCaracteristicas = true
         } else {
-
           this.emptyCaracteristicas = false
         }
 
@@ -139,6 +170,7 @@ export class DialogcreateproductComponent implements OnInit, OnDestroy {
 
       }
     });
+
 
   }
   getCaracteristicasKeys(): string[] {

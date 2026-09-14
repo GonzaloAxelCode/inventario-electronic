@@ -1,0 +1,17 @@
+:host ::ng-deep {
+  tui-textfield,
+  tui-select {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  tui-textfield .t-textfield {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  tui-select .t-select {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}

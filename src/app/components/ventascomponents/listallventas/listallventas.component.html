@@ -1,431 +1,399 @@
 <div>
-  <section>
-    <!-- FILTROS (siempre visibles) -->
-    <search tuiSearch class="">
-      <!-- Rango de fechas responsive -->
-      <div class="mb-4 w-full">
-        <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range"
-          class="w-full">
-          Escoje buscar las ventas entre dos fechas
-        </tui-input-date-range>
+  <section class="flex flex-col lg:flex-row lg:gap-6">
+
+    <!-- ==================== ASIDE - FILTROS (desktop statico) ==================== -->
+    <aside class="w-full lg:w-80 xl:w-96 shrink-0 mb-4 lg:mb-0 lg:sticky lg:top-4 lg:self-start">
+      <search tuiSearch>
+        <!-- Rango de fechas -->
+        <div class="mb-4 w-full">
+          <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range"
+            class="w-full">
+            Escoje buscar las ventas entre dos fechas
+          </tui-input-date-range>
+        </div>
+
+        <!-- Toggle Filtros (solo mobile) -->
+        <div class="flex lg:hidden justify-end mb-3">
+          <button type="button" (click)="expanded = !expanded"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+            [class]="expanded ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900' : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600'">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/>
+            </svg>
+            Filtros
+          </button>
+        </div>
+
+        <!-- Filtros expandidos -->
+        <form [formGroup]="form" (submit)="onSubmitSearch()">
+          <tui-expand [expanded]="expanded || isDesktop">
+            <div class="space-y-3 pb-3">
+              <div class="flex flex-col gap-3 w-full">
+                <tui-textfield iconStart="@tui.search" class="w-full">
+                  <input size="s" formControlName="nombre_cliente" placeholder="Buscar cliente" tuiTextfield />
+                </tui-textfield>
+
+                <tui-select class="w-full" formControlName="metodo_pago">
+                  <ng-container ngProjectAs="tuiLabel">
+                    <span>Método de Pago</span>
+                  </ng-container>
+                  <select placeholder="Método pago" size="m" tuiSelect [items]="metodos_pago"></select>
+                </tui-select>
+
+                <tui-select class="w-full" formControlName="tipo_comprobante">
+                  <ng-container ngProjectAs="tuiLabel">
+                    <span>Tipo Comprobante</span>
+                  </ng-container>
+                  <select placeholder="Comprobante" size="s" tuiSelect [items]="tipoComprobantes"></select>
+                </tui-select>
+
+                <tui-textfield iconStart="@tui.search" class="w-full">
+                  <input formControlName="numero_comprobante" placeholder="N° Comprobante" tuiTextfield />
+                </tui-textfield>
+
+                <tui-textfield iconStart="@tui.search" class="w-full">
+                  <input formControlName="numero_documento_cliente" placeholder="DNI o RUC" tuiTextfield />
+                </tui-textfield>
+              </div>
+
+              <div class="flex flex-row items-center gap-3">
+                <button type="submit"
+                  loading="!!(ventasState$ | async)?.loadingLoadVentas"
+                  iconStart="@tui.search" tuiButton appearance="textfield"
+                  [disabled]="!!(ventasState$ | async)?.loadingLoadVentas"
+                  class="flex-1">
+                  Buscar
+                </button>
+                <button appearance="flat" iconStart="@tui.rotate-cw" size="s" tuiButton type="button"
+                  (click)="clearSearch()" class="!rounded-lg shrink-0">
+                  <span class="text-xs">Limpiar</span>
+                </button>
+              </div>
+            </div>
+          </tui-expand>
+        </form>
+      </search>
+    </aside>
+
+    <!-- ==================== CONTENIDO PRINCIPAL - VENTAS ==================== -->
+    <div class="flex-1 min-w-0">
+
+      <!-- Toolbar: Resultados + Toggle Vista -->
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-neutral-500 dark:text-neutral-400">Resultados:</span>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-neutral-200 dark:bg-neutral-700 text-xs font-bold text-neutral-900 dark:text-white">
+            {{ (ventasState$ | async)?.count || 0 }}
+          </span>
+        </div>
+        <!-- Toggle Vista -->
+        <div class="flex items-center gap-0.5 bg-neutral-200 dark:bg-neutral-700 rounded-lg p-0.5">
+          <button type="button" (click)="viewMode = 'table'"
+            [class]="viewMode === 'table' ? 'px-2.5 py-1.5 rounded-md bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm transition-all' : 'px-2.5 py-1.5 rounded-md text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 transition-all'">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+            </svg>
+          </button>
+          <button type="button" (click)="viewMode = 'grid'"
+            [class]="viewMode === 'grid' ? 'px-2.5 py-1.5 rounded-md bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm transition-all' : 'px-2.5 py-1.5 rounded-md text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 transition-all'">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <!-- Toolbar: Resultados + Acciones -->
-      <fieldset class="mb-4">
-        <div class="flex flex-wrap items-center justify-between gap-2 sm:gap-3 bg-neutral-50 dark:bg-neutral-800/50 rounded-xl px-3 sm:px-4 py-2 sm:py-3">
-
-          <!-- Izquierda: Contador -->
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-neutral-500 dark:text-neutral-400">Resultados:</span>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-neutral-200 dark:bg-neutral-700 text-xs font-bold text-neutral-900 dark:text-white">
-              {{ (ventasState$ | async)?.count || 0 }}
-            </span>
-          </div>
-
-          <!-- Derecha: Acciones -->
-          <div class="flex items-center gap-2">
-            <!-- Toggle Vista -->
-            <div class="flex items-center gap-0.5 bg-neutral-200 dark:bg-neutral-700 rounded-lg p-0.5">
-              <button type="button" (click)="viewMode = 'table'"
-                [class]="viewMode === 'table' ? 'px-2.5 py-1.5 rounded-md bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm transition-all' : 'px-2.5 py-1.5 rounded-md text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 transition-all'">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-                </svg>
-              </button>
-              <button type="button" (click)="viewMode = 'grid'"
-                [class]="viewMode === 'grid' ? 'px-2.5 py-1.5 rounded-md bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm transition-all' : 'px-2.5 py-1.5 rounded-md text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 transition-all'">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>
-                </svg>
-              </button>
-            </div>
-
-            <!-- Separador -->
-            <div class="w-px h-6 bg-neutral-300 dark:bg-neutral-600"></div>
-
-            <!-- Boton Limpiar -->
-            <button appearance="flat" iconStart="@tui.rotate-cw" size="s" tuiButton type="button"
-              (click)="clearSearch()" class="!rounded-lg">
-              <span class="text-xs">Limpiar</span>
-            </button>
-
-            <!-- Toggle Filtros -->
-            <button type="button" (click)="expanded = !expanded"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-              [class]="expanded ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900' : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600'">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/>
-              </svg>
-              Filtros
-            </button>
-          </div>
-        </div>
-      </fieldset>
-
-      <form [formGroup]="form" (submit)="onSubmitSearch()">
-        <tui-expand [expanded]="expanded">
-          <div class="space-y-3 pb-3">
-            <div class="flex flex-wrap xl:flex-nowrap gap-3 w-full">
-              <tui-textfield iconStart="@tui.search" class="w-full">
-                <input size="s" formControlName="nombre_cliente" placeholder="Buscar cliente" tuiTextfield />
-              </tui-textfield>
-
-              <tui-select class="w-full" formControlName="metodo_pago">
-                <ng-container ngProjectAs="tuiLabel">
-                  <span class="hidden sm:inline">Método de Pago</span>
-                  <span class="sm:hidden">Método</span>
-                </ng-container>
-                <select placeholder="Método pago" size="m" tuiSelect [items]="metodos_pago"></select>
-              </tui-select>
-
-              <tui-select class="w-full" formControlName="tipo_comprobante">
-                <ng-container ngProjectAs="tuiLabel">
-                  <span class="hidden sm:inline">Tipo Comprobante</span>
-                  <span class="sm:hidden">Comprobante</span>
-                </ng-container>
-                <select placeholder="Comprobante" size="s" tuiSelect [items]="tipoComprobantes"></select>
-              </tui-select>
-
-              <tui-textfield iconStart="@tui.search" class="w-full">
-                <input formControlName="numero_comprobante" placeholder="N° Comprobante" tuiTextfield size="s" />
-              </tui-textfield>
-
-              <tui-textfield iconStart="@tui.search" class="w-full">
-                <input formControlName="numero_documento_cliente" placeholder="DNI o RUC" tuiTextfield size="s" />
-              </tui-textfield>
-            </div>
-
-            <div class="flex flex-row items-center gap-3">
-              <button type="submit"
-                loading="!!(ventasState$ | async)?.loadingSearch || !!(ventasState$ | async)?.loadingLoadVentas"
-                iconStart="@tui.search" tuiButton appearance="textfield"
-                [disabled]="!!(ventasState$ | async)?.loadingSearch || !!(ventasState$ | async)?.loadingLoadVentas"
-                class="col-span-1 w-full flex-1">
-                Buscar
-              </button>
-              <span class="w-auto">
-                <app-buttonupdate [func]="refreshVentas.bind(this)" [vertical]="false"
-                  [loading]="!!(ventasState$ | async)?.loadingLoadVentas"></app-buttonupdate>
-              </span>
-            </div>
-          </div>
-        </tui-expand>
-      </form>
-    </search>
-
-    <!-- SKELETON LOADING -->
-    <div *ngIf="(ventasState$ | async)?.loadingLoadVentas" class="space-y-3 mt-4">
-      <div class="hidden lg:block space-y-2">
-        <div *ngFor="let i of [1,2,3,4,5]" class="rounded-2xl bg-white dark:bg-neutral-800 p-4 border border-neutral-200 dark:border-neutral-700 animate-pulse">
-          <div class="flex items-center justify-between gap-4">
-            <div class="flex items-center gap-4 flex-1">
-              <div class="w-12 h-12 rounded-lg bg-neutral-200 dark:bg-neutral-700"></div>
-              <div class="flex-1">
-                <div class="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-32 mb-2"></div>
-                <div class="flex gap-3">
-                  <div class="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-20"></div>
-                  <div class="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-16"></div>
-                  <div class="h-5 bg-neutral-200 dark:bg-neutral-700 rounded-full w-16"></div>
+      <!-- SKELETON LOADING -->
+      <div *ngIf="(ventasState$ | async)?.loadingLoadVentas" class="space-y-3">
+        <div class="hidden lg:block space-y-2">
+          <div *ngFor="let i of [1,2,3,4,5]" class="rounded-2xl bg-white dark:bg-neutral-800 p-4 border border-neutral-200 dark:border-neutral-700 animate-pulse">
+            <div class="flex items-center justify-between gap-4">
+              <div class="flex items-center gap-4 flex-1">
+                <div class="w-12 h-12 rounded-lg bg-neutral-200 dark:bg-neutral-700"></div>
+                <div class="flex-1">
+                  <div class="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-32 mb-2"></div>
+                  <div class="flex gap-3">
+                    <div class="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-20"></div>
+                    <div class="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-16"></div>
+                    <div class="h-5 bg-neutral-200 dark:bg-neutral-700 rounded-full w-16"></div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="flex items-center gap-4">
-              <div class="h-5 bg-neutral-200 dark:bg-neutral-700 rounded-full w-20"></div>
-              <div class="text-right">
-                <div class="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-10 mb-1"></div>
-                <div class="h-6 bg-neutral-200 dark:bg-neutral-700 rounded w-20"></div>
+              <div class="flex items-center gap-4">
+                <div class="h-5 bg-neutral-200 dark:bg-neutral-700 rounded-full w-20"></div>
+                <div class="text-right">
+                  <div class="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-10 mb-1"></div>
+                  <div class="h-6 bg-neutral-200 dark:bg-neutral-700 rounded w-20"></div>
+                </div>
+                <div class="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg w-20"></div>
               </div>
-              <div class="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg w-20"></div>
+            </div>
+          </div>
+        </div>
+        <div class="block lg:hidden space-y-3 px-2">
+          <div *ngFor="let i of [1,2,3]" class="rounded-lg bg-white dark:bg-neutral-800 p-3 border border-neutral-200 dark:border-neutral-700 animate-pulse">
+            <div class="flex items-center justify-between mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
+              <div class="h-5 bg-neutral-200 dark:bg-neutral-700 rounded w-24"></div>
+              <div class="h-5 bg-neutral-200 dark:bg-neutral-700 rounded-full w-16"></div>
+            </div>
+            <div class="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-32 mb-3"></div>
+            <div class="flex gap-2 mb-3">
+              <div class="h-6 bg-neutral-200 dark:bg-neutral-700 rounded-full w-20"></div>
+              <div class="h-6 bg-neutral-200 dark:bg-neutral-700 rounded-full w-24"></div>
+            </div>
+            <div class="flex justify-between items-center pt-3 border-t border-neutral-200 dark:border-neutral-700">
+              <div class="h-7 bg-neutral-200 dark:bg-neutral-700 rounded w-24"></div>
+              <div class="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg w-24"></div>
             </div>
           </div>
         </div>
       </div>
-      <div class="block lg:hidden space-y-3 px-2">
-        <div *ngFor="let i of [1,2,3]" class="rounded-lg bg-white dark:bg-neutral-800 p-3 border border-neutral-200 dark:border-neutral-700 animate-pulse">
-          <div class="flex items-center justify-between mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
-            <div class="h-5 bg-neutral-200 dark:bg-neutral-700 rounded w-24"></div>
-            <div class="h-5 bg-neutral-200 dark:bg-neutral-700 rounded-full w-16"></div>
-          </div>
-          <div class="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-32 mb-3"></div>
-          <div class="flex gap-2 mb-3">
-            <div class="h-6 bg-neutral-200 dark:bg-neutral-700 rounded-full w-20"></div>
-            <div class="h-6 bg-neutral-200 dark:bg-neutral-700 rounded-full w-24"></div>
-          </div>
-          <div class="flex justify-between items-center pt-3 border-t border-neutral-200 dark:border-neutral-700">
-            <div class="h-7 bg-neutral-200 dark:bg-neutral-700 rounded w-24"></div>
-            <div class="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg w-24"></div>
-          </div>
-        </div>
+
+      <!-- EMPTY STATE -->
+      <div *ngIf="(ventasState$ | async)?.ventas?.length === 0 && !(ventasState$ | async)?.loadingLoadVentas"
+        class="flex flex-col items-center justify-center py-20 text-center">
+        <svg class="w-16 h-16 mb-4 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/>
+        </svg>
+        <h2 class="text-xl font-bold text-neutral-600 dark:text-neutral-300 mb-2">Aun no tienes ventas</h2>
+        <p class="text-sm text-neutral-400 dark:text-neutral-500">Empieza a hacer tu primera venta</p>
       </div>
-    </div>
 
-    <!-- EMPTY STATE -->
-    <div *ngIf="(ventasState$ | async)?.ventas?.length === 0 && !(ventasState$ | async)?.loadingLoadVentas"
-      class="flex flex-col items-center justify-center py-20 text-center">
-      <svg class="w-16 h-16 mb-4 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/>
-      </svg>
-      <h2 class="text-xl font-bold text-neutral-600 dark:text-neutral-300 mb-2">Aun no tienes ventas</h2>
-      <p class="text-sm text-neutral-400 dark:text-neutral-500">Empieza a hacer tu primera venta</p>
-    </div>
+      <!-- CONTENIDO (solo si hay datos y no esta cargando) -->
+      <ng-container *ngIf="!(ventasState$ | async)?.loadingLoadVentas && ((ventasState$ | async)?.ventas?.length || 0) > 0">
 
-    <!-- CONTENIDO (solo si hay datos y no esta cargando) -->
-    <ng-container *ngIf="!(ventasState$ | async)?.loadingLoadVentas && ((ventasState$ | async)?.ventas?.length || 0) > 0">
+        <!-- ==================== VISTA TABLA ==================== -->
+        <ng-container *ngIf="viewMode === 'table'">
+          <!-- Contenedor principal -->
+          <div *ngIf="((ventasState$ | async)?.search_ventas_found) === '' || ((ventasState$ | async)?.search_ventas_found === 'ventas_found')">
 
-      <!-- ==================== VISTA TABLA ==================== -->
-      <ng-container *ngIf="viewMode === 'table'">
-        <!-- HEADER TABLA DESKTOP -->
-        <div class="hidden lg:grid grid-cols-[1fr_100px_100px_100px_120px_100px] gap-3 px-5 py-3 mb-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-          <div>Venta / Comprobante</div>
-          <div class="text-center">Estado</div>
-          <div class="text-center">Sunat</div>
-          <div class="text-center">Tipo</div>
-          <div class="text-right">Total</div>
-          <div class="text-center">Accion</div>
-        </div>
+            <!-- Vista de CARDS para móviles -->
+            <div class="block lg:hidden space-y-2 px-0.5">
+              <div
+                *ngFor="let venta of (ventasState$ | async)?.ventas; trackBy: trackByVentaId"
+                class="relative bg-white/90 dark:bg-neutral-800/70 backdrop-blur-xl rounded-2xl border border-stone-200/60 dark:border-neutral-700/40 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] p-4 cursor-pointer hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] hover:scale-[1.01] transition-all group"
+                style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;"
+                (click)="showDialogVentaDetail(venta)">
+                <div *ngIf="venta.comprobante_nota_credito" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.06] pointer-events-none z-10 rotate-[-12deg]">
+                  <p class="text-5xl font-black tracking-tighter text-red-600">ANULADA</p>
+                </div>
 
-        <!-- Contenedor principal -->
-        <div *ngIf="((ventasState$ | async)?.search_ventas_found) === '' || ((ventasState$ | async)?.search_ventas_found === 'ventas_found')">
-
-          <!-- Vista de CARDS para móviles - Apple -->
-          <div class="block lg:hidden space-y-2 px-0.5">
-            <div
-              *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas); trackBy: trackByVentaId"
-              class="relative bg-white/90 dark:bg-neutral-800/70 backdrop-blur-xl rounded-2xl border border-stone-200/60 dark:border-neutral-700/40 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)] p-4 cursor-pointer hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] hover:scale-[1.01] transition-all group"
-              style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;"
-              (click)="showDialogVentaDetail(venta)">
-              <div *ngIf="venta.comprobante_nota_credito" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.06] pointer-events-none z-10 rotate-[-12deg]">
-                <p class="text-5xl font-black tracking-tighter text-red-600">ANULADA</p>
-              </div>
-
-              <!-- Header Apple -->
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-9 h-9 rounded-xl bg-stone-900 dark:bg-white flex items-center justify-center shadow-sm">
-                    <span class="text-[11px] font-bold text-white dark:text-stone-900">#{{venta.id}}</span>
+                <!-- Header Apple -->
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-stone-900 dark:bg-white flex items-center justify-center shadow-sm">
+                      <span class="text-[11px] font-bold text-white dark:text-stone-900">#{{venta.id}}</span>
+                    </div>
+                    <div>
+                      <p class="text-[11px] font-semibold tracking-widest uppercase text-stone-400">Venta</p>
+                      <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white -mt-0.5">{{venta.comprobante.serie}}-{{venta.comprobante.correlativo}}</p>
+                    </div>
                   </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
+                      {{ venta.comprobante.estado_sunat }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Cliente + Comprobante Apple -->
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0">
+                    {{ (venta.nombre_cliente || 'C').charAt(0) }}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white truncate">{{ venta.nombre_cliente || 'Cliente Anonimo' }}</p>
+                    <p class="text-xs text-stone-500 dark:text-stone-400 truncate">{{ venta.numero_documento_cliente || '-' }} · {{ venta.tipo_comprobante }}</p>
+                  </div>
+                  <svg class="w-4 h-4 text-stone-300 dark:text-stone-600 group-hover:text-stone-400 group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </div>
+
+                <!-- Productos Apple -->
+                <div class="mb-4">
+                  <div class="flex items-center gap-1.5 mb-2">
+                    <svg class="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                    <span class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">{{ getProductos(venta).length }} Productos</span>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5">
+                    <span *ngFor="let productos of getProductos(venta).slice(0,3)" class="inline-flex items-center px-2.5 py-1 rounded-full bg-stone-100 dark:bg-neutral-700/50 border border-stone-200/50 dark:border-neutral-600/30 text-xs font-medium text-stone-700 dark:text-stone-300">{{ productos.producto_nombre }}</span>
+                    <span *ngIf="getProductos(venta).length > 3" class="inline-flex items-center px-2 py-1 rounded-full bg-stone-900 dark:bg-white text-white dark:text-stone-900 text-xs font-semibold">+{{ getProductos(venta).length - 3 }}</span>
+                  </div>
+                </div>
+
+                <!-- Grid info Apple -->
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                  <div class="bg-stone-50 dark:bg-neutral-700/30 rounded-2xl p-2.5 text-center">
+                    <p class="text-[9px] font-semibold tracking-widest uppercase text-stone-400">Hora</p>
+                    <p class="text-xs font-semibold text-stone-900 dark:text-white mt-0.5">{{ formatoHora12(venta.fecha_hora)}}</p>
+                  </div>
+                  <div class="bg-stone-50 dark:bg-neutral-700/30 rounded-2xl p-2.5 text-center">
+                    <p class="text-[9px] font-semibold tracking-widest uppercase text-stone-400">Fecha</p>
+                    <p class="text-xs font-semibold text-stone-900 dark:text-white mt-0.5 truncate">{{ formatoCorto(venta.fecha_realizacion || venta.fecha_hora) }}</p>
+                  </div>
+                  <div class="bg-stone-50 dark:bg-neutral-700/30 rounded-2xl p-2.5 text-center">
+                    <p class="text-[9px] font-semibold tracking-widest uppercase text-stone-400">Pago</p>
+                    <p class="text-xs font-semibold text-stone-900 dark:text-white mt-0.5 truncate">{{ venta.metodo_pago || 'Efectivo' }}</p>
+                  </div>
+                </div>
+
+                <!-- Footer Total Apple -->
+                <div class="flex items-center justify-between pt-4 border-t border-stone-100 dark:border-neutral-700/50">
                   <div>
-                    <p class="text-[11px] font-semibold tracking-widest uppercase text-stone-400">Venta</p>
-                    <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white -mt-0.5">{{venta.comprobante.serie}}-{{venta.comprobante.correlativo}}</p>
+                    <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Total</p>
+                    <p class="text-2xl font-bold tracking-tight text-stone-900 dark:text-white">S/. {{venta.total}}</p>
+                  </div>
+                  <div class="w-8 h-8 rounded-full bg-stone-900 dark:bg-white flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg class="w-4 h-4 text-white dark:text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                   </div>
                 </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
-                    {{ venta.comprobante.estado_sunat }}
+              </div>
+            </div>
+
+            <!-- Vista de TABLA para desktop -->
+            <div class="hidden lg:block space-y-2">
+              <div
+                *ngFor="let venta of (ventasState$ | async)?.ventas; trackBy: trackByVentaId"
+                class="relative grid grid-cols-[1.5fr_100px_110px_130px] gap-3 items-center px-5 py-4 rounded-[20px] bg-white/90 dark:bg-neutral-800/60 backdrop-blur-xl border border-stone-200/60 dark:border-neutral-700/40 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:scale-[1.005] transition-all cursor-pointer group"
+                style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;"
+                (click)="showDialogVentaDetail(venta)">
+                <div *ngIf="venta.comprobante_nota_credito" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.04] pointer-events-none z-10 rotate-[-8deg]">
+                  <p class="text-4xl font-black tracking-tighter text-red-600">ANULADA</p>
+                </div>
+
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-10 h-10 rounded-xl bg-stone-900 dark:bg-white flex items-center justify-center shadow-sm shrink-0">
+                    <span class="text-xs font-bold text-white dark:text-stone-900">#{{venta.id}}</span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white truncate">
+                      <ng-container *ngIf="venta.comprobante">{{venta.comprobante.serie}}-{{venta.comprobante.correlativo}}</ng-container>
+                      <ng-container *ngIf="!venta.comprobante">Venta #{{venta.id}}</ng-container>
+                      <span class="font-normal text-stone-400">·</span>
+                      <span class="text-xs font-medium text-stone-500 dark:text-stone-400 truncate">{{ venta.nombre_cliente || 'Cliente Anonimo' }}</span>
+                    </p>
+                    <p class="text-[11px] text-stone-500 dark:text-stone-400 truncate flex items-center gap-1.5 mt-0.5">
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded-md bg-stone-100 dark:bg-neutral-700/50 text-[10px] font-medium">{{ getProductos(venta).length }} prod.</span>
+                      <span>{{ venta.numero_documento_cliente || '-' }}</span>
+                      <span>·</span>
+                      <span>{{ formatoCorto(venta.fecha_hora) }}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-1">
+                  <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-semibold" [class]="venta.tipo_comprobante === 'Boleta' ? 'bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-300' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'">
+                    {{ venta.tipo_comprobante }}
                   </span>
+                  <span class="text-[10px] text-stone-500 dark:text-stone-400">{{ venta.metodo_pago || 'Efectivo' }}</span>
                 </div>
-              </div>
 
-              <!-- Cliente + Comprobante Apple -->
-              <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0">
-                  {{ (venta.nombre_cliente || 'C').charAt(0) }}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white truncate">{{ venta.nombre_cliente || 'Cliente Anonimo' }}</p>
-                  <p class="text-xs text-stone-500 dark:text-stone-400 truncate">{{ venta.numero_documento_cliente || '-' }} · {{ venta.tipo_comprobante }}</p>
-                </div>
-                <svg class="w-4 h-4 text-stone-300 dark:text-stone-600 group-hover:text-stone-400 group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-              </div>
-
-              <!-- Productos Apple -->
-              <div class="mb-4">
-                <div class="flex items-center gap-1.5 mb-2">
-                  <svg class="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                  <span class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">{{ getProductos(venta).length }} Productos</span>
-                </div>
-                <div class="flex flex-wrap gap-1.5">
-                  <span *ngFor="let productos of getProductos(venta).slice(0,3)" class="inline-flex items-center px-2.5 py-1 rounded-full bg-stone-100 dark:bg-neutral-700/50 border border-stone-200/50 dark:border-neutral-600/30 text-xs font-medium text-stone-700 dark:text-stone-300">{{ productos.producto_nombre }}</span>
-                  <span *ngIf="getProductos(venta).length > 3" class="inline-flex items-center px-2 py-1 rounded-full bg-stone-900 dark:bg-white text-white dark:text-stone-900 text-xs font-semibold">+{{ getProductos(venta).length - 3 }}</span>
-                </div>
-              </div>
-
-              <!-- Grid info Apple -->
-              <div class="grid grid-cols-3 gap-2 mb-4">
-                <div class="bg-stone-50 dark:bg-neutral-700/30 rounded-2xl p-2.5 text-center">
-                  <p class="text-[9px] font-semibold tracking-widest uppercase text-stone-400">Hora</p>
-                  <p class="text-xs font-semibold text-stone-900 dark:text-white mt-0.5">{{ formatoHora12(venta.fecha_hora)}}</p>
-                </div>
-                <div class="bg-stone-50 dark:bg-neutral-700/30 rounded-2xl p-2.5 text-center">
-                  <p class="text-[9px] font-semibold tracking-widest uppercase text-stone-400">Fecha</p>
-                  <p class="text-xs font-semibold text-stone-900 dark:text-white mt-0.5 truncate">{{ formatoCorto(venta.fecha_realizacion || venta.fecha_hora) }}</p>
-                </div>
-                <div class="bg-stone-50 dark:bg-neutral-700/30 rounded-2xl p-2.5 text-center">
-                  <p class="text-[9px] font-semibold tracking-widest uppercase text-stone-400">Pago</p>
-                  <p class="text-xs font-semibold text-stone-900 dark:text-white mt-0.5 truncate">{{ venta.metodo_pago || 'Efectivo' }}</p>
-                </div>
-              </div>
-
-              <!-- Footer Total Apple -->
-              <div class="flex items-center justify-between pt-4 border-t border-stone-100 dark:border-neutral-700/50">
-                <div>
-                  <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Total</p>
-                  <p class="text-2xl font-bold tracking-tight text-stone-900 dark:text-white">S/. {{venta.total}}</p>
-                </div>
-                <div class="w-8 h-8 rounded-full bg-stone-900 dark:bg-white flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <svg class="w-4 h-4 text-white dark:text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                <div class="text-right">
+                  <p class="text-base font-bold tracking-tight text-stone-900 dark:text-white">S/. {{venta.total}}</p>
+                  <p class="text-[10px] text-stone-400">{{ formatoHora12(venta.fecha_hora) }}</p>
                 </div>
               </div>
             </div>
           </div>
+        </ng-container>
 
-          <!-- Vista de TABLA para desktop - Apple -->
-          <div class="hidden lg:block space-y-2">
-            <!-- Header Apple -->
-            <div class="hidden lg:grid grid-cols-[1.5fr_100px_110px_130px] gap-3 px-5 py-2.5 rounded-2xl bg-stone-100/70 dark:bg-neutral-800/50 border border-stone-200/50 dark:border-neutral-700/30 text-[10px] font-semibold tracking-widest uppercase text-stone-400">
-              <div>Venta / Cliente</div>
-              <div class="text-center">Estado</div>
-              <div class="text-center">Comprobante</div>
-              <div class="text-right">Total · Fecha</div>
-            </div>
-            <div
-              *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas); trackBy: trackByVentaId"
-              class="relative grid grid-cols-[1.5fr_100px_110px_130px] gap-3 items-center px-5 py-4 rounded-[20px] bg-white/90 dark:bg-neutral-800/60 backdrop-blur-xl border border-stone-200/60 dark:border-neutral-700/40 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:scale-[1.005] transition-all cursor-pointer group"
-              style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;"
-              (click)="showDialogVentaDetail(venta)">
-              <div *ngIf="venta.comprobante_nota_credito" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.04] pointer-events-none z-10 rotate-[-8deg]">
-                <p class="text-4xl font-black tracking-tighter text-red-600">ANULADA</p>
+        <!-- ==================== VISTA GRID ==================== -->
+        <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div *ngFor="let venta of (ventasState$ | async)?.ventas; trackBy: trackByVentaId"
+            (click)="showDialogVentaDetail(venta)"
+            class="bg-white/90 dark:bg-neutral-800/60 backdrop-blur-xl rounded-[24px] border border-stone-200/60 dark:border-neutral-700/40 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)] overflow-hidden hover:shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:scale-[1.015] transition-all cursor-pointer group flex flex-col"
+            style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;">
+
+            <div class="p-4 pb-3 border-b border-stone-100 dark:border-neutral-700/40">
+              <div class="flex items-center justify-between mb-2.5">
+                <span class="text-[13px] font-bold tracking-tight text-stone-900 dark:text-white">
+                  <ng-container *ngIf="venta.comprobante">{{ venta.comprobante.serie }}-{{ venta.comprobante.correlativo }}</ng-container>
+                  <ng-container *ngIf="!venta.comprobante">Venta #{{ venta.id }}</ng-container>
+                </span>
               </div>
-
-              <!-- Venta / Cliente + Productos -->
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-10 h-10 rounded-xl bg-stone-900 dark:bg-white flex items-center justify-center shadow-sm shrink-0">
-                  <span class="text-xs font-bold text-white dark:text-stone-900">#{{venta.id}}</span>
-                </div>
-                <div class="min-w-0 flex-1">
-                  <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white truncate">
-                    <ng-container *ngIf="venta.comprobante">{{venta.comprobante.serie}}-{{venta.comprobante.correlativo}}</ng-container>
-                    <ng-container *ngIf="!venta.comprobante">Venta #{{venta.id}}</ng-container>
-                    <span class="font-normal text-stone-400">·</span>
-                    <span class="text-xs font-medium text-stone-500 dark:text-stone-400 truncate">{{ venta.nombre_cliente || 'Cliente Anonimo' }}</span>
-                  </p>
-                  <p class="text-[11px] text-stone-500 dark:text-stone-400 truncate flex items-center gap-1.5 mt-0.5">
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-md bg-stone-100 dark:bg-neutral-700/50 text-[10px] font-medium">{{ getProductos(venta).length }} prod.</span>
-                    <span>{{ venta.numero_documento_cliente || '-' }}</span>
-                    <span>·</span>
-                    <span>{{ formatoCorto(venta.fecha_hora) }}</span>
-                  </p>
-                </div>
-              </div>
-
-              <!-- Comprobante + Pago -->
-              <div class="flex flex-col items-center gap-1">
-                <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-semibold" [class]="venta.tipo_comprobante === 'Boleta' ? 'bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-300' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-semibold" [class]="venta.tipo_comprobante === 'Boleta' ? 'bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-300' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'">
                   {{ venta.tipo_comprobante }}
                 </span>
-                <span class="text-[10px] text-stone-500 dark:text-stone-400">{{ venta.metodo_pago || 'Efectivo' }}</span>
+                <span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
+                  {{ venta.comprobante.estado_sunat }}
+                </span>
+                <span class="ml-auto text-[10px] text-stone-400">{{ venta.comprobante.serie }} · {{ formatoHora12(venta.fecha_hora) }}</span>
+              </div>
+            </div>
+
+            <div class="p-4 space-y-3 flex-1">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0">
+                  {{ (venta.nombre_cliente || 'C').charAt(0) }}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white truncate">{{ venta.nombre_cliente || 'Cliente Anonimo' }}</p>
+                  <p class="text-xs text-stone-500 dark:text-stone-400 truncate">{{ venta.numero_documento_cliente || '-' }} · {{ venta.telefono_cliente || 'Sin tel' }}</p>
+                </div>
               </div>
 
-              <!-- Total + Hora -->
-              <div class="text-right">
-                <p class="text-base font-bold tracking-tight text-stone-900 dark:text-white">S/. {{venta.total}}</p>
-                <p class="text-[10px] text-stone-400">{{ formatoHora12(venta.fecha_hora) }}</p>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="bg-stone-50 dark:bg-neutral-700/30 rounded-2xl p-2.5">
+                  <p class="text-[9px] font-semibold tracking-widest uppercase text-stone-400">Fecha</p>
+                  <p class="text-xs font-semibold text-stone-900 dark:text-white mt-1 truncate">{{ formatoCorto(venta.fecha_hora) }}</p>
+                  <p class="text-[10px] text-stone-500 dark:text-stone-400">{{ formatoHora12(venta.fecha_hora) }}</p>
+                </div>
+                <div class="bg-stone-50 dark:bg-neutral-700/30 rounded-2xl p-2.5">
+                  <p class="text-[9px] font-semibold tracking-widest uppercase text-stone-400">Pago</p>
+                  <p class="text-xs font-semibold text-stone-900 dark:text-white mt-1 truncate">{{ venta.metodo_pago || 'Efectivo' }}</p>
+                  <p class="text-[10px] text-stone-500 dark:text-stone-400">{{ getProductos(venta).length }} prod.</p>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center gap-1.5 mb-1.5">
+                  <svg class="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                  <span class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Productos</span>
+                  <span class="ml-auto text-[10px] font-medium text-stone-400">{{ getProductos(venta).length }} items</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  <span *ngFor="let prod of getProductos(venta)?.slice(0, 3)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-stone-100 dark:bg-neutral-700/50 border border-stone-200/50 dark:border-neutral-600/30 text-xs font-medium text-stone-700 dark:text-stone-300">
+                    <span class="w-4 h-4 rounded-full bg-white dark:bg-neutral-600 flex items-center justify-center text-[9px] font-bold text-stone-500 shrink-0">{{ prod.producto_nombre.charAt(0) }}</span>
+                    {{ prod.producto_nombre | slice:0:14 }}{{ prod.producto_nombre.length > 14 ? '…' : '' }}
+                  </span>
+                  <span *ngIf="(getProductos(venta)?.length || 0) > 3" class="inline-flex items-center px-2.5 py-1 rounded-full bg-stone-900 dark:bg-white text-white dark:text-stone-900 text-xs font-semibold">+{{ (getProductos(venta)?.length || 0) - 3 }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="px-4 py-3 bg-stone-50/70 dark:bg-neutral-700/20 border-t border-stone-100 dark:border-neutral-700/40 flex items-center justify-between">
+              <div>
+                <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Total</p>
+                <p class="text-xl font-bold tracking-tight text-stone-900 dark:text-white">S/. {{ venta.total }}</p>
+                <p class="text-[10px] text-stone-500 dark:text-stone-400">{{ venta.comprobante.serie }} · {{ venta.tipo_comprobante }}</p>
+              </div>
+              <div class="w-9 h-9 rounded-full bg-stone-900 dark:bg-white flex items-center justify-center shadow-md group-hover:translate-x-0.5 group-hover:scale-105 transition-all">
+                <svg class="w-4 h-4 text-white dark:text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Estado de búsqueda vacía -->
+        <tui-block-status *ngIf="((ventasState$ | async)?.search_ventas_found) === 'ventas_not_found'" size="m" class="m-auto px-4">
+          <svg tuiSlot="top" class="w-16 h-16 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+          </svg>
+          <h4 class="text-center text-sm sm:text-base">Ventas no encontradas</h4>
+          <span class="text-center text-xs sm:text-sm">No coincidimos con ninguna venta</span>
+        </tui-block-status>
+
+        <!-- Paginación -->
+        <div class="pt-4 flex justify-center px-2"
+          *ngIf="((ventasState$ | async)?.search_ventas_found) === 'ventas_found' || ((ventasState$ | async)?.search_ventas_found) === ''"
+          (click)="$event.stopPropagation()"
+          (keydown)="$event.stopPropagation()">
+          <tui-pagination [index]="(ventasState$ | async)?.index_page" [length]="(ventasState$ | async)?.length_pages"
+            (indexChange)="goToPage($event)" class="w-full overflow-x-auto" />
         </div>
       </ng-container>
+    </div>
 
-      <!-- ==================== VISTA GRID - Apple ==================== -->
-      <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <div *ngFor="let venta of ((ventasState$ | async)?.ventas_search?.length ? (ventasState$ | async)?.ventas_search : (ventasState$ | async)?.ventas); trackBy: trackByVentaId"
-          (click)="showDialogVentaDetail(venta)"
-          class="bg-white/90 dark:bg-neutral-800/60 backdrop-blur-xl rounded-[24px] border border-stone-200/60 dark:border-neutral-700/40 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)] overflow-hidden hover:shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:scale-[1.015] transition-all cursor-pointer group flex flex-col"
-          style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;">
-
-          <!-- Header Apple -->
-          <div class="p-4 pb-3 border-b border-stone-100 dark:border-neutral-700/40">
-            <div class="flex items-center justify-between mb-2.5">
-              <span class="text-[13px] font-bold tracking-tight text-stone-900 dark:text-white">
-                <ng-container *ngIf="venta.comprobante">{{ venta.comprobante.serie }}-{{ venta.comprobante.correlativo }}</ng-container>
-                <ng-container *ngIf="!venta.comprobante">Venta #{{ venta.id }}</ng-container>
-              </span>
-            </div>
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-semibold" [class]="venta.tipo_comprobante === 'Boleta' ? 'bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-300' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'">
-                {{ venta.tipo_comprobante }}
-              </span>
-              <span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
-                {{ venta.comprobante.estado_sunat }}
-              </span>
-              <span class="ml-auto text-[10px] text-stone-400">{{ venta.comprobante.serie }} · {{ formatoHora12(venta.fecha_hora) }}</span>
-            </div>
-          </div>
-
-          <!-- Cuerpo Apple -->
-          <div class="p-4 space-y-3 flex-1">
-            <!-- Cliente -->
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0">
-                {{ (venta.nombre_cliente || 'C').charAt(0) }}
-              </div>
-              <div class="min-w-0 flex-1">
-                <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white truncate">{{ venta.nombre_cliente || 'Cliente Anonimo' }}</p>
-                <p class="text-xs text-stone-500 dark:text-stone-400 truncate">{{ venta.numero_documento_cliente || '-' }} · {{ venta.telefono_cliente || 'Sin tel' }}</p>
-              </div>
-            </div>
-
-            <!-- Fecha + Pago grid -->
-            <div class="grid grid-cols-2 gap-2">
-              <div class="bg-stone-50 dark:bg-neutral-700/30 rounded-2xl p-2.5">
-                <p class="text-[9px] font-semibold tracking-widest uppercase text-stone-400">Fecha</p>
-                <p class="text-xs font-semibold text-stone-900 dark:text-white mt-1 truncate">{{ formatoCorto(venta.fecha_hora) }}</p>
-                <p class="text-[10px] text-stone-500 dark:text-stone-400">{{ formatoHora12(venta.fecha_hora) }}</p>
-              </div>
-              <div class="bg-stone-50 dark:bg-neutral-700/30 rounded-2xl p-2.5">
-                <p class="text-[9px] font-semibold tracking-widest uppercase text-stone-400">Pago</p>
-                <p class="text-xs font-semibold text-stone-900 dark:text-white mt-1 truncate">{{ venta.metodo_pago || 'Efectivo' }}</p>
-                <p class="text-[10px] text-stone-500 dark:text-stone-400">{{ getProductos(venta).length }} prod.</p>
-              </div>
-            </div>
-
-            <!-- Productos Apple -->
-            <div>
-              <div class="flex items-center gap-1.5 mb-1.5">
-                <svg class="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                <span class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Productos</span>
-                <span class="ml-auto text-[10px] font-medium text-stone-400">{{ getProductos(venta).length }} items</span>
-              </div>
-              <div class="flex flex-wrap gap-1.5">
-                <span *ngFor="let prod of getProductos(venta)?.slice(0, 3)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-stone-100 dark:bg-neutral-700/50 border border-stone-200/50 dark:border-neutral-600/30 text-xs font-medium text-stone-700 dark:text-stone-300">
-                  <span class="w-4 h-4 rounded-full bg-white dark:bg-neutral-600 flex items-center justify-center text-[9px] font-bold text-stone-500 shrink-0">{{ prod.producto_nombre.charAt(0) }}</span>
-                  {{ prod.producto_nombre | slice:0:14 }}{{ prod.producto_nombre.length > 14 ? '…' : '' }}
-                </span>
-                <span *ngIf="(getProductos(venta)?.length || 0) > 3" class="inline-flex items-center px-2.5 py-1 rounded-full bg-stone-900 dark:bg-white text-white dark:text-stone-900 text-xs font-semibold">+{{ (getProductos(venta)?.length || 0) - 3 }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Footer Apple -->
-          <div class="px-4 py-3 bg-stone-50/70 dark:bg-neutral-700/20 border-t border-stone-100 dark:border-neutral-700/40 flex items-center justify-between">
-            <div>
-              <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Total</p>
-              <p class="text-xl font-bold tracking-tight text-stone-900 dark:text-white">S/. {{ venta.total }}</p>
-              <p class="text-[10px] text-stone-500 dark:text-stone-400">{{ venta.comprobante.serie }} · {{ venta.tipo_comprobante }}</p>
-            </div>
-            <div class="w-9 h-9 rounded-full bg-stone-900 dark:bg-white flex items-center justify-center shadow-md group-hover:translate-x-0.5 group-hover:scale-105 transition-all">
-              <svg class="w-4 h-4 text-white dark:text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Estado de búsqueda vacía -->
-      <tui-block-status *ngIf="((ventasState$ | async)?.search_ventas_found) === 'ventas_not_found'" size="m" class="m-auto px-4">
-        <svg tuiSlot="top" class="w-16 h-16 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
-        </svg>
-        <h4 class="text-center text-sm sm:text-base">Ventas no encontradas</h4>
-        <span class="text-center text-xs sm:text-sm">No coincidimos con ninguna venta</span>
-      </tui-block-status>
-
-      <!-- Paginación responsive -->
-      <div class="pt-4 flex justify-center px-2"
-        *ngIf="((ventasState$ | async)?.search_ventas_found) === 'ventas_found' || ((ventasState$ | async)?.search_ventas_found) === ''">
-        <tui-pagination [index]="(ventasState$ | async)?.index_page" [length]="(ventasState$ | async)?.length_pages"
-          (indexChange)="goToPage($event)" class="w-full overflow-x-auto" />
-      </div>
-    </ng-container>
   </section>
 </div>
 

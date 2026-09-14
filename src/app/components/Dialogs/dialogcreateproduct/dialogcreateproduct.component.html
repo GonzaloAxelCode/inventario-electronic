@@ -91,44 +91,11 @@
         </div>
       </div>
 
-      <!-- Fila completa debajo: Marca y Modelo -->
-      <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Marca -->
-        <div class="flex flex-col">
-          <tui-select formControlName="marca" class="w-full">
-            Marca
-            <tui-data-list *tuiDataList>
-              <button *ngFor="let marca of marcas" tuiOption [value]="marca">{{ marca }}</button>
-            </tui-data-list>
-          </tui-select>
-          <p *ngIf="productoForm.get('marca')?.invalid && productoForm.get('marca')?.touched" class="text-red-500 text-sm mt-1">
-            Este campo es obligatorio
-          </p>
-          <p *ngIf="(productoError$ | async)?.marca?.[0]" class="text-red-500 text-sm mt-1">
-            {{ (productoError$ | async)?.marca?.[0] }}
-          </p>
-        </div>
+      <!-- Fila completa debajo: Eliminado Marca y Modelo -->
+      <!-- Marca y Modelo eliminados según requerimiento -->
 
-        <!-- Modelo -->
-        <div class="flex flex-col">
-          <tui-select formControlName="modelo" class="w-full">
-            Modelo
-            <tui-data-list *tuiDataList>
-              <button *ngFor="let modelo of modelos" tuiOption [value]="modelo">{{ modelo }}</button>
-            </tui-data-list>
-          </tui-select>
-          <p *ngIf="productoForm.get('modelo')?.invalid && productoForm.get('modelo')?.touched" class="text-red-500 text-sm mt-1">
-            Este campo es obligatorio
-          </p>
-          <p *ngIf="(productoError$ | async)?.modelo?.[0]" class="text-red-500 text-sm mt-1">
-            {{ (productoError$ | async)?.modelo?.[0] }}
-          </p>
-        </div>
-      </div>
-
-      <!-- Inventario (Stock y Costos) -->
-      <div class="lg:col-span-3 p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-        <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-3">Inventario inicial</h4>
+      <!-- Inventario (Stock y Costos) - Sin contenedor -->
+      <div class="lg:col-span-3 space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="flex flex-col">
             <tui-textfield class="w-full">
@@ -146,6 +113,7 @@
             </tui-textfield>
             <p *ngIf="productoForm.get('costo_compra')?.invalid && productoForm.get('costo_compra')?.touched" class="text-red-500 text-xs mt-1">Requerido ≥0</p>
             <p *ngIf="(productoError$ | async)?.costo_compra?.[0]" class="text-red-500 text-xs mt-1">{{ (productoError$ | async)?.costo_compra?.[0] }}</p>
+            <p *ngIf="productoForm.errors?.['costoCompraMayor']" class="text-red-500 text-xs mt-1">El costo de compra debe ser menor o igual al costo de venta</p>
           </div>
           <div class="flex flex-col">
             <tui-textfield class="w-full">
@@ -154,6 +122,7 @@
             </tui-textfield>
             <p *ngIf="productoForm.get('costo_venta')?.invalid && productoForm.get('costo_venta')?.touched" class="text-red-500 text-xs mt-1">Requerido ≥0</p>
             <p *ngIf="(productoError$ | async)?.costo_venta?.[0]" class="text-red-500 text-xs mt-1">{{ (productoError$ | async)?.costo_venta?.[0] }}</p>
+            <p *ngIf="productoForm.errors?.['costoCompraMayor']" class="text-red-500 text-xs mt-1">El costo de compra debe ser menor o igual al costo de venta</p>
           </div>
         </div>
       </div>

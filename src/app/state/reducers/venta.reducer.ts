@@ -51,9 +51,6 @@ import {
     generarComprobanteVenta,
     generarComprobanteVentaError,
     generarComprobanteVentaExito,
-    searchVenta,
-    searchVentaFail,
-    searchVentaSuccess
 } from '../actions/venta.actions';
 export interface ProductsSales {
     producto_id: number;
@@ -118,7 +115,6 @@ export interface VentaState {
     length_pages: any;
     loadingSearch: boolean;
     loadingLoadVentas: boolean
-    ventas_search: Venta[];
     loadingResumenVentas: boolean
     loadingMostSales: boolean
     loadingNotaCredito: boolean
@@ -151,7 +147,6 @@ export const initialState: VentaState = {
     index_page: null,
     length_pages: null,
     loadingSearch: false,
-    ventas_search: [],
     loadingVentasToday: false,
     reporteMensual: {
         total_ventas: 0,
@@ -200,10 +195,11 @@ export const ventaReducer = createReducer(
         ...state,
         loadingLoadVentas: true
     })),
-    on(cargarVentasTiendaExito, (state, { ventas, count, next, previous, index_page, length_pages }) => ({
+    on(cargarVentasTiendaExito, (state, { ventas, count, next, previous, index_page, length_pages, search_ventas_found }) => ({
         ...state,
         ventas,
         count, next, previous, index_page, length_pages,
+        search_ventas_found: search_ventas_found ?? state.search_ventas_found,
         loadingLoadVentas: false
     })),
     on(cargarVentasTiendaError, (state, { error }) => ({
@@ -258,7 +254,6 @@ export const ventaReducer = createReducer(
     on(generarComprobanteVentaExito, (state, { venta }) => ({
         ...state,
         ventas: state.ventas.map(v => v.id === venta.id ? venta : v),
-        ventas_search: state.ventas_search.map(v => v.id === venta.id ? venta : v),
         temporaryVenta: venta,
         showVentaDetailTemporary: true,
         loadingGenerarComprobante: false
@@ -355,29 +350,10 @@ export const ventaReducer = createReducer(
         showVentaDetailTemporary: false,
         temporaryVenta: {} as Venta
     })),
-    //search
-    on(searchVenta, state => ({
-        ...state,
-        loadingSearch: true
-    })),
-    on(searchVentaSuccess, (state, { ventas, search_ventas_found, count, next, previous, index_page, length_pages }) => ({
-        ...state,
-        ventas_search: ventas,
-        loadingSearch: false,
-        search_ventas_found: search_ventas_found,
-        count: count,
-        next, previous, index_page, length_pages
-    })),
-    on(searchVentaFail, (state, { error }) => ({
-        ...state,
-        errors: error,
-        loadingSearch: false
-    })),
     on(clearVentaSearch, (state) => ({
         ...state,
         count: 0,
         loadingSearch: false,
-        ventas_search: [],
         search_ventas_found: ""
     })),
     on(anularVenta, (state) => ({
@@ -391,15 +367,6 @@ export const ventaReducer = createReducer(
         errors: null,
 
         ventas: state.ventas.map(venta =>
-            venta.id === ventaId
-                ? {
-                    ...venta,
-                    estado: 'ANULADA',
-                    comprobante_nota_credito: comprobante_nota_credito
-                }
-                : venta
-        ),
-        ventas_search: state.ventas_search.map(venta =>
             venta.id === ventaId
                 ? {
                     ...venta,

@@ -71,6 +71,11 @@ export class TemasSettingsComponent implements OnInit {
     this.saveModulosConfig();
   }
 
+  toggleGanancias(): void {
+    this.featureFlags.toggleGanancias();
+    this.saveModulosConfig();
+  }
+
   private saveModulosConfig(): void {
     const modulos: string[] = [];
     if (this.featureFlags.guiasRemisionEnabled()) {
@@ -78,6 +83,9 @@ export class TemasSettingsComponent implements OnInit {
     }
     if (this.featureFlags.comprasEnabled()) {
       modulos.push('compras');
+    }
+    if (this.featureFlags.gananciasEnabled()) {
+      modulos.push('ganancias');
     }
     this.saveConfig({ modulos_habilitados: modulos });
   }

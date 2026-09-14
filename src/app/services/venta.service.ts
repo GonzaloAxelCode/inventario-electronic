@@ -7,18 +7,12 @@ import { ProductsSales } from '../state/reducers/venta.reducer';
 import { URL_BASE } from './utils/endpoints';
 
 export interface QuerySearchVenta {
-    estado: string;
     metodo_pago: string;
     tipo_comprobante: string;
-    from_date: [number, number, number];
-    to_date: [number, number, number];
-    serie: string;
-    correlativo: string;
     nombre_cliente: string;
     numero_documento_cliente: string;
-    tipo_documento_cliente: string;
-    estado_sunat: string;
     numero_comprobante: string;
+    estado_sunat: string;
 }
 
 export interface VentaResponse {
@@ -160,38 +154,43 @@ export class VentaService {
         );
     }
     getVentasPorTienda(
-
         from_date: [number, number, number],
         to_date: [number, number, number],
         page: number = 1,
-        page_size: number = 30
+        page_size: number = 30,
+        query?: Partial<QuerySearchVenta>
     ): Observable<VentaResponse> {
-
-        // Construir los query params
-        let params = new HttpParams()
-
-            .set('page', page.toString())
-            .set('page_size', page_size.toString());
-
-        // Función para convertir el array de fecha a string YYYY-MM-DD
         const formatDateArray = (dateArray: [number, number, number]): string => {
             const [year, month, day] = dateArray;
-            // Nota: month es 0-based (0=enero, 11=diciembre)
             return `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
         };
 
+        const params = new HttpParams()
+            .set('page', page.toString())
+            .set('page_size', page_size.toString());
 
-        params = params.set('from_date', formatDateArray(from_date));
-        params = params.set('to_date', formatDateArray(to_date));
+        const body: any = {
+            from_date: formatDateArray(from_date),
+            to_date: formatDateArray(to_date),
+        };
 
+        if (query) {
+            body.query = {
+                metodo_pago: query.metodo_pago || "",
+                tipo_comprobante: query.tipo_comprobante || "",
+                nombre_cliente: query.nombre_cliente || "",
+                numero_documento_cliente: query.numero_documento_cliente || "",
+                numero_comprobante: query.numero_comprobante || "",
+                estado_sunat: query.estado_sunat || "",
+            };
+        }
 
-        return this.http.get<VentaResponse>(`${this.siteURL}/sales/totals/`, { params })
-            .pipe(
-                catchError(error => {
-                    console.error('Error al obtener ventas por tienda', error);
-                    return throwError(error);
-                })
-            );
+        return this.http.post<VentaResponse>(`${this.siteURL}/sales/totals/`, body, { params }).pipe(
+            catchError(error => {
+                console.error('Error al obtener ventas por tienda', error);
+                return throwError(error);
+            })
+        );
     }
     createVenta(venta: CreateVenta): Observable<Venta> {
         return this.http.post<Venta>(`${this.siteURL}/sales/create/`, venta).pipe(
@@ -236,18 +235,6 @@ export class VentaService {
                 console.error('Error al obtener resumen de ventas', error);
                 return throwError(error);
             })
-        );
-    }
-    fetchSearchVentas(query: Partial<QuerySearchVenta>, page: number, page_size: number): Observable<any> {
-        const params = new HttpParams()
-            .set('page', page)
-            .set('page_size', page_size);
-        return this.http.post<VentaResponse>(`${this.siteURL}/sales/search/`, {
-
-            query,
-
-        }, { params }).pipe(
-            catchError(error => throwError(error))
         );
     }
 

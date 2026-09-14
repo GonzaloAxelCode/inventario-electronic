@@ -106,6 +106,10 @@ export class MyaccountComponent implements OnInit {
     return this.user.modulos_habilitados?.includes('compras') ?? false;
   }
 
+  get gananciasActive(): boolean {
+    return this.user.modulos_habilitados?.includes('ganancias') ?? this.featureFlags.gananciasEnabled();
+  }
+
   toggleTheme(): void {
     const newTheme = this.user.theme === 'dark' ? 'light' : 'dark';
     this.user = { ...this.user, theme: newTheme };
@@ -136,6 +140,9 @@ export class MyaccountComponent implements OnInit {
         break;
       case 'compras':
         this.featureFlags.toggleCompras();
+        break;
+      case 'ganancias':
+        this.featureFlags.toggleGanancias();
         break;
     }
   }

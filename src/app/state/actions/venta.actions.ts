@@ -42,9 +42,6 @@ export enum VentaActionTypes {
     CARGAR_RESUMEN_VENTAS_BY_DATE_ERROR = '[Venta] Cargar Resumen Ventas por Mes o Día Error',
     CLEAR_VENTA_TEMPORAL = '[Venta] Limpiar venta temporal ',
 
-    SEARCH_VENTA = "SEARCH_VENTA ",
-    SEARCH_VENTA_SUCCESS = "SEARCH_VENTA SUCCESS",
-    SEARCH_VENTA_FAIL = "SEARCH_VENTA FAIL",
     CLEAR_VENTA_SEARCH = "CLEAR_VENTA_SEARCH",
 
     CARGAR_REPORTE_MENSUAL = '[Venta] Cargar Reporte Mensual',
@@ -118,12 +115,12 @@ export const cargarTopProductosVentasHoyError = createAction(
 
 export const cargarVentasTienda = createAction(
     VentaActionTypes.CARGAR_VENTAS_TIENDA,
-    props<{ from_date: any, to_date: any, page?: any, page_size?: any }>()
+    props<{ from_date: any, to_date: any, page?: any, page_size?: any, query?: Partial<QuerySearchVenta> }>()
 );
 
 export const cargarVentasTiendaExito = createAction(
     VentaActionTypes.CARGAR_VENTAS_TIENDA_EXITO,
-    props<{ count: any, next: any, previous: any, index_page: any, length_pages: any, ventas: any, }>()
+    props<{ count: any, next: any, previous: any, index_page: any, length_pages: any, ventas: any, search_ventas_found?: any }>()
 );
 
 export const cargarVentasTiendaError = createAction(
@@ -220,22 +217,6 @@ export const cargarVentasRangoFechasTiendaError = createAction(
 export const clearVentaTemporal = createAction(
     VentaActionTypes.CLEAR_VENTA_TEMPORAL,
 
-);
-
-
-export const searchVenta = createAction(
-    VentaActionTypes.SEARCH_VENTA,
-    props<{ query: Partial<QuerySearchVenta>, page_size?: any, page?: any }>()
-);
-
-export const searchVentaSuccess = createAction(
-    VentaActionTypes.SEARCH_VENTA_SUCCESS,
-    props<{ ventas: any, count: any, next: any, previous: any, index_page: any, length_pages: any, search_ventas_found: any }>()
-);
-
-export const searchVentaFail = createAction(
-    VentaActionTypes.SEARCH_VENTA_FAIL,
-    props<{ error: any }>()
 );
 
 
