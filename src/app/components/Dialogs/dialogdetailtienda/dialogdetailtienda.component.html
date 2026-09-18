@@ -216,7 +216,6 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">Clave privada</p>
-                  <p class="text-[10px] leading-3 text-[#86868b] dark:text-[#a1a1a6]">Archivo de certificado .key/.pem/.p12/.pfx</p>
                   <div class="mt-2 flex flex-wrap items-center gap-2">
                     <button type="button" (click)="certPrivadaInput.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
                     <span *ngIf="certPrivadaFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[160px]">{{ certPrivadaFileName }}</span>
@@ -227,7 +226,6 @@
                 </div>
                 <div>
                   <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">Clave pública</p>
-                  <p class="text-[10px] leading-3 text-[#86868b] dark:text-[#a1a1a6]">Archivo de certificado .crt/.cer/.pem/.pub</p>
                   <div class="mt-2 flex flex-wrap items-center gap-2">
                     <button type="button" (click)="certPublicaInput.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
                     <span *ngIf="certPublicaFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[160px]">{{ certPublicaFileName }}</span>
@@ -237,7 +235,6 @@
                   <input type="file" #certPublicaInput (change)="onCertPublicaSelected($event)" accept=".crt,.cer,.pem,.pub,.key,.p12,.pfx,.txt" class="hidden" />
                 </div>
               </div>
-              <p class="text-[10px] text-[#86868b] mt-2">Se envían como texto string en <span class="font-mono">cert_clave_privada</span> y <span class="font-mono">cert_clave_publica</span>.</p>
             </div>
 
 
@@ -245,7 +242,7 @@
 
           <!-- Botón -->
           <div class="w-full flex flex-1">
-            <button tuiButton size="m" appearance="outline-grayscale" class="w-full" type="submit"
+            <button tuiButton size="m" appearance="outline-grayscale" class="w-full !rounded-full" type="submit"
               [disabled]="tiendaForm.invalid">
               Actualizar Tienda
               <tui-loader [showLoader]="!!(loadingUpdateTienda)"></tui-loader>

@@ -1,0 +1,76 @@
+<!-- Pill compacta: solo si hay plan cargado -->
+<ng-container *ngIf="mode === 'pill'">
+  <span *ngIf="data?.plan_actual as plan"
+    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#7d7aff]/10 text-[#7d7aff] dark:text-[#a5a3ff] text-[10px] font-semibold tracking-wide">
+    Plan {{ plan.nombre_plan }}
+  </span>
+</ng-container>
+
+<!-- Tarjeta solo lectura -->
+<ng-container *ngIf="mode === 'card'">
+  <div *ngIf="loading" class="rounded-2xl p-6 text-center">
+    <p class="text-[13px] text-[#86868b]">Cargando plan…</p>
+  </div>
+
+  <div *ngIf="!loading && (failed || (!data?.plan_actual && !data?.uso_mensual))" class="rounded-2xl p-6 text-center">
+    <p class="text-[13px] font-medium text-[#1d1d1f] dark:text-white">Sin plan asignado</p>
+    <p class="text-[12px] text-[#86868b] mt-1">Tu tienda aún no tiene un plan de suscripción.</p>
+  </div>
+
+  <div *ngIf="!loading && data?.plan_actual as plan" class="rounded-2xl overflow-hidden">
+    <div class="px-5 py-3 flex items-center justify-between">
+      <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Mi plan</p>
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold"
+        [ngClass]="plan.activo ? 'bg-[#30d158]/15 text-[#30d158]' : 'bg-black/[0.06] text-[#86868b]'">
+        <span class="w-1.5 h-1.5 rounded-full" [ngClass]="plan.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
+        {{ plan.activo ? 'Activo' : 'Inactivo' }}
+      </span>
+    </div>
+    <div class="p-5">
+      <h2 class="text-[20px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">{{ plan.nombre_plan }}</h2>
+      <p *ngIf="plan.descripcion" class="text-[12px] text-[#86868b] mt-1">{{ plan.descripcion }}</p>
+      <p class="text-[13px] font-medium text-[#1d1d1f] dark:text-white mt-1">{{ plan.precio_mensual }} {{ plan.moneda }} · mensual</p>
+      <p *ngIf="plan.precio_anual" class="text-[12px] text-[#86868b]">{{ plan.precio_anual }} {{ plan.moneda }} · anual</p>
+      <ul *ngIf="plan.lista_descripcion?.length" class="mt-3 space-y-1">
+        <li *ngFor="let c of plan.lista_descripcion" class="flex gap-2 text-[12px] leading-5 text-[#1d1d1f] dark:text-white/90">
+          <span class="text-[#30d158] font-bold">✓</span><span>{{ c }}</span>
+        </li>
+      </ul>
+      <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+        <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-2 py-2">
+          <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Boletas</p>
+          <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ isIlimitado(plan.limite_boletas) ? '∞' : plan.limite_boletas }}</p>
+        </div>
+        <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-2 py-2">
+          <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Facturas</p>
+          <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ isIlimitado(plan.limite_facturas) ? '∞' : plan.limite_facturas }}</p>
+        </div>
+        <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-2 py-2">
+          <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Personal</p>
+          <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ isIlimitado(plan.limite_personal) ? '∞' : plan.limite_personal }}</p>
+        </div>
+      </div>
+      <div *ngIf="data?.uso_mensual as uso" class="mt-4 space-y-3">
+        <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Uso del mes {{ usoMesLabel(uso) }}</p>
+        <div>
+          <div class="flex justify-between text-[12px] mb-1">
+            <span class="text-[#1d1d1f] dark:text-white font-medium">Boletas</span>
+            <span class="font-mono text-[#86868b]">{{ boletasEmitidas(uso) }} / {{ isIlimitado(plan.limite_boletas) ? '∞' : plan.limite_boletas }}</span>
+          </div>
+          <div class="h-2 rounded-full bg-black/[0.06] dark:bg-white/[0.08] overflow-hidden">
+            <div class="h-full rounded-full bg-[#0071e3]" [style.width.%]="usoPorcentaje(boletasEmitidas(uso), plan.limite_boletas)"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between text-[12px] mb-1">
+            <span class="text-[#1d1d1f] dark:text-white font-medium">Facturas</span>
+            <span class="font-mono text-[#86868b]">{{ facturasEmitidas(uso) }} / {{ isIlimitado(plan.limite_facturas) ? '∞' : plan.limite_facturas }}</span>
+          </div>
+          <div class="h-2 rounded-full bg-black/[0.06] dark:bg-white/[0.08] overflow-hidden">
+            <div class="h-full rounded-full bg-[#7d7aff]" [style.width.%]="usoPorcentaje(facturasEmitidas(uso), plan.limite_facturas)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

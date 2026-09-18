@@ -118,6 +118,11 @@ const routes: Routes = [
 				loadComponent: () => import('./pages/admin/admintiendadetail/admintiendadetail.component').then(m => m.AdmintiendadetailComponent),
 				canActivate: [adminStoreGuard()]
 			},
+			{
+				path: 'planes',
+				loadComponent: () => import('./pages/admin/adminplanes/adminplanes.component').then(m => m.AdminplanesComponent),
+				canActivate: [superUserGuard()]
+			},
 		]
 	},
 	{

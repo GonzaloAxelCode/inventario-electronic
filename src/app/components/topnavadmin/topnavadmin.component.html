@@ -21,6 +21,10 @@
           class="px-4 py-1.5 rounded-full text-[13px] font-medium text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white transition-all">
           {{ isSuperUser ? 'Tiendas' : 'Mis sucursales' }}
         </a>
+        <a *ngIf="isSuperUser" routerLink="/admin/planes" routerLinkActive="nav-link-active"
+          class="px-4 py-1.5 rounded-full text-[13px] font-medium text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white transition-all">
+          Suscripciones
+        </a>
       </nav>
 
       <!-- Right — User + Mobile -->
@@ -76,6 +80,7 @@
             <nav class="p-2 space-y-1">
               <a routerLink="/admin" (click)="closeMobileMenu()" class="block px-3 py-2.5 rounded-xl text-[13px] font-medium hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">Inicio</a>
               <a routerLink="/admin/store" (click)="closeMobileMenu()" class="block px-3 py-2.5 rounded-xl text-[13px] font-medium hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">{{ isSuperUser ? 'Tiendas' : 'Mis sucursales' }}</a>
+              <a *ngIf="isSuperUser" routerLink="/admin/planes" (click)="closeMobileMenu()" class="block px-3 py-2.5 rounded-xl text-[13px] font-medium hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">Suscripciones</a>
             </nav>
             <div class="h-px dropdown-divider bg-black/[0.06] dark:bg-white/[0.06]"></div>
             <button (click)="toggleTheme($event)" class="w-full flex items-center gap-2 px-4 py-2.5 text-[13px] text-[#1d1d1f] dark:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">

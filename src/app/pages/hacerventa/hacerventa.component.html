@@ -1,6 +1,6 @@
-<div class="p-4 sm:p-8 max-w-[1600px] mx-auto">
+<div class="apple-venta p-4 sm:p-8 max-w-[1600px] mx-auto">
 
-    <header tuiSubheader class="mb-6 border-b border-neutral-200 dark:border-neutral-800">
+    <header tuiSubheader class="mb-6">
         <div class="mb-5">
             <h2 class="text-xl font-semibold text-neutral-900 dark:text-white tracking-tight">Hacer venta</h2>
             <p class="text-sm text-neutral-500 dark:text-neutral-400">Punto de venta y registro de comprobantes</p>
@@ -34,16 +34,16 @@
                             </div>
 
                             <button iconStart="@tui.plus" tuiButton appearance="primary-grayscale" type="button"
-                                (click)="showDialog()" size="m" class="!rounded-lg">
+                                (click)="showDialog()" size="m" class="!rounded-full">
                                 Agregar producto
                             </button>
                         </div>
 
                         <!-- Lista de productos -->
-                        <div class="space-y-3">
+                        <div class="space-y-6">
 
                             <div *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item"
-                                class="relative rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 sm:p-5 transition-colors hover:border-neutral-300 dark:hover:border-neutral-700">
+                                class="relative py-4 sm:py-5">
 
                                 <button tuiIconButton iconStart="@tui.x" type="button" appearance="flat"
                                     (click)="eliminarProductoForm(i)" size="xs"
@@ -53,7 +53,7 @@
                                 <div class="flex flex-col sm:flex-row gap-4">
                                     <!-- Imagen -->
                                     <div class="shrink-0">
-                                        <div class="w-20 h-20 sm:w-[88px] sm:h-[88px] rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800">
+                                        <div class="w-20 h-20 sm:w-[88px] sm:h-[88px] rounded-2xl overflow-hidden bg-neutral-100 dark:bg-white/10">
                                             <img [src]="item.get('imagen_producto')?.value"
                                                 alt="Imagen del producto" class="w-full h-full object-cover" />
                                         </div>
@@ -69,9 +69,9 @@
                                                 <span class="text-xs text-neutral-500 dark:text-neutral-400">
                                                     {{ item.get('nombre_categoria')?.value }}
                                                 </span>
-                                                <span class="text-neutral-300 dark:text-neutral-700">·</span>
+                                                <span class="text-neutral-300">·</span>
                                                 <tui-chip iconStart="@tui.scan-barcode" size="xs"
-                                                    class="text-[11px] !bg-neutral-100 dark:!bg-neutral-800 !text-neutral-600 dark:!text-neutral-300">
+                                                    class="text-[11px] !bg-neutral-100 dark:bg-white/10 !text-neutral-600 dark:text-neutral-300">
                                                     {{ item.get('producto_sku')?.value }}
                                                 </tui-chip>
                                             </div>
@@ -108,7 +108,7 @@
                                             </div>
 
                                             <!-- Total del item -->
-                                            <div class="text-right rounded-lg bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200 dark:border-neutral-800 p-3">
+                                            <div class="text-right py-1">
                                                 <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">Total</p>
                                                 <p class="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
                                                     {{ ((+item.get('costo_original')?.value || 0) *
@@ -124,8 +124,8 @@
 
                             <!-- Estado vacio -->
                             <div *ngIf="productosFormArray.length === 0"
-                                class="text-center py-16 sm:py-20 rounded-xl border border-dashed border-neutral-300 dark:border-neutral-700">
-                                <svg class="w-10 h-10 mx-auto mb-3 text-neutral-300 dark:text-neutral-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                class="text-center py-16 sm:py-20">
+                                <svg class="w-10 h-10 mx-auto mb-3 text-neutral-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
                                 </svg>
                                 <h3 class="text-base font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
@@ -140,7 +140,7 @@
 
                     <!-- ==================== PANEL LATERAL DERECHO ==================== -->
                     <div class="order-2 lg:sticky lg:top-4 lg:self-start">
-                        <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 divide-y divide-neutral-200 dark:divide-neutral-800">
+                        <div class="rounded-2xl bg-white dark:bg-neutral-800">
 
                             <!-- Seccion: Cliente -->
                             <div class="p-5">
@@ -172,7 +172,7 @@
                                         </tui-textfield>
 
                                         <div *ngIf="ventaForm.get('cliente')?.value" class="mt-3">
-                                            <div class="rounded-lg border-l-2 border-emerald-500 bg-emerald-50/70 dark:bg-emerald-900/10 p-3.5 mb-2">
+                                            <div class="rounded-2xl bg-emerald-500/10 p-3.5 mb-2">
                                                 <div class="flex items-start justify-between gap-2">
                                                     <div class="flex-1 min-w-0">
                                                         <p class="font-semibold text-sm text-neutral-900 dark:text-white truncate">
@@ -189,7 +189,7 @@
                                                 </div>
                                             </div>
                                             <button tuiButton size="s" type="button" appearance="secondary-grayscale"
-                                                (click)="expanded = !expanded" class="w-full !rounded-lg !text-xs">
+                                                (click)="expanded = !expanded" class="w-full !rounded-full !text-xs">
                                                 {{ expanded ? 'Ocultar detalles' : 'Detalles' }}
                                             </button>
                                             <div [@expandCollapse]="expanded ? 'open' : 'closed'" class="overflow-hidden">
@@ -229,7 +229,7 @@
                                         </div>
 
                                         <!-- Cliente encontrado -->
-                                        <div *ngIf="ventaForm.get('cliente')?.value" class="rounded-lg border-l-2 border-emerald-500 bg-emerald-50/70 dark:bg-emerald-900/10 p-3.5">
+                                        <div *ngIf="ventaForm.get('cliente')?.value" class="rounded-2xl bg-emerald-500/10 p-3.5">
                                             <div class="flex items-start justify-between gap-2 mb-2">
                                                 <div class="flex-1 min-w-0">
                                                     <p class="font-semibold text-sm text-neutral-900 dark:text-white truncate">
@@ -245,7 +245,7 @@
                                                 </button>
                                             </div>
                                             <button tuiButton size="s" type="button" appearance="secondary-grayscale"
-                                                (click)="expanded = !expanded" class="w-full !rounded-lg !text-xs">
+                                                (click)="expanded = !expanded" class="w-full !rounded-full !text-xs">
                                                 {{ expanded ? 'Ocultar detalles' : 'Más detalles' }}
                                             </button>
                                         </div>
@@ -268,7 +268,7 @@
                                             </div>
                                         </div>
 
-                                        <span *ngIf="errorClientNotFound" class="text-rose-600 text-xs block mt-2 bg-rose-50 dark:bg-rose-900/20 rounded-lg px-3 py-2">
+                                        <span *ngIf="errorClientNotFound" class="text-rose-600 text-xs block mt-2 bg-rose-50 rounded-lg px-3 py-2">
                                             Cliente no encontrado. Intente más tarde.
                                         </span>
                                     </div>
@@ -303,7 +303,7 @@
 
                                 <!-- Cliente anonimo -->
                                 <div *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'">
-                                    <div class="flex items-center gap-3 rounded-lg bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200 dark:border-neutral-800 p-3.5">
+                                    <div class="flex items-center gap-3 rounded-2xl bg-neutral-50 dark:bg-white/5 p-3.5">
                                         <div class="w-9 h-9 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center shrink-0">
                                             <svg class="w-4.5 h-4.5 text-neutral-500 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
@@ -367,31 +367,31 @@
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-neutral-500 dark:text-neutral-400">Descuentos</span>
-                                        <span class="font-medium text-rose-600 dark:text-rose-400">
+                                        <span class="font-medium text-rose-600">
                                             - {{ salesTotals.descuentoTotales | currency:'S/' }}
                                         </span>
                                     </div>
                                 </div>
 
-                                <div class="mt-4 rounded-xl bg-neutral-900 dark:bg-neutral-950 p-4 text-white">
+                                <div class="mt-4 rounded-2xl bg-emerald-500/10 p-4">
                                     <div class="flex justify-between items-start">
                                         <div>
-                                            <p class="text-xs text-neutral-400 mb-1">Total a pagar</p>
-                                            <p class="text-2xl font-bold tracking-tight">
+                                            <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Total a pagar</p>
+                                            <p class="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
                                                 {{ salesTotals.total | currency:'S/' }}
                                             </p>
                                         </div>
                                         <div class="text-right">
-                                            <p class="text-[11px] text-neutral-400">IGV 18%</p>
-                                            <p class="text-xs font-medium text-neutral-300">
+                                            <p class="text-[11px] text-neutral-500 dark:text-neutral-400">IGV 18%</p>
+                                            <p class="text-xs font-medium text-neutral-600 dark:text-neutral-300">
                                                 {{ salesTotals.igv | currency:'S/' }}
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-2 mt-3 pt-3 border-t border-white/10">
+                                    <div class="flex items-center gap-2 mt-3 pt-3">
                                         <img src="https://www.proactivanet.com/wp-content/uploads/2023/01/PROACTIVANET-Logo-Sunat.png"
                                             class="object-contain w-14 opacity-60" alt="SUNAT">
-                                        <span class="text-[11px] text-neutral-400">Emisión electrónica SUNAT</span>
+                                        <span class="text-[11px] text-neutral-500 dark:text-neutral-400">Emisión electrónica SUNAT</span>
                                     </div>
                                 </div>
 
@@ -408,7 +408,7 @@
                                             Finalizar venta
                                         </span>
                                     </button>
-                                    <p *ngIf="rucRequiredError()" class="text-rose-600 text-xs mt-2 text-center bg-rose-50 dark:bg-rose-900/20 rounded-lg px-3 py-2 font-medium">
+                                    <p *ngIf="rucRequiredError()" class="text-rose-600 text-xs mt-2 text-center bg-rose-50 rounded-lg px-3 py-2 font-medium">
                                         Para facturas solo se permite RUC (11 dígitos). No se puede continuar con DNI.
                                     </p>
 
@@ -427,12 +427,12 @@
 
                                 <!-- Advertencia permisos -->
                                 <div *ngIf="!(userPermissions$ | async)?.can_make_sale"
-                                    class="mt-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-3.5">
+                                    class="mt-3 rounded-lg bg-amber-50 p-3.5">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
                                         </svg>
-                                        <p class="text-xs font-medium text-amber-700 dark:text-amber-300">
+                                        <p class="text-xs font-medium text-amber-700">
                                             Permisos insuficientes para realizar ventas
                                         </p>
                                     </div>
@@ -461,7 +461,7 @@
                             </p>
                         </div>
                         <button *ngIf="pedidoFlowStep > 0" tuiButton type="button" appearance="secondary-grayscale" size="s"
-                            (click)="volverSeleccionPedido()" class="!rounded-lg">
+                            (click)="volverSeleccionPedido()" class="!rounded-full">
                             <span class="flex items-center gap-1.5">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"/>
@@ -481,8 +481,8 @@
 
                                 <!-- Empty state -->
                                 <div *ngIf="pedidosSala.length === 0"
-                                    class="text-center py-16 rounded-xl border border-dashed border-neutral-300 dark:border-neutral-700">
-                                    <svg class="w-12 h-12 mx-auto mb-4 text-neutral-300 dark:text-neutral-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    class="text-center py-16">
+                                    <svg class="w-12 h-12 mx-auto mb-4 text-neutral-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/>
                                     </svg>
                                     <h3 class="text-base font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
@@ -498,14 +498,14 @@
                                     <div *ngFor="let pedido of pedidosSala"
                                         (click)="pedidoSeleccionado = pedido"
                                         [class]="pedidoSeleccionado?.id === pedido.id
-                                            ? 'bg-white dark:bg-neutral-900 rounded-xl p-5 border-2 border-neutral-900 dark:border-white cursor-pointer transition-colors relative'
-                                            : 'bg-white dark:bg-neutral-900 rounded-xl p-5 border border-neutral-200 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600 cursor-pointer transition-colors relative'">
+                                            ? 'bg-white dark:bg-neutral-800 rounded-2xl p-5 ring-2 ring-neutral-900 dark:ring-emerald-400 cursor-pointer transition-colors relative'
+                                            : 'bg-white dark:bg-neutral-800 rounded-2xl p-5 cursor-pointer transition-colors relative'">
 
                                         <!-- Boton quitar pedido -->
                                         <button
                                             type="button"
                                             (click)="quitarPedidoSala(pedido); $event.stopPropagation()"
-                                            class="absolute top-3 right-3 p-1.5 rounded-lg text-neutral-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-900/20 transition-colors z-10"
+                                            class="absolute top-3 right-3 p-1.5 rounded-lg text-neutral-400 hover:bg-rose-50 hover:text-rose-600 transition-colors z-10"
                                             title="Quitar pedido de la sala">
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -519,10 +519,10 @@
                                                 <p class="text-base font-semibold text-neutral-900 dark:text-white">{{ pedido.numero_pedido }}</p>
                                             </div>
                                             <div class="flex flex-col items-end gap-1">
-                                                <span class="text-[11px] px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-medium">
+                                                <span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 font-medium">
                                                     {{ pedido.estado }}
                                                 </span>
-                                                <span class="text-[11px] px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-medium">
+                                                <span class="text-[11px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-white/10 text-neutral-600 dark:text-neutral-300 font-medium">
                                                     {{ pedido.tipo_pedido }}
                                                 </span>
                                             </div>
@@ -530,7 +530,7 @@
 
                                         <!-- Miniaturas de productos -->
                                         <div class="flex items-center gap-2 mb-4" *ngIf="pedido.productos?.length">
-                                            <div *ngFor="let prod of pedido.productos.slice(0, 4)" class="w-10 h-10 rounded-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden bg-neutral-100 dark:bg-neutral-800 shrink-0">
+                                            <div *ngFor="let prod of pedido.productos.slice(0, 4)" class="w-10 h-10 rounded-xl overflow-hidden bg-neutral-100 dark:bg-white/10 shrink-0">
                                                 <img [src]="prod.imagen_producto || 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
                                                      class="w-full h-full object-cover" />
                                             </div>
@@ -569,7 +569,7 @@
                                         </div>
 
                                         <!-- Total -->
-                                        <div class="flex items-center justify-between pt-3 border-t border-neutral-100 dark:border-neutral-800">
+                                        <div class="flex items-center justify-between pt-3">
                                             <span class="text-sm text-neutral-500 dark:text-neutral-400">Total</span>
                                             <span class="text-lg font-bold text-neutral-900 dark:text-white">
                                                 S/. {{ pedido.total | number:'1.2-2' }}
@@ -589,7 +589,7 @@
                                 <!-- Boton continuar -->
                                 <div class="mt-6" *ngIf="pedidoSeleccionado">
                                     <button tuiButton appearance="primary-grayscale" size="l" type="button"
-                                        (click)="continuarConPedido()" class="w-full !rounded-lg">
+                                        (click)="continuarConPedido()" class="w-full !rounded-full">
                                         <span class="flex items-center justify-center gap-2">
                                             Continuar con {{ pedidoSeleccionado.numero_pedido }}
                                             <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -604,9 +604,9 @@
                             <div *ngIf="pedidoFlowStep === 1" class="space-y-4">
 
                                 <!-- Header resumen compacto -->
-                                <div class="flex items-center justify-between gap-3 py-3 px-4 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800">
+                                <div class="flex items-center justify-between gap-3 py-3 px-4 bg-white dark:bg-neutral-800 rounded-2xl shadow-sm">
                                     <div class="flex items-center gap-3 min-w-0">
-                                        <div class="w-9 h-9 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center shrink-0">
+                                        <div class="w-9 h-9 rounded-full bg-neutral-100 dark:bg-white/10 flex items-center justify-center shrink-0">
                                             <svg class="w-4.5 h-4.5 text-neutral-600 dark:text-neutral-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                             </svg>
@@ -618,20 +618,20 @@
                                     </div>
                                     <div class="text-right shrink-0">
                                         <p class="text-base font-bold text-neutral-900 dark:text-white">S/ {{ salesTotals.total | number:'1.2-2' }}</p>
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-700">
                                             Pendiente
                                         </span>
                                     </div>
                                 </div>
 
                                 <!-- Preview de comprobante -->
-                                <div class="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+                                <div class="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm overflow-hidden">
                                     <!-- Header del comprobante -->
-                                    <div class="p-4 sm:p-5 border-b border-neutral-100 dark:border-neutral-800">
+                                    <div class="p-4 sm:p-5">
                                         <div class="flex items-start justify-between gap-3">
                                             <div class="min-w-0">
                                                 <div class="flex items-center gap-2 mb-1">
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-neutral-100 dark:bg-white/10 text-neutral-600 dark:text-neutral-300">
                                                         {{ ventaForm.get('tipoComprobante')?.value || 'Boleta' }}
                                                     </span>
                                                     <span class="text-[11px] text-neutral-400">{{ pedidoSeleccionado?.fecha | date:'mediumDate' }}</span>
@@ -644,7 +644,7 @@
                                         </div>
 
                                         <!-- Info grid compacta -->
-                                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-800">
+                                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 pt-3">
                                             <div>
                                                 <p class="text-[11px] text-neutral-400">Estado</p>
                                                 <p class="text-sm font-medium text-neutral-900 dark:text-white">Pendiente</p>
@@ -669,15 +669,15 @@
                                         <p class="text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-3">Productos ({{ productosFormArray.length }})</p>
                                         <div class="space-y-2">
                                             <div *ngFor="let item of productosFormArray.controls; let i = index"
-                                                class="flex gap-3 p-3 border border-neutral-100 dark:border-neutral-800 rounded-lg">
+                                                class="flex gap-3 p-3 rounded-2xl bg-neutral-50/60 dark:bg-white/5">
                                                 <img [src]="item.get('imagen_producto')?.value || 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
-                                                    class="w-12 h-12 rounded-lg object-cover border border-neutral-200 dark:border-neutral-700 shrink-0" />
+                                                    class="w-12 h-12 rounded-xl object-cover shrink-0" />
                                                 <div class="flex-1 min-w-0">
                                                     <p class="text-sm font-medium truncate text-neutral-900 dark:text-white">{{ item.get('producto_nombre')?.value }}</p>
                                                     <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
                                                         <span class="text-xs text-neutral-500 dark:text-neutral-400">x{{ item.get('cantidad_final')?.value }}</span>
                                                         <span class="text-xs text-neutral-500 dark:text-neutral-400">S/ {{ item.get('costo_original')?.value | number:'1.2-2' }} c/u</span>
-                                                        <span *ngIf="(item.get('descuento')?.value || 0) > 0" class="text-xs text-rose-600 dark:text-rose-400">-S/ {{ item.get('descuento')?.value | number:'1.2-2' }}</span>
+                                                        <span *ngIf="(item.get('descuento')?.value || 0) > 0" class="text-xs text-rose-600">-S/ {{ item.get('descuento')?.value | number:'1.2-2' }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="text-right shrink-0">
@@ -688,7 +688,7 @@
                                     </div>
 
                                     <!-- Resumen montos -->
-                                    <div class="p-4 sm:p-5 bg-neutral-50 dark:bg-neutral-800/40 border-t border-neutral-100 dark:border-neutral-800">
+                                    <div class="p-4 sm:p-5 bg-neutral-50 dark:bg-white/5">
                                         <div class="space-y-2">
                                             <div class="flex justify-between text-sm">
                                                 <span class="text-neutral-500 dark:text-neutral-400">Subtotal</span>
@@ -699,8 +699,8 @@
                                                 <span class="font-medium text-neutral-900 dark:text-white">S/ {{ salesTotals.igv | number:'1.2-2' }}</span>
                                             </div>
                                             <div *ngIf="salesTotals.descuentoTotales > 0" class="flex justify-between text-sm">
-                                                <span class="text-rose-600 dark:text-rose-400">Descuento</span>
-                                                <span class="font-medium text-rose-600 dark:text-rose-400">- S/ {{ salesTotals.descuentoTotales | number:'1.2-2' }}</span>
+                                                <span class="text-rose-600">Descuento</span>
+                                                <span class="font-medium text-rose-600">- S/ {{ salesTotals.descuentoTotales | number:'1.2-2' }}</span>
                                             </div>
                                             <div class="h-px bg-neutral-200 dark:bg-neutral-700 my-2"></div>
                                             <div class="flex justify-between items-baseline">
@@ -717,7 +717,7 @@
                         <div *ngIf="pedidoFlowStep > 0" class="w-full lg:w-[360px] lg:sticky lg:top-4 space-y-4">
 
                             <!-- Seccion: Comprobante -->
-                            <div class="bg-white dark:bg-neutral-900 rounded-xl p-4 border border-neutral-200 dark:border-neutral-800">
+                            <div class="bg-white dark:bg-neutral-800 rounded-2xl p-4 shadow-sm">
                                 <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Comprobante</h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
                                     <tui-select formControlName="tipoComprobante" class="w-full">
@@ -748,37 +748,37 @@
                             </div>
 
                             <!-- Resumen con boton finalizar -->
-                            <div class="bg-neutral-900 dark:bg-neutral-950 rounded-xl p-4 sm:p-5 text-white">
-                                <h3 class="text-sm font-semibold mb-3">Resumen</h3>
+                            <div class="bg-emerald-500/10 rounded-2xl p-4 sm:p-5">
+                                <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Resumen</h3>
 
                                 <div class="space-y-2 mb-4">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm text-neutral-400">Subtotal</span>
-                                        <span class="text-sm font-medium">S/ {{ salesTotals.subtotal | number:'1.2-2' }}</span>
+                                        <span class="text-sm text-neutral-500 dark:text-neutral-400">Subtotal</span>
+                                        <span class="text-sm font-medium text-neutral-900 dark:text-white">S/ {{ salesTotals.subtotal | number:'1.2-2' }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm text-neutral-400">Descuentos</span>
-                                        <span class="text-sm font-medium text-rose-400">- S/ {{ salesTotals.descuentoTotales | number:'1.2-2' }}</span>
+                                        <span class="text-sm text-neutral-500 dark:text-neutral-400">Descuentos</span>
+                                        <span class="text-sm font-medium text-rose-600">- S/ {{ salesTotals.descuentoTotales | number:'1.2-2' }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm text-neutral-400">IGV 18%</span>
-                                        <span class="text-sm font-medium">S/ {{ salesTotals.igv | number:'1.2-2' }}</span>
+                                        <span class="text-sm text-neutral-500 dark:text-neutral-400">IGV 18%</span>
+                                        <span class="text-sm font-medium text-neutral-900 dark:text-white">S/ {{ salesTotals.igv | number:'1.2-2' }}</span>
                                     </div>
                                 </div>
 
-                                <div class="border-t border-white/10 pt-3 mb-4">
+                                <div class="pt-3 mb-4">
                                     <div class="flex justify-between items-baseline">
-                                        <span class="text-sm text-neutral-400">Total</span>
-                                        <span class="text-3xl font-bold tracking-tight">S/ {{ salesTotals.total | number:'1.2-2' }}</span>
+                                        <span class="text-sm text-neutral-500 dark:text-neutral-400">Total</span>
+                                        <span class="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">S/ {{ salesTotals.total | number:'1.2-2' }}</span>
                                     </div>
                                 </div>
 
-                                <div class="flex items-center gap-2 mb-4 py-2 px-3 bg-white/5 rounded-lg">
+                                <div class="flex items-center gap-2 mb-4 py-2 px-3 bg-white dark:bg-neutral-800 rounded-2xl">
                                     <img src="https://www.proactivanet.com/wp-content/uploads/2023/01/PROACTIVANET-Logo-Sunat.png"
                                         class="object-contain w-9 h-9 opacity-70" alt="SUNAT">
                                     <div>
-                                        <p class="text-[11px] font-medium text-white/80">Electrónico SUNAT</p>
-                                        <p class="text-[10px] text-white/50">Comprobante oficial</p>
+                                        <p class="text-[11px] font-medium text-neutral-700 dark:text-neutral-300">Electrónico SUNAT</p>
+                                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Comprobante oficial</p>
                                     </div>
                                 </div>
 
@@ -786,9 +786,9 @@
                                 <div *ngIf="(userPermissions$ | async)?.can_make_sale">
                                     <button
                                         [disabled]="productosFormArray.length === 0 || processingVenta"
-                                        class="w-full py-3 px-4 bg-white text-neutral-900 font-semibold text-sm rounded-lg hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                                        class="w-full py-3 px-4 bg-neutral-900 text-white font-semibold text-sm rounded-full hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                                         tuiButton type="button" (click)="confirmarVentaPedido()" size="l">
-                                        <tui-loader *ngIf="processingVenta" size="s" class="!text-neutral-900"></tui-loader>
+                                        <tui-loader *ngIf="processingVenta" size="s" class="!text-white"></tui-loader>
                                         <ng-container *ngIf="!processingVenta">
                                             <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -800,7 +800,7 @@
 
                                 <!-- Advertencia permisos -->
                                 <div *ngIf="!(userPermissions$ | async)?.can_make_sale"
-                                    class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
+                                    class="bg-amber-500/10 rounded-lg p-3">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>

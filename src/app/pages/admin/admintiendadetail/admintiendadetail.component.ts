@@ -1,4 +1,4 @@
-import { Tienda } from '@/app/models/tienda.models';
+import { PlanSuscripcion, SuscripcionTiendaResponse, Tienda, UsoMensualTienda } from '@/app/models/tienda.models';
 import { TiendaService } from '@/app/services/tienda.service';
 import { imageUrl, URL_BASE } from '@/app/services/utils/endpoints';
 import { eliminarTiendaPermanently, eliminarTiendaPermanentlySuccess, loadTiendasAction, updateTiendaAction } from '@/app/state/actions/tienda.actions';
@@ -12,7 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
-import { TuiAlertService, TuiAppearance, TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiButtonLoading, TuiConfirmData, TuiTab, TuiTabs } from '@taiga-ui/kit';
 import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
 import { Subject, takeUntil } from 'rxjs';
@@ -25,7 +25,7 @@ import { DialogUpdateTiendaService } from '@/app/services/dialogs-services/dialo
   imports: [
     CommonModule, TuiButton, TuiAppearance, TuiLoader,
     TuiInputModule, TuiSelectModule, FormsModule, TuiTextfield, ReactiveFormsModule,
-    TuiButtonLoading, TuiTabs, TuiTab, TableUsersComponent
+    TuiButtonLoading, TuiTabs, TuiTab, TuiDataList, TableUsersComponent
   ],
   templateUrl: './admintiendadetail.component.html',
   styleUrl: './admintiendadetail.component.scss'
@@ -42,7 +42,20 @@ export class AdmintiendadetailComponent implements OnInit {
   deleteTiendaLoader = false;
   loading = true;
 
-  activeTab: 'update' | 'config' | 'personal' | 'diseno' = 'update';
+  // Suscripción / Plan (GET /api/tiendas/<id>/planes/)
+  suscripcion: SuscripcionTiendaResponse | null = null;
+  loadingSuscripcion = false;
+  errorSuscripcion: string | null = null;
+  private suscripcionLoadedForTiendaId: number | null = null;
+
+  // Planes: listar / cambiar (crear vive en /admin/planes)
+  planes: PlanSuscripcion[] = [];
+  loadingPlanes = false;
+  errorPlanes: string | null = null;
+  selectedPlanId: number | null = null;
+  changingPlan = false;
+
+  activeTab: 'update' | 'config' | 'personal' | 'diseno' | 'suscripcion' = 'update';
   readonly seriesOptions = ['001','002','003','004','005','006','007','008','009','010'];
   isSuperUser = false;
   selectedTicket: 't80_1' | 't80_2' | 't80_3' | 't80_4' | 't80_5' | 't80_6' = 't80_1';
@@ -190,8 +203,154 @@ export class AdmintiendadetailComponent implements OnInit {
     });
   }
 
+  loadSuscripcion(force = false): void {
+    const id = this.tienda?.id;
+    if (!id) return;
+    if (!force && this.suscripcionLoadedForTiendaId === id && this.suscripcion) return;
+    this.loadingSuscripcion = true;
+    this.errorSuscripcion = null;
+    this.cdRef.markForCheck();
+    this.tiendaService.getPlanYSuscripcion(id).subscribe({
+      next: (data) => {
+        this.suscripcion = data;
+        this.suscripcionLoadedForTiendaId = id;
+        if (data?.plan_actual?.id) {
+          this.selectedPlanId = data.plan_actual.id;
+        }
+        this.loadingSuscripcion = false;
+        this.cdRef.markForCheck();
+      },
+      error: (err) => {
+        this.loadingSuscripcion = false;
+        this.errorSuscripcion = err?.status === 403
+          ? 'Sin permisos para ver la suscripción de esta tienda (403).'
+          : (err?.error?.error || 'No se pudo cargar la suscripción. Inténtalo de nuevo.');
+        console.error('getPlanYSuscripcion error', err);
+        this.cdRef.markForCheck();
+      }
+    });
+  }
+
+  loadPlanes(force = false): void {
+    if (!force && this.planes.length > 0) return;
+    this.loadingPlanes = true;
+    this.errorPlanes = null;
+    this.cdRef.markForCheck();
+    this.tiendaService.listPlanes().subscribe({
+      next: (data) => {
+        this.planes = Array.isArray(data) ? data : [];
+        this.loadingPlanes = false;
+        // Si hay plan actual y no hay selección, preseleccionar
+        if (!this.selectedPlanId && this.suscripcion?.plan_actual?.id) {
+          this.selectedPlanId = this.suscripcion.plan_actual.id;
+        }
+        this.cdRef.markForCheck();
+      },
+      error: (err) => {
+        this.loadingPlanes = false;
+        this.errorPlanes = 'No se pudieron cargar los planes.';
+        console.error('listPlanes error', err);
+        this.cdRef.markForCheck();
+      }
+    });
+  }
+
+  onCambiarPlan(): void {
+    const tiendaId = this.tienda?.id;
+    if (!tiendaId || !this.selectedPlanId || this.changingPlan) return;
+    if (this.suscripcion?.plan_actual?.id === this.selectedPlanId) {
+      this.alerts.open('La tienda ya tiene ese plan asignado.').subscribe();
+      return;
+    }
+    const plan = this.planes.find(p => p.id === Number(this.selectedPlanId));
+    const data: TuiConfirmData = {
+      content: `¿Cambiar el plan de <b>${this.tienda.nombre}</b> a <b>${plan?.nombre_plan ?? '#' + this.selectedPlanId}</b>?`,
+      yes: 'Cambiar plan',
+      no: 'Cancelar',
+    };
+    this.dialogs.open<boolean>(TUI_CONFIRM, {
+      label: 'Cambiar plan',
+      size: 's',
+      data,
+    }).subscribe((confirm) => {
+      if (!confirm) return;
+      this.changingPlan = true;
+      this.cdRef.markForCheck();
+      this.tiendaService.cambiarPlanTienda(tiendaId, Number(this.selectedPlanId)).subscribe({
+        next: (tiendaActualizada) => {
+          this.changingPlan = false;
+          // Actualiza tienda local (incluye campo plan) y recarga suscripción
+          this.tienda = { ...this.tienda, ...(tiendaActualizada as any) };
+          this.suscripcionLoadedForTiendaId = null;
+          this.loadSuscripcion(true);
+          this.alerts.open(`Plan cambiado a ${plan?.nombre_plan ?? this.selectedPlanId}.`).subscribe();
+          this.cdRef.markForCheck();
+        },
+        error: (err) => {
+          this.changingPlan = false;
+          const msg = err?.error?.error
+            || (err?.status === 403 ? 'No tienes permisos para cambiar el plan de esta tienda.'
+            : err?.status === 404 ? 'El plan especificado no existe.'
+            : 'No se pudo cambiar el plan. Inténtalo de nuevo.');
+          this.alerts.open(msg).subscribe();
+          console.error('cambiarPlanTienda error', err);
+          this.cdRef.markForCheck();
+        }
+      });
+    });
+  }
+
+  // Puente para el tui-select (Taiga muestra el nombre; el id es la fuente de verdad)
+  get selectedPlanNombre(): string | null {
+    return this.planes.find(p => p.id === Number(this.selectedPlanId))?.nombre_plan ?? null;
+  }
+
+  onPlanNombreChange(nombre: string | null): void {
+    const found = this.planes.find(p => p.nombre_plan === nombre);
+    this.selectedPlanId = found ? found.id : null;
+    this.cdRef.markForCheck();
+  }
+
+  planEtiqueta(p: PlanSuscripcion): string {
+    return `${p.nombre_plan} · ${p.precio_mensual} ${p.moneda} · B${this.isIlimitado(p.limite_boletas) ? '∞' : p.limite_boletas}/F${this.isIlimitado(p.limite_facturas) ? '∞' : p.limite_facturas}${p.activo ? '' : ' (inactivo)'}`;
+  }
+
+  // Normaliza uso_mensual (soporta forma nueva y legacy)
+  getBoletasEmitidas(uso: UsoMensualTienda | null | undefined): number {
+    if (!uso) return 0;
+    return Number(uso.boletas_emitidas ?? (uso as any).total_boletas ?? 0);
+  }
+
+  getFacturasEmitidas(uso: UsoMensualTienda | null | undefined): number {
+    if (!uso) return 0;
+    return Number(uso.facturas_emitidas ?? (uso as any).total_facturas ?? 0);
+  }
+
+  getUsoMesLabel(uso: UsoMensualTienda | null | undefined): string {
+    if (!uso) return '';
+    if (typeof uso.mes === 'string') return uso.mes.slice(0, 7); // "2026-09-01" -> "2026-09"
+    if (typeof uso.mes === 'number' && uso.anio) return `${uso.mes}/${uso.anio}`;
+    if (typeof uso.mes === 'number') return `${uso.mes}`;
+    return '';
+  }
+
+  getUsoPorcentaje(usado: number | null | undefined, limite: number | null | undefined): number {
+    const u = Number(usado ?? 0);
+    const l = Number(limite ?? 0);
+    if (!l || l <= 0) return 0;
+    return Math.min(100, Math.round((u / l) * 100));
+  }
+
+  isIlimitado(limite: number | null | undefined): boolean {
+    return Number(limite ?? 0) >= 999999;
+  }
+
   setTab(tab: typeof this.activeTab) {
     this.activeTab = tab;
+    if (tab === 'suscripcion') {
+      this.loadSuscripcion();
+      this.loadPlanes();
+    }
   }
 
   goBack() {
@@ -286,20 +445,6 @@ export class AdmintiendadetailComponent implements OnInit {
         this.cdRef.markForCheck();
       }
     });
-  }
-
-  getPropietarioNombre(tienda: Tienda): string {
-    const owner = tienda.propietario_data;
-    if (owner) {
-      const full = `${owner.first_name || ''} ${owner.last_name || ''}`.trim();
-      return full || owner.username || `Propietario #${tienda.propietario ?? '—'}`;
-    }
-    const ownerUser = tienda.users_tienda?.find(u => u.id === tienda.propietario);
-    if (ownerUser) {
-      const full = `${ownerUser.first_name || ''} ${ownerUser.last_name || ''}`.trim();
-      return full || ownerUser.username || `Propietario #${tienda.propietario ?? '—'}`;
-    }
-    return `Propietario #${tienda.propietario ?? '—'}`;
   }
 
   onSubmit() {

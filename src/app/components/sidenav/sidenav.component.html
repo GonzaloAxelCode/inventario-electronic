@@ -124,6 +124,7 @@
           <div class="user-info">
             <span class="user-name text-neutral-900 dark:text-white">{{ user.username }}</span>
             <span class="user-role text-neutral-500 dark:text-neutral-400">{{ user.is_superuser ? 'Desarrollador' : 'Personal' }}</span>
+            <app-planbadge mode="pill" [tiendaId]="tienda?.id"></app-planbadge>
           </div>
           <svg class="chevron-icon text-neutral-400" [class.rotate-180]="userMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>

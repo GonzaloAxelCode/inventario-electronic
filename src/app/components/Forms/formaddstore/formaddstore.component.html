@@ -1,7 +1,7 @@
 ﻿<div class="form-container mt-5">
   <form [formGroup]="tiendaForm" (ngSubmit)="onSubmit()" class="space-y-4">
     <!-- Banner sucursal para admin tienda — Apple sin fondo pesado -->
-    <div *ngIf="isAdminTienda" class="rounded-2xl border border-[#0071e3]/15 bg-[#0071e3]/[0.06] dark:bg-[#0071e3]/[0.10] px-4 py-3 flex gap-3">
+    <div *ngIf="isAdminTienda" class="rounded-2xl bg-[#0071e3]/[0.06] dark:bg-[#0071e3]/[0.10] px-4 py-3 flex gap-3">
       <div class="w-8 h-8 rounded-full bg-[#0071e3]/15 flex items-center justify-center shrink-0">
         <svg class="w-4 h-4 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11v2m0 0v2m0-2h2m-2 0H8"/></svg>
       </div>
@@ -11,7 +11,7 @@
         <p class="text-[11px] text-[#86868b] dark:text-[#a1a1a6] mt-0.5">Solo puedes crear sucursales de tu tienda principal. El personal se gestiona con normalidad.</p>
       </div>
     </div>
-    <div *ngIf="!isSuperUser && !isAdminTienda" class="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-transparent px-3 py-2 text-[11px] text-[#86868b]">Creando tienda principal</div>
+    <div *ngIf="!isSuperUser && !isAdminTienda" class="rounded-xl bg-transparent px-3 py-2 text-[11px] text-[#86868b]">Creando tienda principal</div>
 
     <!-- Grid responsivo -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -121,14 +121,13 @@
        </div>
 
        <!-- Certificados clave privada y pública SUNAT — se envían como string -->
-       <div class="lg:col-span-2 rounded-2xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-4" [class.opacity-50]="esSucursal" [class.pointer-events-none]="esSucursal">
+       <div class="lg:col-span-2 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] p-4" [class.opacity-50]="esSucursal" [class.pointer-events-none]="esSucursal">
          <p class="text-[12px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white mb-1">Certificados clave SUNAT
            <span *ngIf="esSucursal" class="text-[10px] text-[#86868b] dark:text-[#a1a1a6] ml-1">(Heredado del padre)</span>
          </p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">Clave privada</p>
-            <p class="text-[10px] leading-3 text-[#86868b] dark:text-[#a1a1a6]">Archivo de certificado .key/.pem/.p12/.pfx</p>
             <div class="mt-2 flex flex-wrap items-center gap-2">
               <button type="button" (click)="certPrivadaInput.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
               <span *ngIf="certPrivadaFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[160px]">{{ certPrivadaFileName }}</span>
@@ -139,7 +138,6 @@
           </div>
           <div>
             <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">Clave pública</p>
-            <p class="text-[10px] leading-3 text-[#86868b] dark:text-[#a1a1a6]">Archivo de certificado .crt/.cer/.pem/.pub</p>
             <div class="mt-2 flex flex-wrap items-center gap-2">
               <button type="button" (click)="certPublicaInput.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
               <span *ngIf="certPublicaFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[160px]">{{ certPublicaFileName }}</span>
@@ -152,18 +150,17 @@
       </div>
 
       <!-- Imágenes — Apple elegante sin fondos, con instrucciones -->
-      <div class="lg:col-span-2 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
+      <div class="lg:col-span-2 rounded-2xl bg-transparent overflow-hidden">
         <div class="px-4 py-2.5 flex items-center justify-between"><p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Imágenes</p><span class="text-[10px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">Opcionales</span></div>
-        <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
         <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           <!-- Logo claro -->
-          <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3 flex flex-col">
+          <div class="rounded-xl bg-black/[0.02] dark:bg-white/[0.03] p-3 flex flex-col">
             <div class="flex items-center gap-2 mb-2">
-              <div class="w-7 h-7 rounded-lg bg-white dark:bg-[#2c2c2e] ring-1 ring-black/[0.06] flex items-center justify-center"><svg class="w-4 h-4 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.608-4.608a2 2 0 012.828 0L16 16m-2-2l1.5-1.5a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+              <div class="w-7 h-7 rounded-lg bg-white dark:bg-[#2c2c2e] flex items-center justify-center"><svg class="w-4 h-4 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.608-4.608a2 2 0 012.828 0L16 16m-2-2l1.5-1.5a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
               <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Logo claro</p>
               <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3]">Requerido</span>
             </div>
-            <div class="w-full aspect-square rounded-xl overflow-hidden bg-white dark:bg-[#1c1c1e] ring-1 ring-black/[0.06] cursor-pointer flex items-center justify-center" (click)="fileInput.click()">
+            <div class="w-full aspect-square rounded-xl overflow-hidden bg-white dark:bg-[#1c1c1e] cursor-pointer flex items-center justify-center" (click)="fileInput.click()">
               <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo Preview" class="w-full h-full object-contain p-2"/>
               <div *ngIf="!logoPreview" class="text-center p-4">
                 <svg class="w-6 h-6 mx-auto text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 16v-8m0 0l-3 3m3-3l3 3M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
@@ -171,20 +168,19 @@
                 <p class="text-[10px] text-[#86868b]">Toca para seleccionar</p>
               </div>
             </div>
-            <p class="text-[10px] leading-3 text-[#86868b] mt-2">Recomendado <b class="text-[#1d1d1f] dark:text-white">512×512 px</b> cuadrado 1:1 · PNG transparente o JPG · <b>Máx 2MB</b> · Mín 200×200 · Se muestra 32–64px</p>
             <p *ngIf="selectedLogo" class="text-[10px] font-mono truncate mt-1 px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08]">{{ selectedLogo.name }}</p>
             <button *ngIf="selectedLogo" type="button" (click)="selectedLogo=null; logoPreview=null; fileInput.value=''" class="text-[10px] text-[#ff3b30] mt-1 self-start">Quitar</button>
             <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/png,image/jpeg,image/webp" class="hidden"/>
           </div>
 
           <!-- Logo oscuro -->
-          <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3 flex flex-col">
+          <div class="rounded-xl bg-black/[0.02] dark:bg-white/[0.03] p-3 flex flex-col">
             <div class="flex items-center gap-2 mb-2">
               <div class="w-7 h-7 rounded-lg bg-[#1d1d1f] dark:bg-white flex items-center justify-center"><svg class="w-4 h-4 text-white dark:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg></div>
               <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">Logo oscuro</p>
-              <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Opcional</span>
+              <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded-full text-[#86868b]">Opcional</span>
             </div>
-            <div class="w-full aspect-square rounded-xl overflow-hidden bg-[#1d1d1f] dark:bg-white ring-1 ring-black/[0.06] cursor-pointer flex items-center justify-center" (click)="fileInputDark.click()">
+            <div class="w-full aspect-square rounded-xl overflow-hidden bg-[#1d1d1f] dark:bg-white cursor-pointer flex items-center justify-center" (click)="fileInputDark.click()">
               <img *ngIf="logoDarkPreview" [src]="logoDarkPreview" alt="Logo Dark Preview" class="w-full h-full object-contain p-2"/>
               <div *ngIf="!logoDarkPreview" class="text-center p-4">
                 <svg class="w-6 h-6 mx-auto text-white/60 dark:text-black/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 16v-8m0 0l-3 3m3-3l3 3M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
@@ -192,7 +188,6 @@
                 <p class="text-[10px] text-white/60 dark:text-black/50">Para tema oscuro</p>
               </div>
             </div>
-            <p class="text-[10px] leading-3 text-[#86868b] mt-2">Mismo tamaño <b class="text-[#1d1d1f] dark:text-white">512×512</b> · Versión blanca · PNG transparente · <b>Máx 2MB</b> · Si no se sube, se invierte el claro</p>
             <p *ngIf="selectedLogoDark" class="text-[10px] font-mono truncate mt-1 px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08]">{{ selectedLogoDark.name }}</p>
             <button *ngIf="selectedLogoDark" type="button" (click)="selectedLogoDark=null; logoDarkPreview=null; fileInputDark.value=''" class="text-[10px] text-[#ff3b30] mt-1 self-start">Quitar</button>
             <input type="file" #fileInputDark (change)="onLogoDarkSelected($event)" accept="image/png,image/jpeg,image/webp" class="hidden"/>
@@ -203,37 +198,34 @@
 
     </div>
 
-    <!-- Jerarquía — solo superusuario, obligatorio final -->
-      <div *ngIf="isSuperUser" class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
-        <div class="px-4 py-2.5 flex items-center justify-between"><p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Jerarquía</p><span class="text-[10px] px-2 py-1 rounded-full bg-[#ff3b30]/10 text-[#ff3b30] font-medium">Obligatorio</span></div>
-        <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
-          <div class="p-4">
+    <!-- Jerarquía — solo superusuario, opcional (vacío = tienda padre) -->
+      <div *ngIf="isSuperUser" class="rounded-2xl bg-transparent overflow-hidden">
+        <div class="px-4 py-2.5"><p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Jerarquía</p></div>
+        <div class="p-4">
             <label class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">¿Registrar como tienda padre o sucursal?</label>
-            <tui-select formControlName="tienda_padre_select" class="w-full" [stringify]="getJerarquiaLabel">
-              <tui-data-list *tuiDataList>
-                <button tuiOption [value]="''" [disabled]="true">Selecciona una opción</button>
-                <button tuiOption [value]="'padre'">Registrar como tienda Padre</button>
-                <button *ngFor="let t of tiendasList" tuiOption [value]="t.id">
-                  {{ t.nombre }} — RUC {{ t.ruc || '—' }} · ID {{ t.id }}
-                </button>
-              </tui-data-list>
+            <tui-select formControlName="tienda_padre_select" class="w-full mt-1">
+              Jerarquía
+              <select tuiSelect [items]="jerarquiaOptions" placeholder="Tienda padre (por defecto)"></select>
             </tui-select>
-            <p *ngIf="tiendaForm.get('tienda_padre_select')?.touched && tiendaForm.get('tienda_padre_select')?.invalid" class="text-[#ff3b30] text-[11px] mt-1">Debes elegir si es tienda padre o seleccionar una tienda padre existente.</p>
           </div>
       </div>
 
-    <!-- Botón -->
-    <div class="w-full flex flex-1">
-      <button 
-        tuiButton 
-        size="m"
-        appearance="primary"
-        class="w-full rounded-full"
-        type="submit" 
+    <!-- Botones -->
+    <div class="w-full flex gap-2">
+      <button
+        type="submit"
+        class="flex-1 h-11 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-colors disabled:opacity-40"
         [disabled]="tiendaForm.invalid"
       >
         {{ isAdminTienda ? 'Crear Sucursal' : 'Crear Tienda' }}
         <tui-loader [showLoader]="!!(loadingCreateTienda$  | async)?.loadingCreateTienda"></tui-loader>
+      </button>
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="h-11 px-6 rounded-full border border-black/[0.12] dark:border-white/[0.2] text-[13px] font-medium text-[#1d1d1f] dark:text-white"
+      >
+        Cancelar
       </button>
     </div>
 

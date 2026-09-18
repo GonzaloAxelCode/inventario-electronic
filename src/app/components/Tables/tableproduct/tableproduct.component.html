@@ -1,4 +1,4 @@
-<section class="py-3  sm:py-4 md:py-6  rounded-lg">
+<section class="apple-products pb-3 sm:py-4 md:py-6 rounded-lg">
     <!-- Si no hay productos, mostramos el mensaje con el botón -->
     <tui-block-status
         *ngIf="(productosState$ | async)?.productos?.length === 0 && !(productosState$ | async)?.loadingProductos else tabla"
@@ -16,320 +16,236 @@
     <div>
         <!-- Si hay productos, mostramos la tabla -->
         <ng-template #tabla>
-            <search tuiSearch class="pb-4">
+            <div class="flex flex-col gap-4 lg:flex-row lg:gap-6 lg:items-start">
+            <!-- ==================== ASIDE - FILTROS (solo desktop) ==================== -->
+            <aside class="hidden lg:block w-full lg:w-80 xl:w-96 shrink-0 lg:sticky lg:top-4 lg:self-start">
+            <search tuiSearch>
                 <form [formGroup]="form" (submit)="onSubmitSearch()">
-                    <fieldset tuiTextfieldSize="s">
-                        <tui-textfield iconStart="@tui.search">
-                            <input tuiTheme="ligth" formControlName="sku" placeholder="Buscar por Codigo"
-                                tuiTextfield />
-                        </tui-textfield>
-                        <tui-textfield iconStart="@tui.search">
-                            <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre"
-                                tuiTextfield />
-                        </tui-textfield>
+                        <div class="space-y-3 pb-3">
+                            <div class="flex flex-col gap-3 w-full">
+                                <tui-textfield iconStart="@tui.search" class="w-full !max-w-none">
+                                    <input size="s" tuiTheme="ligth" formControlName="sku" placeholder="Buscar por Codigo" tuiTextfield />
+                                </tui-textfield>
+                                <tui-textfield iconStart="@tui.search" class="w-full !max-w-none">
+                                    <input size="s" tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre" tuiTextfield />
+                                </tui-textfield>
 
-                        <tui-select class="w-44" formControlName="categoria" [stringify]="stringify">
-                            Categoria
-                            <select placeholder="Categoria" tuiSelect [items]="(selectCategorias$ | async)"></select>
-                        </tui-select>
-                        <button size="s" appearance="primary-grayscale" tuiButton type="submit"
-                            (click)="onSubmitSearch()"
-                            [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null && !form.value.sku">
-                            >
-                            Buscar
-                        </button>
-                    </fieldset>
-                    <fieldset>
+                                <tui-select class="w-full" formControlName="categoria" [stringify]="stringify">
+                                    Categoria
+                                    <select placeholder="Categoria" size="s" tuiSelect [items]="(selectCategorias$ | async)"></select>
+                                </tui-select>
+                            </div>
 
-
-                        Resultados: {{((productosState$ | async)?.count )}}
-                        <hr />
-
-
-                        <button appearance="flat-grayscale" iconStart="@tui.rotate-cw" size="xs" tuiButton type="reset"
-                            (click)="clearSearch()">
-                            Limpiar {{ count() ? '(' + count() + ')' : '' }}
-                        </button>
-
-                    </fieldset>
+                            <div class="flex flex-row items-center gap-3">
+                                <button type="submit" iconStart="@tui.search" tuiButton appearance="textfield"
+                                    (click)="onSubmitSearch()" class="flex-1 !rounded-full dark:!bg-white dark:!text-neutral-900"
+                                    [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null && !form.value.sku">
+                                    Buscar
+                                </button>
+                                <button appearance="flat" iconStart="@tui.rotate-cw" size="s" tuiButton type="reset"
+                                    (click)="clearSearch()" class="!rounded-lg shrink-0 !bg-transparent dark:!bg-transparent">
+                                    <span class="text-xs">Limpiar {{ count() ? '(' + count() + ')' : '' }}</span>
+                                </button>
+                            </div>
+                        </div>
                 </form>
             </search>
+            </aside>
+            <div class="min-w-0 flex-1">
             <tui-loader [overlay]="true"
                 [showLoader]="!!(productosState$ | async)?.loadingProductos || !!(productosState$ | async)?.loadingSearch">
                 <div class="rounded-lg overflow-hidden">
                     <div
                         *ngIf="(isTheSearchWasDone ? ((productosState$ | async)?.productos_search?.length || 0) : ((productosState$ | async)?.productos?.length || 0)) > 0">
 
-                        <!-- Vista de CARDS para móviles -->
-                        <div class="block lg:hidden space-y-3">
-                            <div
-                                *ngIf="((productosState$ | async)?.search_products_found ) === '' || ((productosState$ | async)?.search_products_found === 'products_found') ">
+                        <ng-container *ngIf="((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos) as productos">
+                        <ng-container *ngIf="((productosState$ | async)?.search_products_found) === '' || ((productosState$ | async)?.search_products_found) === 'products_found'">
 
+                        <!-- Acciones + toggle lista / grilla estilo Apple -->
+                        <div class="flex flex-wrap items-center justify-between gap-2 pb-3">
+                            <div class="flex items-center gap-2">
+                                <button type="button" (click)="showDialogCreateProduct()"
+                                    class="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs font-semibold text-neutral-900 shadow-sm transition hover:bg-neutral-100 active:scale-95 dark:border-white/20 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/>
+                                    </svg>
+                                    Agregar
+                                </button>
+                                <span class="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                                    {{((productosState$ | async)?.count ?? 0)}} productos
+                                </span>
+                                <button type="button" (click)="filtrosOpen = true"
+                                    class="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs font-semibold text-neutral-900 shadow-sm transition active:scale-95 lg:hidden dark:border-white/20 dark:bg-neutral-800 dark:text-white">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/>
+                                    </svg>
+                                    Filtros
+                                </button>
+                            </div>
+                            <div class="hidden sm:inline-flex items-center rounded-full bg-neutral-200/70 dark:bg-neutral-800 p-1" role="tablist" aria-label="Cambiar vista">
+                                <button type="button" role="tab" [attr.aria-selected]="viewMode === 'lista'" (click)="setViewMode('lista')"
+                                    class="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all"
+                                    [ngClass]="viewMode === 'lista' ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm' : 'text-neutral-500 dark:text-neutral-400'">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                                    </svg>
+                                    Lista
+                                </button>
+                                <button type="button" role="tab" [attr.aria-selected]="viewMode === 'grilla'" (click)="setViewMode('grilla')"
+                                    class="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all"
+                                    [ngClass]="viewMode === 'grilla' ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm' : 'text-neutral-500 dark:text-neutral-400'">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                                    </svg>
+                                    Grilla
+                                </button>
+                            </div>
+                        </div>
 
-
-                                <div *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)"
-                                    class="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-3 border border-neutral-200 dark:border-neutral-700">
-
-                                    <!-- Header con imagen y código -->
-                                    <div
-                                        class="flex gap-3 mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
+                        <!-- VISTA LISTA estilo Apple: lista agrupada iOS (tablet y desktop) -->
+                        <div *ngIf="viewMode === 'lista' && !isPhone"
+                            class="overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 shadow-sm">
+                            <div *ngFor="let producto of productos; let last = last"
+                                class="border-neutral-200/80 dark:border-white/10 px-4 py-3.5"
+                                [class.border-b]="!last">
+                                <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4">
+                                    <!-- Imagen + nombre / sku / categoría -->
+                                    <div class="flex min-w-0 flex-1 items-center gap-3">
                                         <div (click)="onSetImageProduct(producto); open = true;"
-                                            class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-sm">
+                                            class="h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-neutral-100 dark:bg-neutral-700">
                                             <img loading="lazy"
                                                 [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
                                                 [alt]="producto.nombre"
-                                                class="w-full h-full object-cover cursor-pointer active:scale-95 transition-transform" />
+                                                class="h-full w-full cursor-pointer object-cover" />
                                         </div>
-
-                                        <div class="flex-1 min-w-0">
-                                            <p class="font-semibold text-lg mb-1 truncate">{{ producto.nombre }}</p>
-                                            <tui-chip iconStart="@tui.scan-barcode" size="m" class="mb-2">
-                                                {{ producto.sku }}
-                                            </tui-chip>
-
-                                            <div *ngIf="displayedColumns.includes('categoria')" class="text-xs">
-                                                <span *ngIf="!mostrarAdvertencia(producto.categoria_nombre)"
-                                                    class="text-neutral-600 dark:text-neutral-400">
-                                                    {{ producto.categoria_nombre }}
-                                                </span>
-                                                <span *ngIf="mostrarAdvertencia(producto.categoria_nombre)"
-                                                    class="text-orange-600 dark:text-orange-400">
-                                                    ⚠️ Sin categoría
-                                                </span>
-                                            </div>
+                                        <div class="min-w-0">
+                                            <p class="line-clamp-2 break-words text-[15px] font-semibold leading-snug text-neutral-900 dark:text-white">{{ producto.nombre }}</p>
+                                            <p class="truncate text-xs text-neutral-500 dark:text-neutral-400">{{ producto.sku }}</p>
+                                            <p class="truncate text-xs text-neutral-500 dark:text-neutral-400" *ngIf="!mostrarAdvertencia(producto.categoria_nombre)">
+                                                {{ producto.categoria_nombre || 'Sin categoría' }}
+                                            </p>
+                                            <p class="truncate text-xs text-orange-500 dark:text-orange-400" *ngIf="mostrarAdvertencia(producto.categoria_nombre)">
+                                                Sin categoría
+                                            </p>
                                         </div>
                                     </div>
-
-                                    <!-- Características -->
-                                    <div class="space-y-1 mb-3" *ngIf="producto.caracteristicas">
-                                        <div *ngFor="let item of producto.caracteristicas | keyvalue"
-                                            class="flex items-start text-xs">
-                                            <span
-                                                class="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-white mr-2 mt-1 flex-shrink-0"></span>
-                                            <span class="text-neutral-600 dark:text-neutral-400 font-medium mr-1">{{
-                                                capitalize(item.key || '') }}:</span>
-                                            <span class="text-neutral-800 dark:text-neutral-200 break-words">{{
-                                                item.value
-                                                }}</span>
+                                    <!-- Compra / Venta / Ganancia / Margen -->
+                                    <div class="grid grid-cols-2 gap-x-6 gap-y-2 pl-[68px] sm:grid-cols-4 sm:gap-x-5 lg:pl-0">
+                                        <div>
+                                            <p class="text-[11px] text-neutral-400 dark:text-neutral-500">Compra</p>
+                                            <p *ngIf="producto.is_inventario" class="truncate text-sm font-semibold text-neutral-800 dark:text-neutral-100">S/ {{ producto.inventario?.costo_compra | number:'1.2-2' }}</p>
+                                            <p *ngIf="!producto.is_inventario" class="text-sm text-neutral-400 dark:text-neutral-500">—</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[11px] text-neutral-400 dark:text-neutral-500">Venta</p>
+                                            <p *ngIf="producto.is_inventario" class="truncate text-sm font-semibold text-neutral-800 dark:text-neutral-100">S/ {{ producto.inventario?.costo_venta | number:'1.2-2' }}</p>
+                                            <button *ngIf="!producto.is_inventario" type="button" (click)="crearInventario(producto)"
+                                                class="rounded-full bg-blue-500/10 px-3 py-1 text-[11px] font-semibold text-blue-600 transition hover:bg-blue-500/20 active:scale-95 dark:text-blue-400">
+                                                Crear
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <p class="text-[11px] text-neutral-400 dark:text-neutral-500">Ganancia</p>
+                                            <p *ngIf="gananciaSoles(producto) !== null" class="truncate text-sm font-semibold"
+                                                [ngClass]="(gananciaSoles(producto) ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'">S/ {{ gananciaSoles(producto) | number:'1.2-2' }}</p>
+                                            <p *ngIf="gananciaSoles(producto) === null" class="text-sm text-neutral-400 dark:text-neutral-500">—</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[11px] text-neutral-400 dark:text-neutral-500">Margen</p>
+                                            <span *ngIf="margenPct(producto) !== null" class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold" [ngClass]="margenBadge(margenPct(producto))">{{ margenPct(producto) | number:'1.0-1' }}%</span>
+                                            <p *ngIf="margenPct(producto) === null" class="text-sm text-neutral-400 dark:text-neutral-500">—</p>
                                         </div>
                                     </div>
-
-                                    <!-- Stock y Precio -->
-                                    <div class="grid grid-cols-2 gap-2 mb-3 p-2 bg-neutral-50 dark:bg-neutral-700 rounded-lg"
-                                        *ngIf="displayedColumns.includes('inventario')">
-                                        <!-- Stock -->
-                                        <div class="text-center">
-                                            <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Stock</div>
-                                            <ng-container *ngIf="!producto.is_inventario">
-                                                <span class="text-lg font-semibold text-black dark:text-white">0</span>
-                                            </ng-container>
-                                            <ng-container *ngIf="producto.is_inventario">
-                                                <span class="text-2xl font-semibold"
-                                                    [ngClass]="getColorClass(producto.inventario?.cantidad || 0)">
-                                                    {{ producto.inventario?.cantidad }}
-                                                </span>
-                                                <p class="text-red-400 text-xs mt-1"
-                                                    *ngIf="(producto.inventario?.cantidad || 0) <= 0">
-                                                    Agotado
-                                                </p>
-                                            </ng-container>
-                                        </div>
-
-                                        <!-- Precio -->
-                                        <div class="text-center">
-                                            <div class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Precio
-                                            </div>
-                                            <ng-container *ngIf="!producto.is_inventario">
-                                                <button appearance="primary-neutralscale" size="m" tuiButton
-                                                    type="button" class="w-full text-xs py-1"
-                                                    (click)="crearInventario(producto)">
-                                                    Crear
-                                                </button>
-                                            </ng-container>
-                                            <ng-container *ngIf="producto.is_inventario">
-                                                <div class="text-2xl font-bold">
-                                                    {{ producto.inventario?.costo_venta | currency:'PEN':'S/ ': '1.2-2'
-                                                    }}
-                                                </div>
-                                                <p class="text-red-400 text-xs"
-                                                    *ngIf="producto.inventario?.costo_venta == 0">
-                                                    Sin costo
-                                                </p>
-                                            </ng-container>
-                                        </div>
-                                    </div>
-
-                                    <!-- Estado y fecha -->
-                                    <div class="flex justify-between items-center text-xs text-neutral-500 dark:text-neutral-400 mb-3"
-                                        *ngIf="displayedColumns.includes('fechaCreacion')">
-                                        <span>Fecha de creacion: {{ producto.fecha_creacion | date:'dd/MM/yyyy'
-                                            }}</span>
-
-                                    </div>
-
-                                    <!-- Botones de acción -->
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <button appearance="positive" iconStart="@tui.pencil" tuiButton type="button"
-                                            (click)="showDialogUpdate(producto)"
-                                            [disabled]="!(userPermissions$ | async)?.can_update_product" size="m"
-                                            class="w-full text-xs">
+                                    <!-- Acciones estilo Apple -->
+                                    <div class="flex shrink-0 gap-2 pl-[68px] lg:pl-0">
+                                        <button type="button" (click)="showDialogUpdate(producto)"
+                                            [disabled]="!(userPermissions$ | async)?.can_update_product"
+                                            class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-blue-500/10 px-4 py-2 text-xs font-semibold text-blue-600 transition hover:bg-blue-500/20 active:scale-95 disabled:opacity-40 lg:flex-none dark:text-blue-400">
+                                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
+                                            </svg>
                                             Editar
                                         </button>
-
-                                        <button [disabled]="!(userPermissions$ | async)?.can_delete_product"
-                                            [appearance]="(userPermissions$ | async)?.can_delete_product ? 'error' : 'secondary-neutralscale'"
-                                            iconStart="@tui.trash" tuiButton type="button"
-                                            (click)="onDeleteProducto(producto.id)" size="m" class="w-full text-xs">
+                                        <button type="button" (click)="onDeleteProducto(producto.id)"
+                                            [disabled]="!(userPermissions$ | async)?.can_delete_product"
+                                            class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-red-500/10 px-4 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-500/20 active:scale-95 disabled:opacity-40 lg:flex-none dark:text-red-400">
+                                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                            </svg>
                                             Eliminar
                                         </button>
-
-
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Vista de TABLA para desktop -->
-                        <div class="hidden lg:block overflow-x-auto">
-                            <table tuiTable size="s" class="w-full min-w-[900px]"
-                                *ngIf="((productosState$ | async)?.search_products_found ) === '' || ((productosState$ | async)?.search_products_found === 'products_found') ">
-                                <thead>
-                                    <tr>
-                                        <th tuiTh class="text-center whitespace-nowrap">Codigo</th>
-                                        <th tuiTh *ngIf="displayedColumns.includes('nombre')" class="whitespace-nowrap">
-                                            Nombre/Detalles</th>
-                                        <th tuiTh *ngIf="displayedColumns.includes('categoria')"
-                                            class="whitespace-nowrap">
-                                            Categoría</th>
-                                        <th tuiTh class="whitespace-nowrap">Codigo</th>
-
-
-                                        <th tuiTh *ngIf="displayedColumns.includes('inventario')"
-                                            class="whitespace-nowrap">
-                                            Venta</th>
-                                        <th tuiTh *ngIf="displayedColumns.includes('inventario')"
-                                            class="whitespace-nowrap">
-                                            Stock</th>
-                                        <th tuiTh class="text-center whitespace-nowrap">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="transition-colors"
-                                        *ngFor="let producto of ((productosState$ | async)?.productos_search?.length ? (productosState$ | async)?.productos_search : (productosState$ | async)?.productos)">
-
-                                        <td tuiTd class="text-center">
-                                            <div class="flex flex-col justify-center items-center py-2">
-                                                <tui-chip iconStart="@tui.scan-barcode" size="s" class="mb-3">
-                                                    {{ producto.sku }}
-                                                </tui-chip>
-                                                <div (click)="onSetImageProduct(producto); open = true;"
-                                                    class="w-24 h-24 rounded-xl overflow-hidden border-2 border-neutral-300 dark:border-neutral-600 shadow-md hover:shadow-xl transition-all hover:border-blue-500 dark:hover:border-blue-400">
-                                                    <img [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
-                                                        [alt]="producto.nombre"
-                                                        class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200" />
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                        <td tuiTd *ngIf="displayedColumns.includes('nombre')">
-                                            <span class="font-semibold text-lg block mb-2">{{ producto.nombre }}</span>
-
-                                            <div class="space-y-1">
-                                                <div *ngFor="let item of producto.caracteristicas | keyvalue"
-                                                    class="flex items-center text-sm">
-                                                    <span
-                                                        class="w-2 h-2 rounded-full bg-neutral-400 dark:bg-white mr-2 flex-shrink-0"></span>
-                                                    <span class="text-neutral-600 dark:text-neutral-400 font-medium">{{
-                                                        capitalize(item.key || '') }}:</span>
-                                                    <span class="ml-1 text-neutral-800 dark:text-neutral-200">{{
-                                                        item.value
-                                                        }}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                        <td tuiTd *ngIf="displayedColumns.includes('categoria')">
-                                            <p *ngIf="!mostrarAdvertencia(producto.categoria_nombre)">
-                                                {{ producto.categoria_nombre }}
-                                            </p>
-                                            <p *ngIf="mostrarAdvertencia(producto.categoria_nombre)"
-                                                class="text-sm text-orange-600 dark:text-orange-400">
-                                                ⚠️ Urgente: Asignar una nueva categoría
-                                            </p>
-                                        </td>
-                                        <td tuiTd *ngIf="displayedColumns.includes('categoria')">
-
-                                            <app-barcode [sku]="producto.sku"></app-barcode>
-                                        </td>
-
-
-                                        <td tuiTd *ngIf="displayedColumns.includes('inventario')" class="text-center">
-                                            <div class="flex gap-2 justify-center items-center">
-
-
-                                                <div class="flex flex-col">
-                                                    <div class="text-2xl font-bold whitespace-nowrap">
-                                                        {{ producto.inventario?.costo_venta | currency:'PEN':'S/ ':
-                                                        '1.2-2'
-                                                        }}
-                                                    </div>
-                                                    <p class="text-red-400 text-sm"
-                                                        *ngIf="producto.inventario?.costo_venta == 0">
-                                                        * Sin costo
-                                                    </p>
-                                                </div>
-
-                                            </div>
-                                        </td>
-                                        <td tuiTd *ngIf="displayedColumns.includes('inventario')">
-                                            <ng-container *ngIf="!producto.is_inventario">
-                                                <div tuiBlockDetails>
-                                                    <span class="-translate-y-1 text-lg"
-                                                        [ngClass]="'text-black dark:text-white'">
-                                                        0
-                                                    </span>
-                                                </div>
-                                            </ng-container>
-
-                                            <ng-container *ngIf="producto.is_inventario">
-                                                <div tuiBlockDetails
-                                                    class="text-center flex flex-col items-center gap-1">
-                                                    <span class="text-3xl font-semibold"
-                                                        [ngClass]="getColorClass(producto.inventario?.cantidad || 0)">
-                                                        {{ producto.inventario?.cantidad }}
-                                                    </span>
-
-                                                </div>
-                                            </ng-container>
-                                        </td>
-
-
-
-                                        <td tuiTd>
-                                            <div class="flex flex-col gap-2 justify-center ">
-                                                <button appearance="positive" iconStart="@tui.pencil" tuiButton
-                                                    type="button" (click)="showDialogUpdate(producto)"
-                                                    [disabled]="!(userPermissions$ | async)?.can_update_product"
-                                                    class="whitespace-nowrap">
-                                                    Editar
-                                                </button>
-
-                                                <button [disabled]="!(userPermissions$ | async)?.can_delete_product"
-                                                    [appearance]="(userPermissions$ | async)?.can_delete_product ? 'error' : 'secondary-neutralscale'"
-                                                    iconStart="@tui.trash" tuiButton type="button"
-                                                    (click)="onDeleteProducto(producto.id)" class="whitespace-nowrap">
-                                                    Eliminar
-                                                </button>
-
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <!-- VISTA GRILLA estilo Apple: cards (en teléfonos siempre grilla 2 columnas) -->
+                        <div *ngIf="viewMode === 'grilla' || isPhone" class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
+                            <article *ngFor="let producto of productos"
+                                class="flex flex-col overflow-hidden rounded-3xl border border-black/5 bg-white shadow-sm dark:border-white/10 dark:bg-neutral-800">
+                                <div class="relative cursor-pointer bg-neutral-100 dark:bg-neutral-700" (click)="onSetImageProduct(producto); open = true;">
+                                    <img loading="lazy"
+                                        [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                                        [alt]="producto.nombre"
+                                        class="h-44 w-full object-cover" />
+                                    <span class="absolute right-3 top-3 inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold backdrop-blur" [ngClass]="margenBadge(margenPct(producto))">
+                                        <ng-container *ngIf="margenPct(producto) !== null">{{ margenPct(producto) | number:'1.0-1' }}%</ng-container>
+                                        <ng-container *ngIf="margenPct(producto) === null">—</ng-container>
+                                    </span>
+                                </div>
+                                <div class="flex flex-1 flex-col p-4">
+                                    <p class="line-clamp-2 break-words text-[15px] font-semibold leading-snug text-neutral-900 dark:text-white">{{ producto.nombre }}</p>
+                                    <p class="mt-0.5 truncate text-xs text-neutral-500 dark:text-neutral-400">
+                                        {{ producto.sku }} ·
+                                        <span *ngIf="!mostrarAdvertencia(producto.categoria_nombre)">{{ producto.categoria_nombre || 'Sin categoría' }}</span>
+                                        <span *ngIf="mostrarAdvertencia(producto.categoria_nombre)" class="text-orange-500 dark:text-orange-400">Sin categoría</span>
+                                    </p>
+                                    <div class="mt-3 grid grid-cols-3 gap-2 rounded-2xl bg-neutral-100/80 p-3 text-center dark:bg-white/10">
+                                        <div class="min-w-0">
+                                            <p class="text-[10px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500">Compra</p>
+                                            <p *ngIf="producto.is_inventario" class="truncate text-[13px] font-semibold text-neutral-800 dark:text-neutral-100">S/ {{ producto.inventario?.costo_compra | number:'1.2-2' }}</p>
+                                            <p *ngIf="!producto.is_inventario" class="text-[13px] text-neutral-400 dark:text-neutral-500">—</p>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-[10px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500">Venta</p>
+                                            <p *ngIf="producto.is_inventario" class="truncate text-[13px] font-semibold text-neutral-800 dark:text-neutral-100">S/ {{ producto.inventario?.costo_venta | number:'1.2-2' }}</p>
+                                            <button *ngIf="!producto.is_inventario" type="button" (click)="crearInventario(producto)"
+                                                class="rounded-full bg-blue-500/10 px-3 py-1 text-[11px] font-semibold text-blue-600 transition hover:bg-blue-500/20 active:scale-95 dark:text-blue-400">
+                                                Crear
+                                            </button>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-[10px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500">Ganancia</p>
+                                            <p *ngIf="gananciaSoles(producto) !== null" class="truncate text-[13px] font-semibold"
+                                                [ngClass]="(gananciaSoles(producto) ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'">S/ {{ gananciaSoles(producto) | number:'1.2-2' }}</p>
+                                            <p *ngIf="gananciaSoles(producto) === null" class="text-[13px] text-neutral-400 dark:text-neutral-500">—</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 grid grid-cols-2 gap-2">
+                                        <button type="button" (click)="showDialogUpdate(producto)"
+                                            [disabled]="!(userPermissions$ | async)?.can_update_product"
+                                            class="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-blue-500/10 px-4 py-2 text-xs font-semibold text-blue-600 transition hover:bg-blue-500/20 active:scale-95 disabled:opacity-40 dark:text-blue-400">
+                                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
+                                            </svg>
+                                            Editar
+                                        </button>
+                                        <button type="button" (click)="onDeleteProducto(producto.id)"
+                                            [disabled]="!(userPermissions$ | async)?.can_delete_product"
+                                            class="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-red-500/10 px-4 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-500/20 active:scale-95 disabled:opacity-40 dark:text-red-400">
+                                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                            </svg>
+                                            Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                            </article>
                         </div>
-                    </div>
 
+                        </ng-container>
+                        </ng-container>
+                    </div>
 
 
 
@@ -358,6 +274,8 @@
                     </div>
                 </div>
             </tui-loader>
+            </div>
+            </div>
         </ng-template>
     </div>
 </section>
@@ -376,4 +294,34 @@
         <img *polymorpheusOutlet="content[index] as src" alt="preview" [src]="src"
             class="w-full h-auto max-h-[70vh] sm:max-h-[80vh] object-contain p-2 sm:p-4" />
     </tui-preview>
+</ng-template>
+
+<!-- Modal de filtros (móvil y tablet) -->
+<ng-template [(tuiDialog)]="filtrosOpen" [tuiDialogOptions]="{label: 'Filtros', size: 's'}">
+    <form [formGroup]="form" (submit)="onSubmitSearch(); filtrosOpen = false">
+        <div class="flex flex-col gap-3 w-full">
+            <tui-textfield iconStart="@tui.search" class="w-full">
+                <input size="s" tuiTheme="ligth" formControlName="sku" placeholder="Buscar por Codigo" tuiTextfield />
+            </tui-textfield>
+            <tui-textfield iconStart="@tui.search" class="w-full">
+                <input size="s" tuiTheme="ligth" formControlName="nombre" placeholder="Buscar por nombre" tuiTextfield />
+            </tui-textfield>
+
+            <tui-select class="w-full" formControlName="categoria" [stringify]="stringify">
+                Categoria
+                <select placeholder="Categoria" size="s" tuiSelect [items]="(selectCategorias$ | async)"></select>
+            </tui-select>
+
+            <div class="flex flex-row items-center gap-3 pt-1">
+                <button type="submit" iconStart="@tui.search" tuiButton appearance="textfield" class="flex-1 !rounded-full dark:!bg-white dark:!text-neutral-900"
+                    [disabled]="!form.value.nombre && !form.value.categoria && form.value.activo === null && !form.value.sku">
+                    Buscar
+                </button>
+                <button appearance="flat" iconStart="@tui.rotate-cw" size="s" tuiButton type="button"
+                    (click)="clearSearch(); filtrosOpen = false" class="!rounded-lg shrink-0 !bg-transparent dark:!bg-transparent">
+                    <span class="text-xs">Limpiar</span>
+                </button>
+            </div>
+        </div>
+    </form>
 </ng-template>

@@ -173,6 +173,10 @@ export class DialogcreateproductComponent implements OnInit, OnDestroy {
 
 
   }
+  onCloseDialog() {
+    this.context.completeWith(false);
+  }
+
   getCaracteristicasKeys(): string[] {
     const group = this.productoForm.get('caracteristicas') as FormGroup;
     return group ? Object.keys(group.controls) : [];

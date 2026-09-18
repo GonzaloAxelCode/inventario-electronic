@@ -1,24 +1,22 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
   <!-- Card: Ventas del día -->
-  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDJ2LTJoMzRtMC00SDJ2MmgzNG0wLTRIMXYyaDM0bTAtNEgxdjJoMzQiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
+  <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 p-6 shadow-sm">
     <div class="relative flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-inner">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
+          <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         </div>
         <div>
-          <p class="text-emerald-100 text-sm font-medium">Ventas del Día</p>
-          <p class="text-white/60 text-xs">{{ currentDay }}</p>
+          <p class="text-neutral-900 dark:text-white text-sm font-medium">Ventas del Día</p>
+          <p class="text-neutral-500 dark:text-neutral-400 text-xs">{{ currentDay }}</p>
         </div>
       </div>
       <form [formGroup]="testForm">
         <div class="relative" tuiDropdownOpen [tuiDropdown]="dropdownFecha">
-          <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 backdrop-blur-sm text-white text-xs font-medium hover:bg-white/25 transition-colors" type="button">
+          <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-neutral-200 text-xs font-medium hover:bg-neutral-200 dark:hover:bg-white/15 transition-colors" type="button">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
             </svg>
@@ -34,32 +32,32 @@
     </div>
 
     <div class="relative">
-      <p class="text-white text-4xl font-extrabold tracking-tight" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
+      <p class="text-emerald-600 dark:text-emerald-400 text-4xl font-extrabold tracking-tight" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
         S/. {{ todaySales | number:'1.2-2' }}
       </p>
-      <p class="text-emerald-200 text-xs mt-2 font-medium">{{ getFormattedDate() }}</p>
+      <p class="text-neutral-500 dark:text-neutral-400 text-xs mt-2 font-medium">{{ getFormattedDate() }}</p>
     </div>
 
-    <div class="absolute bottom-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mb-16 group-hover:scale-150 transition-transform duration-700"></div>
+    <div class="absolute bottom-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-16 -mb-16 pointer-events-none"></div>
   </div>
 
   <!-- Card: Ventas semana -->
-  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-500 via-purple-600 to-indigo-700 p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDJ2LTJoMzRtMC00SDJ2MmgzNG0wLTRIMXYyaDM0bTAtNEgxdjJoMzQiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+  <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 p-6 shadow-sm">
+
 
     <div class="relative flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-inner">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
           </svg>
         </div>
         <div>
-          <p class="text-purple-100 text-sm font-medium">Ventas Semana</p>
-          <p class="text-white/60 text-xs">Semana {{ currentWeek }}</p>
+          <p class="text-neutral-900 dark:text-white text-sm font-medium">Ventas Semana</p>
+          <p class="text-neutral-500 dark:text-neutral-400 text-xs">Semana {{ currentWeek }}</p>
         </div>
       </div>
-      <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 backdrop-blur-sm text-white text-xs font-medium">
+      <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-medium">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
         </svg>
@@ -68,35 +66,35 @@
     </div>
 
     <div class="relative">
-      <p class="text-white text-4xl font-extrabold tracking-tight" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
+      <p class="text-blue-600 dark:text-blue-400 text-4xl font-extrabold tracking-tight" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
         S/. {{ thisWeekSales | number:'1.2-2' }}
       </p>
-      <p class="text-purple-200 text-xs mt-2 font-medium">Acumulado de la semana actual</p>
+      <p class="text-neutral-500 dark:text-neutral-400 text-xs mt-2 font-medium">Acumulado de la semana actual</p>
     </div>
 
-    <div class="absolute bottom-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mb-16 group-hover:scale-150 transition-transform duration-700"></div>
+
   </div>
 
   <!-- Card: Ventas mensual -->
-  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 sm:col-span-2 lg:col-span-1">
-    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDJ2LTJoMzRtMC00SDJ2MmgzNG0wLTRIMXYyaDM0bTAtNEgxdjJoMzQiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+  <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 p-6 shadow-sm sm:col-span-2 lg:col-span-1">
+
 
     <div class="relative flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-inner">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center">
+          <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
           </svg>
         </div>
         <div>
-          <p class="text-amber-100 text-sm font-medium">Ventas Mensual</p>
-          <p class="text-white/60 text-xs">{{ getCurrentMonthName() }}</p>
+          <p class="text-neutral-900 dark:text-white text-sm font-medium">Ventas Mensual</p>
+          <p class="text-neutral-500 dark:text-neutral-400 text-xs">{{ getCurrentMonthName() }}</p>
         </div>
       </div>
     </div>
 
     <div class="relative">
-      <p class="text-white text-4xl font-extrabold tracking-tight" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
+      <p class="text-amber-600 dark:text-amber-400 text-4xl font-extrabold tracking-tight" [tuiSkeleton]="!!(ventasState$ | async)?.loadingResumenVentas">
         S/. {{ thisMonthSales | number:'1.2-2' }}
       </p>
     </div>
@@ -120,7 +118,7 @@
       </form>
     </div>
 
-    <div class="absolute bottom-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mb-16 group-hover:scale-150 transition-transform duration-700"></div>
+
   </div>
 
 </div>

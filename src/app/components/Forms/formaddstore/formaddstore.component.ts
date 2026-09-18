@@ -3,7 +3,7 @@ import { AppState } from '@/app/state/app.state';
 import { selectTienda, selectTiendaState } from '@/app/state/selectors/tienda.selectors';
 import { selectCurrenttUser } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiAppearance, TuiButton, TuiDataList, TuiLoader, TuiTextfield } from '@taiga-ui/core';
@@ -19,6 +19,7 @@ import { map, Observable } from 'rxjs';
   styleUrl: './formaddstore.component.scss'
 })
 export class FormaddstoreComponent implements OnInit {
+  @Output() cancelled = new EventEmitter<void>();
   tiendaForm: FormGroup;
   protected loadingCreateTienda$!: Observable<any>
   selectedLogo: File | null = null;
@@ -91,14 +92,9 @@ export class FormaddstoreComponent implements OnInit {
         this.parentTiendaRazonSocial = null;
         this.parentTiendaRuc = null;
       }
-      // Obligatorio solo para superusuario al final: elegir si es padre o sucursal
+      // Jerarquía opcional: sin validador (vacío = tienda padre)
       const ctrl = this.tiendaForm.get('tienda_padre_select');
-      if (this.isSuperUser) {
-        ctrl?.setValidators([Validators.required]);
-      } else {
-        ctrl?.clearValidators();
-        ctrl?.setValue('');
-      }
+      ctrl?.clearValidators();
       ctrl?.updateValueAndValidity({ emitEvent: false });
     });
 
@@ -114,9 +110,10 @@ export class FormaddstoreComponent implements OnInit {
 
     // Detectar cambio en Jerarquía: si se selecciona una tienda (sucursal), heredar datos del padre
     this.tiendaForm.get('tienda_padre_select')?.valueChanges.subscribe(value => {
-      this.esSucursal = !!value && value !== 'padre';
+      const pid = this.parseJerarquiaId(value);
+      this.esSucursal = pid != null;
       if (this.esSucursal) {
-        const selectedTienda = this.tiendasList?.find((t: any) => t.id === value);
+        const selectedTienda = this.tiendasList?.find((t: any) => t.id === pid);
         if (selectedTienda) {
           this.tiendaForm.patchValue({
             razon_social: selectedTienda.razon_social || '',
@@ -196,14 +193,21 @@ export class FormaddstoreComponent implements OnInit {
   }
 
 
-  getJerarquiaLabel(value: string | number | null): string {
-    if (!value) return 'Selecciona una opción';
-    if (value === 'padre') return 'Registrar como tienda Padre';
-    const tienda = this.tiendasList?.find((t: any) => t.id === value);
-    if (tienda) {
-      return `${tienda.nombre} — RUC ${tienda.ruc || '—'} · ID ${tienda.id}`;
-    }
-    return '';
+  readonly jerarquiaPadreLabel = 'Registrar como tienda Padre';
+
+  get jerarquiaOptions(): string[] {
+    const tiendas = (this.tiendasList ?? []).map((t: any) => `${t.nombre} — RUC ${t.ruc || '—'} · ID ${t.id}`);
+    return [this.jerarquiaPadreLabel, ...tiendas];
+  }
+
+  parseJerarquiaId(value: string | null | undefined): number | null {
+    if (!value || value === this.jerarquiaPadreLabel) return null;
+    const m = String(value).match(/ID\s+(\d+)\s*$/);
+    return m ? Number(m[1]) : null;
+  }
+
+  onCancel(): void {
+    this.cancelled.emit();
   }
 
   onSubmit() {
@@ -217,15 +221,15 @@ export class FormaddstoreComponent implements OnInit {
         formData.append(key, value as any);
       });
 
-      // Superusuario: obligatorio elegir si es padre o sucursal (última parte del form)
+      // Superusuario: si elige tienda padre en Jerarquía es sucursal; vacío o Padre = tienda padre
       if (this.isSuperUser) {
-        const sel = this.tiendaForm.get('tienda_padre_select')?.value;
-        if (sel && sel !== 'padre' && sel !== 'Registrar como tienda Padre') {
-          const pid = String(sel);
-          formData.append('tienda_padre', pid);
-          formData.append('parent', pid);
-          formData.append('parent_id', pid);
-          formData.append('tienda_padre_id', pid);
+        const sel = this.tiendaForm.get('tienda_padre_select')?.value as string;
+        const pid = this.parseJerarquiaId(sel);
+        if (pid != null) {
+          formData.append('tienda_padre', String(pid));
+          formData.append('parent', String(pid));
+          formData.append('parent_id', String(pid));
+          formData.append('tienda_padre_id', String(pid));
           formData.append('es_sucursal', 'true');
           formData.append('es_padre', 'false');
         } else {
@@ -282,7 +286,7 @@ export class FormaddstoreComponent implements OnInit {
         serie: [''],
         sol_user: [''],
         sol_password: [''],
-        tienda_padre_select: [''],
+        tienda_padre_select: '',
       });
       this.selectedLogo = null;
       this.selectedLogoDark = null;

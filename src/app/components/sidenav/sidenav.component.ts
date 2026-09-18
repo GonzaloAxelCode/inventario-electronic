@@ -45,6 +45,7 @@ import { map, Observable } from 'rxjs';
 import ChoosestoreComponent from '../choosestore/choosestore.component';
 import { DarkmodeComponent } from '../darkmode/darkmode.component';
 import { HeaderComponent } from "../header/header.component";
+import { PlanbadgeComponent } from '../planbadge/planbadge.component';
 
 @Component({
   selector: 'app-sidenav',
@@ -71,7 +72,7 @@ import { HeaderComponent } from "../header/header.component";
     TuiTextfield, TuiPulse,
     TuiTitle, DarkmodeComponent, ChoosestoreComponent, TuiDrawer, TuiButton, TuiAppearance,
     TuiAvatar, TuiDataList, TuiStatus, TuiBadge,
-    TuiPopup, TuiIcon],
+    TuiPopup, TuiIcon, PlanbadgeComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss',
 })

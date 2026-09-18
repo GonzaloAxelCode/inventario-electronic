@@ -3,17 +3,18 @@ import { clearSearchProductos, deleteProductoAction, loadProductosAction, search
 import { AppState } from '@/app/state/app.state';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { CommonModule, NgForOf } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, inject, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, inject, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiAlertService, TuiAppearance, TuiButton, TuiDialogService, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TuiAlertService, TuiAppearance, TuiButton, TuiDialog, TuiDialogService, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiChip, TuiConfirmService, TuiDataListWrapper, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiRadio } from '@taiga-ui/kit';
 import { map, Observable, take } from 'rxjs';
 
 import { Categoria } from '@/app/models/categoria.models';
 import { DialogCreateInventarioService } from '@/app/services/dialogs-services/dialog-create-inventario.service';
+import { DialogCreateProductService } from '@/app/services/dialogs-services/dialog-create-product.service';
 import { DialogEditInventarioDetailService } from '@/app/services/dialogs-services/dialog-edit-inventario.service';
 import { DialogUpdateProductService } from '@/app/services/dialogs-services/dialog-updateproduct.service';
 import { capitalize } from '@/app/services/utils/capitalize';
@@ -47,14 +48,15 @@ import { BarcodeComponent } from '../../barcode/barcode.component';
     TuiTextfield, TuiSearch, FormsModule, TuiDataListWrapper, NgForOf,
     TuiSelectModule, TuiTextfieldControllerModule,
     TuiLoader,
-    TuiAppearance
+    TuiAppearance,
+    TuiDialog,
   ],
   templateUrl: './tableproduct.component.html',
   styleUrl: './tableproduct.component.scss',
   providers: [TuiConfirmService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TableproductComponent implements OnInit, AfterViewInit {
+export class TableproductComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('barcodeInput') barcodeInput!: ElementRef<HTMLInputElement>;
   private buffer: string = '';
   protected open = false;
@@ -77,6 +79,17 @@ export class TableproductComponent implements OnInit, AfterViewInit {
 
     sku: new FormControl(),
   });
+  ngOnDestroy(): void {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('resize', this.checkDesktop);
+    }
+  }
+
+  protected filtrosOpen = false;
+  isPhone = false;
+  private checkDesktop = () => {
+    this.isPhone = typeof window !== 'undefined' && window.innerWidth < 640;
+  };
   ngAfterViewInit() {
     this.barcodeImgs.forEach((img, index) => {
       const codigo = this.productos[index].sku;
@@ -121,6 +134,39 @@ export class TableproductComponent implements OnInit, AfterViewInit {
   URL_BASE = URL_BASE
   isTheSearchWasDone: boolean = false
   filteredData: any = []
+
+  /** Vista estilo Apple: 'lista' (agrupada iOS) o 'grilla' (cards). */
+  viewMode: 'lista' | 'grilla' = 'lista';
+
+  setViewMode(mode: 'lista' | 'grilla'): void {
+    this.viewMode = mode;
+  }
+
+  /** Ganancia en soles: costo_venta − costo_compra. null si no hay inventario. */
+  gananciaSoles(producto: Producto): number | null {
+    if (!producto.is_inventario || !producto.inventario) return null;
+    const venta = Number(producto.inventario.costo_venta ?? 0);
+    const compra = Number(producto.inventario.costo_compra ?? 0);
+    return venta - compra;
+  }
+
+  /** Margen de ganancia en %: ganancia / costo_venta * 100. null si no calculable. */
+  margenPct(producto: Producto): number | null {
+    if (!producto.is_inventario || !producto.inventario) return null;
+    const venta = Number(producto.inventario.costo_venta ?? 0);
+    if (!venta) return null;
+    const ganancia = this.gananciaSoles(producto);
+    if (ganancia === null) return null;
+    return (ganancia / venta) * 100;
+  }
+
+  /** Color del badge de margen estilo Apple. */
+  margenBadge(margen: number | null): string {
+    if (margen === null) return 'bg-neutral-500/10 text-neutral-500 dark:text-neutral-400';
+    if (margen < 0) return 'bg-red-500/10 text-red-600 dark:text-red-400';
+    if (margen < 20) return 'bg-amber-500/15 text-amber-600 dark:text-amber-400';
+    return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+  }
   allColumnKeys = this.allColumns.map(c => c.key);
   displayedColumns = [...this.allColumnKeys];
   private readonly dialogs = inject(TuiResponsiveDialogService);
@@ -148,6 +194,10 @@ export class TableproductComponent implements OnInit, AfterViewInit {
   }
   ngOnInit(): void {
 
+    this.checkDesktop();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', this.checkDesktop);
+    }
     this.productosState$ = this.store.select(selectProductoState);
     this.selectCategorias$ = this.store.select(selectCategoria).pipe(
       map((state: CategoriaState) => state.categorias)
@@ -217,6 +267,13 @@ export class TableproductComponent implements OnInit, AfterViewInit {
   private readonly dialogService2 = inject(DialogCreateInventarioService);
   protected crearInventario(producto: Producto): void {
     this.dialogService2.open(producto).subscribe((result: any) => {
+
+    });
+  }
+
+  private readonly dialogCreateProductService = inject(DialogCreateProductService);
+  protected showDialogCreateProduct(): void {
+    this.dialogCreateProductService.open().subscribe((result: any) => {
 
     });
   }

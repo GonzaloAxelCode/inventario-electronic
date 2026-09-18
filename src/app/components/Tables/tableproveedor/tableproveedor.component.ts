@@ -7,7 +7,7 @@ import { ProveedorState } from '@/app/state/reducers/proveedor.reducer';
 import { selectProveedores } from '@/app/state/selectors/proveedor.selectors';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
@@ -29,8 +29,35 @@ import { DialogcreateproveedorComponent } from '../../Dialogs/dialogcreateprovee
   templateUrl: './tableproveedor.component.html',
   styleUrl: './tableproveedor.component.scss'
 })
-export class TableproveedorComponent implements OnInit {
+export class TableproveedorComponent implements OnInit, OnDestroy {
   userPermissions$ = this.store.select(selectPermissions);
+
+  /** Vista estilo Apple: 'lista' o 'grilla' (en teléfonos siempre grilla). */
+  viewMode: 'lista' | 'grilla' = 'lista';
+  isPhone = false;
+
+  setViewMode(mode: 'lista' | 'grilla'): void {
+    this.viewMode = mode;
+  }
+
+  private readonly avatarPalette = [
+    '#007AFF', '#34C759', '#FF9500', '#AF52DE',
+    '#FF2D55', '#5AC8FA', '#5856D6', '#00C7BE',
+  ];
+
+  /** Color difuminado del avatar según el id (fijo por proveedor). */
+  avatarColor(proveedor: Proveedor): { fondo: string; texto: string } {
+    const id = Number(proveedor.id ?? 0);
+    const seed = Number.isFinite(id) && id > 0
+      ? id
+      : (proveedor.nombre || '?').length * 7 + 3;
+    const base = this.avatarPalette[seed % this.avatarPalette.length];
+    return { fondo: base + '26', texto: base };
+  }
+
+  private checkPhone = () => {
+    this.isPhone = typeof window !== 'undefined' && window.innerWidth < 640;
+  };
 
 
 
@@ -56,8 +83,18 @@ export class TableproveedorComponent implements OnInit {
   displayedColumns = [...this.allColumnKeys];
   ngOnInit() {
 
+    this.checkPhone();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', this.checkPhone);
+    }
     this.proveedoresState$ = this.store.select(selectProveedores);
 
+  }
+
+  ngOnDestroy(): void {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('resize', this.checkPhone);
+    }
   }
   getProveedorValue(proveedor: Proveedor, key: string): any {
     return proveedor[key as keyof Proveedor];

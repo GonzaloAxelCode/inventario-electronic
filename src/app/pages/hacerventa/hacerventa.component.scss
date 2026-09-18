@@ -1,3 +1,8 @@
+.apple-venta {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
 .table {
     inline-size: 100%;
 }
@@ -9,6 +14,8 @@ div[tuiCell] {
 }
 
 .input-select-cantidad {
+    --input-border-hover: rgba(16, 185, 129, 0.3);
+
     ::ng-deep tui-select {
         .t-input {
             font-size: 18px !important;
@@ -17,6 +24,28 @@ div[tuiCell] {
             line-height: 0 !important;
         }
     }
+}
+
+:host-context([tuiTheme="dark"]) .input-select-cantidad {
+    --input-border-hover: rgba(52, 211, 153, 0.45);
+}
+
+.container-area-products {
+    border: 1px solid rgba(212, 212, 212, 0.8);
+    border-radius: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.container-area-products.is-focused {
+    border-color: rgba(16, 185, 129, 0.7);
+}
+
+:host-context([tuiTheme="dark"]) .container-area-products {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+:host-context([tuiTheme="dark"]) .container-area-products.is-focused {
+    border-color: rgba(52, 211, 153, 0.75);
 }
 
 .full {
@@ -55,7 +84,7 @@ div[tuiCell] {
 .group:hover {
     .input-select-cantidad {
         ::ng-deep .t-input-wrapper {
-            border-color: rgba(16, 185, 129, 0.3);
+            border-color: var(--input-border-hover);
         }
     }
 }

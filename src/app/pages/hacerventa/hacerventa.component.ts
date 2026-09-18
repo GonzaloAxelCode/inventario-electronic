@@ -270,7 +270,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   }
   // Detectar click dentro del div
   clickedInside() {
-    this.container.nativeElement.style.borderColor = '#86efac'; // verde
+    this.container.nativeElement.classList.add('is-focused');
   }
 
   // Detectar click fuera del div
@@ -279,7 +279,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     const clickedInside = this.container.nativeElement.contains(event.target as Node);
 
     if (!clickedInside) {
-      this.container.nativeElement.style.borderColor = '#9ca3af'; // gris
+      this.container.nativeElement.classList.remove('is-focused');
     }
   }
   // Esta función se ejecuta cuando el escáner detecta un código

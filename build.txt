@@ -1,0 +1,1205 @@
+- Generating browser application bundles (phase: setup)...
+Ô£ö Browser application bundle generation complete.
+Ô£ö Browser application bundle generation complete.
+
+Warning: src/app/components/Dialogs/dialogcreateinventario/dialogcreateinventario.component.html:13:59 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+13               <img                       [src]="producto?.imagen ? URL_BASE + producto.imagen : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                                                             ~~~~~~
+
+  src/app/components/Dialogs/dialogcreateinventario/dialogcreateinventario.component.ts:55:16
+    55   templateUrl: './dialogcreateinventario.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogcreateinventarioComponent.
+
+
+Warning: src/app/components/Dialogs/dialogdetailtienda/dialogdetailtienda.component.html:21:32 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+21                 [src]="tienda?.logo_img ? imageUrl(tienda.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                                  ~~~~~~~~
+
+  src/app/components/Dialogs/dialogdetailtienda/dialogdetailtienda.component.ts:25:16
+    25   templateUrl: './dialogdetailtienda.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogdetailtiendaComponent.
+
+
+Warning: src/app/components/Dialogs/dialogdetailtienda/dialogdetailtienda.component.html:46:47 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+46                 <span class="tabular-nums">{{ tienda.id ?? 'ÔÇö' }}</span>
+                                                 ~~~~~~~~~~~~~~~~
+
+  src/app/components/Dialogs/dialogdetailtienda/dialogdetailtienda.component.ts:25:16
+    25   templateUrl: './dialogdetailtienda.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogdetailtiendaComponent.
+
+
+Warning: src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.html:11:37 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+11         [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'">
+                                       ~~~~~~~~~~~~
+
+  src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.ts:56:16
+    56   templateUrl: './dialogventadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogventadetailComponent.
+
+
+Warning: src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.html:11:166 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+11         [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'">
+                                                                                                                                                                        ~~~~~~~~~~~~
+
+  src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.ts:56:16
+    56   templateUrl: './dialogventadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogventadetailComponent.
+
+
+Warning: src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.html:12:31 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+12         {{ venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'Aceptado' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'Rechazado' : 'Pendiente' }}
+                                 ~~~~~~~~~~~~
+
+  src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.ts:56:16
+    56   templateUrl: './dialogventadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogventadetailComponent.
+
+
+Warning: src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.html:12:93 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+12         {{ venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'Aceptado' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'Rechazado' : 'Pendiente' }}
+                                                                                               ~~~~~~~~~~~~
+
+  src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.ts:56:16
+    56   templateUrl: './dialogventadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogventadetailComponent.
+
+
+Warning: src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.html:128:45 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+128                 [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'">
+                                                ~~~~~~~~~~~~
+
+  src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.ts:56:16
+    56   templateUrl: './dialogventadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogventadetailComponent.
+
+
+Warning: src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.html:128:174 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+128                 [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'">
+                                                                                                                                                                                 ~~~~~~~~~~~~
+
+  src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.ts:56:16
+    56   templateUrl: './dialogventadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogventadetailComponent.
+
+
+Warning: src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.html:129:39 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+129                 {{ venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'Aceptado' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'Rechazado' : 'Pendiente' }}
+                                          ~~~~~~~~~~~~
+
+  src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.ts:56:16
+    56   templateUrl: './dialogventadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogventadetailComponent.
+
+
+Warning: src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.html:129:101 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+129                 {{ venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'Aceptado' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'Rechazado' : 'Pendiente' }}
+                                                                                                        ~~~~~~~~~~~~
+
+  src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.ts:56:16
+    56   templateUrl: './dialogventadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogventadetailComponent.
+
+
+Warning: src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.html:219:48 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+219                 {{ comprobante.nombre_cliente?.charAt(0) || 'C' }}
+                                                   ~~~~~~
+
+  src/app/components/Dialogs/dialogventadetail/dialogventadetail.component.ts:56:16
+    56   templateUrl: './dialogventadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DialogventadetailComponent.
+
+
+Warning: src/app/components/Tables/tableusers/tableusers.component.html:21:34 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+21             {{ (user.first_name?.charAt(0) || user.username?.charAt(0) || '?') }}{{ (user.last_name?.charAt(0) || '') }}
+                                    ~~~~~~
+
+  src/app/components/Tables/tableusers/tableusers.component.ts:24:16
+    24   templateUrl: './tableusers.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TableUsersComponent.
+
+
+Warning: src/app/components/Tables/tableusers/tableusers.component.html:21:62 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+21             {{ (user.first_name?.charAt(0) || user.username?.charAt(0) || '?') }}{{ (user.last_name?.charAt(0) || '') }}
+                                                                ~~~~~~
+
+  src/app/components/Tables/tableusers/tableusers.component.ts:24:16
+    24   templateUrl: './tableusers.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TableUsersComponent.
+
+
+Warning: src/app/components/Tables/tableusers/tableusers.component.html:21:102 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+21             {{ (user.first_name?.charAt(0) || user.username?.charAt(0) || '?') }}{{ (user.last_name?.charAt(0) || '') }}
+                                                                                                        ~~~~~~
+
+  src/app/components/Tables/tableusers/tableusers.component.ts:24:16
+    24   templateUrl: './tableusers.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TableUsersComponent.
+
+
+Warning: src/app/components/comprascomponents/registrarcompra/registrarcompra.component.html:383:88 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+383                 [disabled]="!tiposDocProveedorPermitidos[f['tipo_comprobante'].value]?.includes(td)">
+                                                                                           ~~~~~~~~
+
+  src/app/components/comprascomponents/registrarcompra/registrarcompra.component.ts:33:16
+    33   templateUrl: './registrarcompra.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component RegistrarcompraComponent.
+
+
+Warning: src/app/components/comprascomponents/registrarcompra/registrarcompra.component.html:397:131 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+397                 [placeholder]="f['tipo_documento_proveedor'].value ? longitudesDocProveedor[f['tipo_documento_proveedor'].value]?.label : 'Seleccione tipo'"
+                                                                                                                                      ~~~~~
+
+  src/app/components/comprascomponents/registrarcompra/registrarcompra.component.ts:33:16
+    33   templateUrl: './registrarcompra.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component RegistrarcompraComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.html:47:94 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+47             <td class="py-2 text-center text-neutral-600 dark:text-neutral-400 align-top">{{ prod.cantidad ?? 0 }}</td>
+                                                                                                ~~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.ts:17:16
+    17   templateUrl: './dashboard-general-stats.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardGeneralStatsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.html:48:101 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+48             <td class="py-2 text-right font-bold text-neutral-900 dark:text-white align-top">S/ {{ (prod.ingresos ?? 0) | number:'1.0-0' }}</td>
+                                                                                                       ~~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.ts:17:16
+    17   templateUrl: './dashboard-general-stats.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardGeneralStatsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.html:117:99 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+117         <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300 w-24 shrink-0">{{ metodo.nombre ?? 'Otro' }}</span>
+                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.ts:17:16
+    17   templateUrl: './dashboard-general-stats.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardGeneralStatsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.html:120:30 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+120             [style.width.%]="metodo.porcentaje ?? 0"
+                                 ~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.ts:17:16
+    17   templateUrl: './dashboard-general-stats.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardGeneralStatsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.html:122:78 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+122             <span class="text-[10px] font-bold text-white drop-shadow-sm">{{ metodo.porcentaje ?? 0 }}%</span>
+                                                                                 ~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.ts:17:16
+    17   templateUrl: './dashboard-general-stats.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardGeneralStatsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.html:126:79 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+126           <span class="text-xs font-bold text-neutral-900 dark:text-white">{{ metodo.cantidad ?? 0 }}</span>
+                                                                                  ~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.ts:17:16
+    17   templateUrl: './dashboard-general-stats.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardGeneralStatsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.html:127:67 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+127           <span class="text-[10px] text-neutral-400 block">S/ {{ (metodo.monto ?? 0) | number:'1.0-0' }}</span>
+                                                                      ~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.ts:17:16
+    17   templateUrl: './dashboard-general-stats.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardGeneralStatsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.html:174:79 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+174           <span class="text-xs font-bold text-neutral-900 dark:text-white">{{ cat.nombre ?? 'ÔÇö' }}</span>
+                                                                                  ~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.ts:17:16
+    17   templateUrl: './dashboard-general-stats.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardGeneralStatsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.html:176:83 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+176         <p class="text-lg font-extrabold text-neutral-900 dark:text-white">S/ {{ (cat.ingresos ?? 0) | number:'1.0-0' }}</p>
+                                                                                      ~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.ts:17:16
+    17   templateUrl: './dashboard-general-stats.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardGeneralStatsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.html:177:59 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+177         <p class="text-[10px] text-neutral-400 mt-0.5">{{ cat.cantidad ?? 0 }} unidades vendidas</p>
+                                                              ~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component.ts:17:16
+    17   templateUrl: './dashboard-general-stats.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardGeneralStatsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-payment-methods/dashboard-payment-methods.component.html:45:81 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+45           <p class="text-lg font-extrabold text-neutral-900 dark:text-white">{{ totalVentas ?? 0 }}</p>
+                                                                                   ~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-payment-methods/dashboard-payment-methods.component.ts:26:16
+    26   templateUrl: './dashboard-payment-methods.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardPaymentMethodsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/dashboard-payment-methods/dashboard-payment-methods.component.html:59:20 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+59           <span>{{ ringValue[index] ?? 0 }}</span>
+                      ~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/dashboard-payment-methods/dashboard-payment-methods.component.ts:26:16
+    26   templateUrl: './dashboard-payment-methods.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component DashboardPaymentMethodsComponent.
+
+
+Warning: src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.html:63:104 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+63                 <span class="text-xs font-bold text-neutral-900 dark:text-white block leading-none">{{ prod.cantidad ?? 0 }} uds</span>
+                                                                                                          ~~~~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.ts:15:16
+    15   templateUrl: './graficos-inicio.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component GraficosInicioComponent.
+
+
+Warning: src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.html:64:129 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+64                 <span class="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 block leading-none mt-0.5">S/ {{ (prod.total ?? 0) | number:'1.2-2' }}</span>
+                                                                                                                                   ~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.ts:15:16
+    15   templateUrl: './graficos-inicio.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component GraficosInicioComponent.
+
+
+Warning: src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.html:143:21 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+143                 {{ (gaugeValue ?? 0) >= 0 ? '+' : '' }}{{ (gaugeValue ?? 0) | number:'1.0-0' }}%
+                        ~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.ts:15:16
+    15   templateUrl: './graficos-inicio.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component GraficosInicioComponent.
+
+
+Warning: src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.html:143:60 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+143                 {{ (gaugeValue ?? 0) >= 0 ? '+' : '' }}{{ (gaugeValue ?? 0) | number:'1.0-0' }}%
+                                                               ~~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.ts:15:16
+    15   templateUrl: './graficos-inicio.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component GraficosInicioComponent.
+
+
+Warning: src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.html:148:23 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+148             [class]="(variacion ?? 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+                          ~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.ts:15:16
+    15   templateUrl: './graficos-inicio.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component GraficosInicioComponent.
+
+
+Warning: src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.html:149:17 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+149             {{ (variacion ?? 0) >= 0 ? '+' : '' }}{{ (variacion ?? 0) | number:'1.0-0' }} soles vs mes anterior
+                    ~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.ts:15:16
+    15   templateUrl: './graficos-inicio.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component GraficosInicioComponent.
+
+
+Warning: src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.html:149:55 - warning NG8102: The left side of this nullish coalescing operation does not include 'null' or 'undefined' in its type, therefore the '??' operator can be safely removed.
+
+149             {{ (variacion ?? 0) >= 0 ? '+' : '' }}{{ (variacion ?? 0) | number:'1.0-0' }} soles vs mes anterior
+                                                          ~~~~~~~~~~~~~~
+
+  src/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component.ts:15:16
+    15   templateUrl: './graficos-inicio.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component GraficosInicioComponent.
+
+
+Warning: src/app/components/sidenav/sidenav.component.html:122:33 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+122             {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                    ~~~~~~
+
+  src/app/components/sidenav/sidenav.component.ts:76:16
+    76   templateUrl: './sidenav.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component SidenavComponent.
+
+
+Warning: src/app/components/sidenav/sidenav.component.html:122:71 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+122             {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                                                          ~~~~~~
+
+  src/app/components/sidenav/sidenav.component.ts:76:16
+    76   templateUrl: './sidenav.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component SidenavComponent.
+
+
+Warning: src/app/components/sidenav/sidenav.component.html:127:60 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+127             <app-planbadge mode="pill" [tiendaId]="tienda?.id"></app-planbadge>
+                                                               ~~
+
+  src/app/components/sidenav/sidenav.component.ts:76:16
+    76   templateUrl: './sidenav.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component SidenavComponent.
+
+
+Warning: src/app/components/sidenav/sidenav.component.html:138:35 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+138               {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                      ~~~~~~
+
+  src/app/components/sidenav/sidenav.component.ts:76:16
+    76   templateUrl: './sidenav.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component SidenavComponent.
+
+
+Warning: src/app/components/sidenav/sidenav.component.html:138:73 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+138               {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                                                            ~~~~~~
+
+  src/app/components/sidenav/sidenav.component.ts:76:16
+    76   templateUrl: './sidenav.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component SidenavComponent.
+
+
+Warning: src/app/components/sidenavadmin/sidenavadmin.component.html:48:33 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+48             {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                   ~~~~~~
+
+  src/app/components/sidenavadmin/sidenavadmin.component.ts:62:16
+    62   templateUrl: './sidenavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component SidenavadminComponent.
+
+
+Warning: src/app/components/sidenavadmin/sidenavadmin.component.html:48:71 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+48             {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                                                         ~~~~~~
+
+  src/app/components/sidenavadmin/sidenavadmin.component.ts:62:16
+    62   templateUrl: './sidenavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component SidenavadminComponent.
+
+
+Warning: src/app/components/sidenavadmin/sidenavadmin.component.html:63:35 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+63               {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                     ~~~~~~
+
+  src/app/components/sidenavadmin/sidenavadmin.component.ts:62:16
+    62   templateUrl: './sidenavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component SidenavadminComponent.
+
+
+Warning: src/app/components/sidenavadmin/sidenavadmin.component.html:63:73 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+63               {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                                                           ~~~~~~
+
+  src/app/components/sidenavadmin/sidenavadmin.component.ts:62:16
+    62   templateUrl: './sidenavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component SidenavadminComponent.
+
+
+Warning: src/app/components/topnav/topnav.component.html:76:33 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+76             {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                   ~~~~~~
+
+  src/app/components/topnav/topnav.component.ts:67:16
+    67   templateUrl: './topnav.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavComponent.
+
+
+Warning: src/app/components/topnav/topnav.component.html:76:71 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+76             {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                                                         ~~~~~~
+
+  src/app/components/topnav/topnav.component.ts:67:16
+    67   templateUrl: './topnav.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavComponent.
+
+
+Warning: src/app/components/topnav/topnav.component.html:90:35 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+90               {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                     ~~~~~~
+
+  src/app/components/topnav/topnav.component.ts:67:16
+    67   templateUrl: './topnav.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavComponent.
+
+
+Warning: src/app/components/topnav/topnav.component.html:90:73 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+90               {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
+                                                                           ~~~~~~
+
+  src/app/components/topnav/topnav.component.ts:67:16
+    67   templateUrl: './topnav.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavComponent.
+
+
+Warning: src/app/components/topnav/topnav.component.html:129:62 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+129             <div class="dropdown-avatar">{{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}</div>
+                                                                 ~~~~~~
+
+  src/app/components/topnav/topnav.component.ts:67:16
+    67   templateUrl: './topnav.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavComponent.
+
+
+Warning: src/app/components/topnav/topnav.component.html:129:100 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+129             <div class="dropdown-avatar">{{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}</div>
+                                                                                                       ~~~~~~
+
+  src/app/components/topnav/topnav.component.ts:67:16
+    67   templateUrl: './topnav.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:36:24 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+36               {{ user?.first_name?.charAt(0) || 'U' }}{{ user?.last_name?.charAt(0) || '' }}
+                          ~~~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:36:64 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+36               {{ user?.first_name?.charAt(0) || 'U' }}{{ user?.last_name?.charAt(0) || '' }}
+                                                                  ~~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:39:103 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+39               <p class="text-[12px] font-medium leading-none text-[#1d1d1f] dark:text-white">{{ user?.username }}</p>
+                                                                                                         ~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:46:166 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+46               <div class="w-9 h-9 rounded-full user-avatar bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center text-[12px] font-semibold">{{ user?.first_name?.charAt(0) || 'U' }}{{ user?.last_name?.charAt(0) || '' }}</div>
+                                                                                                                                                                        ~~~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:46:206 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+46               <div class="w-9 h-9 rounded-full user-avatar bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center text-[12px] font-semibold">{{ user?.first_name?.charAt(0) || 'U' }}{{ user?.last_name?.charAt(0) || '' }}</div>
+                                                                                                                                                                                                                ~~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:48:94 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+48                 <p class="text-[13px] font-semibold text-[#1d1d1f] dark:text-white">{{ user?.first_name }} {{ user?.last_name }}</p>
+                                                                                                ~~~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:48:117 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+48                 <p class="text-[13px] font-semibold text-[#1d1d1f] dark:text-white">{{ user?.first_name }} {{ user?.last_name }}</p>
+                                                                                                                       ~~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:49:64 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+49                 <p class="text-[11px] text-[#86868b]">{{ user?.username }}</p>
+                                                                  ~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:74:133 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+74               <div class="w-9 h-9 rounded-full bg-black/[0.06] flex items-center justify-center text-[12px] font-semibold">{{ user?.first_name?.charAt(0) || 'U' }}</div>
+                                                                                                                                       ~~~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:76:63 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+76                 <p class="text-[13px] font-semibold">{{ user?.first_name }} {{ user?.last_name }}</p>
+                                                                 ~~~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:76:86 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+76                 <p class="text-[13px] font-semibold">{{ user?.first_name }} {{ user?.last_name }}</p>
+                                                                                        ~~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/topnavadmin/topnavadmin.component.html:77:64 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+77                 <p class="text-[11px] text-[#86868b]">{{ user?.username }}</p>
+                                                                  ~~~~~~~~
+
+  src/app/components/topnavadmin/topnavadmin.component.ts:22:16
+    22   templateUrl: './topnavadmin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TopnavAdminComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:78:39 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+78                 {{ venta.comprobante?.serie }}-{{ venta.comprobante?.correlativo }}
+                                         ~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:78:70 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+78                 {{ venta.comprobante?.serie }}-{{ venta.comprobante?.correlativo }}
+                                                                        ~~~~~~~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:89:50 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+89               {{ venta.comprobante_nota_credito?.serie }}-{{ venta.comprobante_nota_credito?.correlativo }}
+                                                    ~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:89:94 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+89               {{ venta.comprobante_nota_credito?.serie }}-{{ venta.comprobante_nota_credito?.correlativo }}
+                                                                                                ~~~~~~~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:115:128 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+115           <p class="text-xs font-medium text-red-900 dark:text-red-300 mt-0.5 line-clamp-2">{{ venta.comprobante_nota_credito?.motivo || 'Anulaci├│n de la operaci├│n' }} <span class="font-normal text-red-600/60">┬À {{ venta.comprobante_nota_credito?.tipo_motivo || '01' }}</span></p>
+                                                                                                                                   ~~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:115:248 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+115           <p class="text-xs font-medium text-red-900 dark:text-red-300 mt-0.5 line-clamp-2">{{ venta.comprobante_nota_credito?.motivo || 'Anulaci├│n de la operaci├│n' }} <span class="font-normal text-red-600/60">┬À {{ venta.comprobante_nota_credito?.tipo_motivo || '01' }}</span></p>
+                                                                                                                                                                                                                                                           ~~~~~~~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:116:103 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+116           <p class="text-[10px] text-red-400/70 mt-1">{{ formatoCorto(venta.comprobante_nota_credito?.fecha_emision || venta.fecha_hora) }} ┬À NC {{ venta.comprobante_nota_credito?.serie }}-{{ venta.comprobante_nota_credito?.correlativo }}</p>
+                                                                                                          ~~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:116:181 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+116           <p class="text-[10px] text-red-400/70 mt-1">{{ formatoCorto(venta.comprobante_nota_credito?.fecha_emision || venta.fecha_hora) }} ┬À NC {{ venta.comprobante_nota_credito?.serie }}-{{ venta.comprobante_nota_credito?.correlativo }}</p>
+                                                                                                                                                                                        ~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:116:225 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+116           <p class="text-[10px] text-red-400/70 mt-1">{{ formatoCorto(venta.comprobante_nota_credito?.fecha_emision || venta.fecha_hora) }} ┬À NC {{ venta.comprobante_nota_credito?.serie }}-{{ venta.comprobante_nota_credito?.correlativo }}</p>
+                                                                                                                                                                                                                                    ~~~~~~~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:124:84 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+124             <span class="ml-auto text-[10px] text-stone-400">{{ venta.comprobante?.estado_sunat || 'ACEPTADO' }}</span>
+                                                                                       ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:139:73 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+139             <p class="text-[10px] text-stone-400">{{ venta.comprobante?.serie }} ┬À {{ formatoCorto(venta.fecha_realizacion || venta.fecha_hora) }}</p>
+                                                                            ~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/canceledsales/canceledsales.component.html:142:228 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+142             <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-medium bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border border-amber-200/50">{{ venta.comprobante?.estado_sunat || 'ACEPTADO' }}</span>
+                                                                                                                                                                                                                                       ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/canceledsales/canceledsales.component.ts:28:16
+    28   templateUrl: './canceledsales.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CanceledsalesComponent.
+
+
+Warning: src/app/components/ventascomponents/listallventas/listallventas.component.html:189:142 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+189                     <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
+                                                                                                                                                 ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/listallventas/listallventas.component.ts:59:16
+    59   templateUrl: './listallventas.component.html', providers: [
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ListallventasComponent.
+
+
+Warning: src/app/components/ventascomponents/listallventas/listallventas.component.html:189:293 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+189                     <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
+                                                                                                                                                                                                                                                                                                        ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/listallventas/listallventas.component.ts:59:16
+    59   templateUrl: './listallventas.component.html', providers: [
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ListallventasComponent.
+
+
+Warning: src/app/components/ventascomponents/listallventas/listallventas.component.html:190:45 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+190                       {{ venta.comprobante?.estado_sunat || 'SIN COMPROBANTE' }}
+                                                ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/listallventas/listallventas.component.ts:59:16
+    59   templateUrl: './listallventas.component.html', providers: [
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ListallventasComponent.
+
+
+Warning: src/app/components/ventascomponents/listallventas/listallventas.component.html:313:127 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+313                 <span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
+                                                                                                                                  ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/listallventas/listallventas.component.ts:59:16
+    59   templateUrl: './listallventas.component.html', providers: [
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ListallventasComponent.
+
+
+Warning: src/app/components/ventascomponents/listallventas/listallventas.component.html:313:278 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+313                 <span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
+                                                                                                                                                                                                                                                                                         ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/listallventas/listallventas.component.ts:59:16
+    59   templateUrl: './listallventas.component.html', providers: [
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ListallventasComponent.
+
+
+Warning: src/app/components/ventascomponents/listallventas/listallventas.component.html:314:41 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+314                   {{ venta.comprobante?.estado_sunat || 'SIN COMPROBANTE' }}
+                                            ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/listallventas/listallventas.component.ts:59:16
+    59   templateUrl: './listallventas.component.html', providers: [
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ListallventasComponent.
+
+
+Warning: src/app/components/ventascomponents/listallventas/listallventas.component.html:316:88 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+316                 <span class="ml-auto text-[10px] text-stone-400">{{ venta.comprobante?.serie || 'ÔÇö' }} ┬À {{ formatoHora12(venta.fecha_hora) }}</span>
+                                                                                           ~~~~~
+
+  src/app/components/ventascomponents/listallventas/listallventas.component.ts:59:16
+    59   templateUrl: './listallventas.component.html', providers: [
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ListallventasComponent.
+
+
+Warning: src/app/components/ventascomponents/listallventas/listallventas.component.html:355:236 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+355                   <span *ngIf="(getProductos(venta)?.length || 0) > 3" class="inline-flex items-center px-2.5 py-1 rounded-full bg-stone-900 dark:bg-white text-white dark:text-stone-900 text-xs font-semibold">+{{ (getProductos(venta)?.length || 0) - 3 }}</span>
+                                                                                                                                                                                                                                               ~~~~~~
+
+  src/app/components/ventascomponents/listallventas/listallventas.component.ts:59:16
+    59   templateUrl: './listallventas.component.html', providers: [
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ListallventasComponent.
+
+
+Warning: src/app/components/ventascomponents/listallventas/listallventas.component.html:364:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+364                 <p class="text-[10px] text-stone-500 dark:text-stone-400">{{ venta.comprobante?.serie || 'ÔÇö' }} ┬À {{ venta.tipo_comprobante }}</p>
+                                                                                                    ~~~~~
+
+  src/app/components/ventascomponents/listallventas/listallventas.component.ts:59:16
+    59   templateUrl: './listallventas.component.html', providers: [
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ListallventasComponent.
+
+
+Warning: src/app/components/ventascomponents/todaysale/todaysale.component.html:190:43 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+190                     {{ venta.comprobante?.serie || 'ÔÇö' }} - {{ comprobante.correlativo }}
+                                              ~~~~~
+
+  src/app/components/ventascomponents/todaysale/todaysale.component.ts:31:16
+    31   templateUrl: './todaysale.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TodaysaleComponent.
+
+
+Warning: src/app/components/ventascomponents/todaysale/todaysale.component.html:236:52 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+236                     {{ comprobante.nombre_cliente?.charAt(0) || 'C' }}
+                                                       ~~~~~~
+
+  src/app/components/ventascomponents/todaysale/todaysale.component.ts:31:16
+    31   templateUrl: './todaysale.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TodaysaleComponent.
+
+
+Warning: src/app/components/ventascomponents/todaysale/todaysale.component.html:333:52 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+333                   [appearance]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'positive' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'error' : 'warning'">
+                                                       ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/todaysale/todaysale.component.ts:31:16
+    31   templateUrl: './todaysale.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TodaysaleComponent.
+
+
+Warning: src/app/components/ventascomponents/todaysale/todaysale.component.html:333:114 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+333                   [appearance]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'positive' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'error' : 'warning'">
+                                                                                                                     ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/todaysale/todaysale.component.ts:31:16
+    31   templateUrl: './todaysale.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TodaysaleComponent.
+
+
+Warning: src/app/components/ventascomponents/todaysale/todaysale.component.html:334:41 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+334                   {{ venta.comprobante?.estado_sunat === "ACEPTADO" ? 'Aceptado' : venta.comprobante?.estado_sunat ===
+                                            ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/todaysale/todaysale.component.ts:31:16
+    31   templateUrl: './todaysale.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TodaysaleComponent.
+
+
+Warning: src/app/components/ventascomponents/todaysale/todaysale.component.html:334:103 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+334                   {{ venta.comprobante?.estado_sunat === "ACEPTADO" ? 'Aceptado' : venta.comprobante?.estado_sunat ===
+                                                                                                          ~~~~~~~~~~~~
+
+  src/app/components/ventascomponents/todaysale/todaysale.component.ts:31:16
+    31   templateUrl: './todaysale.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TodaysaleComponent.
+
+
+Warning: src/app/components/ventascomponents/todaysalestable/todaysalestable.component.html:78:39 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+78             +{{ (getProductos(venta)?.length || 0) - 3 }} productos mas
+                                         ~~~~~~
+
+  src/app/components/ventascomponents/todaysalestable/todaysalestable.component.ts:64:16
+    64   templateUrl: './todaysalestable.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TodaysalestableComponent.
+
+
+Warning: src/app/components/ventascomponents/todaysalestable/todaysalestable.component.html:86:181 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+86           <span class="inline-flex items-center px-2 py-1 rounded-full bg-stone-900 dark:bg-white text-white dark:text-stone-900 text-[10px] font-semibold">{{ getProductos(venta)?.length || 0 }} prod.</span>
+                                                                                                                                                                                       ~~~~~~
+
+  src/app/components/ventascomponents/todaysalestable/todaysalestable.component.ts:64:16
+    64   templateUrl: './todaysalestable.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TodaysalestableComponent.
+
+
+Warning: src/app/pages/admin/admintiendadetail/admintiendadetail.component.html:14:28 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+14             [src]="tienda?.logo_img ? imageUrl(tienda.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                              ~~~~~~~~
+
+  src/app/pages/admin/admintiendadetail/admintiendadetail.component.ts:30:16
+    30   templateUrl: './admintiendadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AdmintiendadetailComponent.
+
+
+Warning: src/app/pages/admin/admintiendadetail/admintiendadetail.component.html:57:105 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+57           <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">{{ tienda.users_tienda?.length || 0 }} miembros</span>
+                                                                                                           ~~~~~~
+
+  src/app/pages/admin/admintiendadetail/admintiendadetail.component.ts:30:16
+    30   templateUrl: './admintiendadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AdmintiendadetailComponent.
+
+
+Warning: src/app/pages/admin/admintiendadetail/admintiendadetail.component.html:89:105 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+89               <p class="text-[12px] text-[#86868b] mt-0.5">ID {{ tienda.id }} ┬À {{ tienda.users_tienda?.length || 0 }} participantes</p>
+                                                                                                           ~~~~~~
+
+  src/app/pages/admin/admintiendadetail/admintiendadetail.component.ts:30:16
+    30   templateUrl: './admintiendadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AdmintiendadetailComponent.
+
+
+Warning: src/app/pages/admin/admintiendadetail/admintiendadetail.component.html:165:82 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+165             <p class="text-[12px] text-[#86868b] mt-0.5">{{ tienda.users_tienda?.length || 0 }} miembros en esta tienda</p>
+                                                                                     ~~~~~~
+
+  src/app/pages/admin/admintiendadetail/admintiendadetail.component.ts:30:16
+    30   templateUrl: './admintiendadetail.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AdmintiendadetailComponent.
+
+
+Warning: src/app/pages/clientes/clientes.component.html:156:118 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+156                       <p class="text-sm font-semibold text-stone-900 dark:text-white leading-none">{{ v.comprobante?.serie }}-{{ v.comprobante?.correlativo }} <span class="text-xs font-normal text-stone-400">┬À {{ v.tipo_comprobante }}</span></p>
+                                                                                                                         ~~~~~
+
+  src/app/pages/clientes/clientes.component.ts:21:16
+    21   templateUrl: './clientes.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ClientesComponent.
+
+
+Warning: src/app/pages/clientes/clientes.component.html:156:145 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+156                       <p class="text-sm font-semibold text-stone-900 dark:text-white leading-none">{{ v.comprobante?.serie }}-{{ v.comprobante?.correlativo }} <span class="text-xs font-normal text-stone-400">┬À {{ v.tipo_comprobante }}</span></p>
+                                                                                                                                                    ~~~~~~~~~~~
+
+  src/app/pages/clientes/clientes.component.ts:21:16
+    21   templateUrl: './clientes.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ClientesComponent.
+
+
+Warning: src/app/pages/clientes/clientes.component.html:162:180 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+162                     <span class="hidden sm:inline-flex px-2 py-1 rounded-full text-[10px] font-medium bg-stone-900 dark:bg-white text-white dark:text-stone-900">{{ v.comprobante?.estado_sunat }}</span>
+                                                                                                                                                                                       ~~~~~~~~~~~~
+
+  src/app/pages/clientes/clientes.component.ts:21:16
+    21   templateUrl: './clientes.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ClientesComponent.
+
+
+Warning: src/app/pages/clientes/clientes.component.html:170:110 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+170                   <span class="text-xs text-stone-500">{{ getProductos(v).length }} prod ┬À {{ v.comprobante?.moneda || 'PEN' }}</span>
+                                                                                                                 ~~~~~~
+
+  src/app/pages/clientes/clientes.component.ts:21:16
+    21   templateUrl: './clientes.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ClientesComponent.
+
+
+Warning: src/app/pages/clientes/clientes.component.html:231:114 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+231                   <p class="text-sm font-semibold text-stone-900 dark:text-white leading-none">{{ v.comprobante?.serie }}-{{ v.comprobante?.correlativo }}</p>
+                                                                                                                     ~~~~~
+
+  src/app/pages/clientes/clientes.component.ts:21:16
+    21   templateUrl: './clientes.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ClientesComponent.
+
+
+Warning: src/app/pages/clientes/clientes.component.html:231:141 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+231                   <p class="text-sm font-semibold text-stone-900 dark:text-white leading-none">{{ v.comprobante?.serie }}-{{ v.comprobante?.correlativo }}</p>
+                                                                                                                                                ~~~~~~~~~~~
+
+  src/app/pages/clientes/clientes.component.ts:21:16
+    21   templateUrl: './clientes.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ClientesComponent.
+
+
+Warning: src/app/pages/tiktok/tiktok.component.html:322:80 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+322                 {{ cliente.nombre.charAt(0) }}{{ cliente.nombre.split(' ')[1]?.charAt(0) || '' }}
+                                                                                   ~~~~~~
+
+  src/app/pages/tiktok/tiktok.component.ts:26:16
+    26   templateUrl: './tiktok.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TiktokComponent.
+
+
+Warning: C:\Users\ASUS\Worksplace\inventario-web-axel\src\app\components\Tables\tableproduct\tableproduct.component.ts depends on '@/app/utils/barcode'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: C:\Users\ASUS\Worksplace\inventario-web-axel\src\app\components\pedidoscomponents\listallpedidos\listallpedidos.component.ts depends on 'dayjs/plugin/advancedFormat'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: C:\Users\ASUS\Worksplace\inventario-web-axel\src\app\components\pedidoscomponents\listallpedidos\listallpedidos.component.ts depends on 'dayjs/plugin/localizedFormat'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: C:\Users\ASUS\Worksplace\inventario-web-axel\src\app\components\productoscomponents\imprimir-cod-barras\imprimir-cod-barras.component.ts depends on 'jsbarcode'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: C:\Users\ASUS\Worksplace\inventario-web-axel\src\app\pages\clientes\clientes.component.ts depends on 'dayjs'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+
+
+Error: src/app/pages/admin/adminhome/adminhome.component.html:156:27 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'select'.
+
+156                   <select [(ngModel)]="selectedOwnerId" class="w-full rounded-border px-3 py-2 bg-white dark:bg-neutral-800 text-[12px] font-medium text-[#1d1d1f] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#30d158] dark:focus:ring-[#30d158] transition-colors">
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/pages/admin/adminhome/adminhome.component.ts:17:16
+    17   templateUrl: './adminhome.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AdminhomeComponent.
+
+
+Error: src/app/pages/admin/adminhome/adminhome.component.html:156:40 - error TS2339: Property 'selectedOwnerId' does not exist on type 'AdminhomeComponent'.
+
+156                   <select [(ngModel)]="selectedOwnerId" class="w-full rounded-border px-3 py-2 bg-white dark:bg-neutral-800 text-[12px] font-medium text-[#1d1d1f] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#30d158] dark:focus:ring-[#30d158] transition-colors">
+                                           ~~~~~~~~~~~~~~~
+
+  src/app/pages/admin/adminhome/adminhome.component.ts:17:16
+    17   templateUrl: './adminhome.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AdminhomeComponent.
+
+
+Error: src/app/pages/admin/adminhome/adminhome.component.html:156:40 - error TS2339: Property 'selectedOwnerId' does not exist on type 'AdminhomeComponent'.
+
+156                   <select [(ngModel)]="selectedOwnerId" class="w-full rounded-border px-3 py-2 bg-white dark:bg-neutral-800 text-[12px] font-medium text-[#1d1d1f] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#30d158] dark:focus:ring-[#30d158] transition-colors">
+                                           ~~~~~~~~~~~~~~~
+
+  src/app/pages/admin/adminhome/adminhome.component.ts:17:16
+    17   templateUrl: './adminhome.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AdminhomeComponent.
+
+
+Error: src/app/pages/admin/adminhome/adminhome.component.html:158:50 - error TS2341: Property 'ownerStoreCounts$' is private and only accessible within class 'AdminhomeComponent'.
+
+158                     <option *ngFor="let owner of ownerStoreCounts$ | async" [value]="owner.ownerId">
+                                                     ~~~~~~~~~~~~~~~~~
+
+  src/app/pages/admin/adminhome/adminhome.component.ts:17:16
+    17   templateUrl: './adminhome.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component AdminhomeComponent.
+
+
+Error: src/app/pages/admin/adminhome/adminhome.component.ts:88:4 - error TS1005: '}' expected.
+
+88   }
+      
+
+
+

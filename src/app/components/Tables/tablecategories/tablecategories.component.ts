@@ -1,4 +1,5 @@
 import { Categoria } from '@/app/models/categoria.models';
+import { DialogCreateCategoriaService } from '@/app/services/dialogs-services/dialog-create-categoria.service';
 import { DialogUpdateCategoriaService } from '@/app/services/dialogs-services/dialog-updatecategoria.service';
 import { deleteCategoriaAction } from '@/app/state/actions/categoria.actions';
 import { AppState } from '@/app/state/app.state';
@@ -41,6 +42,29 @@ export class TablecategoriesComponent implements OnInit {
   displayedColumns = [...this.allColumnKeys];
 
   searchTerm = '';
+
+  private readonly catPalette = [
+    '#007AFF', '#34C759', '#FF9500', '#FF3B30', '#AF52DE',
+    '#FF2D55', '#5AC8FA', '#FFCC00', '#5856D6', '#00C7BE',
+  ];
+
+  /** Color del icono: fondo difuminado (tinte) + letra en color sólido. */
+  colorCategoria(categoria: Categoria): { fondo: string; texto: string } {
+    const base = categoria.color
+      ? categoria.color
+      : this.catPalette[this.semillaCategoria(categoria) % this.catPalette.length];
+    if (/^#[0-9a-fA-F]{6}$/.test(base)) {
+      return { fondo: base + '26', texto: base };
+    }
+    return { fondo: base, texto: '#ffffff' };
+  }
+
+  private semillaCategoria(categoria: Categoria): number {
+    const id = Number(categoria.id ?? 0);
+    return Number.isFinite(id) && id > 0
+      ? id
+      : (categoria.nombre || '?').length * 7 + 3;
+  }
 
   constructor(private store: Store<AppState>) { }
 
@@ -88,6 +112,12 @@ export class TablecategoriesComponent implements OnInit {
   private readonly dialogService = inject(DialogUpdateCategoriaService);
   protected showDialogUpdate(categoria: Categoria): void {
     this.dialogService.open(categoria).subscribe((result: any) => {
+
+    });
+  }
+  private readonly dialogCreateCategoriaService = inject(DialogCreateCategoriaService);
+  protected showDialogCreateCategoria(): void {
+    this.dialogCreateCategoriaService.open().subscribe((result: any) => {
 
     });
   }

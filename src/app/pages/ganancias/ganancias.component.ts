@@ -1,173 +1,198 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Venta } from '@/app/models/venta.models';
-import { VentaService } from '@/app/services/venta.service';
-
-interface GananciaProducto {
-  producto_id: number;
-  nombre: string;
-  unidades: number;
-  ingresos: number;
-  costos: number;
-  ganancia: number;
-  margen: number;
-}
+import { TuiDay, TuiMonth } from '@taiga-ui/cdk/date-time';
+import {
+  TuiError,
+  TuiDataList,
+  TuiLoader,
+  TuiTitle,
+} from '@taiga-ui/core';
+import { TuiInputDateModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
+import {
+  GananciaService,
+  GananciasRangoResponse,
+  TopProductosMesResponse,
+} from '@/app/services/ganancia.service';
 
 @Component({
   selector: 'app-ganancias',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TuiDataList,
+    TuiError,
+    TuiInputDateModule,
+    TuiLoader,
+    TuiSelectModule,
+    TuiTextfieldControllerModule,
+    TuiTitle,
+  ],
   templateUrl: './ganancias.component.html',
   styleUrl: './ganancias.component.scss',
 })
 export class GananciasComponent implements OnInit {
-  private ventaService = inject(VentaService);
+  private gananciaService = inject(GananciaService);
+
+  readonly meses = [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ];
 
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
-  ventas = signal<Venta[]>([]);
+  data = signal<GananciasRangoResponse | null>(null);
 
-  fromDate = signal<string>(this.firstDayOfMonth());
-  toDate = signal<string>(this.today());
-  searchTerm = signal<string>('');
+  // Filtros cards superiores: día puntual + mes puntual. Semana es automática (backend).
+  fechaDia = signal<TuiDay | null>(TuiDay.currentLocal());
+  filtroMes = signal<TuiMonth | null>(TuiMonth.currentLocal());
 
-  totalIngresos = computed(() => this.resumen().ingresos);
-  totalCostos = computed(() => this.resumen().costos);
-  totalGanancia = computed(() => this.resumen().ganancia);
-  margenPromedio = computed(() => this.resumen().margen);
-  numVentas = computed(() => this.ventasValidas().length);
-
-  ventasValidas = computed(() => {
-    return this.ventas().filter((v) => {
-      const estado = (v.estado || '').toUpperCase();
-      if (estado.includes('CANCEL') || estado.includes('ANUL')) return false;
-      if (v.activo === false) return false;
-      return true;
-    });
-  });
-
-  resumen = computed(() => {
-    let ingresos = 0;
-    let costos = 0;
-    for (const v of this.ventasValidas()) {
-      for (const item of this.getItems(v)) {
-        const cantidad = Number(item.cantidad ?? 0);
-        const precio = Number(item.precio_unitario ?? item.valor_venta ?? item.valorUnitario ?? 0);
-        const descuento = Number(item.descuento ?? 0);
-        const costoUnit = Number(item.costo_original ?? 0);
-        ingresos += precio * cantidad - descuento;
-        costos += costoUnit * cantidad;
-      }
-    }
-    const ganancia = ingresos - costos;
-    const margen = ingresos > 0 ? (ganancia / ingresos) * 100 : 0;
-    return { ingresos, costos, ganancia, margen };
-  });
-
-  porProducto = computed<GananciaProducto[]>(() => {
-    const map = new Map<number | string, GananciaProducto>();
-    const term = this.searchTerm().trim().toLowerCase();
-    for (const v of this.ventasValidas()) {
-      for (const item of this.getItems(v)) {
-        const cantidad = Number(item.cantidad ?? 0);
-        const precio = Number(item.precio_unitario ?? item.valor_venta ?? item.valorUnitario ?? 0);
-        const descuento = Number(item.descuento ?? 0);
-        const costoUnit = Number(item.costo_original ?? 0);
-        const ingreso = precio * cantidad - descuento;
-        const costo = costoUnit * cantidad;
-        const key = item.producto ?? item.producto_nombre ?? item.descripcion ?? 's/n';
-        const nombre: string = item.producto_nombre ?? item.descripcion ?? `Producto #${item.producto ?? ''}`;
-        if (term && !nombre.toLowerCase().includes(term)) continue;
-        const prev = map.get(key) ?? {
-          producto_id: Number(item.producto ?? 0),
-          nombre,
-          unidades: 0,
-          ingresos: 0,
-          costos: 0,
-          ganancia: 0,
-          margen: 0,
-        };
-        prev.unidades += cantidad;
-        prev.ingresos += ingreso;
-        prev.costos += costo;
-        prev.ganancia = prev.ingresos - prev.costos;
-        prev.margen = prev.ingresos > 0 ? (prev.ganancia / prev.ingresos) * 100 : 0;
-        if (!prev.nombre && nombre) prev.nombre = nombre;
-        map.set(key, prev);
-      }
-    }
-    return [...map.values()].sort((a, b) => b.ganancia - a.ganancia);
-  });
+  mesLoading = signal<boolean>(false);
+  mesError = signal<string | null>(null);
+  mesData = signal<TopProductosMesResponse | null>(null);
+  mes = signal<TuiMonth | null>(TuiMonth.currentLocal());
 
   ngOnInit(): void {
     this.cargar();
+    this.cargarMes();
   }
 
   cargar(): void {
-    const from = this.parseDate(this.fromDate());
-    const to = this.parseDate(this.toDate());
-    if (!from || !to) {
-      this.error.set('Rango de fechas inválido.');
-      return;
-    }
     this.loading.set(true);
     this.error.set(null);
-    // VentaService espera mes base 0 (igual que TuiDay): suma +1 internamente
-    this.ventaService
-      .getVentasPorTienda([from.y, from.m, from.d], [to.y, to.m, to.d], 1, 200)
-      .subscribe({
-        next: (res) => {
-          this.ventas.set(res.results ?? []);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.error.set('No se pudieron cargar las ventas para el cálculo.');
-          this.loading.set(false);
-        },
-      });
-  }
-
-  getItems(venta: Venta): any[] {
-    try {
-      const raw = (venta as any)?.productos_json;
-      if (raw) {
-        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
-        if (Array.isArray(parsed) && parsed.length) return parsed;
-      }
-    } catch {
-      // ignorar, usar productos
+    const body: { fecha?: string; month?: number; year?: number } = {};
+    const dia = this.fechaDia();
+    if (dia) {
+      body.fecha = `${dia.year}-${String(dia.month + 1).padStart(2, '0')}-${String(dia.day).padStart(2, '0')}`;
     }
-    return (venta as any)?.productos ?? [];
+    const fm = this.filtroMes();
+    if (fm) {
+      body.month = fm.month;
+      body.year = fm.year;
+    }
+    this.gananciaService.getGananciasRango(body).subscribe({
+      next: (res) => {
+        this.data.set(res);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        const msg =
+          err?.error?.detail ||
+          err?.error?.message ||
+          'No se pudieron cargar las ganancias.';
+        this.error.set(msg);
+        this.loading.set(false);
+      },
+    });
   }
 
-  ticketPromedio(): number {
-    const n = this.numVentas();
-    return n > 0 ? this.totalIngresos() / n : 0;
+  readonly mesesItems = [...this.meses];
+  readonly yearsItems = (() => {
+    const y = new Date().getFullYear();
+    return [y - 2, y - 1, y, y + 1];
+  })();
+
+  // --- Filtros cards superiores ---
+  onFechaDia(v: TuiDay | null): void {
+    this.fechaDia.set(v);
+    this.cargar();
   }
 
-  private today(): string {
-    const d = new Date();
-    return this.toInput(d);
+  hoyDia(): void {
+    this.fechaDia.set(TuiDay.currentLocal());
+    this.cargar();
   }
 
-  private firstDayOfMonth(): string {
-    const d = new Date();
-    d.setDate(1);
-    return this.toInput(d);
+  fechaDiaEtiqueta(): string {
+    const d = this.fechaDia();
+    if (!d) return 'Elige una fecha';
+    return `${String(d.day).padStart(2, '0')}/${String(d.month + 1).padStart(2, '0')}/${d.year}`;
   }
 
-  private toInput(d: Date): string {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
+  filtroMesEtiqueta(): string {
+    const m = this.filtroMes();
+    return m ? this.meses[m.month] : '';
   }
 
-  private parseDate(input: string): { y: number; m: number; d: number } | null {
-    const parts = input.split('-').map(Number);
-    if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
-    // input month es 1-12 → convertir a base 0 para el backend
-    return { y: parts[0], m: parts[1] - 1, d: parts[2] };
+  setFiltroMesEtiqueta(v: string): void {
+    const i = this.meses.indexOf(String(v));
+    if (i < 0) return;
+    const y = this.filtroMes()?.year ?? new Date().getFullYear();
+    this.filtroMes.set(new TuiMonth(y, i));
+    this.cargar();
+  }
+
+  setFiltroYearSel(year: number | string): void {
+    const y = Number(year);
+    if (Number.isNaN(y) || y < 2000 || y > 2100) return;
+    const i = this.filtroMes()?.month ?? new Date().getMonth();
+    this.filtroMes.set(new TuiMonth(y, i));
+    this.cargar();
+  }
+
+  mesEtiqueta(): string {
+    const m = this.mes();
+    return m ? this.meses[m.month] : '';
+  }
+
+  setMesEtiqueta(v: string): void {
+    const i = this.meses.indexOf(String(v));
+    if (i < 0) return;
+    this.setMesIndex(i);
+    this.cargarMes();
+  }
+
+  setMesYearSel(year: number | string): void {
+    this.setMesYear(year);
+    this.cargarMes();
+  }
+
+  cargarMes(): void {
+    const m = this.mes();
+    if (!m) {
+      this.mesError.set('Selecciona un mes válido.');
+      return;
+    }
+    this.mesLoading.set(true);
+    this.mesError.set(null);
+    this.gananciaService.getTopProductosMes(m.month, m.year).subscribe({
+      next: (res) => {
+        this.mesData.set(res);
+        this.mesLoading.set(false);
+      },
+      error: (err) => {
+        const msg =
+          err?.error?.detail ||
+          err?.error?.message ||
+          'No se pudo cargar el top de productos del mes.';
+        this.mesError.set(msg);
+        this.mesLoading.set(false);
+      },
+    });
+  }
+
+  setMesIndex(index: number | string): void {
+    const i = Number(index);
+    if (Number.isNaN(i) || i < 0 || i > 11) return;
+    const y = this.mes()?.year ?? new Date().getFullYear();
+    this.mes.set(new TuiMonth(y, i));
+  }
+
+  setMesYear(year: number | string): void {
+    const y = Number(year);
+    if (Number.isNaN(y) || y < 2000 || y > 2100) return;
+    const i = this.mes()?.month ?? new Date().getMonth();
+    this.mes.set(new TuiMonth(y, i));
   }
 }

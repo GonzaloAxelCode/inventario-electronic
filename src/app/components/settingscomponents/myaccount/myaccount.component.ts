@@ -13,11 +13,12 @@ import { getLoginUserDataFromLocalStorage } from '@/app/services/utils/localstor
 import { AppState } from '@/app/state/app.state';
 import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
+import { PlanbadgeComponent } from '@/app/components/planbadge/planbadge.component';
 
 @Component({
   selector: 'app-myaccount',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PlanbadgeComponent],
   templateUrl: './myaccount.component.html',
   styleUrl: './myaccount.component.scss'
 })

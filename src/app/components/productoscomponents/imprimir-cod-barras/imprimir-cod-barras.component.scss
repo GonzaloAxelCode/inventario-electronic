@@ -1,3 +1,8 @@
+.apple-barras {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
 @media print {
   .no-print { display: none !important; }
 }

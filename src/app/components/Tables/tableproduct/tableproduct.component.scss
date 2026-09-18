@@ -1,3 +1,8 @@
+.apple-products {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
 @media print {
   #print-area {
     width: 58mm;

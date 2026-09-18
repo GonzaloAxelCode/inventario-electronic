@@ -1,8 +1,8 @@
 <div>
   <section class="flex flex-col lg:flex-row lg:gap-6">
 
-    <!-- ==================== ASIDE - FILTROS (desktop statico) ==================== -->
-    <aside class="w-full lg:w-80 xl:w-96 shrink-0 mb-4 lg:mb-0 lg:sticky lg:top-4 lg:self-start">
+    <!-- ==================== ASIDE - FILTROS (solo desktop) ==================== -->
+    <aside class="hidden lg:block w-full lg:w-80 xl:w-96 shrink-0 lg:sticky lg:top-4 lg:self-start">
       <search tuiSearch>
         <!-- Rango de fechas -->
         <div class="mb-4 w-full">
@@ -12,21 +12,8 @@
           </tui-input-date-range>
         </div>
 
-        <!-- Toggle Filtros (solo mobile) -->
-        <div class="flex lg:hidden justify-end mb-3">
-          <button type="button" (click)="expanded = !expanded"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-            [class]="expanded ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900' : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600'">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/>
-            </svg>
-            Filtros
-          </button>
-        </div>
-
-        <!-- Filtros expandidos -->
+        <!-- Filtros -->
         <form [formGroup]="form" (submit)="onSubmitSearch()">
-          <tui-expand [expanded]="expanded || isDesktop">
             <div class="space-y-3 pb-3">
               <div class="flex flex-col gap-3 w-full">
                 <tui-textfield iconStart="@tui.search" class="w-full">
@@ -61,16 +48,15 @@
                   loading="!!(ventasState$ | async)?.loadingLoadVentas"
                   iconStart="@tui.search" tuiButton appearance="textfield"
                   [disabled]="!!(ventasState$ | async)?.loadingLoadVentas"
-                  class="flex-1">
+                  class="flex-1 !rounded-full dark:!bg-white dark:!text-neutral-900">
                   Buscar
                 </button>
                 <button appearance="flat" iconStart="@tui.rotate-cw" size="s" tuiButton type="button"
-                  (click)="clearSearch()" class="!rounded-lg shrink-0">
+                  (click)="clearSearch()" class="!rounded-lg shrink-0 !bg-transparent dark:!bg-transparent">
                   <span class="text-xs">Limpiar</span>
                 </button>
               </div>
             </div>
-          </tui-expand>
         </form>
       </search>
     </aside>
@@ -86,6 +72,15 @@
             {{ (ventasState$ | async)?.count || 0 }}
           </span>
         </div>
+        <!-- Filtros (modal en móvil/tablet) + Toggle Vista -->
+        <div class="flex items-center gap-2">
+          <button type="button" (click)="filtrosOpen = true"
+            class="inline-flex lg:hidden items-center gap-1.5 px-3 py-1.5 rounded-full border border-black/10 bg-white text-xs font-semibold text-neutral-900 shadow-sm transition active:scale-95 dark:border-white/20 dark:bg-neutral-800 dark:text-white">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/>
+            </svg>
+            Filtros
+          </button>
         <!-- Toggle Vista -->
         <div class="flex items-center gap-0.5 bg-neutral-200 dark:bg-neutral-700 rounded-lg p-0.5">
           <button type="button" (click)="viewMode = 'table'"
@@ -100,6 +95,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>
             </svg>
           </button>
+        </div>
         </div>
       </div>
 
@@ -186,12 +182,12 @@
                     </div>
                     <div>
                       <p class="text-[11px] font-semibold tracking-widest uppercase text-stone-400">Venta</p>
-                      <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white -mt-0.5">{{venta.comprobante.serie}}-{{venta.comprobante.correlativo}}</p>
+                      <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white -mt-0.5"><ng-container *ngIf="venta.comprobante">{{venta.comprobante.serie}}-{{venta.comprobante.correlativo}}</ng-container><ng-container *ngIf="!venta.comprobante">Venta #{{venta.id}}</ng-container></p>
                     </div>
                   </div>
                   <div class="flex items-center gap-1.5">
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
-                      {{ venta.comprobante.estado_sunat }}
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
+                      {{ venta.comprobante?.estado_sunat || 'SIN COMPROBANTE' }}
                     </span>
                   </div>
                 </div>
@@ -314,10 +310,10 @@
                 <span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-semibold" [class]="venta.tipo_comprobante === 'Boleta' ? 'bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-300' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'">
                   {{ venta.tipo_comprobante }}
                 </span>
-                <span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
-                  {{ venta.comprobante.estado_sunat }}
+                <span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-medium border" [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200/50' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50'">
+                  {{ venta.comprobante?.estado_sunat || 'SIN COMPROBANTE' }}
                 </span>
-                <span class="ml-auto text-[10px] text-stone-400">{{ venta.comprobante.serie }} · {{ formatoHora12(venta.fecha_hora) }}</span>
+                <span class="ml-auto text-[10px] text-stone-400">{{ venta.comprobante?.serie || '—' }} · {{ formatoHora12(venta.fecha_hora) }}</span>
               </div>
             </div>
 
@@ -365,7 +361,7 @@
               <div>
                 <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Total</p>
                 <p class="text-xl font-bold tracking-tight text-stone-900 dark:text-white">S/. {{ venta.total }}</p>
-                <p class="text-[10px] text-stone-500 dark:text-stone-400">{{ venta.comprobante.serie }} · {{ venta.tipo_comprobante }}</p>
+                <p class="text-[10px] text-stone-500 dark:text-stone-400">{{ venta.comprobante?.serie || '—' }} · {{ venta.tipo_comprobante }}</p>
               </div>
               <div class="w-9 h-9 rounded-full bg-stone-900 dark:bg-white flex items-center justify-center shadow-md group-hover:translate-x-0.5 group-hover:scale-105 transition-all">
                 <svg class="w-4 h-4 text-white dark:text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
@@ -403,4 +399,58 @@
     <button iconStart="@tui.x" tuiIconButton tuiPreviewAction type="button" (click)="open = false" class="text-sm sm:text-base">Close</button>
     <img *polymorpheusOutlet="content[index] as src" alt="preview" [src]="src" class="w-full h-auto max-h-[70vh] sm:max-h-[80vh] object-contain p-2 sm:p-4" />
   </tui-preview>
+</ng-template>
+
+<!-- Modal de filtros (móvil y tablet) -->
+<ng-template [(tuiDialog)]="filtrosOpen" [tuiDialogOptions]="{label: 'Filtros', size: 's'}">
+  <div class="mb-4 w-full">
+    <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range"
+      class="w-full">
+      Escoje buscar las ventas entre dos fechas
+    </tui-input-date-range>
+  </div>
+
+  <form [formGroup]="form" (submit)="onSubmitSearch(); filtrosOpen = false">
+    <div class="flex flex-col gap-3 w-full">
+      <tui-textfield iconStart="@tui.search" class="w-full">
+        <input size="s" formControlName="nombre_cliente" placeholder="Buscar cliente" tuiTextfield />
+      </tui-textfield>
+
+      <tui-select class="w-full" formControlName="metodo_pago">
+        <ng-container ngProjectAs="tuiLabel">
+          <span>Método de Pago</span>
+        </ng-container>
+        <select placeholder="Método pago" size="m" tuiSelect [items]="metodos_pago"></select>
+      </tui-select>
+
+      <tui-select class="w-full" formControlName="tipo_comprobante">
+        <ng-container ngProjectAs="tuiLabel">
+          <span>Tipo Comprobante</span>
+        </ng-container>
+        <select placeholder="Comprobante" size="s" tuiSelect [items]="tipoComprobantes"></select>
+      </tui-select>
+
+      <tui-textfield iconStart="@tui.search" class="w-full">
+        <input formControlName="numero_comprobante" placeholder="N° Comprobante" tuiTextfield />
+      </tui-textfield>
+
+      <tui-textfield iconStart="@tui.search" class="w-full">
+        <input formControlName="numero_documento_cliente" placeholder="DNI o RUC" tuiTextfield />
+      </tui-textfield>
+
+      <div class="flex flex-row items-center gap-3 pt-1">
+        <button type="submit"
+          loading="!!(ventasState$ | async)?.loadingLoadVentas"
+          iconStart="@tui.search" tuiButton appearance="textfield"
+          [disabled]="!!(ventasState$ | async)?.loadingLoadVentas"
+          class="flex-1 !rounded-full dark:!bg-white dark:!text-neutral-900">
+          Buscar
+        </button>
+        <button appearance="flat" iconStart="@tui.rotate-cw" size="s" tuiButton type="button"
+          (click)="clearSearch(); filtrosOpen = false" class="!rounded-lg shrink-0 !bg-transparent dark:!bg-transparent">
+          <span class="text-xs">Limpiar</span>
+        </button>
+      </div>
+    </div>
+  </form>
 </ng-template>

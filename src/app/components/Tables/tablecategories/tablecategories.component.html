@@ -1,4 +1,4 @@
-<section class="py-3 sm:py-4 md:py-6">
+<section class="apple-categories py-3 sm:py-4 md:py-6">
     <tui-block-status
         *ngIf="(selectCategorias$ | async)?.categorias?.length === 0 && !(selectCategorias$ | async)?.loadingCategorias else tabla"
         size="m" class="m-auto">
@@ -13,16 +13,16 @@
     <div>
         <ng-template #tabla>
             <tui-loader [overlay]="true" [showLoader]="!!(selectCategorias$ | async)?.loadingCategorias">
-                <div class="rounded-2xl overflow-hidden">
+                <div class="rounded-lg overflow-hidden">
 
                     <!-- Barra de búsqueda -->
-                    <div class="px-2 mb-4" *ngIf="(selectCategorias$ | async)?.categorias?.length || 0 > 0">
+                    <div class="mb-3" *ngIf="(selectCategorias$ | async)?.categorias?.length || 0 > 0">
                         <div class="relative">
                             <input
                                 type="text"
                                 [(ngModel)]="searchTerm"
                                 placeholder="Buscar por nombre..."
-                                class="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:focus:ring-blue-400/30 transition-all shadow-sm"
+                                class="w-full pl-9 pr-4 py-2 text-sm rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:focus:ring-blue-400/30 transition-all shadow-sm"
                             />
                             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -30,119 +30,64 @@
                         </div>
                     </div>
 
-                    <!-- Vista de CARDS para móviles -->
-                    <div class="block lg:hidden space-y-3 px-2">
-                        <div *ngFor="let categoria of filtrarCategorias((selectCategorias$ | async)?.categorias || [])"
-                            class="bg-white dark:bg-neutral-800 rounded-2xl shadow-md border border-neutral-200 dark:border-neutral-700 p-4 transition-all">
-
-                            <!-- Header con ID y estado -->
-                            <div class="flex items-center justify-between mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-700">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                                        #{{ categoria.id }}
-                                    </span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium"
-                                        [ngClass]="categoria.activo ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'">
-                                        {{ categoria.activo ? 'Activo' : 'Inactivo' }}
-                                    </span>
-                                </div>
-                                <span class="text-xs text-neutral-400 dark:text-neutral-500">
-                                    {{ categoria.date_created | date:'shortDate' }}
-                                </span>
-                            </div>
-
-                            <!-- Nombre -->
-                            <p class="font-semibold text-lg text-neutral-900 dark:text-neutral-100 mb-1 truncate">
-                                {{ categoria.nombre }}
-                            </p>
-
-                            <!-- Descripción -->
-                            <div class="mb-3" *ngIf="categoria.descripcion">
-                                <p class="text-xs text-neutral-600 dark:text-neutral-400 line-clamp-2">
-                                    {{ categoria.descripcion }}
-                                </p>
-                            </div>
-
-                            <!-- Botones de acción -->
-                            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-neutral-200 dark:border-neutral-700">
-                                <button appearance="positive" iconStart="@tui.pencil" tuiButton type="button"
-                                    (click)="showDialogUpdate(categoria)"
-                                    [disabled]="!(userPermissions$ | async)?.can_modify_category" size="m"
-                                    class="w-full text-xs rounded-xl">
-                                    Editar
-                                </button>
-
-                                <button [disabled]="!(userPermissions$ | async)?.can_delete_category"
-                                    [appearance]="(userPermissions$ | async)?.can_delete_category ? 'error' : 'secondary-neutralscale'"
-                                    iconStart="@tui.trash" tuiButton type="button"
-                                    (click)="onDeleteCategoria(categoria.id)" size="m" class="w-full text-xs rounded-xl">
-                                    Eliminar
-                                </button>
-                            </div>
-                        </div>
+                    <!-- Acciones: agregar + conteo -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-3">
+                        <button type="button" (click)="showDialogCreateCategoria()"
+                            class="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs font-semibold text-neutral-900 shadow-sm transition hover:bg-neutral-100 active:scale-95 dark:border-white/20 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/>
+                            </svg>
+                            Agregar
+                        </button>
+                        <span class="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                            {{ filtrarCategorias((selectCategorias$ | async)?.categorias || []).length }} categorías
+                        </span>
                     </div>
 
-                    <!-- Vista de TABLA para desktop -->
-                    <div class="hidden lg:block overflow-x-auto">
-                        <table tuiTable size="s" class="w-full min-w-[700px]">
-                            <thead>
-                                <tr>
-                                    <th tuiTh class="text-center whitespace-nowrap">ID</th>
-                                    <th tuiTh class="whitespace-nowrap">Nombre</th>
-                                    <th tuiTh class="whitespace-nowrap">Descripción</th>
-                                    <th tuiTh class="text-center whitespace-nowrap">Estado</th>
-                                    <th tuiTh class="text-center whitespace-nowrap">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="transition-colors"
-                                    *ngFor="let categoria of filtrarCategorias((selectCategorias$ | async)?.categorias || [])">
-
-                                    <td tuiTd class="text-center">
-                                        <span class="text-sm font-medium text-neutral-500 dark:text-neutral-400">
-                                            #{{ categoria.id }}
-                                        </span>
-                                    </td>
-
-                                    <td tuiTd>
-                                        <span class="font-semibold text-sm text-neutral-900 dark:text-neutral-100">
-                                            {{ categoria.nombre }}
-                                        </span>
-                                    </td>
-
-                                    <td tuiTd>
-                                        <p class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 max-w-[200px]">
-                                            {{ categoria.descripcion }}
-                                        </p>
-                                    </td>
-
-                                    <td tuiTd class="text-center">
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
-                                            [ngClass]="categoria.activo ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'">
-                                            {{ categoria.activo ? 'Activo' : 'Inactivo' }}
-                                        </span>
-                                    </td>
-
-                                    <td tuiTd>
-                                        <div class="flex gap-2 justify-center">
-                                            <button appearance="positive" iconStart="@tui.pencil" tuiButton
-                                                type="button" (click)="showDialogUpdate(categoria)"
-                                                [disabled]="!(userPermissions$ | async)?.can_modify_category"
-                                                class="whitespace-nowrap text-xs rounded-xl">
-                                                Editar
-                                            </button>
-
-                                            <button [disabled]="!(userPermissions$ | async)?.can_delete_category"
-                                                    [appearance]="(userPermissions$ | async)?.can_delete_category ? 'error' : 'secondary-neutralscale'"
-                                                    iconStart="@tui.trash" tuiButton type="button"
-                                                    (click)="onDeleteCategoria(categoria.id)" class="whitespace-nowrap text-xs rounded-xl">
-                                                    Eliminar
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <!-- Lista agrupada estilo Apple -->
+                    <div class="overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm dark:border-white/10 dark:bg-neutral-800">
+                        <div *ngFor="let categoria of filtrarCategorias((selectCategorias$ | async)?.categorias || []); let last = last"
+                            class="border-neutral-200/80 px-4 py-3.5 dark:border-white/10"
+                            [class.border-b]="!last">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                                <!-- Color + nombre / descripción -->
+                                <div class="flex min-w-0 flex-1 items-center gap-3">
+                                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-base font-bold"
+                                        [style.background]="colorCategoria(categoria).fondo"
+                                        [style.color]="colorCategoria(categoria).texto">
+                                        {{ (categoria.nombre || '?').charAt(0).toUpperCase() }}
+                                    </span>
+                                    <div class="min-w-0">
+                                        <p class="line-clamp-2 break-words text-[15px] font-semibold leading-snug text-neutral-900 dark:text-white">{{ categoria.nombre }}</p>
+                                        <p class="mt-0.5 line-clamp-1 text-xs text-neutral-500 dark:text-neutral-400" *ngIf="categoria.descripcion">{{ categoria.descripcion }}</p>
+                                        <p class="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">#{{ categoria.id }} · {{ categoria.date_created | date:'dd/MM/yyyy' }}</p>
+                                    </div>
+                                </div>
+                                <!-- Acciones estilo Apple -->
+                                <div class="flex shrink-0 gap-2 pl-[56px] sm:pl-0">
+                                    <button type="button" (click)="showDialogUpdate(categoria)"
+                                        [disabled]="!(userPermissions$ | async)?.can_modify_category"
+                                        class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-blue-500/10 px-4 py-2 text-xs font-semibold text-blue-600 transition hover:bg-blue-500/20 active:scale-95 disabled:opacity-40 sm:flex-none dark:text-blue-400">
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
+                                        </svg>
+                                        Editar
+                                    </button>
+                                    <button type="button" (click)="onDeleteCategoria(categoria.id)"
+                                        [disabled]="!(userPermissions$ | async)?.can_delete_category"
+                                        class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-red-500/10 px-4 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-500/20 active:scale-95 disabled:opacity-40 sm:flex-none dark:text-red-400">
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                        </svg>
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <p *ngIf="filtrarCategorias((selectCategorias$ | async)?.categorias || []).length === 0"
+                            class="px-4 py-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
+                            Sin categorías para mostrar.
+                        </p>
                     </div>
                 </div>
             </tui-loader>

@@ -13,23 +13,10 @@
     </header>
 
     <ng-container *ngIf="activeTab === 'productos'">
-        <div class="flex gap-2 mb-4">
-            <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button"
-                (click)="showDialogCreateProduct()">
-                Agregar nuevo producto
-            </button>
-            <app-buttonupdate [func]="clickRefreshProducts.bind(this)" [loading]="loading"></app-buttonupdate>
-        </div>
         <app-tableproduct></app-tableproduct>
     </ng-container>
 
     <ng-container *ngIf="activeTab === 'categorias'">
-        <div class="flex gap-2 mb-4">
-            <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button"
-                (click)="showDialogCreateCategoria()">
-                Agregar categoria
-            </button>
-        </div>
         <app-tablecategories></app-tablecategories>
     </ng-container>
 

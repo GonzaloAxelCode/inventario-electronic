@@ -14,52 +14,52 @@
 
   <!-- Data -->
   <div *ngIf="!loadingSummary" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <div class="p-4 bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-800/20 rounded-2xl border border-emerald-200 dark:border-emerald-700/50 shadow-sm">
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm">
       <div class="flex items-center gap-2 mb-2">
-        <div class="w-8 h-8 rounded-xl bg-emerald-500/20 dark:bg-emerald-400/20 flex items-center justify-center">
+        <div class="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center">
           <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </div>
-        <p class="text-xs font-semibold text-emerald-700 dark:text-emerald-300">Total Ventas Hoy</p>
+        <p class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Total Ventas Hoy</p>
       </div>
-      <p class="text-2xl font-extrabold text-emerald-900 dark:text-emerald-100">S/ {{ totalVentas | number:'1.2-2' }}</p>
+      <p class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">S/ {{ totalVentas | number:'1.2-2' }}</p>
     </div>
 
-    <div class="p-4 bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-900/30 dark:to-violet-800/20 rounded-2xl border border-violet-200 dark:border-violet-700/50 shadow-sm">
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm">
       <div class="flex items-center gap-2 mb-2">
-        <div class="w-8 h-8 rounded-xl bg-violet-500/20 dark:bg-violet-400/20 flex items-center justify-center">
+        <div class="w-8 h-8 rounded-xl bg-violet-500/10 flex items-center justify-center">
           <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
           </svg>
         </div>
-        <p class="text-xs font-semibold text-violet-700 dark:text-violet-300">Comprobantes</p>
+        <p class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Comprobantes</p>
       </div>
-      <p class="text-2xl font-extrabold text-violet-900 dark:text-violet-100">{{ totalTransacciones }}</p>
+      <p class="text-2xl font-extrabold text-violet-600 dark:text-violet-400">{{ totalTransacciones }}</p>
     </div>
 
-    <div class="p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 rounded-2xl border border-blue-200 dark:border-blue-700/50 shadow-sm">
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm">
       <div class="flex items-center gap-2 mb-2">
-        <div class="w-8 h-8 rounded-xl bg-blue-500/20 dark:bg-blue-400/20 flex items-center justify-center">
+        <div class="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center">
           <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
           </svg>
         </div>
-        <p class="text-xs font-semibold text-blue-700 dark:text-blue-300">Ticket Promedio</p>
+        <p class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Ticket Promedio</p>
       </div>
-      <p class="text-2xl font-extrabold text-blue-900 dark:text-blue-100">S/ {{ ticketPromedio | number:'1.0-0' }}</p>
+      <p class="text-2xl font-extrabold text-blue-600 dark:text-blue-400">S/ {{ ticketPromedio | number:'1.0-0' }}</p>
     </div>
 
-    <div class="p-4 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/30 dark:to-amber-800/20 rounded-2xl border border-amber-200 dark:border-amber-700/50 shadow-sm">
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm">
       <div class="flex items-center gap-2 mb-2">
-        <div class="w-8 h-8 rounded-xl bg-amber-500/20 dark:bg-amber-400/20 flex items-center justify-center">
+        <div class="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
           <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
           </svg>
         </div>
-        <p class="text-xs font-semibold text-amber-700 dark:text-amber-300">Clientes</p>
+        <p class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Clientes</p>
       </div>
-      <p class="text-2xl font-extrabold text-amber-900 dark:text-amber-100">{{ clientesAtendidos }}</p>
+      <p class="text-2xl font-extrabold text-amber-600 dark:text-amber-400">{{ clientesAtendidos }}</p>
     </div>
   </div>
 

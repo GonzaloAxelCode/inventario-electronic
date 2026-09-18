@@ -1,58 +1,81 @@
-<div class="h-screen h-dvh bg-transparent">
-  <div class="max-w-[980px] mx-auto px-6 md:px-8 py-10">
-    <!-- Apple Header -->
-    <div class="mb-7">
-      <div class="flex items-start justify-between gap-6">
-        <div>
-          <h1 class="text-[30px] md:text-[34px] font-semibold tracking-[-0.03em] leading-none text-[#1d1d1f] dark:text-white antialiased">
+<div class="min-h-screen bg-transparent">
+  <div class="max-w-[1200px] mx-auto px-6 md:px-8 py-8">
+    <!-- Header -->
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+      <div class="min-w-0">
+        <div class="flex items-center gap-2.5">
+          <h1 class="text-[26px] md:text-[28px] font-semibold tracking-[-0.03em] leading-none text-[#1d1d1f] dark:text-white antialiased">
             {{ (gestionTitle$ | async) || 'Gestión de Tiendas' }}
           </h1>
-          <p *ngIf="gestionSubtitle$ | async as subtitle" class="text-[13px] leading-5 text-[#86868b] dark:text-[#a1a1a6] mt-2 font-normal">
-            {{ subtitle }}
-          </p>
-          <p *ngIf="(isSuperUser$ | async) === false" class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mt-1">
-            Mostrando solo tu tienda y sucursales asociadas
-          </p>
+          <span class="hidden sm:inline-flex items-center gap-1.5 text-[#86868b] dark:text-[#a1a1a6]">
+            <span class="w-2 h-2 rounded-full bg-[#30d158]"></span>
+            <span class="text-[11px] font-medium tracking-wide uppercase">Admin</span>
+          </span>
         </div>
-        <div class="hidden md:flex items-center gap-2 text-[#86868b] dark:text-[#a1a1a6]">
-          <span class="w-2 h-2 rounded-full bg-[#30d158]"></span>
-          <span class="text-[11px] font-medium tracking-wide uppercase">Admin</span>
-        </div>
+        <p *ngIf="gestionSubtitle$ | async as subtitle" class="text-[13px] leading-5 text-[#86868b] dark:text-[#a1a1a6] mt-2 font-normal">
+          {{ subtitle }}
+          <ng-container *ngIf="filteredTiendas$ | async as filtered"> · {{ filtered.length }} {{ filtered.length === 1 ? 'tienda' : 'tiendas' }}</ng-container>
+        </p>
+        <p *ngIf="(isSuperUser$ | async) === false" class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mt-1">
+          Mostrando solo tu tienda y sucursales asociadas
+        </p>
       </div>
-    </div>
-
-    <div class="h-px bg-black/[0.08] dark:bg-white/[0.08] mt-6 mb-8"></div>
-
-    <!-- Gestion — único contenido (tabs removidos) -->
-      <!-- Toolbar Apple — sin fondo, solo tipografía y hairline -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div class="flex items-center gap-3">
-          <h2 class="text-[15px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white">
-            <ng-container *ngIf="filteredTiendas$ | async as filtered">{{ filtered.length }} {{ filtered.length === 1 ? 'tienda' : 'tiendas' }}</ng-container>
-          </h2>
-          <span class="hidden sm:inline-flex items-center px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[11px] font-medium text-[#86868b] dark:text-[#a1a1a6]">Lista</span>
-        </div>
+      <div class="flex items-center gap-2">
         <button
           type="button"
           (click)="showDialog()"
-          class="inline-flex items-center justify-center gap-1.5 h-8 px-5 rounded-full bg-[#0071e3] hover:bg-[#0077ed] active:bg-[#0068d1] text-white text-[13px] font-medium tracking-[-0.01em] transition-colors">
+          class="inline-flex items-center justify-center gap-1.5 h-9 px-6 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium tracking-[-0.01em] transition-colors">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
           </svg>
           Nueva tienda
         </button>
       </div>
+    </div>
 
-      <div class="h-px bg-black/[0.06] dark:bg-white/[0.06] mb-6"></div>
-
-      <!-- Tabla / Lista Apple -->
-      <ng-container *ngIf="filteredTiendas$ | async as filtered">
-        <div [tuiSkeleton]="(loadingTiendas$ | async) === true" class="rounded-2xl">
-          <app-tabletiendas [tiendas]="filtered"></app-tabletiendas>
+    <!-- Aside propietarios + tiendas al costado -->
+    <div class="grid gap-8 items-start" [ngClass]="(isSuperUser$ | async) ? 'lg:grid-cols-[300px_1fr]' : 'grid-cols-1'">
+      <!-- Aside: selector de propietario (solo superuser) -->
+      <aside *ngIf="isSuperUser$ | async" class="w-full lg:w-auto shrink-0">
+        <div class="lg:sticky lg:top-6 space-y-6">
+          <section *ngIf="ownerOptions$ | async as owners">
+            <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white mb-1">Propietarios</h2>
+            <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mb-4">Elige un propietario para ver sus tiendas al costado.</p>
+            <div class="space-y-1">
+              <button
+                *ngFor="let owner of owners"
+                type="button"
+                (click)="setOwner(owner.ownerId)"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors"
+                [ngClass]="selectedOwnerId === owner.ownerId ? 'bg-black/[0.05] dark:bg-white/[0.08]' : 'hover:bg-black/[0.03] dark:hover:bg-white/[0.05]'">
+                <span class="w-8 h-8 rounded-full bg-[#30d158]/15 flex items-center justify-center text-[12px] font-semibold text-[#30d158] shrink-0">
+                  {{ (owner.ownerName || '?').charAt(0).toUpperCase() }}
+                </span>
+                <span class="flex-1 min-w-0">
+                  <span class="block text-[13px] font-medium text-[#1d1d1f] dark:text-white truncate">{{ owner.ownerName }}</span>
+                  <span class="block text-[11px] text-[#86868b]">{{ owner.tiendaCount }} {{ owner.tiendaCount === 1 ? 'tienda' : 'tiendas' }}</span>
+                </span>
+                <span *ngIf="selectedOwnerId === owner.ownerId" class="w-2 h-2 rounded-full bg-[#30d158] shrink-0"></span>
+              </button>
+            </div>
+          </section>
         </div>
-        <p *ngIf="filtered.length === 0 && (isSuperUser$ | async) === false" class="text-[13px] text-[#86868b] dark:text-[#a1a1a6] mt-6 text-center">
-          No se encontraron sucursales. Se muestra tu tienda principal.
-        </p>
-      </ng-container>
+      </aside>
+
+      <!-- Tiendas al costado -->
+      <div class="min-w-0">
+        <ng-container *ngIf="filteredTiendas$ | async as filtered">
+          <div [tuiSkeleton]="(loadingTiendas$ | async) === true" class="rounded-2xl">
+            <app-tabletiendas [tiendas]="filtered"></app-tabletiendas>
+          </div>
+          <p *ngIf="filtered.length === 0 && (isSuperUser$ | async) === false" class="text-[13px] text-[#86868b] dark:text-[#a1a1a6] mt-6 text-center">
+            No se encontraron sucursales. Se muestra tu tienda principal.
+          </p>
+          <p *ngIf="filtered.length === 0 && (isSuperUser$ | async) === true" class="text-[13px] text-[#86868b] dark:text-[#a1a1a6] mt-6 text-center">
+            Este propietario aún no tiene tiendas.
+          </p>
+        </ng-container>
+      </div>
+    </div>
   </div>
 </div>

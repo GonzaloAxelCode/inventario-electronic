@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiButton, TuiDataList, TuiDialogContext, TuiDropdown, TuiError, TuiExpand, TuiGroup, TuiHintUnstyledComponent, TuiIcon, TuiLoader, TuiNumberFormat, TuiTextfield } from '@taiga-ui/core';
@@ -49,7 +49,6 @@ export class DialogupdateproductComponent implements OnInit {
   protected readonly context = injectContext<TuiDialogContext<boolean, Partial<Producto>>>();
   public producto: Partial<Producto> = this.context.data ?? {};
   selectedCategory: any;
-  protected expandedCaracteristicas = false;
   emptyCaracteristicas = false
   userPermissions$ = this.store.select(selectPermissions);
   protected expanded = false;
@@ -59,9 +58,10 @@ export class DialogupdateproductComponent implements OnInit {
   inventarioFormEdit!: FormGroup;
   categorias: Categoria[] = [];
   marcas = ['Genérico', 'Samsung', 'Apple', 'Xiaomi', 'Huawei'];
-  modelos = ['Genérico', 'Modelo A', 'Modelo B', 'Modelo C'];
   URL_BASE = URL_BASE
   previewImage: string | ArrayBuffer | null = null;
+  originalImage: string | null = null;
+  @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
 
   hasInventario: boolean = false;
   private pendingProducto = false;
@@ -74,7 +74,6 @@ export class DialogupdateproductComponent implements OnInit {
       id: [this.producto.id],
       descripcion: [this.producto.descripcion],
       marca: [this.producto.marca || 'Genérico', Validators.required],
-      modelo: [this.producto.modelo || 'Genérico', Validators.required],
       categoria: [this.producto.categoria, Validators.required],
       imagen: [null],
       caracteristicas: this.buildCaracteristicasGroup()
@@ -92,6 +91,15 @@ export class DialogupdateproductComponent implements OnInit {
   removeImage(): void {
     this.previewImage = null;
     this.productoForm.patchValue({ imagen: null });
+    if (this.fileInput) this.fileInput.nativeElement.value = '';
+  }
+  restoreImage(): void {
+    this.previewImage = this.originalImage;
+    this.productoForm.patchValue({ imagen: null });
+    if (this.fileInput) this.fileInput.nativeElement.value = '';
+  }
+  get hasImageChanged(): boolean {
+    return !!this.originalImage && this.previewImage !== this.originalImage;
   }
   buildCaracteristicasGroup(): FormGroup {
     const caracteristicas = this.producto?.caracteristicas || {};
@@ -102,9 +110,11 @@ export class DialogupdateproductComponent implements OnInit {
     return this.fb.group(group);
   }
   ngOnInit() {
-    this.previewImage = this.producto?.imagen
+    this.originalImage = this.producto?.imagen
       ? URL_BASE + this.producto.imagen
-      : "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
+      : null;
+    this.previewImage = this.originalImage
+      ?? "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
     this.store.select(selectProductoState).subscribe((state: ProductoState) => {
       this.loadingUpdateProducto = state.loadingUpdate;
     });
@@ -159,7 +169,6 @@ export class DialogupdateproductComponent implements OnInit {
     }
 
     this.productoForm.get('categoria')!.valueChanges.subscribe(catId => {
-      this.expandedCaracteristicas = true;
       if (!catId) {
         return;
       }

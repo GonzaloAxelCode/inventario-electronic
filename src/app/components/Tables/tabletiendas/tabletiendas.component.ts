@@ -140,21 +140,34 @@ export class TabletiendasComponent implements OnInit {
     return this.gradients[index % this.gradients.length];
   }
 
-  private userColors = [
-    '#667eea', '#f5576c', '#4facfe', '#43e97b',
-    '#fa709a', '#a18cd1', '#fccb90', '#e0c3fc',
-  ];
-
-  getUserColor(index: number): string {
-    return this.userColors[index % this.userColors.length];
+  /** Solo tiendas padre (sin tienda_padre o con padre fuera de la lista) */
+  soloPadres(tiendas: Tienda[]): Tienda[] {
+    const ids = new Set(tiendas.map(t => t.id));
+    return tiendas.filter(t => t.tienda_padre == null || !ids.has(t.tienda_padre as number));
   }
 
-  getUserNames(tienda: Tienda): string {
-    const users = tienda.users_tienda || [];
-    if (users.length === 0) return '';
-    const names = users.slice(0, 3).map(u => u.first_name || u.username);
-    const extra = users.length > 3 ? ` +${users.length - 3} más` : '';
-    return names.join(', ') + extra;
+  /** Agrupa cada padre con sus sucursales */
+  getGruposJerarquia(tiendas: Tienda[]): { padre: Tienda; sucursales: Tienda[] }[] {
+    const padres = this.soloPadres(tiendas);
+    return padres.map(p => ({
+      padre: p,
+      sucursales: tiendas.filter(t => t.tienda_padre === p.id),
+    }));
+  }
+
+  getOwnerLabel(t: Tienda): string {
+    if (t.propietario == null) return 'Sin propietario';
+    const ownerData = t.propietario_data;
+    if (ownerData) {
+      const full = `${ownerData.first_name || ''} ${ownerData.last_name || ''}`.trim();
+      return full || ownerData.username || `Propietario #${t.propietario}`;
+    }
+    const ownerUser = t.users_tienda?.find(u => u.id === t.propietario);
+    if (ownerUser) {
+      const full = `${ownerUser.first_name || ''} ${ownerUser.last_name || ''}`.trim();
+      return full || ownerUser.username || `Propietario #${t.propietario}`;
+    }
+    return `Propietario #${t.propietario}`;
   }
 
   getGroupedTiendas(tiendas: Tienda[]): { ownerId: number | null; ownerLabel: string; tiendas: Tienda[] }[] {

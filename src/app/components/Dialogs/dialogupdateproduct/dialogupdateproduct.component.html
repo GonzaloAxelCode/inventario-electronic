@@ -30,23 +30,19 @@
           </tui-error>
         </div>
         
-        <!-- Características -->
-        <div class="flex flex-col bg-neutral-50 dark:bg-neutral-800 px-5 py-2 rounded-xl">
-          <p class="cursor-pointer py-1"     (click)="expandedCaracteristicas = !expandedCaracteristicas"
->Actualizar características <tui-icon      [style.font-size.rem]="1" icon="@tui.chevron-down" />
- </p>
- <p *ngIf="emptyCaracteristicas" class="py-4 text-center w-full text-neutral-700 dark:text-neutral-400">Esta categoria no tiene caracteristicas</p>
-          	<tui-expand *ngIf="!emptyCaracteristicas"  [expanded]="expandedCaracteristicas">
-
-
-          <div formGroupName="caracteristicas" class="grid gap-4 mt-4">
+        <!-- Características (solo si la categoría tiene) -->
+        <div *ngIf="!emptyCaracteristicas" class="flex flex-col">
+          <p class="py-1 font-medium">Características</p>
+          <div formGroupName="caracteristicas" class="grid gap-4 mt-2">
             <ng-container *ngFor="let key of getCaracteristicasKeys()">
-              <tui-textfield iconStart="@tui.circle-plus" [tuiTextfieldSize]="'m'">
-                <label tuiLabel>{{ key + " (Opcional)" | titlecase }}</label>
-                <input tuiTextfield [formControlName]="key" [placeholder]="'Ingresa ' + (key | titlecase)" />
-              </tui-textfield>
+              <div class="flex flex-col gap-1">
+                <label class="text-xs font-medium text-neutral-600 dark:text-neutral-300">{{ key | titlecase }}</label>
+                <tui-textfield [tuiTextfieldSize]="'m'">
+                  <input tuiTextfield [formControlName]="key" />
+                </tui-textfield>
+              </div>
             </ng-container>
-          </div>             </tui-expand>
+          </div>
         </div>
 
       </div>
@@ -59,6 +55,9 @@
           <!-- Input oculto -->
           <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
 
+          <!-- Input cámara (solo teléfonos) -->
+          <input #cameraInput type="file" (change)="onFileSelected($event)" accept="image/*" capture="environment" class="hidden" />
+
           <!-- Preview de imagen con hover para eliminar -->
           <div *ngIf="previewImage" class="relative w-[200px] h-[200px] group cursor-pointer" (click)="removeImage()">
             <img [src]="previewImage" class="w-full h-full object-contain rounded-lg shadow-md" />
@@ -67,6 +66,12 @@
             <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
               <span class="text-white text-6xl font-bold">×</span>
             </div>
+
+            <!-- Restablecer original sobre la imagen -->
+            <button *ngIf="hasImageChanged" type="button" (click)="$event.stopPropagation(); restoreImage()"
+              class="absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold text-neutral-900 shadow-md transition hover:bg-white active:scale-95 dark:bg-black/80 dark:text-white">
+              Restablecer original
+            </button>
           </div>
 
           <!-- Área clickeable cuando no hay imagen -->
@@ -77,12 +82,22 @@
             </svg>
             <span class="text-gray-400 text-sm">Seleccionar imagen</span>
           </div>
+
+          <!-- Tomar foto (solo teléfonos) -->
+          <button type="button" (click)="cameraInput.click()"
+            class="mt-2 flex w-[200px] items-center justify-center gap-1.5 rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold text-neutral-900 shadow-sm transition active:scale-95 sm:hidden dark:border-white/15 dark:bg-neutral-800 dark:text-white">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"></path>
+            </svg>
+            Tomar foto
+          </button>
         </div>
       </div>
 
-      <!-- Fila completa: Marca y Modelo -->
-      <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
-        
+      <!-- Fila completa: Marca -->
+      <div class="lg:col-span-3 grid grid-cols-1 gap-6">
+
         <!-- Marca -->
         <div class="flex flex-col">
           <tui-select formControlName="marca" class="w-full">
@@ -96,23 +111,11 @@
           </tui-error>
         </div>
 
-        <!-- Modelo -->
-        <div class="flex flex-col">
-          <tui-select formControlName="modelo" class="w-full">
-            Modelo
-            <tui-data-list *tuiDataList>
-              <button *ngFor="let modelo of modelos" tuiOption [value]="modelo">{{ modelo }}</button>
-            </tui-data-list>
-          </tui-select>
-          <tui-error *ngIf="productoForm.get('modelo')?.invalid && productoForm.get('modelo')?.touched">
-            Este campo es obligatorio
-          </tui-error>
-        </div>
         
       </div>
 
       <!-- Sección Inventario movida aquí (antes en dialogeditinventario) -->
-      <div *ngIf="hasInventario" class="lg:col-span-3 p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <div *ngIf="hasInventario" class="lg:col-span-3">
         <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-3">Inventario</h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="flex flex-col">
@@ -160,10 +163,15 @@
         <span class="text-yellow-400">* Permisos insuficientes para editar un producto</span>
       </div>
 
-      <!-- Botón único: Actualiza Producto + Inventario -->
-      <div *ngIf="(userPermissions$ | async)?.can_update_product" class="lg:col-span-3">
-        <button tuiButton type="submit" iconStart="@tui.pencil" appearance="positive"
-          [disabled]="productoForm.invalid || (hasInventario && inventarioFormEdit.invalid) || isUpdating" class="w-full px-6 py-2 transition">
+      <!-- Botones: cancelar + actualizar -->
+      <div *ngIf="(userPermissions$ | async)?.can_update_product" class="lg:col-span-3 flex flex-col-reverse sm:flex-row gap-2">
+        <button type="button" (click)="onCloseDialog()"
+          class="flex-1 rounded-full border border-black/10 dark:border-white/15 bg-transparent px-6 py-2 text-sm font-semibold text-neutral-700 dark:text-neutral-200 transition hover:bg-neutral-100 dark:hover:bg-white/10 active:scale-[0.98]">
+          Cancelar
+        </button>
+        <button type="submit"
+          [disabled]="productoForm.invalid || (hasInventario && inventarioFormEdit.invalid) || isUpdating"
+          class="flex-[2] rounded-full bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 px-6 py-2 text-sm font-bold transition hover:opacity-90 active:scale-[0.98] disabled:opacity-40 flex items-center justify-center gap-2">
           <span *ngIf="isUpdating">
             <tui-loader [showLoader]="true" size="s"></tui-loader>
           </span>

@@ -1,7 +1,7 @@
 <!-- Vista para ventas que si se enviaro-->
 <div class="p-0 flex flex-col sm:flex-row " *ngIf="venta">
 
-  <div class="p-3" *ngIf="selectedState === 'original' && venta.comprobante.estado_sunat === 'ACEPTADO'">
+  <div class="p-3" *ngIf="selectedState === 'original' && venta.comprobante?.estado_sunat === 'ACEPTADO'">
 
     <div class="flex flex-row sm:flex-col gap-2 mb-4 overflow-x-auto sm:overflow-visible -mx-3 px-3 sm:mx-0 sm:px-0">
 
@@ -81,7 +81,7 @@
     </div>
   </div>
 
-  <div class="p-3" *ngIf="selectedState === 'anulado' && venta.comprobante.estado_sunat === 'ACEPTADO'">
+  <div class="p-3" *ngIf="selectedState === 'anulado' && venta.comprobante?.estado_sunat === 'ACEPTADO'">
 
     <div class="flex flex-row sm:flex-col gap-2 mb-4 overflow-x-auto sm:overflow-visible -mx-3 px-3 sm:mx-0 sm:px-0">
 
@@ -187,7 +187,7 @@
                 <div *ngIf="selectedState === 'original'" class="flex flex-col gap-1">
                   <p class="text-xs text-neutral-500 dark:text-neutral-400">Número de comprobante</p>
                   <p class="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                    {{ venta.comprobante.serie }} - {{ comprobante.correlativo }}
+                    {{ venta.comprobante?.serie || '—' }} - {{ comprobante.correlativo }}
                   </p>
 
                   <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-2">Fecha de comprobante</p>
@@ -330,8 +330,8 @@
                   Estado
                 </span>
                 <tui-chip size="s"
-                  [appearance]="venta.comprobante.estado_sunat === 'ACEPTADO' ? 'positive' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'error' : 'warning'">
-                  {{ venta.comprobante.estado_sunat === "ACEPTADO" ? 'Aceptado' : venta.comprobante.estado_sunat ===
+                  [appearance]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'positive' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'error' : 'warning'">
+                  {{ venta.comprobante?.estado_sunat === "ACEPTADO" ? 'Aceptado' : venta.comprobante?.estado_sunat ===
                   "RECHAZADO" ? 'Rechazado' : 'Pendiente' }}
                 </tui-chip>
               </div>

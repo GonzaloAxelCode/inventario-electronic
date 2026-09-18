@@ -1,103 +1,221 @@
-<main class="p-2 sm:p-6 max-w-6xl mx-auto">
-  <header class="mb-4">
-    <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-      Ganancias
-      <span class="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">Beta</span>
-    </h2>
-    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">
-      Utilidad estimada por rango de fechas: ingresos menos costo original. No incluye impuestos ni gastos operativos.
-    </p>
+<main class="p-4 sm:p-6">
 
-    <div class="flex flex-col sm:flex-row gap-2 sm:items-end bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3 sm:p-4">
-      <label class="flex flex-col gap-1 text-xs font-medium text-neutral-600 dark:text-neutral-300">
-        Desde
-        <input type="date" [ngModel]="fromDate()" (ngModelChange)="fromDate.set($event)"
-          class="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-2 py-1.5 text-sm dark:text-white" />
-      </label>
-      <label class="flex flex-col gap-1 text-xs font-medium text-neutral-600 dark:text-neutral-300">
-        Hasta
-        <input type="date" [ngModel]="toDate()" (ngModelChange)="toDate.set($event)"
-          class="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-2 py-1.5 text-sm dark:text-white" />
-      </label>
-      <label class="flex flex-col gap-1 text-xs font-medium text-neutral-600 dark:text-neutral-300 flex-1">
-        Buscar producto
-        <input type="text" placeholder="Nombre del producto..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
-          class="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-2 py-1.5 text-sm dark:text-white" />
-      </label>
-      <button (click)="cargar()" [disabled]="loading()"
-        class="rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2">
-        {{ loading() ? 'Calculando...' : 'Calcular' }}
-      </button>
-    </div>
+  <header class="p-0 mb-4">
+    <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Ganancias</h2>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">
+      Aquí ves cuánto estás ganando con tus ventas aceptadas de tu tienda.
+    </p>
   </header>
 
-  <div *ngIf="error()" class="mb-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm px-3 py-2">
-    {{ error() }}
+  <div class="flex flex-col gap-6">
+
+    <!-- GENERALES -->
+    <tui-error [error]="error()" />
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- Card: Ganancia del día (con selector de fecha) -->
+      <div class="ganancia-card relative overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 p-6 shadow-sm">
+        <div class="relative flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center">
+              <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-neutral-900 dark:text-white text-sm font-medium">Ganancia del día</p>
+              <p class="text-neutral-500 dark:text-neutral-400 text-xs">{{ fechaDiaEtiqueta() }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="relative">
+          <p class="text-amber-600 dark:text-amber-400 text-4xl font-extrabold tracking-tight">
+            S/ {{ (data()?.ganancia_hoy ?? 0) | number:'1.2-2' }}
+          </p>
+        </div>
+        <div class="relative mt-4 flex items-center gap-2">
+          <tui-input-date
+            tuiTextfieldSize="s"
+            [ngModel]="fechaDia()"
+            (ngModelChange)="onFechaDia($event)"
+            class="flex-1 min-w-0 rounded-xl ganancia-field"
+          >
+            Fecha
+          </tui-input-date>
+          <button
+            type="button"
+            (click)="hoyDia()"
+            class="shrink-0 text-xs font-semibold rounded-xl px-3 py-2 transition bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 dark:border-amber-400/30"
+          >
+            Hoy
+          </button>
+        </div>
+        <div class="absolute bottom-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full -mr-16 -mb-16 pointer-events-none"></div>
+      </div>
+
+      <!-- Card: Últimos 7 días (automático) -->
+      <div class="ganancia-card relative overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 p-6 shadow-sm">
+        <div class="relative flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center">
+              <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-neutral-900 dark:text-white text-sm font-medium">Últimos 7 días</p>
+              <p class="text-neutral-500 dark:text-neutral-400 text-xs">Automático · incluye hoy</p>
+            </div>
+          </div>
+        </div>
+        <div class="relative">
+          <p class="text-amber-600 dark:text-amber-400 text-4xl font-extrabold tracking-tight">
+            S/ {{ (data()?.ganancia_7dias ?? 0) | number:'1.2-2' }}
+          </p>
+        </div>
+        <p class="relative mt-4 text-[11px] leading-5 text-neutral-500 dark:text-neutral-400">
+          Se calcula solo con los últimos 7 días hasta hoy.
+        </p>
+        <div class="absolute bottom-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full -mr-16 -mb-16 pointer-events-none"></div>
+      </div>
+
+      <!-- Card: Ganancia del mes (con selector mes + año) -->
+      <div class="ganancia-card relative overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 p-6 shadow-sm sm:col-span-2 lg:col-span-1">
+        <div class="relative flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center">
+              <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-neutral-900 dark:text-white text-sm font-medium">Ganancia del mes</p>
+              <p class="text-neutral-500 dark:text-neutral-400 text-xs">{{ filtroMesEtiqueta() }} {{ filtroMes()?.year }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="relative">
+          <p class="text-amber-600 dark:text-amber-400 text-4xl font-extrabold tracking-tight">
+            S/ {{ (data()?.ganancia_mes ?? 0) | number:'1.2-2' }}
+          </p>
+        </div>
+        <div class="relative mt-4 flex gap-2">
+          <tui-select
+            tuiTextfieldSize="s"
+            [ngModel]="filtroMesEtiqueta()"
+            (ngModelChange)="setFiltroMesEtiqueta($event)"
+            class="flex-1 min-w-0 rounded-xl ganancia-field"
+          >
+            Mes
+            <tui-data-list size="s" *tuiDataList>
+              <button *ngFor="let item of mesesItems" tuiOption [value]="item">
+                {{ item }}
+              </button>
+            </tui-data-list>
+          </tui-select>
+          <tui-select
+            tuiTextfieldSize="s"
+            [ngModel]="filtroMes()?.year"
+            (ngModelChange)="setFiltroYearSel($event)"
+            class="w-24 rounded-xl ganancia-field"
+          >
+            Año
+            <tui-data-list size="s" *tuiDataList>
+              <button *ngFor="let y of yearsItems" tuiOption [value]="y">
+                {{ y }}
+              </button>
+            </tui-data-list>
+          </tui-select>
+        </div>
+        <div class="absolute bottom-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full -mr-16 -mb-16 pointer-events-none"></div>
+      </div>
+    </div>
+
+    <div *ngIf="loading() && !data()" class="p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm text-center text-sm text-neutral-500">
+      Consultando ganancias...
+    </div>
+
+    <div class="p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm h-full flex flex-col">
+        <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Top productos del mes</h4>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Los 10 productos que más ganancia dejaron · se actualiza solo</p>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <tui-select tuiTextfieldSize="s" [ngModel]="mesEtiqueta()" (ngModelChange)="setMesEtiqueta($event)" class="flex-1 min-w-[9rem]">
+            Mes
+            <tui-data-list size="s" *tuiDataList>
+              <button *ngFor="let item of mesesItems" tuiOption [value]="item">
+                {{ item }}
+              </button>
+            </tui-data-list>
+          </tui-select>
+          <tui-select tuiTextfieldSize="s" [ngModel]="mes()?.year" (ngModelChange)="setMesYearSel($event)" class="w-28">
+            Año
+            <tui-data-list size="s" *tuiDataList>
+              <button *ngFor="let y of yearsItems" tuiOption [value]="y">
+                {{ y }}
+              </button>
+            </tui-data-list>
+          </tui-select>
+        </div>
+        <tui-error [error]="mesError()" />
+        <tui-loader [showLoader]="mesLoading()" [overlay]="true" class="flex-1">
+          <div *ngIf="mesData() as m" class="flex flex-col gap-4">
+            <div *ngFor="let p of m.productos" class="flex flex-col gap-1.5">
+              <div class="flex items-center justify-between gap-3 text-sm">
+                <span class="flex items-center gap-2.5 min-w-0 flex-1">
+                  <img
+                    *ngIf="p.imagen"
+                    [src]="p.imagen"
+                    [alt]="p.nombre"
+                    loading="lazy"
+                    class="w-9 h-9 rounded-lg object-cover bg-neutral-100 dark:bg-neutral-700 shrink-0"
+                  />
+                  <span
+                    *ngIf="!p.imagen"
+                    class="w-9 h-9 rounded-lg bg-neutral-100 dark:bg-neutral-700 text-neutral-400 flex items-center justify-center text-xs font-bold shrink-0"
+                  >
+                    {{ p.posicion }}
+                  </span>
+                  <span class="min-w-0">
+                    <span class="block text-neutral-900 dark:text-white truncate">
+                      <span class="text-neutral-400 mr-1">{{ p.posicion }}.</span>{{ p.nombre }}
+                    </span>
+                    <span class="flex items-center gap-1.5 mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+                      <span
+                        *ngIf="p.categoria?.nombre"
+                        class="inline-flex items-center gap-1 max-w-[10rem] truncate"
+                      >
+                        <span
+                          class="w-2 h-2 rounded-full shrink-0"
+                          [style.background]="p.categoria?.color || '#a3a3a3'"
+                        ></span>
+                        <span class="truncate">{{ p.categoria?.nombre }}</span>
+                      </span>
+                      <span class="whitespace-nowrap">{{ p.cantidad_vendida }} vendidos</span>
+                      <span *ngIf="p.descuentos_totales > 0" class="whitespace-nowrap text-amber-600 dark:text-amber-400">
+                        · −S/ {{ p.descuentos_totales | number:'1.2-2' }} dscto.
+                      </span>
+                    </span>
+                  </span>
+                </span>
+                <span class="flex items-start gap-4 shrink-0 text-right">
+                  <span class="flex flex-col">
+                    <span class="text-[10px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500">Facturado</span>
+                    <span class="font-semibold whitespace-nowrap text-sm text-neutral-700 dark:text-neutral-200">S/ {{ p.total_facturado | number:'1.2-2' }}</span>
+                  </span>
+                  <span class="flex flex-col">
+                    <span class="text-[10px] uppercase tracking-wide text-neutral-400 dark:text-neutral-500">Ganancia</span>
+                    <span class="font-bold whitespace-nowrap text-sm" [class.text-emerald-600]="p.ganancia_neta >= 0" [class.dark:text-emerald-400]="p.ganancia_neta >= 0" [class.text-red-500]="p.ganancia_neta < 0">S/ {{ p.ganancia_neta | number:'1.2-2' }}</span>
+                  </span>
+                </span>
+              </div>
+            </div>
+            <p *ngIf="m.productos.length === 0" class="text-center text-sm text-neutral-500 py-6">
+              Sin productos vendidos en este mes.
+            </p>
+          </div>
+        </tui-loader>
+      </div>
+
   </div>
 
-  <!-- Resumen -->
-  <section class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-4">
-    <div class="rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-3">
-      <p class="text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">Ingresos</p>
-      <p class="text-lg sm:text-2xl font-bold text-neutral-900 dark:text-white">S/ {{ totalIngresos() | number:'1.2-2' }}</p>
-      <p class="text-[11px] text-neutral-500">{{ numVentas() }} ventas · ticket S/ {{ ticketPromedio() | number:'1.2-2' }}</p>
-    </div>
-    <div class="rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-3">
-      <p class="text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">Costos</p>
-      <p class="text-lg sm:text-2xl font-bold text-amber-600 dark:text-amber-400">S/ {{ totalCostos() | number:'1.2-2' }}</p>
-      <p class="text-[11px] text-neutral-500">Costo original × cantidad</p>
-    </div>
-    <div class="rounded-xl bg-white dark:bg-neutral-800 border border-emerald-200 dark:border-emerald-800 p-3">
-      <p class="text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">Ganancia bruta</p>
-      <p class="text-lg sm:text-2xl font-bold" [class.text-emerald-600]="totalGanancia() >= 0" [class.text-red-500]="totalGanancia() < 0">
-        S/ {{ totalGanancia() | number:'1.2-2' }}
-      </p>
-      <p class="text-[11px] text-neutral-500">Ingresos − costos</p>
-    </div>
-    <div class="rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-3">
-      <p class="text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">Margen</p>
-      <p class="text-lg sm:text-2xl font-bold text-neutral-900 dark:text-white">{{ margenPromedio() | number:'1.1-1' }}%</p>
-      <p class="text-[11px] text-neutral-500">Ganancia / ingresos</p>
-    </div>
-  </section>
-
-  <!-- Detalle por producto -->
-  <section class="rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-    <div class="px-3 sm:px-4 py-3 border-b border-neutral-200 dark:border-neutral-700">
-      <h3 class="text-sm font-semibold text-neutral-900 dark:text-white">Detalle por producto</h3>
-      <p class="text-[11px] text-neutral-500">Ordenado por mayor ganancia. Ventas anuladas/canceladas excluidas.</p>
-    </div>
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm min-w-[640px]">
-        <thead>
-          <tr class="text-left text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400 border-b border-neutral-200 dark:border-neutral-700">
-            <th class="px-3 py-2">Producto</th>
-            <th class="px-3 py-2 text-right">Und.</th>
-            <th class="px-3 py-2 text-right">Ingresos</th>
-            <th class="px-3 py-2 text-right">Costos</th>
-            <th class="px-3 py-2 text-right">Ganancia</th>
-            <th class="px-3 py-2 text-right">Margen</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let p of porProducto()" class="border-b border-neutral-100 dark:border-neutral-700/60 last:border-0">
-            <td class="px-3 py-2 text-neutral-900 dark:text-white">{{ p.nombre }}</td>
-            <td class="px-3 py-2 text-right text-neutral-600 dark:text-neutral-300">{{ p.unidades }}</td>
-            <td class="px-3 py-2 text-right text-neutral-600 dark:text-neutral-300">S/ {{ p.ingresos | number:'1.2-2' }}</td>
-            <td class="px-3 py-2 text-right text-neutral-600 dark:text-neutral-300">S/ {{ p.costos | number:'1.2-2' }}</td>
-            <td class="px-3 py-2 text-right font-semibold" [class.text-emerald-600]="p.ganancia >= 0" [class.text-red-500]="p.ganancia < 0">
-              S/ {{ p.ganancia | number:'1.2-2' }}
-            </td>
-            <td class="px-3 py-2 text-right text-neutral-600 dark:text-neutral-300">{{ p.margen | number:'1.1-1' }}%</td>
-          </tr>
-          <tr *ngIf="!loading() && porProducto().length === 0">
-            <td colspan="6" class="px-3 py-6 text-center text-neutral-500 text-sm">Sin datos en el rango seleccionado.</td>
-          </tr>
-          <tr *ngIf="loading()">
-            <td colspan="6" class="px-3 py-6 text-center text-neutral-500 text-sm">Calculando ganancias...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
 </main>

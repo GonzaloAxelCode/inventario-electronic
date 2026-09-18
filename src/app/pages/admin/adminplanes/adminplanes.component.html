@@ -1,0 +1,60 @@
+<tui-loader [showLoader]="loading" [overlay]="true">
+  <div class="h-screen h-dvh bg-transparent">
+    <div class="max-w-[980px] mx-auto px-6 md:px-8 py-8">
+      <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+        <div>
+          <h1 class="text-[26px] md:text-[28px] font-semibold tracking-[-0.03em] leading-none text-[#1d1d1f] dark:text-white antialiased">Suscripciones</h1>
+          <p class="text-[13px] leading-5 text-[#86868b] dark:text-[#a1a1a6] mt-1.5">Planes disponibles · {{ planes.length }} {{ planes.length === 1 ? 'plan' : 'planes' }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && error" class="rounded-2xl border border-[#ff3b30]/20 bg-[#ff3b30]/[0.06] p-6 text-center mb-4">
+        <p class="text-[13px] font-medium text-[#ff3b30]">{{ error }}</p>
+        <button (click)="loadPlanes()" class="mt-3 h-8 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium">Reintentar</button>
+      </div>
+
+      <!-- Lista de planes (GET /api/planes/) -->
+      <div *ngIf="!loading && !error && planes.length === 0" class="rounded-2xl p-8 text-center">
+        <p class="text-[14px] font-semibold text-[#1d1d1f] dark:text-white">Sin planes</p>
+        <p class="text-[12px] text-[#86868b] mt-1">Aún no hay planes registrados.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div *ngFor="let plan of planes" class="rounded-2xl overflow-hidden">
+          <div class="p-5">
+            <h2 class="text-[18px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">{{ plan.nombre_plan }}</h2>
+            <p *ngIf="plan.descripcion" class="text-[12px] text-[#86868b] mt-1">{{ plan.descripcion }}</p>
+            <p class="text-[13px] font-medium text-[#1d1d1f] dark:text-white mt-2">{{ plan.precio_mensual }} {{ plan.moneda }} · mensual</p>
+            <p *ngIf="plan.precio_anual" class="text-[12px] text-[#86868b]">{{ plan.precio_anual }} {{ plan.moneda }} · anual</p>
+            <ul *ngIf="plan.lista_descripcion?.length" class="mt-3 space-y-1">
+              <li *ngFor="let c of plan.lista_descripcion" class="flex gap-2 text-[12px] leading-5 text-[#1d1d1f] dark:text-white/90">
+                <span class="text-[#30d158] font-bold">✓</span><span>{{ c }}</span>
+              </li>
+            </ul>
+            <div class="grid grid-cols-3 gap-2 mt-3 text-center">
+              <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-2 py-2">
+                <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Boletas</p>
+                <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ isIlimitado(plan.limite_boletas) ? '∞' : plan.limite_boletas }}</p>
+              </div>
+              <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-2 py-2">
+                <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Facturas</p>
+                <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ isIlimitado(plan.limite_facturas) ? '∞' : plan.limite_facturas }}</p>
+              </div>
+              <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-2 py-2">
+                <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Personal</p>
+                <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ isIlimitado(plan.limite_personal) ? '∞' : plan.limite_personal }}</p>
+              </div>
+            </div>
+            <div *ngIf="isSuperUser" class="mt-4">
+              <button (click)="startEdit(plan)"
+                class="w-full h-10 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-colors">
+                Actualizar plan
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</tui-loader>

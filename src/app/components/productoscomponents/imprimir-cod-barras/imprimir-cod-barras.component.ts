@@ -3,6 +3,9 @@ import { AfterViewChecked, ChangeDetectorRef, Component, ElementRef, QueryList, 
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import * as JsBarcodeImport from 'jsbarcode';
+import { TuiDataList, TuiTextfield } from '@taiga-ui/core';
+import { TuiCheckbox } from '@taiga-ui/kit';
+import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { Producto } from '@/app/models/producto.models';
 import { AppState } from '@/app/state/app.state';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
@@ -22,7 +25,7 @@ interface LabelCopy {
 @Component({
   selector: 'app-imprimir-cod-barras',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TuiTextfield, TuiDataList, TuiSelectModule, TuiTextfieldControllerModule, TuiCheckbox],
   templateUrl: './imprimir-cod-barras.component.html',
   styleUrl: './imprimir-cod-barras.component.scss'
 })
@@ -46,6 +49,22 @@ export class ImprimirCodBarrasComponent implements OnInit, AfterViewChecked {
   altoBarcode = 40;
   anchoLabel: number = 48; // mm aprox
   columnas: 1 | 2 | 3 = 1;
+
+  readonly papeles: Array<{ valor: '58' | '80'; etiqueta: string }> = [
+    { valor: '58', etiqueta: '58 mm (térmica)' },
+    { valor: '80', etiqueta: '80 mm (térmica)' },
+  ];
+  readonly columnasItems: Array<{ valor: 1 | 2 | 3; etiqueta: string }> = [
+    { valor: 1, etiqueta: '1 columna' },
+    { valor: 2, etiqueta: '2 columnas' },
+    { valor: 3, etiqueta: '3 columnas' },
+  ];
+  readonly altosBarcode: Array<{ valor: number; etiqueta: string }> = [
+    { valor: 30, etiqueta: '30 px (bajo)' },
+    { valor: 40, etiqueta: '40 px (normal)' },
+    { valor: 55, etiqueta: '55 px (alto)' },
+    { valor: 70, etiqueta: '70 px (extra)' },
+  ];
   // precio: tomamos de inventario.costo_venta si existe
   private pendingRender = false;
 

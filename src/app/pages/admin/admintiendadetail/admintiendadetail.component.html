@@ -1,8 +1,8 @@
 <tui-loader [showLoader]="loading || deleteTiendaLoader" [overlay]="true">
   <div class="h-screen h-dvh bg-transparent">
-    <div class="max-w-[980px] mx-auto px-6 md:px-8 py-8">
+    <div class="max-w-[1200px] mx-auto px-6 md:px-8 py-8">
       <!-- Back Apple -->
-      <button (click)="goBack()" class="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#0071e3] hover:text-[#0077ed] transition-colors mb-6">
+      <button (click)="goBack()" class="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1d1d1f] dark:text-white transition-colors mb-6">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
         Volver a Tiendas
       </button>
@@ -18,12 +18,6 @@
         <div class="flex-1 min-w-0">
           <div class="flex flex-wrap items-center gap-2">
             <h1 class="text-[26px] md:text-[28px] font-semibold tracking-[-0.03em] leading-none text-[#1d1d1f] dark:text-white antialiased truncate">{{ tienda.nombre || '—' }}</h1>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide"
-              [ngClass]="tienda.activo ? 'bg-[#30d158]/15 text-[#30d158] dark:bg-[#30d158]/20' : 'bg-black/[0.06] text-[#86868b] dark:bg-white/[0.08]'">
-              <span class="w-1.5 h-1.5 rounded-full" [ngClass]="tienda.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
-              {{ tienda.activo ? 'Activa' : 'Inactiva' }}
-            </span>
-            <span *ngIf="tienda.is_deleted" class="px-2 py-1 rounded-full text-[11px] font-medium bg-[#ff3b30]/10 text-[#ff3b30]">Eliminada</span>
           </div>
           <p class="text-[13px] leading-5 text-[#86868b] dark:text-[#a1a1a6] mt-1.5 truncate">
             <span *ngIf="tienda.razon_social">{{ tienda.razon_social }} · </span>RUC {{ tienda.ruc || '—' }} · {{ tienda.direccion || 'Sin dirección' }}
@@ -35,7 +29,6 @@
         </div>
       </div>
 
-      <div class="h-px bg-black/[0.08] dark:bg-white/[0.08] mb-6"></div>
 
       <div *ngIf="!loading && !tienda?.id" class="rounded-2xl border border-[#ff3b30]/20 bg-[#ff3b30]/[0.06] dark:bg-[#ff3b30]/[0.08] p-8 text-center">
         <div class="w-10 h-10 mx-auto rounded-full bg-[#ff3b30]/15 flex items-center justify-center mb-3">
@@ -47,149 +40,156 @@
       </div>
 
       <ng-container *ngIf="tienda?.id">
-      <!-- Segmented Control Apple -->
-      <div class="overflow-x-auto scrollbar-hide -mx-1 mb-6">
-        <div class="inline-flex items-center p-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] backdrop-blur min-w-max">
+      <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
+      <!-- Aside — horizontal en móvil, vertical en desktop -->
+      <aside class="w-full md:w-60 shrink-0 md:sticky md:top-6">
+        <nav class="flex md:flex-col gap-1.5 overflow-x-auto scrollbar-hide pb-1 md:pb-0">
         <button (click)="setTab('update')"
-          class="px-3 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
-          [ngClass]="activeTab === 'update' ? 'bg-white dark:bg-[#3a3a3c] text-[#1d1d1f] dark:text-white shadow-sm ring-1 ring-black/[0.04]' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white'">
-          Información de la tienda
+          class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
+          [ngClass]="activeTab === 'update' ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
+          <span class="block text-[13px] font-medium leading-none">Información</span>
+          <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">Datos y estadísticas</span>
         </button>
         <button (click)="setTab('personal')"
-          class="px-3 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
-          [ngClass]="activeTab === 'personal' ? 'bg-white dark:bg-[#3a3a3c] text-[#1d1d1f] dark:text-white shadow-sm ring-1 ring-black/[0.04]' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white'">
-          Personal
+          class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
+          [ngClass]="activeTab === 'personal' ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
+          <span class="block text-[13px] font-medium leading-none">Personal</span>
+          <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">{{ tienda.users_tienda?.length || 0 }} miembros</span>
         </button>
         <button (click)="setTab('diseno')"
-          class="px-3 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
-          [ngClass]="activeTab === 'diseno' ? 'bg-white dark:bg-[#3a3a3c] text-[#1d1d1f] dark:text-white shadow-sm ring-1 ring-black/[0.04]' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white'">
-          Diseño
+          class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
+          [ngClass]="activeTab === 'diseno' ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
+          <span class="block text-[13px] font-medium leading-none">Diseño</span>
+          <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">Tickets y PDF</span>
+        </button>
+        <button *ngIf="isSuperUser" (click)="setTab('suscripcion')"
+          class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
+          [ngClass]="activeTab === 'suscripcion' ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
+          <span class="block text-[13px] font-medium leading-none">Suscripción</span>
+          <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">Plan y uso</span>
         </button>
         <button *ngIf="isSuperUser" (click)="setTab('config')"
-          class="px-3 md:px-5 py-1.5 rounded-full text-[13px] font-medium leading-none transition-all"
-          [ngClass]="activeTab === 'config' ? 'bg-white dark:bg-[#3a3a3c] text-[#1d1d1f] dark:text-white shadow-sm ring-1 ring-black/[0.04]' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:text-[#1d1d1f] dark:hover:text-white'">
-          Configuración
+          class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
+          [ngClass]="activeTab === 'config' ? 'bg-[#ff3b30] text-white' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
+          <span class="block text-[13px] font-medium leading-none">Configuración</span>
+          <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">Zona de peligro</span>
         </button>
-        </div>
-      </div>
+        </nav>
+      </aside>
+      <!-- Contenido a ancho completo -->
+      <div class="flex-1 min-w-0 w-full">
 
       <!-- TAB: Información de la tienda -->
-      <div *ngIf="activeTab === 'update'" class="space-y-6">
-        <div class="flex justify-end">
-          <button (click)="openEditModal()" class="h-9 px-6 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium tracking-[-0.01em] hover:bg-black dark:hover:bg-[#f5f5f7] transition-colors">
-            Actualizar tienda
-          </button>
-        </div>
-        <!-- Resumen sistema — más información, inset grouped sin fondo -->
-        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
-          <div class="px-5 py-3 flex items-center justify-between">
-            <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">Resumen del sistema</p>
-            <span class="text-[11px] text-[#86868b]">{{ tienda.users_tienda?.length || 0 }} participantes</span>
+      <div *ngIf="activeTab === 'update'" class="space-y-8">
+        <!-- Resumen del sistema -->
+        <section>
+          <div class="flex items-start justify-between gap-3 mb-4">
+            <div>
+              <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Resumen del sistema</h2>
+              <p class="text-[12px] text-[#86868b] mt-0.5">ID {{ tienda.id }} · {{ tienda.users_tienda?.length || 0 }} participantes</p>
+            </div>
+            <button (click)="openEditModal()" class="shrink-0 h-9 px-6 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium tracking-[-0.01em] transition-colors">
+              Actualizar tienda
+            </button>
           </div>
-          <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
-          <div class="divide-y divide-black/[0.06] dark:divide-white/[0.06] text-[13px]">
-            <div class="grid grid-cols-2 md:grid-cols-4 divide-x divide-black/[0.06] dark:divide-white/[0.06]">
-              <div class="px-5 py-3"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">ID</p><p class="font-mono font-medium text-[#1d1d1f] dark:text-white">{{ tienda.id }}</p></div>
-              <div class="px-5 py-3"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">RUC</p><p class="font-medium text-[#1d1d1f] dark:text-white">{{ tienda.ruc || '—' }}</p></div>
-              <div class="px-5 py-3"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Serie</p><p class="font-mono font-medium text-[#1d1d1f] dark:text-white">{{ tienda.serie || '—' }}</p></div>
-              <div class="px-5 py-3"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Estado</p><p class="font-medium" [ngClass]="tienda.activo ? 'text-[#30d158]' : 'text-[#ff3b30]'">{{ tienda.activo ? 'Activa' : 'Inactiva' }}<span *ngIf="tienda.is_deleted" class="text-[#ff3b30]"> · Eliminada</span></p></div>
+          <dl class="text-[13px]">
+            <div class="flex items-baseline justify-between gap-4 py-3">
+              <dt class="text-[#86868b] shrink-0">Razón social</dt>
+              <dd class="font-medium text-[#1d1d1f] dark:text-white text-right truncate">{{ tienda.razon_social || '—' }}</dd>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-black/[0.06] dark:divide-white/[0.06]">
-              <div class="px-5 py-3 flex justify-between"><span class="text-[#86868b]">Razón social</span><span class="font-medium text-[#1d1d1f] dark:text-white truncate ml-4">{{ tienda.razon_social || '—' }}</span></div>
-              <div class="px-5 py-3 flex justify-between"><span class="text-[#86868b]">Representante</span><span class="font-medium text-[#1d1d1f] dark:text-white truncate ml-4">{{ tienda.representante || '—' }}</span></div>
+            <div class="flex items-baseline justify-between gap-4 py-3">
+              <dt class="text-[#86868b] shrink-0">RUC</dt>
+              <dd class="font-medium text-[#1d1d1f] dark:text-white text-right">{{ tienda.ruc || '—' }}</dd>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-black/[0.06] dark:divide-white/[0.06]">
-              <div class="px-5 py-3 flex justify-between"><span class="text-[#86868b]">Dirección</span><span class="font-medium text-[#1d1d1f] dark:text-white truncate ml-4">{{ tienda.direccion || '—' }}</span></div>
-              <div class="px-5 py-3 flex justify-between"><span class="text-[#86868b]">Contacto</span><span class="font-medium text-[#1d1d1f] dark:text-white truncate ml-4">{{ tienda.telefono || '—' }} · {{ tienda.email || '—' }}</span></div>
+            <div class="flex items-baseline justify-between gap-4 py-3">
+              <dt class="text-[#86868b] shrink-0">Serie</dt>
+              <dd class="font-mono font-medium text-[#1d1d1f] dark:text-white text-right">{{ tienda.serie || '—' }}</dd>
             </div>
-            <div *ngIf="isSuperUser" class="grid grid-cols-3 divide-x divide-black/[0.06] dark:divide-white/[0.06]">
-              <div class="px-5 py-3 text-center"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Boleta</p><p class="font-mono text-[13px] font-semibold text-[#1d1d1f] dark:text-white">{{ tienda.correlativo_inicial_boleta }}</p></div>
-              <div class="px-5 py-3 text-center"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Factura</p><p class="font-mono text-[13px] font-semibold text-[#1d1d1f] dark:text-white">{{ tienda.correlativo_inicial_factura }}</p></div>
-              <div class="px-5 py-3 text-center"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Nota créd.</p><p class="font-mono text-[13px] font-semibold text-[#1d1d1f] dark:text-white">{{ tienda.correlativo_inicial_nota_credito }}</p></div>
+            <div class="flex items-baseline justify-between gap-4 py-3">
+              <dt class="text-[#86868b] shrink-0">Representante</dt>
+              <dd class="font-medium text-[#1d1d1f] dark:text-white text-right truncate">{{ tienda.representante || '—' }}</dd>
             </div>
-            <div class="px-5 py-3 flex flex-wrap gap-2 text-[11px]">
-              <span class="px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white">Propietario: {{ getPropietarioNombre(tienda) }}</span>
-              <span class="px-2 py-1 rounded-full border border-black/[0.08] dark:border-white/[0.08] text-[#86868b]">Creada {{ tienda.date_created | date:'medium' }}</span>
-              <span class="px-2 py-1 rounded-full border border-black/[0.08] dark:border-white/[0.08] text-[#86868b]">Logo {{ tienda.logo_img ? 'sí' : 'no' }}</span>
+            <div class="flex items-baseline justify-between gap-4 py-3">
+              <dt class="text-[#86868b] shrink-0">Dirección</dt>
+              <dd class="font-medium text-[#1d1d1f] dark:text-white text-right truncate">{{ tienda.direccion || '—' }}</dd>
             </div>
+            <div class="flex items-baseline justify-between gap-4 py-3">
+              <dt class="text-[#86868b] shrink-0">Contacto</dt>
+              <dd class="font-medium text-[#1d1d1f] dark:text-white text-right truncate">{{ tienda.telefono || '—' }} · {{ tienda.email || '—' }}</dd>
+            </div>
+          </dl>
+          <div *ngIf="isSuperUser" class="grid grid-cols-3 gap-3 mt-2">
+            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-3 text-center"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Boleta</p><p class="font-mono text-[15px] font-semibold text-[#1d1d1f] dark:text-white mt-0.5">{{ tienda.correlativo_inicial_boleta }}</p></div>
+            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-3 text-center"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Factura</p><p class="font-mono text-[15px] font-semibold text-[#1d1d1f] dark:text-white mt-0.5">{{ tienda.correlativo_inicial_factura }}</p></div>
+            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-3 text-center"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Nota créd.</p><p class="font-mono text-[15px] font-semibold text-[#1d1d1f] dark:text-white mt-0.5">{{ tienda.correlativo_inicial_nota_credito }}</p></div>
           </div>
-        </div>
+        </section>
 
-        <!-- Imágenes y archivo clave — Previa (aún no en BD) -->
-        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
-          <div class="px-5 py-3 flex items-center justify-between">
-            <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">Imágenes y archivo — Previa</p>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">Aún no en BD</span>
+        <!-- Estadísticas de la tienda (tienda_stats) -->
+        <section *ngIf="tienda.tienda_stats as stats">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Estadísticas</h2>
+            <span *ngIf="stats.nombre_suscripcion" class="text-[11px] px-2.5 py-1 rounded-full bg-[#7d7aff]/10 text-[#7d7aff] font-semibold">Plan {{ stats.nombre_suscripcion }}</span>
           </div>
-          <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
-          <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Logo claro -->
-            <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3">
-              <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#0071e3]"></span>Logo</p>
-              <div class="mt-2 w-full aspect-square rounded-xl overflow-hidden bg-white dark:bg-[#1c1c1e] ring-1 ring-black/[0.06] flex items-center justify-center">
-                <img *ngIf="tienda.logo_img" [src]="imageUrl(tienda.logo_img)" alt="Logo" class="w-full h-full object-contain p-2"/>
-                <div *ngIf="!tienda.logo_img" class="text-center p-4">
-                  <svg class="w-6 h-6 mx-auto text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.608-4.608a2 2 0 012.828 0L16 16m-2-2l1.5-1.5a2 2 0 012.828 0L20 16m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                  <p class="text-[10px] text-[#86868b] mt-1">Previa 512×512</p>
-                </div>
-               </div>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-4">
+              <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#1d1d1f] dark:text-white">{{ stats.total_comprobantes }}</p>
+              <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Comprobantes</p>
+              <p class="text-[11px] font-mono text-[#86868b] mt-0.5">{{ stats.boletas }} bol · {{ stats.facturas }} fact</p>
             </div>
-            <!-- Logo dark -->
-            <div class="rounded-xl border border-dashed border-black/[0.12] dark:border-white/[0.12] bg-black/[0.02] dark:bg-white/[0.03] p-3">
-              <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#1d1d1f] dark:bg-white"></span>Logo dark</p>
-              <div class="mt-2 w-full aspect-square rounded-xl overflow-hidden bg-[#1d1d1f] dark:bg-white ring-1 ring-black/[0.06] flex items-center justify-center">
-                <img *ngIf="$any(tienda).logo_dark || $any(tienda).logo_dark_img" [src]="imageUrl($any(tienda).logo_dark || $any(tienda).logo_dark_img)" alt="Logo dark" class="w-full h-full object-contain p-2"/>
-                <div *ngIf="!$any(tienda).logo_dark && !$any(tienda).logo_dark_img" class="text-center p-4">
-                  <svg class="w-6 h-6 mx-auto text-white/60 dark:text-black/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-                  <p class="text-[10px] text-white/60 dark:text-black/50 mt-1">Previa dark</p>
-                </div>
-              </div>
-              <p class="text-[10px] leading-3 text-[#86868b] mt-2">512×512 · Blanca · Máx 2MB · Para dark mode</p>
-              <p class="text-[10px] font-mono truncate mt-1 text-[#1d1d1f] dark:text-white">{{ $any(tienda).logo_dark || $any(tienda).logo_dark_img || '—' }}</p>
+            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-4">
+              <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#1d1d1f] dark:text-white">S/ {{ stats.total_facturado }}</p>
+              <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Total facturado</p>
+              <p class="text-[11px] text-[#86868b] mt-0.5">Historial completo</p>
+            </div>
+            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-4">
+              <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#1d1d1f] dark:text-white">{{ stats.boletas }}</p>
+              <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Boletas</p>
+              <p class="text-[11px] text-[#86868b] mt-0.5">Emitidas a la fecha</p>
+            </div>
+            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-4">
+              <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#1d1d1f] dark:text-white">{{ stats.num_personal }}</p>
+              <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Personal</p>
+              <p class="text-[11px] text-[#86868b] mt-0.5">{{ stats.facturas }} facturas emitidas</p>
             </div>
           </div>
-          </div>
+        </section>
 
       </div>
 
-      <!-- TAB: Personal — Apple -->
+      <!-- TAB: Personal -->
       <div *ngIf="activeTab === 'personal'">
-        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
-          <div class="px-5 py-3 flex items-center justify-between">
-            <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Personal · {{ tienda.users_tienda?.length || 0 }}</p>
-            <span class="text-[11px] text-[#86868b]">Tienda #{{ tienda.id }}</span>
-          </div>
-          <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
-          <div class="p-2 md:p-4 bg-transparent">
-            <app-tableusers [idtienda]="tienda.id"></app-tableusers>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Personal</h2>
+            <p class="text-[12px] text-[#86868b] mt-0.5">{{ tienda.users_tienda?.length || 0 }} miembros en esta tienda</p>
           </div>
         </div>
+        <app-tableusers [idtienda]="tienda.id"></app-tableusers>
       </div>
 
-      <!-- TAB: Diseño — ambos perfiles, 6 boletas 80mm + 3 facturas PDF, solo previa en cards -->
-      <div *ngIf="activeTab === 'diseno'" class="space-y-6">
+      <!-- TAB: Diseño -->
+      <div *ngIf="activeTab === 'diseno'" class="space-y-8">
         <!-- Boletas 80mm -->
-        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
-          <div class="px-5 py-3 flex items-center justify-between">
-            <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">Boletas — Ticket 80mm</p>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">6 diseños · térmica</span>
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Boletas — Ticket 80mm</h2>
+              <p class="text-[12px] text-[#86868b] mt-0.5">6 diseños · térmica</p>
+            </div>
           </div>
-          <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
-          <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div *ngFor="let tpl of ticketTemplates"
-                 (click)="selectTicket(tpl.key)"
-                 class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all"
-                 [ngClass]="selectedTicket===tpl.key ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
-              <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2">
-                  <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">{{ tpl.label }}</p>
-                  <span *ngIf="tpl.key==='t80_1'" class="text-[9px] px-1.5 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3] font-semibold">Default</span>
-                </div>
-                <span *ngIf="selectedTicket===tpl.key" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
-                <span *ngIf="selectedTicket!==tpl.key" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
-              </div>
-              <div class="mx-auto w-[120px] sm:w-[140px] bg-white dark:bg-[#1c1c1e] border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
-                <ng-container [ngSwitch]="tpl.key">
+          <div class="pb-1 flex gap-2 overflow-x-auto scrollbar-hide">
+            <button *ngFor="let tpl of ticketTemplates" (click)="selectTicket(tpl.key)"
+              class="shrink-0 h-8 px-4 rounded-full text-[12px] font-medium transition-colors"
+              [ngClass]="selectedTicket===tpl.key ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f]/70 dark:text-white/70'">
+              {{ tpl.label }}
+            </button>
+          </div>
+          <div class="py-5 flex flex-col items-center">
+            <ng-container *ngFor="let tpl of ticketTemplates">
+              <ng-container *ngIf="tpl.key===selectedTicket">
+                <div class="w-full max-w-[240px] bg-white dark:bg-[#1c1c1e] border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
+                  <ng-container [ngSwitch]="tpl.key">
                   <!-- Ticket 1 — Clásico -->
                   <div *ngSwitchCase="'t80_1'">
                     <div class="h-1 bg-black"></div>
@@ -304,33 +304,32 @@
                     <p class="text-[4px] text-center text-[#86868b] -mt-1">¡Gracias!</p>
                   </div>
                 </ng-container>
-              </div>
-              <p class="text-[10px] text-[#86868b] mt-2 text-center">{{ tpl.desc }}</p>
+                </div>
+                <p class="text-[11px] text-[#86868b] mt-3 text-center">{{ tpl.desc }}</p>
+              </ng-container>
+            </ng-container>
+          </div>
+        </section>
+        <!-- Facturas PDF -->
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Diseño de Facturas PDF</h2>
+              <p class="text-[12px] text-[#86868b] mt-0.5">6 estilos · A4</p>
             </div>
           </div>
-        </div>
-        <!-- Facturas PDF -->
-        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
-          <div class="px-5 py-3 flex items-center justify-between">
-            <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">Diseño de Facturas PDF</p>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">6 estilos · A4</span>
+          <div class="pb-1 flex gap-2 overflow-x-auto scrollbar-hide">
+            <button *ngFor="let tpl of invoiceTemplates" (click)="selectInvoice(tpl.key)"
+              class="shrink-0 h-8 px-4 rounded-full text-[12px] font-medium transition-colors"
+              [ngClass]="selectedInvoice===tpl.key ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f]/70 dark:text-white/70'">
+              {{ tpl.label }}
+            </button>
           </div>
-          <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
-          <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div *ngFor="let tpl of invoiceTemplates"
-                 (click)="selectInvoice(tpl.key)"
-                 class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all"
-                 [ngClass]="selectedInvoice===tpl.key ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
-              <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2">
-                  <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">{{ tpl.label }}</p>
-                  <span *ngIf="tpl.key==='pdf_1'" class="text-[9px] px-1.5 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3] font-semibold">Default</span>
-                </div>
-                <span *ngIf="selectedInvoice===tpl.key" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
-                <span *ngIf="selectedInvoice!==tpl.key" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
-              </div>
-              <div class="mx-auto w-[120px] sm:w-[150px] bg-white border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
-                <ng-container [ngSwitch]="tpl.key">
+          <div class="py-5 flex flex-col items-center">
+            <ng-container *ngFor="let tpl of invoiceTemplates">
+              <ng-container *ngIf="tpl.key===selectedInvoice">
+                <div class="w-full max-w-[280px] bg-white border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
+                  <ng-container [ngSwitch]="tpl.key">
                   <!-- PDF 1 — Corporate -->
                   <div *ngSwitchCase="'pdf_1'">
                     <div class="h-2 bg-[#0071e3]"></div>
@@ -437,33 +436,32 @@
                     </div>
                   </div>
                 </ng-container>
-              </div>
-              <p class="text-[10px] text-[#86868b] mt-2 text-center">{{ tpl.desc }}</p>
+                </div>
+                <p class="text-[11px] text-[#86868b] mt-3 text-center">{{ tpl.desc }}</p>
+              </ng-container>
+            </ng-container>
+          </div>
+        </section>
+        <!-- Boletas PDF -->
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Diseño de Boletas PDF</h2>
+              <p class="text-[12px] text-[#86868b] mt-0.5">6 estilos · A4</p>
             </div>
           </div>
-        </div>
-        <!-- Boletas PDF -->
-        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden">
-          <div class="px-5 py-3 flex items-center justify-between">
-            <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">Diseño de Boletas PDF</p>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b]">6 estilos · A4</span>
+          <div class="pb-1 flex gap-2 overflow-x-auto scrollbar-hide">
+            <button *ngFor="let tpl of boletaTemplates" (click)="selectBoleta(tpl.key)"
+              class="shrink-0 h-8 px-4 rounded-full text-[12px] font-medium transition-colors"
+              [ngClass]="selectedBoleta===tpl.key ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f]/70 dark:text-white/70'">
+              {{ tpl.label }}
+            </button>
           </div>
-          <div class="h-px bg-black/[0.06] dark:bg-white/[0.06]"></div>
-          <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div *ngFor="let tpl of boletaTemplates"
-                 (click)="selectBoleta(tpl.key)"
-                 class="cursor-pointer rounded-2xl border bg-transparent p-3 transition-all"
-                 [ngClass]="selectedBoleta===tpl.key ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20' : 'border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.12]'">
-              <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2">
-                  <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white">{{ tpl.label }}</p>
-                  <span *ngIf="tpl.key==='boleta_v1'" class="text-[9px] px-1.5 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3] font-semibold">Default</span>
-                </div>
-                <span *ngIf="selectedBoleta===tpl.key" class="w-5 h-5 rounded-full bg-[#0071e3] text-white flex items-center justify-center text-[10px]">✓</span>
-                <span *ngIf="selectedBoleta!==tpl.key" class="text-[10px] px-1.5 py-0.5 rounded-full border border-black/[0.08] text-[#86868b]">Previa</span>
-              </div>
-              <div class="mx-auto w-[120px] sm:w-[150px] bg-white border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
-                <ng-container [ngSwitch]="tpl.key">
+          <div class="py-5 flex flex-col items-center">
+            <ng-container *ngFor="let tpl of boletaTemplates">
+              <ng-container *ngIf="tpl.key===selectedBoleta">
+                <div class="w-full max-w-[280px] bg-white border border-black/[0.08] rounded-lg overflow-hidden shadow-sm">
+                  <ng-container [ngSwitch]="tpl.key">
                   <!-- BOLETA 1 — Corporate -->
                   <div *ngSwitchCase="'boleta_v1'">
                     <div class="h-2 bg-[#0071e3]"></div>
@@ -570,11 +568,143 @@
                     </div>
                   </div>
                 </ng-container>
+                </div>
+                <p class="text-[11px] text-[#86868b] mt-3 text-center">{{ tpl.desc }}</p>
+              </ng-container>
+            </ng-container>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB: Suscripción — solo superuser -->
+      <div *ngIf="activeTab === 'suscripcion' && isSuperUser" class="space-y-4">
+        <div class="flex justify-end">
+          <button (click)="loadSuscripcion(true)" [disabled]="loadingSuscripcion"
+            class="h-8 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-colors disabled:opacity-50">
+            {{ loadingSuscripcion ? 'Cargando…' : 'Recargar' }}
+          </button>
+        </div>
+
+        <div *ngIf="loadingSuscripcion" class="rounded-2xl p-8 text-center">
+          <p class="text-[13px] text-[#86868b]">Cargando suscripción…</p>
+        </div>
+
+        <div *ngIf="!loadingSuscripcion && errorSuscripcion" class="rounded-2xl border border-[#ff3b30]/20 bg-[#ff3b30]/[0.06] p-6 text-center">
+          <p class="text-[13px] font-medium text-[#ff3b30]">{{ errorSuscripcion }}</p>
+          <button (click)="loadSuscripcion(true)" class="mt-3 h-8 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium">Reintentar</button>
+        </div>
+
+        <ng-container *ngIf="!loadingSuscripcion && !errorSuscripcion">
+          <!-- Sin plan asignado -->
+          <div *ngIf="!suscripcion?.plan_actual" class="rounded-2xl border border-dashed border-black/[0.12] dark:border-white/[0.12] p-8 text-center">
+            <p class="text-[14px] font-semibold text-[#1d1d1f] dark:text-white">Sin plan asignado</p>
+            <p class="text-[12px] text-[#86868b] mt-1">Esta tienda aún no tiene un plan de suscripción.</p>
+          </div>
+
+          <!-- Plan actual -->
+          <div *ngIf="suscripcion?.plan_actual as plan" class="rounded-2xl overflow-hidden">
+            <div class="px-5 py-3 flex items-center justify-between">
+              <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Plan actual</p>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold"
+                [ngClass]="plan.activo ? 'bg-[#30d158]/15 text-[#30d158]' : 'bg-black/[0.06] text-[#86868b]'">
+                <span class="w-1.5 h-1.5 rounded-full" [ngClass]="plan.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
+                {{ plan.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+            
+            <div class="p-5">
+              <div class="flex flex-wrap items-baseline gap-2">
+                <h2 class="text-[22px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">{{ plan.nombre_plan }}</h2>
+                <span class="text-[12px] font-mono text-[#86868b]">#{{ plan.id }}</span>
               </div>
-              <p class="text-[10px] text-[#86868b] mt-2 text-center">{{ tpl.desc }}</p>
+              <p class="text-[13px] text-[#86868b] mt-1">
+                {{ plan.precio_mensual }} {{ plan.moneda }} · mensual<span *ngIf="plan.precio_anual"> · {{ plan.precio_anual }} {{ plan.moneda }} · anual</span>
+              </p>
+              <ul *ngIf="plan.lista_descripcion?.length" class="mt-3 space-y-1">
+                <li *ngFor="let c of plan.lista_descripcion" class="flex gap-2 text-[13px] leading-5 text-[#1d1d1f] dark:text-white/90">
+                  <span class="text-[#30d158] font-bold">✓</span><span>{{ c }}</span>
+                </li>
+              </ul>
+              <div class="grid grid-cols-3 gap-3 mt-4 text-center">
+                <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-3 py-3">
+                  <p class="text-[11px] uppercase tracking-wide text-[#86868b]">Boletas</p>
+                  <p class="font-mono text-[15px] font-semibold text-[#1d1d1f] dark:text-white">{{ isIlimitado(plan.limite_boletas) ? '∞' : plan.limite_boletas }}</p>
+                </div>
+                <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-3 py-3">
+                  <p class="text-[11px] uppercase tracking-wide text-[#86868b]">Facturas</p>
+                  <p class="font-mono text-[15px] font-semibold text-[#1d1d1f] dark:text-white">{{ isIlimitado(plan.limite_facturas) ? '∞' : plan.limite_facturas }}</p>
+                </div>
+                <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-3 py-3">
+                  <p class="text-[11px] uppercase tracking-wide text-[#86868b]">Personal</p>
+                  <p class="font-mono text-[15px] font-semibold text-[#1d1d1f] dark:text-white">{{ isIlimitado(plan.limite_personal) ? '∞' : plan.limite_personal }}</p>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- Uso mensual -->
+          <div class="rounded-2xl overflow-hidden">
+            <div class="px-5 py-3 flex items-center justify-between">
+              <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Uso del mes</p>
+              <span *ngIf="suscripcion?.uso_mensual" class="text-[11px] font-mono text-[#86868b]">
+                {{ getUsoMesLabel(suscripcion?.uso_mensual) }}
+              </span>
+            </div>
+            
+            <div *ngIf="!suscripcion?.uso_mensual" class="p-6 text-center">
+              <p class="text-[13px] text-[#86868b]">Sin comprobantes este mes.</p>
+            </div>
+            <div *ngIf="suscripcion?.uso_mensual as uso" class="p-5 space-y-4">
+              <div *ngIf="suscripcion?.plan_actual as plan">
+                <div class="flex justify-between text-[13px] mb-1.5">
+                  <span class="text-[#1d1d1f] dark:text-white font-medium">Boletas</span>
+                  <span class="font-mono text-[#86868b]">{{ getBoletasEmitidas(uso) }} / {{ isIlimitado(plan.limite_boletas) ? '∞' : plan.limite_boletas }}</span>
+                </div>
+                <div class="h-2 rounded-full bg-black/[0.06] dark:bg-white/[0.08] overflow-hidden">
+                  <div class="h-full rounded-full bg-[#0071e3] transition-all" [style.width.%]="getUsoPorcentaje(getBoletasEmitidas(uso), plan.limite_boletas)"></div>
+                </div>
+              </div>
+              <div *ngIf="suscripcion?.plan_actual as plan">
+                <div class="flex justify-between text-[13px] mb-1.5">
+                  <span class="text-[#1d1d1f] dark:text-white font-medium">Facturas</span>
+                  <span class="font-mono text-[#86868b]">{{ getFacturasEmitidas(uso) }} / {{ isIlimitado(plan.limite_facturas) ? '∞' : plan.limite_facturas }}</span>
+                </div>
+                <div class="h-2 rounded-full bg-black/[0.06] dark:bg-white/[0.08] overflow-hidden">
+                  <div class="h-full rounded-full bg-[#7d7aff] transition-all" [style.width.%]="getUsoPorcentaje(getFacturasEmitidas(uso), plan.limite_facturas)"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cambiar plan (PATCH /api/tiendas/<id>/cambiar-plan/) -->
+          <div class="rounded-2xl overflow-hidden">
+            <div class="px-5 py-3">
+              <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Cambiar plan</p>
+            </div>
+            
+            <div class="p-5">
+              <div *ngIf="errorPlanes" class="mb-3 text-[12px] text-[#ff3b30]">{{ errorPlanes }}</div>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <tui-select
+                  [ngModel]="selectedPlanNombre"
+                  (ngModelChange)="onPlanNombreChange($event)"
+                  class="flex-1">
+                  Elige un plan
+                  <tui-data-list *tuiDataList>
+                    <button *ngFor="let p of planes" tuiOption [value]="p.nombre_plan">
+                      {{ planEtiqueta(p) }}
+                    </button>
+                  </tui-data-list>
+                </tui-select>
+                <button (click)="onCambiarPlan()" [disabled]="!selectedPlanId || changingPlan || selectedPlanId === suscripcion?.plan_actual?.id"
+                  class="h-10 px-6 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-colors disabled:opacity-40">
+                  {{ changingPlan ? 'Cambiando…' : 'Cambiar plan' }}
+                </button>
+              </div>
+              <p *ngIf="planes.length === 0 && !loadingPlanes" class="text-[12px] text-[#86868b] mt-2">No hay planes para mostrar.</p>
         </div>
+      </div>
+      </ng-container>
       </div>
 
       <!-- TAB: Configuración — solo superusuarios (admin tienda no ve eliminar ni config) -->
@@ -592,8 +722,10 @@
                 Eliminar tienda permanentemente
               </button>
             </div>
+            </div>
           </div>
         </div>
+      </div>
       </div>
       </ng-container>
 

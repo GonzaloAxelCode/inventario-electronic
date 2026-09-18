@@ -1,172 +1,150 @@
-<div class="p-2 sm:p-6 w-full md:hidden">
-  <!-- Botón agregar -->
-  <div class="flex justify-start mb-4">
-    <button
-      iconStart="@tui.plus"
-      tuiButton
-      appearance="textfield"
-      tuiButtonVertical
-      type="button"
-      class="w-full sm:w-auto"
-      (click)="showDialogCreate()"
-    >
-      Agregar Proveedor
-    </button>
-  </div>
-
-  <!-- Skeleton mientras carga -->
-  <div
-    class="rounded-2xl"
-    [tuiSkeleton]="!!(proveedoresState$ | async)?.loadingProveedores"
-  >
-    <!-- ✅ Si hay proveedores -->
-    <ng-container *ngIf="(proveedoresState$ | async)?.proveedores?.length; else noProveedores">
-      <div class="flex flex-col gap-4 mt-3">
-        <div
-          *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []"
-          class="rounded-2xl border border-gray-300 dark:border-gray-700 shadow-sm p-4 transition-all duration-300"
-        >
-          <!-- Encabezado -->
-          <div class="flex items-start justify-between mb-3">
-            <div>
-              <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
-                {{ proveedor.nombre }}
-              </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                <strong>RUC:</strong> {{  '100000001' }}
-              </p>
-            </div>
-            <tui-badge
-              [appearance]="proveedor.activo ? 'positive' : 'negative'"
-              class="text-xs"
-            >
-              {{ proveedor.activo ? 'Activo' : 'Inactivo' }}
-            </tui-badge>
-          </div>
-
-          <!-- Detalles -->
-          <div class="text-sm text-gray-700 dark:text-gray-300 space-y-0.5 mb-3">
-            <p><strong>Teléfono:</strong> {{ proveedor.telefono || '—' }}</p>
-            <p><strong>Correo:</strong> {{ proveedor.email || '—' }}</p>
-            <p><strong>Dirección:</strong> {{ proveedor.direccion || '—' }}</p>
-          </div>
-
-          <!-- Acciones -->
-          <div class="flex flex-col sm:flex-row gap-2 mt-3">
-            <button
-              appearance="positive"
-              iconStart="@tui.users"
-              tuiButton
-              type="button"
-              class="w-full sm:w-auto"
-              (click)="showDialogUpdate(proveedor)"
-            >
-              Actualizar
-            </button>
-
-            <button
-              [disabled]="!(userPermissions$ | async)?.can_delete_proveedor"
-              [appearance]="
-                (userPermissions$ | async)?.can_delete_proveedor
-                  ? (proveedor.activo ? 'error' : 'secondary')
-                  : 'secondary-grayscale'
-              "
-              iconStart="@tui.trash"
-              tuiButton
-              type="button"
-              class="w-full sm:w-auto"
-              (click)="onActiveToggle(proveedor)"
-            >
-              {{ proveedor.activo ? 'Desactivar' : 'Activar' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </ng-container>
-
-    <!-- 🚫 Si no hay proveedores -->
-    <ng-template #noProveedores>
-      <tui-block-status class="mt-10">
-        <img
-          alt="no-data"
-          src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
-          tuiSlot="top"
-        />
-
-        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
-          Aún no tienes ningún proveedor
-        </h4>
-        <span class="text-gray-600 dark:text-gray-400">
-          Empieza a crear tus primeros proveedores
-        </span>
-      </tui-block-status>
-    </ng-template>
-  </div>
-</div>
-
-<div class="py-2 hidden md:block">
-
-  <div class="flex gap-2">
-    <button iconStart="@tui.plus" tuiButton appearance="textfield" tuiButtonVertical type="button" class="my-5 pr-3"
-      (click)="showDialogCreate()">
-      Agregar Proveedor
-    </button>
-
-  </div>
-  <div class="rounded-lg h-[200px] min-h-[200px]" [tuiSkeleton]="!!(proveedoresState$ | async)?.loadingProveedores">
-
-
-    <ng-template #tabla>
-      <table tuiTable size="s">
-        <thead>
-          <tr>
-            <th *ngFor="let column of allColumns" tuiTh>{{ column.label }}</th>
-            <th tuiTh>Activo</th>
-            <th tuiTh>Acciones</th>
-
-
-
-          </tr>
-        </thead>
-        <tbody tuiTbody *ngIf="(proveedoresState$ | async)?.proveedores?.length">
-          <tr *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []">
-
-            <td *ngFor="let column of allColumns" tuiTd>{{ getProveedorValue(proveedor, column.key) }}</td>
-
-            <td tuiTd>
-              <tui-badge [appearance]="proveedor.activo ? 'positive' : 'negative'">{{ proveedor.activo ? 'Activo' : 'No
-                activo' }}</tui-badge>
-            </td>
-            <td tuiTd>
-              <div class="flex gap-2 ">
-                <button appearance="positive" iconStart="@tui.users" tuiButton type="button"
-                  (click)="showDialogUpdate(proveedor)">
-                  Actualizar
-                </button>
-                <button [appearance]="proveedor.activo ? 'error' : 'secondary'" iconStart="@tui.trash" tuiButton
-                  type="button" (click)=" onActiveToggle(proveedor)">
-                  {{ proveedor.activo ? 'Desactivar' : 'Activar' }}
-                </button>
-              </div>
-
-            </td>
-
-          </tr>
-
-        </tbody>
-      </table>
-    </ng-template>
+<section class="apple-proveedores py-3 sm:py-4 md:py-6">
     <tui-block-status
-      *ngIf="(proveedoresState$ | async)?.proveedores?.length === 0 && !(proveedoresState$ | async)?.loadingProveedores else tabla"
-      size="m" class="m-auto">
-      <svg tuiSlot="top" class="w-20 h-20 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
-      </svg>
+        *ngIf="(proveedoresState$ | async)?.proveedores?.length === 0 && !(proveedoresState$ | async)?.loadingProveedores"
+        size="m" class="m-auto">
+        <svg tuiSlot="top" class="w-20 h-20 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
+        </svg>
 
-      <h4>No hay proveedores registrados</h4>
+        <h4>No hay proveedores registrados</h4>
 
-      <span>Agrega tu primer proveedor para gestionar tus compras</span>
+        <span>Agrega tu primer proveedor para gestionar tus compras</span>
 
     </tui-block-status>
 
-  </div>
+    <div *ngIf="(proveedoresState$ | async)?.proveedores?.length">
+        <div class="rounded-lg overflow-hidden" [tuiSkeleton]="!!(proveedoresState$ | async)?.loadingProveedores">
+
+            <!-- Acciones + toggle lista / grilla estilo Apple -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3">
+                <div class="flex items-center gap-2">
+                    <button type="button" (click)="showDialogCreate()"
+                        class="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs font-semibold text-neutral-900 shadow-sm transition hover:bg-neutral-100 active:scale-95 dark:border-white/20 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/>
+                        </svg>
+                        Agregar
+                    </button>
+                    <span class="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                        {{ ((proveedoresState$ | async)?.proveedores ?? []).length }} proveedores
+                    </span>
+                </div>
+                <div class="hidden sm:inline-flex items-center rounded-full bg-neutral-200/70 dark:bg-neutral-800 p-1" role="tablist" aria-label="Cambiar vista">
+                    <button type="button" role="tab" [attr.aria-selected]="viewMode === 'lista'" (click)="setViewMode('lista')"
+                        class="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all"
+                        [ngClass]="viewMode === 'lista' ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm' : 'text-neutral-500 dark:text-neutral-400'">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        Lista
+                    </button>
+                    <button type="button" role="tab" [attr.aria-selected]="viewMode === 'grilla'" (click)="setViewMode('grilla')"
+                        class="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all"
+                        [ngClass]="viewMode === 'grilla' ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm' : 'text-neutral-500 dark:text-neutral-400'">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                        </svg>
+                        Grilla
+                    </button>
+                </div>
+            </div>
+
+            <!-- VISTA LISTA estilo Apple -->
+            <div *ngIf="viewMode === 'lista' && !isPhone"
+                class="overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 shadow-sm">
+                <div *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []; let last = last"
+                    class="border-neutral-200/80 dark:border-white/10 px-4 py-3.5"
+                    [class.border-b]="!last">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                        <!-- Avatar + nombre / datos -->
+                        <div class="flex min-w-0 flex-1 items-center gap-3">
+                            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-base font-bold"
+                                [style.background]="avatarColor(proveedor).fondo"
+                                [style.color]="avatarColor(proveedor).texto">
+                                {{ (proveedor.nombre || '?').charAt(0).toUpperCase() }}
+                            </span>
+                            <div class="min-w-0">
+                                <p class="line-clamp-2 break-words text-[15px] font-semibold leading-snug text-neutral-900 dark:text-white">{{ proveedor.nombre }}</p>
+                                <p class="mt-0.5 truncate text-xs text-neutral-500 dark:text-neutral-400">RUC: {{ proveedor.ruc || '—' }}</p>
+                                <p class="truncate text-xs text-neutral-500 dark:text-neutral-400" *ngIf="proveedor.tipo_producto">{{ proveedor.tipo_producto }}</p>
+                            </div>
+                        </div>
+                        <!-- Contacto -->
+                        <div class="grid grid-cols-1 gap-0.5 pl-[56px] sm:pl-0 text-xs text-neutral-500 dark:text-neutral-400">
+                            <span class="truncate" *ngIf="proveedor.telefono">📞 {{ proveedor.telefono }}</span>
+                            <span class="truncate" *ngIf="proveedor.email">✉️ {{ proveedor.email }}</span>
+                            <span class="truncate" *ngIf="proveedor.direccion">📍 {{ proveedor.direccion }}</span>
+                        </div>
+                        <!-- Estado -->
+                        <span class="inline-flex shrink-0 items-center self-start rounded-full px-2.5 py-0.5 text-xs font-semibold sm:self-center"
+                            [ngClass]="proveedor.activo ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-neutral-500/10 text-neutral-500 dark:text-neutral-400'">
+                            {{ proveedor.activo ? 'Activo' : 'Inactivo' }}
+                        </span>
+                        <!-- Acciones estilo Apple -->
+                        <div class="flex shrink-0 gap-2 pl-[56px] sm:pl-0">
+                            <button type="button" (click)="showDialogUpdate(proveedor)"
+                                class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold text-neutral-900 shadow-sm transition hover:bg-neutral-100 active:scale-95 sm:flex-none dark:border-white/20 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
+                                </svg>
+                                Actualizar
+                            </button>
+                            <button type="button" (click)="onActiveToggle(proveedor)"
+                                [disabled]="!(userPermissions$ | async)?.can_delete_proveedor"
+                                class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition active:scale-95 disabled:opacity-40 sm:flex-none"
+                                [ngClass]="proveedor.activo ? 'bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:text-red-400' : 'bg-neutral-500/10 text-neutral-600 hover:bg-neutral-500/20 dark:text-neutral-300'">
+                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                </svg>
+                                {{ proveedor.activo ? 'Desactivar' : 'Activar' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VISTA GRILLA estilo Apple (en teléfonos siempre 1 columna) -->
+            <div *ngIf="viewMode === 'grilla' || isPhone" class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
+                <article *ngFor="let proveedor of (proveedoresState$ | async)?.proveedores ?? []"
+                    class="flex flex-col rounded-3xl border border-black/5 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-neutral-800">
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-base font-bold"
+                            [style.background]="avatarColor(proveedor).fondo"
+                            [style.color]="avatarColor(proveedor).texto">
+                            {{ (proveedor.nombre || '?').charAt(0).toUpperCase() }}
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <p class="line-clamp-2 break-words text-[15px] font-semibold leading-snug text-neutral-900 dark:text-white">{{ proveedor.nombre }}</p>
+                            <p class="mt-0.5 truncate text-xs text-neutral-500 dark:text-neutral-400">RUC: {{ proveedor.ruc || '—' }}</p>
+                        </div>
+                        <span class="inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                            [ngClass]="proveedor.activo ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-neutral-500/10 text-neutral-500 dark:text-neutral-400'">
+                            {{ proveedor.activo ? 'Activo' : 'Inactivo' }}
+                        </span>
+                    </div>
+                    <div class="mt-3 grid grid-cols-1 gap-0.5 rounded-2xl bg-neutral-100/80 dark:bg-white/10 p-3 text-xs text-neutral-600 dark:text-neutral-300">
+                        <span class="truncate" *ngIf="proveedor.tipo_producto">{{ proveedor.tipo_producto }}</span>
+                        <span class="truncate" *ngIf="proveedor.telefono">📞 {{ proveedor.telefono }}</span>
+                        <span class="truncate" *ngIf="proveedor.email">✉️ {{ proveedor.email }}</span>
+                        <span class="truncate" *ngIf="proveedor.direccion">📍 {{ proveedor.direccion }}</span>
+                    </div>
+                    <div class="mt-3 grid grid-cols-2 gap-2">
+                        <button type="button" (click)="showDialogUpdate(proveedor)"
+                            class="inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold text-neutral-900 shadow-sm transition hover:bg-neutral-100 active:scale-95 dark:border-white/20 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
+                            </svg>
+                            Actualizar
+                        </button>
+                        <button type="button" (click)="onActiveToggle(proveedor)"
+                            [disabled]="!(userPermissions$ | async)?.can_delete_proveedor"
+                            class="inline-flex w-full items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition active:scale-95 disabled:opacity-40"
+                            [ngClass]="proveedor.activo ? 'bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:text-red-400' : 'bg-neutral-500/10 text-neutral-600 hover:bg-neutral-500/20 dark:text-neutral-300'">
+                            {{ proveedor.activo ? 'Desactivar' : 'Activar' }}
+                        </button>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>

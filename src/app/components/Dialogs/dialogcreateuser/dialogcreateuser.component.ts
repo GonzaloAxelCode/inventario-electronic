@@ -61,4 +61,8 @@ export class DialogcreateuserComponent {
       this.userForm.markAllAsTouched();
     }
   }
+
+  onCancel(): void {
+    this.context.completeWith(false);
+  }
 }

@@ -8,8 +8,8 @@
     </div>
     <div class="flex items-center gap-2 shrink-0">
       <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
-        [class]="venta.comprobante.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'">
-        {{ venta.comprobante.estado_sunat === 'ACEPTADO' ? 'Aceptado' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'Rechazado' : 'Pendiente' }}
+        [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'">
+        {{ venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'Aceptado' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'Rechazado' : 'Pendiente' }}
       </span>
       <p class="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900 dark:text-white">S/ {{ comprobante.total }}</p>
     </div>
@@ -20,7 +20,7 @@
 
     <!-- Sidebar acciones - Estilo Apple -->
     <div *ngIf="venta.estado !== 'ANULADA'" class="grid grid-cols-3 sm:grid-cols-4 lg:flex lg:flex-col gap-3 p-3 pt-4 lg:pt-8 lg:pr-4 lg:pb-4 lg:pl-4 lg:w-[168px] shrink-0 border-b lg:border-b-0 lg:border-r border-stone-200/60 dark:border-stone-700/40 bg-stone-50/40 dark:bg-stone-900/20" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;">
-      <ng-container *ngIf="selectedState === 'original' && venta.comprobante.estado_sunat === 'ACEPTADO'">
+      <ng-container *ngIf="selectedState === 'original' && venta.comprobante?.estado_sunat === 'ACEPTADO'">
         <!-- Grupo Documentos -->
         <div class="flex lg:flex-col gap-2 lg:shrink-0 w-full col-span-3 sm:col-span-4 lg:col-span-1">
           <p class="hidden lg:block text-[10px] font-semibold text-stone-400 uppercase tracking-widest px-1 mb-1">Documentos</p>
@@ -125,8 +125,8 @@
             </div>
             <div class="flex items-center gap-3">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium"
-                [class]="venta.comprobante.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'">
-                {{ venta.comprobante.estado_sunat === 'ACEPTADO' ? 'Aceptado' : venta.comprobante.estado_sunat === 'RECHAZADO' ? 'Rechazado' : 'Pendiente' }}
+                [class]="venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'">
+                {{ venta.comprobante?.estado_sunat === 'ACEPTADO' ? 'Aceptado' : venta.comprobante?.estado_sunat === 'RECHAZADO' ? 'Rechazado' : 'Pendiente' }}
               </span>
               <div class="text-right">
                 <p class="text-2xl font-semibold text-stone-900 dark:text-white">S/ {{ comprobante.total }}</p>

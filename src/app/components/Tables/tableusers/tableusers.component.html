@@ -6,16 +6,16 @@
         Personal
       </p>
       <button (click)="showDialogCreateUser(idtienda)"
-        class="inline-flex items-center gap-1.5 h-7 px-3.5 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white text-[12px] font-medium transition-colors">
+        class="inline-flex items-center gap-1.5 h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[12px] font-medium transition-colors">
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
         Agregar
       </button>
     </div>
 
     <ng-container *ngIf="filteredUsers && filteredUsers.length > 0; else noUsers">
-      <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-transparent overflow-hidden divide-y divide-black/[0.06] dark:divide-white/[0.06]">
+      <div class="bg-transparent space-y-1">
         <div *ngFor="let user of filteredUsers; let i = index"
-          class="flex items-center gap-4 px-4 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors">
+          class="flex items-center gap-4 px-4 py-4 rounded-xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors">
           <!-- Avatar Apple -->
           <div class="w-10 h-10 rounded-full bg-black/[0.06] dark:bg-white/[0.08] ring-1 ring-black/[0.08] dark:ring-white/[0.08] flex items-center justify-center text-[12px] font-semibold text-[#1d1d1f] dark:text-white shrink-0 uppercase">
             {{ (user.first_name?.charAt(0) || user.username?.charAt(0) || '?') }}{{ (user.last_name?.charAt(0) || '') }}
@@ -83,20 +83,20 @@
     </ng-container>
 
   <ng-template #noUsers>
-    <div class="py-12 text-center rounded-2xl border border-dashed border-black/[0.08] dark:border-white/[0.08] bg-transparent">
+    <div class="py-12 text-center rounded-2xl bg-transparent">
       <div class="w-12 h-12 mx-auto rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center mb-3">
         <svg class="w-6 h-6 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </div>
       <p class="text-[14px] font-semibold text-[#1d1d1f] dark:text-white">Sin personal</p>
       <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mt-1">Agrega un nuevo miembro para esta tienda.</p>
-      <button (click)="showDialogCreateUser(idtienda)" class="mt-4 h-8 px-5 rounded-full bg-[#0071e3] text-white text-[13px] font-medium">Agregar personal</button>
+      <button (click)="showDialogCreateUser(idtienda)" class="mt-4 h-8 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium">Agregar personal</button>
     </div>
   </ng-template>
 
   <!-- Modal confirmar eliminación — Apple sin fondo pesado, solo visual -->
   <div *ngIf="showDeleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" (click)="closeDeleteConfirm()"></div>
-    <div class="relative w-full max-w-[360px] rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#1c1c1e] p-6 shadow-xl">
+    <div class="relative w-full max-w-[360px] rounded-2xl bg-white dark:bg-[#1c1c1e] p-6 shadow-xl">
       <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center mb-3" [ngClass]="isUserDeleted(userToDelete) ? 'bg-[#30d158]/10' : 'bg-[#ff3b30]/10'">
         <svg *ngIf="!isUserDeleted(userToDelete)" class="w-5 h-5 text-[#ff3b30]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
         <svg *ngIf="isUserDeleted(userToDelete)" class="w-5 h-5 text-[#30d158]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -119,7 +119,7 @@
   <!-- Modal editar usuario -->
   <div *ngIf="showEditUserModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" (click)="closeEditUserModal()"></div>
-    <div class="relative w-full max-w-[360px] rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#1c1c1e] p-6 shadow-xl">
+    <div class="relative w-full max-w-[360px] rounded-2xl bg-white dark:bg-[#1c1c1e] p-6 shadow-xl">
       <div class="w-10 h-10 mx-auto rounded-full bg-[#0071e3]/10 flex items-center justify-center mb-3">
         <svg class="w-5 h-5 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
       </div>
@@ -140,7 +140,7 @@
       </div>
       <div class="flex gap-3 mt-5">
         <button (click)="closeEditUserModal()" class="flex-1 h-9 rounded-full border border-black/[0.08] dark:border-white/[0.08] bg-transparent text-[#1d1d1f] dark:text-white text-[13px] font-medium">Cancelar</button>
-        <button (click)="confirmEditUser()" class="flex-1 h-9 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white text-[13px] font-medium">Guardar</button>
+        <button (click)="confirmEditUser()" class="flex-1 h-9 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-colors">Guardar</button>
       </div>
     </div>
   </div>
@@ -148,7 +148,7 @@
   <!-- Modal resetear contraseña -->
   <div *ngIf="showResetPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" (click)="closeResetPasswordModal()"></div>
-    <div class="relative w-full max-w-[360px] rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#1c1c1e] p-6 shadow-xl">
+    <div class="relative w-full max-w-[360px] rounded-2xl bg-white dark:bg-[#1c1c1e] p-6 shadow-xl">
       <div class="w-10 h-10 mx-auto rounded-full bg-[#ff9f0a]/10 flex items-center justify-center mb-3">
         <svg class="w-5 h-5 text-[#ff9f0a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
       </div>

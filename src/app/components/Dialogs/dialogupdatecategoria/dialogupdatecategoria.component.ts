@@ -80,8 +80,11 @@ export class DialogupdatecategoriaComponent {
     this.caracteristicasArray.removeAt(index);
   }
 
-  onSubmit() {
-    if (this.categoryForm.valid) {
+  onCloseDialog() {
+    this.context.completeWith(false);
+  }
+
+  onSubmit() {    if (this.categoryForm.valid) {
       const newCategory = this.categoryForm.getRawValue();
       const { caracteristicas_template, ...categoriaData } = newCategory;
       this.store.dispatch(updateCategoriaAction({

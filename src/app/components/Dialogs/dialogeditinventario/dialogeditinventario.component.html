@@ -36,7 +36,7 @@
 
     <!-- Botón -->
     <div *ngIf="(userPermissions$ | async)?.can_modify_inventory" class="md:col-span-2 flex justify-end">
-      <button tuiButton size="m" type="submit"
+      <button tuiButton size="m" type="submit" class="!rounded-full"
        appearance="positive" [disabled]="inventarioFormEdit.invalid || loadingInventarioUpdate">
        				<tui-loader size="s" [showLoader]="loadingInventarioUpdate"></tui-loader>
         Actualizar Inventario

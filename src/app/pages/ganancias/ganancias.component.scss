@@ -1,3 +1,21 @@
 :host {
   display: block;
 }
+
+// Campos dentro de las cards de gradiente: dejan que Taiga resuelva
+// el fondo según [tuiTheme="dark"] (claro/oscuro automático).
+// Solo ajustamos radio, borde sutil y legibilidad sobre el gradiente.
+.ganancia-card .ganancia-field {
+  border-radius: 0.75rem;
+  overflow: hidden;
+
+  // Anillo de foco visible tanto en light como en dark
+  &:focus-within {
+    outline: 2px solid rgb(255 255 255 / 0.7);
+    outline-offset: 1px;
+  }
+}
+
+[tuiTheme='dark'] .ganancia-card .ganancia-field:focus-within {
+  outline-color: rgb(255 255 255 / 0.35);
+}

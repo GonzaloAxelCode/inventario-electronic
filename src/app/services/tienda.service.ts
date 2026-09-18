@@ -1,4 +1,4 @@
-import { Tienda } from '@/app/models/tienda.models';
+import { PlanSuscripcion, PlanSuscripcionCreate, PlanSuscripcionUpdate, SuscripcionTiendaResponse, Tienda } from '@/app/models/tienda.models';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -64,6 +64,51 @@ export class TiendaService {
     }
     eliminarTiendaPermanently(id: number): Observable<any> {
         return this.http.delete(`${this.siteURL}/tiendas/delete/${id}/`).pipe(
+            catchError(error => {
+                printError(error)
+                return throwError(error)
+            })
+        );
+    }
+
+    getPlanYSuscripcion(tiendaId: number): Observable<SuscripcionTiendaResponse> {
+        return this.http.get<SuscripcionTiendaResponse>(`${this.siteURL}/tiendas/${tiendaId}/planes/`).pipe(
+            catchError(error => {
+                printError(error)
+                return throwError(error)
+            })
+        );
+    }
+
+    listPlanes(): Observable<PlanSuscripcion[]> {
+        return this.http.get<PlanSuscripcion[]>(`${this.siteURL}/planes/`).pipe(
+            catchError(error => {
+                printError(error)
+                return throwError(error)
+            })
+        );
+    }
+
+    updatePlan(planId: number, body: PlanSuscripcionCreate): Observable<PlanSuscripcion> {
+        return this.http.put<PlanSuscripcion>(`${this.siteURL}/planes/${planId}/`, body).pipe(
+            catchError(error => {
+                printError(error)
+                return throwError(error)
+            })
+        );
+    }
+
+    patchPlan(planId: number, body: PlanSuscripcionUpdate): Observable<PlanSuscripcion> {
+        return this.http.patch<PlanSuscripcion>(`${this.siteURL}/planes/${planId}/`, body).pipe(
+            catchError(error => {
+                printError(error)
+                return throwError(error)
+            })
+        );
+    }
+
+    cambiarPlanTienda(tiendaId: number, plan_id: number): Observable<Tienda> {
+        return this.http.patch<Tienda>(`${this.siteURL}/tiendas/${tiendaId}/cambiar-plan/`, { plan_id }).pipe(
             catchError(error => {
                 printError(error)
                 return throwError(error)

@@ -10,14 +10,13 @@ import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVentaState } from '@/app/state/selectors/venta.selectors';
 import { AsyncPipe, CommonModule, NgForOf, NgIf } from '@angular/common';
-import { Component, inject, OnDestroy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { tuiTablePaginationOptionsProvider } from '@taiga-ui/addon-table';
 import { tuiCountFilledControls, TuiDay, TuiDayLike, TuiDayRange } from '@taiga-ui/cdk';
-import { TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiExpand } from '@taiga-ui/experimental';
+import { TuiButton, TuiDialog, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiBadge, TuiChip, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiSwitch, tuiSwitchOptionsProvider } from '@taiga-ui/kit';
 import { TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputDateRangeModule, TuiInputModule, TuiSelectModule } from "@taiga-ui/legacy";
@@ -54,7 +53,7 @@ dayjs.locale('es');
     TuiSearch,
     TuiTextfield,
     TuiChip,
-    TuiBlockStatus, TuiExpand,
+    TuiBlockStatus, TuiDialog,
     // tus componentes
     ButtonupdateComponent, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle],
   templateUrl: './listallventas.component.html', providers: [
@@ -63,8 +62,8 @@ dayjs.locale('es');
   ],
   styleUrl: './listallventas.component.scss'
 })
-export class ListallventasComponent implements OnDestroy {
-  protected expanded = false;
+export class ListallventasComponent {
+  protected filtrosOpen = false;
   viewMode = 'table' as string;
   ventasState$!: Observable<Partial<VentaState>>;
   ventas: any = []
@@ -175,11 +174,6 @@ export class ListallventasComponent implements OnDestroy {
 
   }
   ngOnInit() {
-    this.checkDesktop();
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', this.checkDesktop);
-    }
-
     this.store.select(selectUsersState).pipe(
       map(userState => userState.user.tienda)
     ).subscribe(tienda => {
@@ -193,11 +187,6 @@ export class ListallventasComponent implements OnDestroy {
     })
   }
 
-  isDesktop = false;
-  private checkDesktop = () => {
-    this.isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1024;
-    if (this.isDesktop) this.expanded = true;
-  };
   getVentaValue(venta: Venta, key: string): any {
     return venta[key as keyof Venta];
   }
@@ -336,11 +325,5 @@ export class ListallventasComponent implements OnDestroy {
 
   setTab(tab: typeof this.activeTab) {
     this.activeTab = tab;
-  }
-
-  ngOnDestroy() {
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('resize', this.checkDesktop);
-    }
   }
 }

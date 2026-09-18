@@ -13,62 +13,43 @@
        </p>
      </div>
 
-    <!-- Apple agrupado por dueño — sin fondos, solo hairlines -->
-    <div class="space-y-5">
-      <div *ngFor="let group of getGroupedTiendas(visibleTiendas)">
-        <!-- Header dueño -->
-        <div class="flex items-center gap-2 px-1 mb-2">
-          <div class="w-6 h-6 rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center text-[10px] font-semibold text-[#1d1d1f] dark:text-white ring-1 ring-black/[0.06] dark:ring-white/[0.08]">
-            {{ getOwnerInitials(group.ownerLabel) }}
-          </div>
-          <p class="text-[12px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white truncate">{{ group.ownerLabel }}</p>
-          <span class="text-[11px] px-2 py-0.5 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#86868b] dark:text-[#a1a1a6]">{{ group.tiendas.length }} {{ group.tiendas.length === 1 ? 'tienda' : 'tiendas' }}</span>
-          <span *ngIf="group.ownerId" class="text-[10px] font-mono text-[#86868b]">#{{ group.ownerId }}</span>
+    <!-- Una tarjeta por tienda padre con sus sucursales dentro -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div *ngFor="let grupo of getGruposJerarquia(visibleTiendas)"
+        class="rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] p-5"
+      >
+        <!-- Padre -->
+        <div class="cursor-pointer" (click)="grupo.padre.activo && showDialogDetailTienda(grupo.padre)">
+          <ng-container *ngTemplateOutlet="tarjetaTienda; context: { $implicit: grupo.padre }"></ng-container>
         </div>
-        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] overflow-hidden bg-transparent">
-          <div
-            *ngFor="let tienda of group.tiendas; let last = last"
-            class="group flex items-center gap-4 px-4 py-4 bg-transparent hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors cursor-pointer"
-            [ngClass]="!last ? 'border-b border-black/[0.06] dark:border-white/[0.06]' : ''"
-            (click)="tienda.activo && showDialogDetailTienda(tienda)"
-          >
-            <!-- Logo — Apple 44pt, sin sombra pesada -->
-            <div class="w-11 h-11 rounded-xl overflow-hidden ring-1 ring-black/[0.08] dark:ring-white/[0.08] bg-white dark:bg-[#2c2c2e] shrink-0 flex items-center justify-center">
-              <img loading="lazy"
-                [src]="tienda?.logo_img ? imageUrl(tienda.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
-                [alt]="tienda.nombre"
-                class="w-full h-full object-cover" />
-            </div>
-
-            <!-- Main info — SF style -->
-            <div class="flex-1 min-w-0">
-              <p class="text-[15px] font-semibold tracking-[-0.01em] leading-5 text-[#1d1d1f] dark:text-white truncate">
-                {{ tienda.nombre }}
-              </p>
-              <p class="text-[12px] leading-4 text-[#86868b] dark:text-[#a1a1a6] truncate">
-                <span *ngIf="tienda.ruc">RUC {{ tienda.ruc }} · </span>{{ tienda.direccion || 'Sin dirección' }}
-                <span *ngIf="tienda.telefono"> · {{ tienda.telefono }}</span>
-              </p>
-              <!-- Participantes — Apple caption -->
-              <p class="text-[11px] leading-4 text-[#86868b] dark:text-[#a1a1a6] truncate mt-0.5">
-                <span *ngIf="tienda.users_tienda?.length; else sinUsuarios">{{ getUserNames(tienda) }}</span>
-                <ng-template #sinUsuarios><span class="italic">Sin participantes</span></ng-template>
-              </p>
-            </div>
-
-            <!-- Trailing — solo estado + chevron (sin botón editar) -->
-            <div class="flex items-center gap-2 shrink-0">
-              <div class="hidden sm:flex -space-x-1.5">
-                <div *ngFor="let user of tienda.users_tienda?.slice(0, 3); let ui = index"
-                  class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-semibold text-white ring-1 ring-white dark:ring-[#1c1c1e]"
-                  [style.background]="getUserColor(ui)"
-                  [title]="user.first_name + ' ' + user.last_name">
-                  {{ user.first_name?.charAt(0) || '?' }}{{ user.last_name?.charAt(0) || '' }}
-                </div>
+        <!-- Sucursales de este padre -->
+        <div *ngIf="grupo.sucursales.length" class="mt-4">
+          <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] px-1 mb-2">
+            Sucursales de {{ grupo.padre.nombre }} · {{ grupo.sucursales.length }}
+          </p>
+          <div class="md:ml-4 space-y-1">
+            <div
+              *ngFor="let suc of grupo.sucursales"
+              class="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-colors cursor-pointer"
+              (click)="suc.activo && showDialogDetailTienda(suc)"
+            >
+              <div class="w-9 h-9 rounded-xl overflow-hidden bg-white dark:bg-[#2c2c2e] shrink-0 flex items-center justify-center">
+                <img loading="lazy"
+                  [src]="suc?.logo_img ? imageUrl(suc.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                  [alt]="suc.nombre"
+                  class="w-full h-full object-cover" />
               </div>
-              <!-- Activo dot Apple -->
-              <span class="w-2 h-2 rounded-full" [ngClass]="tienda.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
-              <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <p class="text-[14px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white truncate">{{ suc.nombre }}</p>
+                  <span class="px-1.5 py-0.5 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b] shrink-0">Sucursal</span>
+                </div>
+                <p class="text-[11px] text-[#86868b] dark:text-[#a1a1a6] truncate mt-0.5">
+                  <span *ngIf="suc.serie" class="font-mono">Serie {{ suc.serie }} · </span>{{ suc.direccion || 'Sin dirección' }}
+                </p>
+              </div>
+              <span class="w-2 h-2 rounded-full shrink-0" [ngClass]="suc.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
+              <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
             </div>
@@ -76,6 +57,53 @@
         </div>
       </div>
     </div>
+
+    <!-- Plantilla tarjeta tienda -->
+    <ng-template #tarjetaTienda let-tienda let-compacto="compacto">
+      <div class="flex items-start gap-3">
+        <div class="w-12 h-12 rounded-2xl overflow-hidden bg-white dark:bg-[#2c2c2e] shrink-0 flex items-center justify-center">
+          <img loading="lazy"
+            [src]="tienda?.logo_img ? imageUrl(tienda.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+            [alt]="tienda.nombre"
+            class="w-full h-full object-cover" />
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-1.5">
+            <p class="text-[15px] font-semibold tracking-[-0.01em] leading-5 text-[#1d1d1f] dark:text-white truncate">{{ tienda.nombre }}</p>
+            <span *ngIf="!compacto" class="px-1.5 py-0.5 rounded-full bg-[#30d158]/15 text-[#30d158] text-[10px] font-semibold shrink-0">Principal</span>
+            <span class="w-2 h-2 rounded-full shrink-0" [ngClass]="tienda.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
+          </div>
+          <p class="text-[12px] leading-4 text-[#86868b] dark:text-[#a1a1a6] truncate mt-0.5">
+            <span *ngIf="compacto" class="px-1.5 py-0.5 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[10px] font-medium">Sucursal</span>
+            <span *ngIf="tienda.ruc">RUC {{ tienda.ruc }} · </span>{{ tienda.direccion || 'Sin dirección' }}
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center justify-between mt-4">
+        <div class="flex items-center gap-2 text-[11px] text-[#86868b]">
+          <span *ngIf="tienda.serie" class="font-mono">Serie {{ tienda.serie }}</span>
+          <span *ngIf="tienda.serie && tienda.users_tienda?.length">·</span>
+          <span *ngIf="tienda.users_tienda?.length">{{ tienda.users_tienda.length }} {{ tienda.users_tienda.length === 1 ? 'miembro' : 'miembros' }}</span>
+        </div>
+        <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </div>
+      <div *ngIf="tienda.tienda_stats as stats" class="grid grid-cols-3 gap-2 mt-3 text-center">
+        <div class="rounded-xl bg-white dark:bg-black/[0.2] px-2 py-2">
+          <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ stats.total_comprobantes }}</p>
+          <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Comprob.</p>
+        </div>
+        <div class="rounded-xl bg-white dark:bg-black/[0.2] px-2 py-2">
+          <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">S/ {{ stats.total_facturado }}</p>
+          <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Facturado</p>
+        </div>
+        <div class="rounded-xl bg-white dark:bg-black/[0.2] px-2 py-2">
+          <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ stats.num_personal }}</p>
+          <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Personal</p>
+        </div>
+      </div>
+    </ng-template>
 
   </ng-container>
 
