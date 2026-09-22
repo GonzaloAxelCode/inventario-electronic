@@ -1,13 +1,10 @@
-import { clearTokensAction } from '@/app/state/actions/auth.actions';
-import { clearInventariosFromCache } from '@/app/state/actions/inventario.actions';
-import { clearUserAction } from '@/app/state/actions/user.actions';
+import { LogoutService } from '@/app/services/logout.service';
 import { AppState } from '@/app/state/app.state';
 import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiAppearance, TuiButton, TuiTextfield, TuiTitle } from '@taiga-ui/core';
 import { TuiButtonLoading, TuiFieldErrorPipe, TuiPassword } from '@taiga-ui/kit';
@@ -50,8 +47,8 @@ export class SeguridadComponent implements OnInit {
 
   constructor(
     private store: Store<AppState>,
-    private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private logoutService: LogoutService
   ) {
     this.userState$ = this.store.select(selectUsersState);
 
@@ -96,11 +93,8 @@ export class SeguridadComponent implements OnInit {
   logout() {
     this.loadingLogout = true;
     setTimeout(() => {
-      this.store.dispatch(clearTokensAction());
-      this.store.dispatch(clearUserAction());
-      this.store.dispatch(clearInventariosFromCache());
+      this.logoutService.logout();
       this.loadingLogout = false;
-      this.router.navigate(['/login']);
     }, 3000);
   }
 }

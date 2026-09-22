@@ -1,174 +1,216 @@
-<div class="apple-barras flex flex-col gap-4 p-1 sm:p-2">
-  <!-- Header info -->
-  <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-black/5 dark:border-white/10 p-4 shadow-sm">
-    <div class="flex flex-wrap items-start justify-between gap-3">
-      <div>
-        <h3 class="text-[15px] font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-          <span class="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h2v14H3V5zm4 0h1v14H7V5zm3 0h1v14h-1V5zm3 0h2v14h-2V5zm4 0h2v14h-2V5z"/></svg>
-          </span>
-          Imprimir Códigos de Barras
-        </h3>
-        <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Genera etiquetas para impresora térmica 58mm / 80mm</p>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="text-xs text-neutral-500 dark:text-neutral-400">{{ totalEtiquetas }} etiqueta(s)</span>
-        <button type="button" (click)="clearAll()" [disabled]="selected.length===0" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-700 active:scale-95 transition disabled:opacity-40 disabled:cursor-not-allowed">Limpiar</button>
-        <button type="button" (click)="imprimir()" [disabled]="labels.length===0" class="px-4 py-1.5 rounded-full text-xs font-bold bg-blue-500 hover:bg-blue-600 text-white active:scale-95 transition disabled:opacity-40 disabled:cursor-not-allowed">Imprimir</button>
-      </div>
+<div class="apple-barras max-w-5xl mx-auto flex flex-col gap-4 sm:gap-5 px-3 sm:px-0" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;">
+
+  <!-- Header Apple -->
+  <div class="flex items-center gap-3 px-1 pt-1">
+    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-black dark:bg-white flex items-center justify-center shrink-0">
+      <svg class="w-5 h-5 text-white dark:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h2v14H3V5zm4 0h1v14H7V5zm3 0h1v14h-1V5zm3 0h2v14h-2V5zm4 0h2v14h-2V5z"/></svg>
+    </div>
+    <div class="min-w-0">
+      <h3 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white leading-tight truncate">Códigos de barras</h3>
+      <p class="text-xs text-stone-400">{{ totalEtiquetas }} etiqueta(s) en cola</p>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
-    <!-- Col izquierda: búsqueda y cola -->
-    <div class="xl:col-span-5 flex flex-col gap-4">
-      <!-- Buscador -->
-      <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-black/5 dark:border-white/10 p-4 shadow-sm">
-        <label class="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-2 block">Buscar producto (nombre o SKU)</label>
-        <tui-textfield iconStart="@tui.search" tuiTextfieldSize="s" class="w-full">
-          <input
-            tuiTextfield
-            placeholder="Ej: Coca Cola, SKU123..."
-            [ngModel]="search"
-            (ngModelChange)="onSearchChange($event)"
-          />
-        </tui-textfield>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 items-start">
 
-        <!-- resultados -->
-        <div *ngIf="search.trim().length>0 || filtered.length>0" class="mt-3 max-h-72 overflow-auto rounded-2xl bg-neutral-50 dark:bg-white/5 border border-black/5 dark:border-white/10 divide-y divide-neutral-100 dark:divide-white/10">
-          <div *ngIf="filtered.length===0" class="p-4 text-center text-xs text-neutral-400">Sin resultados</div>
-          <button *ngFor="let p of filtered" type="button" (click)="addProducto(p)"
-            class="w-full text-left px-3 py-2.5 hover:bg-white dark:hover:bg-white/10 flex items-center justify-between gap-3 transition-colors">
-            <div class="min-w-0">
-              <div class="text-sm font-semibold text-neutral-900 dark:text-white truncate">{{ p.nombre }}</div>
-              <div class="text-[11px] text-neutral-500 dark:text-neutral-400 flex items-center gap-2">
-                <span class="font-mono bg-neutral-200/70 dark:bg-white/10 px-1.5 py-0.5 rounded-md">{{ p.sku }}</span>
-                <span *ngIf="p.categoria_nombre" class="truncate">{{ p.categoria_nombre }}</span>
-                <span *ngIf="getPrecio(p)" class="font-semibold text-emerald-600 dark:text-emerald-400">S/ {{ getPrecio(p) | number:'1.2-2' }}</span>
-              </div>
-            </div>
-            <span class="shrink-0 w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm active:scale-90 transition">+</span>
-          </button>
+    <!-- Col izquierda: buscar + cola -->
+    <div class="flex flex-col gap-4 sm:gap-5 min-w-0">
+
+      <!-- 1. Agregar -->
+      <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5">
+        <button type="button" (click)="openSelector('producto')"
+          class="w-full h-14 rounded-2xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-white/15 shadow-sm hover:shadow active:scale-[0.99] transition flex items-center justify-center gap-2 text-sm font-semibold text-stone-900 dark:text-white">
+          <span class="w-6 h-6 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-base leading-none">+</span>
+          Agregar producto
+        </button>
+        <p class="text-[11px] text-stone-400 text-center mt-2">
+          <span *ngIf="!cargandoCatalogo">{{ productos.length }} prod. en catálogo</span>
+          <span *ngIf="cargandoCatalogo">Cargando catálogo…</span>
+        </p>
+      </section>
+
+      <!-- 2. Cola -->
+      <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5">
+        <div class="flex justify-end mb-1">
+          <span class="text-[11px] text-stone-400">{{ selected.length }} prod. · {{ totalEtiquetas }} etiq.</span>
         </div>
-        <p class="text-[11px] text-neutral-400 mt-2">Tip: escribe y toca el producto para agregarlo. Cada toque suma 1 copia.</p>
-      </div>
-
-      <!-- Cola de impresión -->
-      <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-black/5 dark:border-white/10 p-4 shadow-sm">
-        <div class="flex items-center justify-between mb-3">
-          <h4 class="text-sm font-bold text-neutral-900 dark:text-white">Cola de impresión</h4>
-          <span class="text-xs px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-white/10 text-neutral-600 dark:text-neutral-300 font-medium">{{ selected.length }} productos · {{ totalEtiquetas }} etiquetas</span>
+        <div *ngIf="selected.length===0" class="py-10 text-center">
+          <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-stone-100 dark:bg-white/10 flex items-center justify-center text-xl">🏷️</div>
+          <p class="text-sm font-medium text-stone-900 dark:text-white">Sin productos</p>
+          <p class="text-xs text-stone-400 mt-0.5">Busca y toca un producto para agregarlo</p>
         </div>
-
-        <div *ngIf="selected.length===0" class="py-10 text-center border-2 border-dashed border-neutral-200 dark:border-white/15 rounded-2xl">
-          <div class="text-3xl mb-2">🏷️</div>
-          <p class="text-sm font-semibold text-neutral-700 dark:text-neutral-300">Sin productos</p>
-          <p class="text-xs text-neutral-400 mt-1">Busca arriba y agrega productos para generar etiquetas</p>
-        </div>
-
-        <div *ngIf="selected.length>0" class="space-y-2 max-h-[420px] overflow-auto pr-1">
-          <div *ngFor="let it of selected; let i = index" class="flex items-center gap-3 p-2.5 rounded-2xl bg-neutral-50 dark:bg-white/5 border border-black/5 dark:border-white/10">
+        <div *ngIf="selected.length>0" class="divide-y divide-stone-100 dark:divide-white/5 max-h-[380px] overflow-auto">
+          <div *ngFor="let it of selected; let i = index" class="flex items-center gap-3 py-2.5">
             <div class="flex-1 min-w-0">
-              <div class="text-sm font-semibold text-neutral-900 dark:text-white truncate">{{ it.producto.nombre }}</div>
-              <div class="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">{{ it.producto.sku }} <span *ngIf="getPrecio(it.producto)">· S/ {{ getPrecio(it.producto) | number:'1.2-2' }}</span></div>
+              <div class="text-sm font-medium text-stone-900 dark:text-white truncate">{{ it.producto.nombre }}</div>
+              <div class="text-[11px] font-mono text-stone-400">{{ it.producto.sku }}</div>
             </div>
-            <div class="flex items-center gap-1 shrink-0">
-              <button type="button" (click)="dec(i)" class="w-7 h-7 rounded-full border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-white/10 active:scale-90 transition flex items-center justify-center text-sm">−</button>
-              <span class="w-8 text-center text-sm font-bold text-neutral-900 dark:text-white">{{ it.cantidad }}</span>
-              <button type="button" (click)="inc(i)" class="w-7 h-7 rounded-full bg-blue-500 hover:bg-blue-600 text-white active:scale-90 transition flex items-center justify-center text-sm">+</button>
+            <div class="flex items-center gap-1 bg-stone-100 dark:bg-white/10 rounded-full p-1 shrink-0">
+              <button type="button" (click)="dec(i)" class="w-7 h-7 rounded-full bg-white dark:bg-stone-800 shadow-sm text-stone-700 dark:text-stone-200 flex items-center justify-center text-sm active:scale-90 transition">−</button>
+              <span class="w-7 text-center text-sm font-semibold text-stone-900 dark:text-white">{{ it.cantidad }}</span>
+              <button type="button" (click)="inc(i)" class="w-7 h-7 rounded-full bg-white dark:bg-stone-800 shadow-sm text-stone-700 dark:text-stone-200 flex items-center justify-center text-sm active:scale-90 transition">+</button>
             </div>
-            <button type="button" (click)="removeItem(i)" class="w-7 h-7 rounded-full hover:bg-red-500/10 text-neutral-400 hover:text-red-500 active:scale-90 transition flex items-center justify-center">×</button>
+            <button type="button" (click)="removeItem(i)" class="w-8 h-8 rounded-full text-stone-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 active:scale-90 transition flex items-center justify-center shrink-0">×</button>
           </div>
         </div>
-      </div>
+      </section>
     </div>
 
-    <!-- Col derecha: config + preview -->
-    <div class="xl:col-span-7 flex flex-col gap-4">
-      <!-- Config -->
-      <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-black/5 dark:border-white/10 p-4 shadow-sm">
-        <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-3">Configuración térmica</h4>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div>
-            <tui-select tuiTextfieldSize="s" [(ngModel)]="papel" (ngModelChange)="onConfigChange()" class="w-full">
-              Papel
-              <tui-data-list size="s" *tuiDataList>
-                <button *ngFor="let p of papeles" tuiOption [value]="p.valor">{{ p.etiqueta }}</button>
-              </tui-data-list>
-            </tui-select>
-          </div>
-          <div>
-            <tui-select tuiTextfieldSize="s" [(ngModel)]="columnas" (ngModelChange)="onConfigChange()" class="w-full">
-              Columnas
-              <tui-data-list size="s" *tuiDataList>
-                <button *ngFor="let c of columnasItems" tuiOption [value]="c.valor">{{ c.etiqueta }}</button>
-              </tui-data-list>
-            </tui-select>
-            <span *ngIf="papel==='58'" class="text-[10px] text-neutral-400">58mm usa 1 col.</span>
-          </div>
-          <div>
-            <tui-select tuiTextfieldSize="s" [(ngModel)]="altoBarcode" (ngModelChange)="onConfigChange()" class="w-full">
-              Alto barras
-              <tui-data-list size="s" *tuiDataList>
-                <button *ngFor="let a of altosBarcode" tuiOption [value]="a.valor">{{ a.etiqueta }}</button>
-              </tui-data-list>
-            </tui-select>
-          </div>
-          <div class="flex flex-col gap-2 justify-end">
-            <label class="flex items-center gap-2 text-xs text-neutral-700 dark:text-neutral-300 cursor-pointer">
-              <input type="checkbox" tuiCheckbox size="s" [(ngModel)]="mostrarNombre" (ngModelChange)="onConfigChange()"> Nombre
-            </label>
-            <label class="flex items-center gap-2 text-xs text-neutral-700 dark:text-neutral-300 cursor-pointer">
-              <input type="checkbox" tuiCheckbox size="s" [(ngModel)]="mostrarPrecio" (ngModelChange)="onConfigChange()"> Precio
-            </label>
-            <label class="flex items-center gap-2 text-xs text-neutral-700 dark:text-neutral-300 cursor-pointer">
-              <input type="checkbox" tuiCheckbox size="s" [(ngModel)]="mostrarSku" (ngModelChange)="onConfigChange()"> Texto SKU
-            </label>
+    <!-- Col derecha: ajustes + vista previa -->
+    <div class="flex flex-col gap-4 sm:gap-5 min-w-0 lg:sticky lg:top-4">
+
+      <!-- 3. Ajustes -->
+      <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5 space-y-4">
+        <div>
+          <p class="text-xs font-medium text-stone-500 dark:text-stone-400 mb-2">Papel</p>
+          <div class="grid grid-cols-2 gap-1 p-1 rounded-full bg-stone-100 dark:bg-white/10">
+            <button type="button" (click)="papel='58'; onConfigChange()"
+              [class]="papel==='58' ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">58 mm</button>
+            <button type="button" (click)="papel='80'; onConfigChange()"
+              [class]="papel==='80' ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">80 mm</button>
           </div>
         </div>
-        <div class="mt-3 flex items-center gap-2 text-[11px] text-blue-900 dark:text-blue-200 bg-blue-500/10 border border-blue-500/20 dark:border-blue-400/20 rounded-2xl px-3 py-2">
-          <span>💡</span> Para 58mm usa 1 columna. Para 80mm puedes usar 2-3 columnas y cortar en guillotina. El navegador imprimirá en tamaño real.
+
+        <div *ngIf="papel==='80'">
+          <p class="text-xs font-medium text-stone-500 dark:text-stone-400 mb-2">Columnas</p>
+          <div class="grid grid-cols-3 gap-1 p-1 rounded-full bg-stone-100 dark:bg-white/10">
+            <button *ngFor="let c of columnasItems" type="button" (click)="columnas = c.valor; onConfigChange()"
+              [class]="columnas===c.valor ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">{{ c.valor }}</button>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-xs font-medium text-stone-500 dark:text-stone-400 mb-2">Tamaño de barras</p>
+          <div class="grid grid-cols-3 gap-1 p-1 rounded-full bg-stone-100 dark:bg-white/10">
+            <button type="button" (click)="altoBarcode=30; onConfigChange()"
+              [class]="altoBarcode===30 ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">Bajo</button>
+            <button type="button" (click)="altoBarcode=40; onConfigChange()"
+              [class]="altoBarcode===40 ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">Normal</button>
+            <button type="button" (click)="altoBarcode=55; onConfigChange()"
+              [class]="altoBarcode>=55 ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">Alto</button>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-xs font-medium text-stone-500 dark:text-stone-400 mb-2">Mostrar en etiqueta</p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" (click)="mostrarNombre=!mostrarNombre; onConfigChange()"
+              [class]="mostrarNombre ? 'px-4 h-9 rounded-full text-xs font-semibold bg-black dark:bg-white text-white dark:text-black transition' : 'px-4 h-9 rounded-full text-xs font-medium bg-stone-100 dark:bg-white/10 text-stone-500 dark:text-stone-400 transition'">Nombre</button>
+            <button type="button" (click)="mostrarPrecio=!mostrarPrecio; onConfigChange()"
+              [class]="mostrarPrecio ? 'px-4 h-9 rounded-full text-xs font-semibold bg-black dark:bg-white text-white dark:text-black transition' : 'px-4 h-9 rounded-full text-xs font-medium bg-stone-100 dark:bg-white/10 text-stone-500 dark:text-stone-400 transition'">Precio</button>
+            <button type="button" (click)="mostrarSku=!mostrarSku; onConfigChange()"
+              [class]="mostrarSku ? 'px-4 h-9 rounded-full text-xs font-semibold bg-black dark:bg-white text-white dark:text-black transition' : 'px-4 h-9 rounded-full text-xs font-medium bg-stone-100 dark:bg-white/10 text-stone-500 dark:text-stone-400 transition'">SKU</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Vista previa -->
+      <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5">
+        <div class="flex justify-end mb-3">
+          <span class="text-[11px] text-stone-400">{{ labels.length }} etiq.</span>
+        </div>
+        <div *ngIf="labels.length===0" class="py-10 text-center border-2 border-dashed border-stone-200 dark:border-white/10 rounded-2xl">
+          <p class="text-xs text-stone-400">Aquí verás tus etiquetas</p>
+        </div>
+        <div *ngIf="labels.length>0" class="preview-paper mx-auto bg-stone-50 dark:bg-white/5 border border-stone-200/60 dark:border-white/10 rounded-2xl p-2 overflow-x-auto overflow-y-auto max-h-[60vh] sm:max-h-[480px] w-full max-w-full"
+          [style.maxWidth]="papel==='58' ? '240px' : '340px'">
+          <div class="grid gap-2 min-w-0" [style.gridTemplateColumns]="papel==='58' ? '1fr' : 'repeat(' + columnas + ', minmax(0, 1fr))'">
+            <div *ngFor="let lab of labelsPreview" class="rounded-xl p-2 flex flex-col items-center justify-center bg-white min-h-[90px] text-black min-w-0 overflow-hidden">
+              <div *ngIf="mostrarNombre" class="text-[10px] font-semibold text-center leading-tight line-clamp-2 break-words w-full">{{ lab.producto.nombre }}</div>
+              <svg #barcodeSvg class="mt-1 w-full max-w-[160px] h-auto"></svg>
+              <div *ngIf="mostrarPrecio && getPrecio(lab.producto)" class="text-xs font-bold mt-1 whitespace-nowrap">S/ {{ getPrecio(lab.producto) | number:'1.2-2' }}</div>
+              <div *ngIf="!mostrarSku" class="text-[9px] font-mono mt-0.5 truncate max-w-full">{{ lab.producto.sku }}</div>
+          </div>
+        </div>
+        <p *ngIf="labelsOcultos>0" class="text-[11px] text-stone-400 text-center mt-2">Vista previa: primeros 120 · se imprimirán las {{ labels.length }} etiquetas</p>
+        </div>
+        <button type="button" (click)="imprimir()" [disabled]="labels.length===0"
+          class="mt-4 w-full py-3.5 rounded-full text-sm font-semibold bg-black dark:bg-white text-white dark:text-black shadow-sm hover:opacity-90 active:scale-[0.99] transition disabled:opacity-30">
+          Imprimir {{ totalEtiquetas }} etiqueta(s)
+        </button>
+      </section>
+    </div>
+  </div>
+
+  <!-- Modal selector: producto por producto / categoría -->
+  <div *ngIf="selectorAbierto" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="absolute inset-0 bg-black/30" (click)="closeSelector()"></div>
+    <div class="relative w-full sm:max-w-lg bg-white dark:bg-neutral-800 rounded-t-3xl sm:rounded-3xl border border-stone-200/70 dark:border-white/10 shadow-xl flex flex-col max-h-[88vh] overflow-hidden">
+      <div class="p-5 pb-3">
+        <div class="w-10 h-1 rounded-full bg-stone-200 dark:bg-white/20 mx-auto mb-4 sm:hidden"></div>
+        <div class="flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <h4 class="text-base font-semibold text-stone-900 dark:text-white">Agregar productos</h4>
+            <p class="text-[11px] text-stone-400 mt-0.5">
+              <span *ngIf="!cargandoCatalogo">{{ productos.length }} prod. en catálogo</span>
+              <span *ngIf="cargandoCatalogo">Cargando catálogo…</span>
+            </p>
+          </div>
+          <button type="button" (click)="closeSelector()"
+            class="w-8 h-8 rounded-full bg-stone-100 dark:bg-white/10 text-stone-500 flex items-center justify-center shrink-0">×</button>
+        </div>
+        <div class="grid grid-cols-2 gap-1 p-1 mt-4 rounded-full bg-stone-100 dark:bg-white/10">
+          <button type="button" (click)="modoSelector='producto'"
+            [class]="modoSelector==='producto' ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">Por producto</button>
+          <button type="button" (click)="modoSelector='categoria'"
+            [class]="modoSelector==='categoria' ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">Por categoría</button>
+        </div>
+        <div class="flex items-center justify-between mt-3 px-1">
+          <p class="text-[11px] text-stone-400">Copias por producto (en bloque)</p>
+          <div class="flex items-center gap-1 bg-stone-100 dark:bg-white/10 rounded-full p-1">
+            <button type="button" (click)="bulkDec()" class="w-7 h-7 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm text-stone-700 dark:text-stone-200 flex items-center justify-center active:scale-90 transition">−</button>
+            <span class="w-7 text-center text-sm font-semibold text-stone-900 dark:text-white">{{ copiasBulk }}</span>
+            <button type="button" (click)="bulkInc()" class="w-7 h-7 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm text-stone-700 dark:text-stone-200 flex items-center justify-center active:scale-90 transition">+</button>
+          </div>
         </div>
       </div>
 
-      <!-- Preview -->
-      <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-black/5 dark:border-white/10 p-4 shadow-sm">
-        <div class="flex items-center justify-between mb-3">
-          <h4 class="text-sm font-bold text-neutral-900 dark:text-white">Vista previa ({{ papel }}mm)</h4>
-          <span class="text-xs text-neutral-500 dark:text-neutral-400">{{ labels.length }} etiqueta(s)</span>
-        </div>
-
-        <div *ngIf="labels.length===0" class="py-12 text-center border-2 border-dashed border-neutral-200 dark:border-white/15 rounded-2xl">
-          <p class="text-sm text-neutral-400">La vista previa aparecerá aquí</p>
-        </div>
-
-        <div *ngIf="labels.length>0" class="preview-paper mx-auto bg-white border border-neutral-200 rounded-2xl shadow-inner p-2 overflow-auto max-h-[560px]"
-          [style.width]="papel==='58' ? '220px' : '320px'">
-          <div class="grid gap-2" [style.gridTemplateColumns]="papel==='58' ? '1fr' : 'repeat(' + columnas + ', 1fr)'">
-            <div *ngFor="let lab of labels; let idx = index" class="label-preview border border-dashed border-neutral-300 rounded-xl p-2 flex flex-col items-center justify-center bg-white min-h-[90px] text-black">
-              <div *ngIf="mostrarNombre" class="text-[10px] font-bold text-center leading-tight line-clamp-2 break-words w-full text-black">{{ lab.producto.nombre }}</div>
-              <svg #barcodeSvg class="mt-1 w-full max-w-[180px]"></svg>
-              <div *ngIf="mostrarPrecio && getPrecio(lab.producto)" class="text-xs font-extrabold mt-1 text-black">S/ {{ getPrecio(lab.producto) | number:'1.2-2' }}</div>
-              <div *ngIf="!mostrarSku" class="text-[9px] font-mono mt-0.5 text-black">{{ lab.producto.sku }}</div>
+      <!-- Por producto -->
+      <div *ngIf="modoSelector==='producto'" class="px-5 pb-5 flex flex-col min-h-0">
+        <tui-textfield iconStart="@tui.search" tuiTextfieldSize="m" class="w-full">
+          <input tuiTextfield placeholder="Buscar por nombre o SKU…" [ngModel]="search" (ngModelChange)="onSearchChange($event)" />
+        </tui-textfield>
+        <div class="mt-2 divide-y divide-stone-100 dark:divide-white/5 overflow-auto min-h-0 max-h-[46vh]">
+          <div *ngIf="filtered.length===0" class="py-8 text-center text-xs text-stone-400">Sin resultados</div>
+          <button *ngFor="let p of filtered" type="button" (click)="elegirProductoDesdeSelector(p)"
+            class="w-full text-left py-2.5 flex items-center gap-3 active:bg-stone-50 dark:active:bg-white/5 rounded-xl px-2 transition">
+            <div class="min-w-0 flex-1">
+              <div class="text-sm font-medium text-stone-900 dark:text-white truncate">{{ p.nombre }}</div>
+              <div class="text-[11px] text-stone-400 flex items-center gap-2 mt-0.5">
+                <span class="font-mono truncate">{{ p.sku }}</span>
+                <span *ngIf="getPrecio(p)" class="font-semibold text-stone-900 dark:text-white shrink-0">S/ {{ getPrecio(p) | number:'1.2-2' }}</span>
+                <span *ngIf="cantidadEnCola(p)" class="px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold shrink-0">×{{ cantidadEnCola(p) }}</span>
+              </div>
             </div>
-          </div>
+            <span class="shrink-0 w-7 h-7 rounded-full bg-stone-100 dark:bg-white/10 text-stone-600 dark:text-stone-200 flex items-center justify-center text-base leading-none">+</span>
+          </button>
         </div>
-
-        <div class="mt-4 flex gap-2 justify-end">
-          <button type="button" (click)="clearAll()" [disabled]="selected.length===0" class="px-4 py-2 rounded-full text-sm font-semibold border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-700 active:scale-95 transition disabled:opacity-40">Limpiar</button>
-          <button type="button" (click)="imprimir()" [disabled]="labels.length===0" class="px-4 py-2 rounded-full text-sm font-bold bg-blue-500 hover:bg-blue-600 text-white active:scale-95 transition disabled:opacity-40">Imprimir {{ totalEtiquetas }} etiqueta(s) en {{ papel }}mm</button>
-        </div>
+        <button type="button" (click)="closeSelector()"
+          class="mt-3 w-full h-12 rounded-full text-sm font-semibold bg-black dark:bg-white text-white dark:text-black active:scale-[0.99] transition shrink-0">
+          Listo · {{ totalEtiquetas }} etiqueta(s)
+        </button>
       </div>
 
-      <!-- Ayuda -->
-      <div class="bg-blue-500/10 border border-blue-500/20 dark:border-blue-400/20 rounded-3xl p-4">
-        <h5 class="text-sm font-bold text-blue-950 dark:text-blue-100 mb-2">¿Cómo imprimir en térmica?</h5>
-        <ol class="text-xs text-blue-950/70 dark:text-blue-100/70 space-y-1 list-decimal list-inside">
-          <li>Conecta tu impresora térmica (58mm o 80mm) y selecciona el papel arriba.</li>
-          <li>Agrega productos y ajusta copias con +/−.</li>
-          <li>Pulsa <b>Imprimir</b> → en el diálogo elige tu impresora térmica, tamaño <b>{{ papel }}mm</b>, márgenes <b>Ninguno</b> y escala 100%.</li>
-          <li>Para cortar, activa “Cortar después de imprimir” si tu impresora lo soporta.</li>
-        </ol>
+      <!-- Por categoría -->
+      <div *ngIf="modoSelector==='categoria'" class="px-5 pb-5 flex flex-col min-h-0">
+        <div class="overflow-auto min-h-0 max-h-[46vh] divide-y divide-stone-100 dark:divide-white/5">
+          <div *ngIf="categorias.length===0" class="py-8 text-center text-xs text-stone-400">Sin categorías</div>
+          <div *ngFor="let c of categorias" class="flex items-center gap-3 py-3">
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-stone-900 dark:text-white truncate">{{ c }}</p>
+              <p class="text-[11px] text-stone-400">{{ conteoCategoria(c) }} prod. · {{ conteoCategoria(c) * copiasBulk }} etiq.</p>
+            </div>
+            <button type="button" (click)="categoriaFiltro=c; addCategoriaActual()"
+              class="px-4 h-9 rounded-full text-xs font-semibold bg-stone-100 dark:bg-white/10 text-stone-700 dark:text-stone-200 active:scale-95 transition shrink-0">
+              + {{ conteoCategoria(c) }}
+            </button>
+          </div>
+        </div>
+        <p *ngIf="productos.length>100" class="text-[11px] text-stone-400 text-center mt-2 px-1">Si son muchos, imprime por tandas: agrega una categoría, imprime, limpia y sigue.</p>
+        <button type="button" (click)="addTodos(); closeSelector()" [disabled]="productos.length===0"
+          class="mt-3 w-full h-12 rounded-full text-sm font-semibold bg-black dark:bg-white text-white dark:text-black active:scale-[0.99] transition disabled:opacity-40 shrink-0">
+          Agregar todo ({{ productos.length }})
+        </button>
       </div>
     </div>
   </div>

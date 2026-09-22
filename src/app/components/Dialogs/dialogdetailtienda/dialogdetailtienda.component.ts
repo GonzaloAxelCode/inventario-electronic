@@ -31,6 +31,14 @@ export class DialogdetailtiendaComponent implements OnInit {
   tiendaForm!: FormGroup;
   URL_BASE = URL_BASE;
   imageUrl = imageUrl;
+
+  /** Username del propietario (objeto nuevo o legacy). */
+  get propietarioUsername(): string {
+    const p: any = (this.tienda as any)?.propietario;
+    if (p != null && typeof p === 'object') return p.username || p.full_name || '';
+    const pd: any = (this.tienda as any)?.propietario_data;
+    return pd?.username || '';
+  }
   private destroy$ = new Subject<void>();
   selectedLogo: File | null = null;
   logoPreview: string | null = imageUrl(this.tienda.logo_img);
@@ -51,6 +59,22 @@ export class DialogdetailtiendaComponent implements OnInit {
     this.activeTab = tab;
   }
 
+  /** La tienda ya tiene certificado guardado (flag del GET; el valor real nunca viene). */
+  get tieneCertPrivadaGuardada(): boolean {
+    const t: any = this.tienda as any;
+    return !!(t?.tiene_certificado || t?.cert_clave_privada || t?.tiene_cert_privada || t?.tiene_certificado_privada);
+  }
+
+  get tieneCertPublicaGuardada(): boolean {
+    const t: any = this.tienda as any;
+    return !!(t?.tiene_certificado || t?.cert_clave_publica || t?.tiene_cert_publica || t?.tiene_certificado_publica);
+  }
+
+  /** Hay clave SOL guardada (flag del GET; el valor real nunca viene). */
+  get tieneSolGuardada(): boolean {
+    return !!((this.tienda as any)?.tiene_sol || (this.tienda as any)?.sol_user);
+  }
+
 
   constructor(private store: Store<AppState>, private fb: FormBuilder, private actions$: Actions, private cdRef: ChangeDetectorRef) {
 
@@ -63,7 +87,6 @@ export class DialogdetailtiendaComponent implements OnInit {
       email: [this.tienda.email || ''],               // opcional
       sol_user: [this.tienda.sol_user || ''],            // opcional
       sol_password: [this.tienda.sol_password || ''],        // opcional
-      representante: [this.tienda.representante || ''],        // nuevo campo para representante de la tienda
       serie: [this.tienda.serie || '', Validators.required],
       correlativo_inicial_boleta: [this.tienda.correlativo_inicial_boleta || 1],
       correlativo_inicial_factura: [this.tienda.correlativo_inicial_factura || 1],
@@ -75,7 +98,6 @@ export class DialogdetailtiendaComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedLogo = input.files[0];
-      console.log('Archivo seleccionado:', this.selectedLogo.name);
 
       // Creamos preview
       const reader = new FileReader();
@@ -121,8 +143,9 @@ export class DialogdetailtiendaComponent implements OnInit {
       // Creamos FormData
       const formData = new FormData();
 
-      // Agregamos todos los campos del formulario
+      // Agregamos todos los campos del formulario (menos la clave SOL vacía si ya hay una guardada)
       Object.entries(this.tiendaForm.value).forEach(([key, value]) => {
+        if ((key === 'sol_user' || key === 'sol_password') && (value === '' || value == null) && this.tieneSolGuardada) return;
         formData.append(key, value as any); // Angular guarda todo como string por defecto
       });
 

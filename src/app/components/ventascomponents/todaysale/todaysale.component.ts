@@ -44,7 +44,6 @@ export class TodaysaleComponent {
   public comprobante: ComprobanteElectronico = this.venta?.comprobante ?? {} as ComprobanteElectronico;
   constructor(private store: Store<AppState>, private sanitizer: DomSanitizer, private actions$: Actions
   ) {
-    console.log(this.venta)
 
   }
 
@@ -135,7 +134,6 @@ export class TodaysaleComponent {
       venta: this.venta,
 
     }))
-    console.log(this.venta)
   }
   private destroy$ = new Subject<void>();
 

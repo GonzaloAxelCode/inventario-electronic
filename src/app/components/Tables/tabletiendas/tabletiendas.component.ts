@@ -1,4 +1,4 @@
-import { Tienda, TiendaState } from '@/app/models/tienda.models';
+import { Tienda, TiendaState, getPropietarioId, getPropietarioLabel } from '@/app/models/tienda.models';
 import { DialogDetailTiendaService } from '@/app/services/dialogs-services/dialog-detailtienda.service';
 import { DialogUpdateTiendaService } from '@/app/services/dialogs-services/dialog-updatetienda.service';
 import { URL_BASE, imageUrl } from '@/app/services/utils/endpoints';
@@ -6,7 +6,7 @@ import { desactivateTiendaAction } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -26,6 +26,10 @@ import { Observable, tap } from 'rxjs';
 })
 export class TabletiendasComponent implements OnInit {
   @Input() tiendas: Tienda[] | null = null;
+  /** Crear sucursal de un padre: el padre abre el modal con jerarquía prefijada. */
+  @Output() crearSucursal = new EventEmitter<Tienda>();
+  /** Muestra el contador "N tiendas" (oculto para admin_tienda). */
+  @Input() mostrarContador = true;
   URL_BASE = URL_BASE;
   imageUrl = imageUrl;
   tiendasState$?: Observable<TiendaState>;
@@ -142,56 +146,51 @@ export class TabletiendasComponent implements OnInit {
 
   /** Solo tiendas padre (sin tienda_padre o con padre fuera de la lista) */
   soloPadres(tiendas: Tienda[]): Tienda[] {
-    const ids = new Set(tiendas.map(t => t.id));
-    return tiendas.filter(t => t.tienda_padre == null || !ids.has(t.tienda_padre as number));
+    const lista = tiendas ?? [];
+    const ids = new Set(lista.map(t => t.id));
+    return lista.filter(t => t.tienda_padre == null || !ids.has(t.tienda_padre as number));
   }
 
-  /** Agrupa cada padre con sus sucursales */
+  /** Padres con sus sucursales: prefiere el anidado del GET, si no deriva de la lista plana */
   getGruposJerarquia(tiendas: Tienda[]): { padre: Tienda; sucursales: Tienda[] }[] {
-    const padres = this.soloPadres(tiendas);
+    const lista = tiendas ?? [];
+    const padres = this.soloPadres(lista);
+    const nestedIds = new Set<number>();
+    for (const p of padres) for (const s of (p.sucursales ?? [])) nestedIds.add(s.id);
     return padres.map(p => ({
       padre: p,
-      sucursales: tiendas.filter(t => t.tienda_padre === p.id),
+      sucursales: (p.sucursales?.length
+        ? [...p.sucursales]
+        : lista.filter(t => t.id !== p.id && !nestedIds.has(t.id) && t.tienda_padre === p.id)),
     }));
   }
 
+  /** Expand de sucursales: abierto por defecto (solo se colapsa manualmente) */
+  private collapsedPadres = new Set<number>();
+
+  sucursalesAbiertas(padreId: number): boolean {
+    return !this.collapsedPadres.has(padreId);
+  }
+
+  toggleSucursales(padreId: number): void {
+    if (this.collapsedPadres.has(padreId)) {
+      this.collapsedPadres.delete(padreId);
+    } else {
+      this.collapsedPadres.add(padreId);
+    }
+  }
+
   getOwnerLabel(t: Tienda): string {
-    if (t.propietario == null) return 'Sin propietario';
-    const ownerData = t.propietario_data;
-    if (ownerData) {
-      const full = `${ownerData.first_name || ''} ${ownerData.last_name || ''}`.trim();
-      return full || ownerData.username || `Propietario #${t.propietario}`;
-    }
-    const ownerUser = t.users_tienda?.find(u => u.id === t.propietario);
-    if (ownerUser) {
-      const full = `${ownerUser.first_name || ''} ${ownerUser.last_name || ''}`.trim();
-      return full || ownerUser.username || `Propietario #${t.propietario}`;
-    }
-    return `Propietario #${t.propietario}`;
+    return getPropietarioLabel(t);
   }
 
   getGroupedTiendas(tiendas: Tienda[]): { ownerId: number | null; ownerLabel: string; tiendas: Tienda[] }[] {
     const map = new Map<string, { ownerId: number | null; ownerLabel: string; tiendas: Tienda[] }>();
     for (const t of tiendas) {
-      const key = t.propietario != null ? `owner-${t.propietario}` : 'sin-owner';
+      const ownerId = getPropietarioId(t);
+      const key = ownerId != null ? `owner-${ownerId}` : 'sin-owner';
       if (!map.has(key)) {
-        let label = 'Sin propietario';
-        if (t.propietario != null) {
-          const ownerData = t.propietario_data;
-          if (ownerData) {
-            const full = `${ownerData.first_name || ''} ${ownerData.last_name || ''}`.trim();
-            label = full || ownerData.username || `Propietario #${t.propietario}`;
-          } else {
-            const ownerUser = t.users_tienda?.find(u => u.id === t.propietario);
-            if (ownerUser) {
-              const full = `${ownerUser.first_name || ''} ${ownerUser.last_name || ''}`.trim();
-              label = full || ownerUser.username || `Propietario #${t.propietario}`;
-            } else {
-              label = `Propietario #${t.propietario}`;
-            }
-          }
-        }
-        map.set(key, { ownerId: t.propietario, ownerLabel: label, tiendas: [] });
+        map.set(key, { ownerId, ownerLabel: getPropietarioLabel(t), tiendas: [] });
       }
       map.get(key)!.tiendas.push(t);
     }

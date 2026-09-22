@@ -9,7 +9,8 @@
 
       <!-- Header Apple — sin fondo pesado -->
       <div class="flex flex-col sm:flex-row sm:gap-5 sm:items-start mb-6">
-        <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden ring-1 ring-black/[0.08] dark:ring-white/[0.08] bg-white dark:bg-[#2c2c2e] shrink-0">
+        <div (click)="openLogosModal()" title="Actualizar logos"
+          class="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden ring-1 ring-black/[0.08] dark:ring-white/[0.08] bg-white dark:bg-[#2c2c2e] shrink-0 cursor-pointer hover:ring-2 hover:ring-[#0071e3]/50 transition-shadow">
           <img loading="lazy"
             [src]="tienda?.logo_img ? imageUrl(tienda.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
             [alt]="tienda.nombre"
@@ -56,6 +57,12 @@
           <span class="block text-[13px] font-medium leading-none">Personal</span>
           <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">{{ tienda.users_tienda?.length || 0 }} miembros</span>
         </button>
+        <button *ngIf="!esSucursal" (click)="setTab('sucursales')"
+          class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
+          [ngClass]="activeTab === 'sucursales' ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
+          <span class="block text-[13px] font-medium leading-none">Sucursales</span>
+          <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">{{ sucursalesDeTienda.length }} {{ sucursalesDeTienda.length === 1 ? 'sucursal' : 'sucursales' }}</span>
+        </button>
         <button (click)="setTab('diseno')"
           class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
           [ngClass]="activeTab === 'diseno' ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
@@ -68,6 +75,12 @@
           <span class="block text-[13px] font-medium leading-none">Suscripción</span>
           <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">Plan y uso</span>
         </button>
+        <button *ngIf="isSuperUser && !esSucursal" (click)="setTab('sunat')"
+          class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
+          [ngClass]="activeTab === 'sunat' ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
+          <span class="block text-[13px] font-medium leading-none">Configuración SUNAT</span>
+          <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">Clave SOL y certificados</span>
+        </button>
         <button *ngIf="isSuperUser" (click)="setTab('config')"
           class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
           [ngClass]="activeTab === 'config' ? 'bg-[#ff3b30] text-white' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
@@ -75,6 +88,18 @@
           <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">Zona de peligro</span>
         </button>
         </nav>
+        <!-- Plan de esta tienda -->
+        <div *ngIf="tienda.subscripcion_data as plan" class="hidden md:block mt-4 rounded-2xl bg-[#7d7aff]/[0.07] dark:bg-[#7d7aff]/[0.12] px-4 py-3">
+          <p class="text-[10px] font-semibold tracking-widest uppercase text-[#86868b]">Plan</p>
+          <p class="text-[13px] font-semibold text-[#1d1d1f] dark:text-white mt-0.5 truncate">{{ plan.nombre_plan || '—' }}</p>
+          <p *ngIf="plan.periodo_facturacion" class="text-[11px] text-[#86868b] capitalize">{{ plan.periodo_facturacion }}</p>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span *ngIf="plan.limite_facturas != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_facturas }} fact.</span>
+            <span *ngIf="plan.limite_boletas != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_boletas }} bol.</span>
+            <span *ngIf="plan.limite_personal != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_personal }} pers.</span>
+            <span *ngIf="plan.limite_productos != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_productos }} prod.</span>
+          </div>
+        </div>
       </aside>
       <!-- Contenido a ancho completo -->
       <div class="flex-1 min-w-0 w-full">
@@ -86,12 +111,50 @@
           <div class="flex items-start justify-between gap-3 mb-4">
             <div>
               <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Resumen del sistema</h2>
-              <p class="text-[12px] text-[#86868b] mt-0.5">ID {{ tienda.id }} · {{ tienda.users_tienda?.length || 0 }} participantes</p>
+              <p class="text-[12px] text-[#86868b] mt-0.5">{{ tienda.users_tienda?.length || 0 }} participantes</p>
+              <div class="flex flex-wrap gap-2 mt-2">
+                <span *ngIf="tienda.tiene_sol && tienda.tiene_certificado" class="text-[11px] px-2.5 py-1 rounded-full bg-[#30d158]/15 text-[#30d158] font-semibold">SUNAT configurado</span>
+                <span *ngIf="!(tienda.tiene_sol && tienda.tiene_certificado)" class="text-[11px] px-2.5 py-1 rounded-full bg-[#ff9f0a]/15 text-[#ff9f0a] font-semibold">Falta: {{ !tienda.tiene_sol && !tienda.tiene_certificado ? 'clave SOL + certificado' : (!tienda.tiene_sol ? 'clave SOL' : 'certificado') }}</span>
+              </div>
             </div>
             <button (click)="openEditModal()" class="shrink-0 h-9 px-6 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium tracking-[-0.01em] transition-colors">
               Actualizar tienda
             </button>
           </div>
+          <!-- Estadísticas de la tienda (tienda_stats) — al inicio -->
+          <section *ngIf="tienda.tienda_stats as stats" class="mb-2">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Estadísticas</h2>
+              <span *ngIf="stats.nombre_suscripcion" class="text-[11px] px-2.5 py-1 rounded-full bg-[#7d7aff]/10 text-[#7d7aff] font-semibold">Plan {{ stats.nombre_suscripcion }}</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              <div class="rounded-2xl bg-[#0a84ff]/[0.08] dark:bg-[#0a84ff]/[0.14] px-4 py-4">
+                <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#0a84ff]">{{ stats.facturas }}</p>
+                <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Facturas</p>
+                <p class="text-[11px] text-[#86868b] mt-0.5">Emitidas a la fecha</p>
+              </div>
+              <div class="rounded-2xl bg-[#30d158]/[0.08] dark:bg-[#30d158]/[0.14] px-4 py-4">
+                <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#30d158]">S/ {{ stats.total_facturado }}</p>
+                <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Total facturado</p>
+                <p class="text-[11px] text-[#86868b] mt-0.5">Historial completo</p>
+              </div>
+              <div class="rounded-2xl bg-[#ff9f0a]/[0.08] dark:bg-[#ff9f0a]/[0.14] px-4 py-4">
+                <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#ff9f0a]">{{ stats.boletas }}</p>
+                <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Boletas</p>
+                <p class="text-[11px] text-[#86868b] mt-0.5">Emitidas a la fecha</p>
+              </div>
+              <div class="rounded-2xl bg-[#bf5af2]/[0.08] dark:bg-[#bf5af2]/[0.14] px-4 py-4">
+                <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#bf5af2]">{{ stats.num_personal }}</p>
+                <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Personal</p>
+                <p class="text-[11px] text-[#86868b] mt-0.5">{{ stats.facturas }} facturas emitidas</p>
+              </div>
+              <div class="rounded-2xl bg-[#64d2ff]/[0.08] dark:bg-[#64d2ff]/[0.14] px-4 py-4">
+                <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#64d2ff]">{{ stats.num_productos ?? '—' }}</p>
+                <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Productos</p>
+                <p class="text-[11px] text-[#86868b] mt-0.5">En catálogo</p>
+              </div>
+            </div>
+          </section>
           <dl class="text-[13px]">
             <div class="flex items-baseline justify-between gap-4 py-3">
               <dt class="text-[#86868b] shrink-0">Razón social</dt>
@@ -106,8 +169,8 @@
               <dd class="font-mono font-medium text-[#1d1d1f] dark:text-white text-right">{{ tienda.serie || '—' }}</dd>
             </div>
             <div class="flex items-baseline justify-between gap-4 py-3">
-              <dt class="text-[#86868b] shrink-0">Representante</dt>
-              <dd class="font-medium text-[#1d1d1f] dark:text-white text-right truncate">{{ tienda.representante || '—' }}</dd>
+              <dt class="text-[#86868b] shrink-0">Propietario</dt>
+              <dd class="font-medium text-[#1d1d1f] dark:text-white text-right truncate">{{ propietarioUsername || '—' }}</dd>
             </div>
             <div class="flex items-baseline justify-between gap-4 py-3">
               <dt class="text-[#86868b] shrink-0">Dirección</dt>
@@ -118,41 +181,6 @@
               <dd class="font-medium text-[#1d1d1f] dark:text-white text-right truncate">{{ tienda.telefono || '—' }} · {{ tienda.email || '—' }}</dd>
             </div>
           </dl>
-          <div *ngIf="isSuperUser" class="grid grid-cols-3 gap-3 mt-2">
-            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-3 text-center"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Boleta</p><p class="font-mono text-[15px] font-semibold text-[#1d1d1f] dark:text-white mt-0.5">{{ tienda.correlativo_inicial_boleta }}</p></div>
-            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-3 text-center"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Factura</p><p class="font-mono text-[15px] font-semibold text-[#1d1d1f] dark:text-white mt-0.5">{{ tienda.correlativo_inicial_factura }}</p></div>
-            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-3 text-center"><p class="text-[11px] uppercase tracking-wide text-[#86868b]">Nota créd.</p><p class="font-mono text-[15px] font-semibold text-[#1d1d1f] dark:text-white mt-0.5">{{ tienda.correlativo_inicial_nota_credito }}</p></div>
-          </div>
-        </section>
-
-        <!-- Estadísticas de la tienda (tienda_stats) -->
-        <section *ngIf="tienda.tienda_stats as stats">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Estadísticas</h2>
-            <span *ngIf="stats.nombre_suscripcion" class="text-[11px] px-2.5 py-1 rounded-full bg-[#7d7aff]/10 text-[#7d7aff] font-semibold">Plan {{ stats.nombre_suscripcion }}</span>
-          </div>
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-4">
-              <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#1d1d1f] dark:text-white">{{ stats.total_comprobantes }}</p>
-              <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Comprobantes</p>
-              <p class="text-[11px] font-mono text-[#86868b] mt-0.5">{{ stats.boletas }} bol · {{ stats.facturas }} fact</p>
-            </div>
-            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-4">
-              <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#1d1d1f] dark:text-white">S/ {{ stats.total_facturado }}</p>
-              <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Total facturado</p>
-              <p class="text-[11px] text-[#86868b] mt-0.5">Historial completo</p>
-            </div>
-            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-4">
-              <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#1d1d1f] dark:text-white">{{ stats.boletas }}</p>
-              <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Boletas</p>
-              <p class="text-[11px] text-[#86868b] mt-0.5">Emitidas a la fecha</p>
-            </div>
-            <div class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] px-4 py-4">
-              <p class="font-mono text-[26px] leading-none font-semibold tracking-tight text-[#1d1d1f] dark:text-white">{{ stats.num_personal }}</p>
-              <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-2">Personal</p>
-              <p class="text-[11px] text-[#86868b] mt-0.5">{{ stats.facturas }} facturas emitidas</p>
-            </div>
-          </div>
         </section>
 
       </div>
@@ -166,6 +194,46 @@
           </div>
         </div>
         <app-tableusers [idtienda]="tienda.id"></app-tableusers>
+      </div>
+
+      <!-- TAB: Sucursales de esta tienda padre -->
+      <div *ngIf="activeTab === 'sucursales' && !esSucursal">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Sucursales</h2>
+            <p class="text-[12px] text-[#86868b] mt-0.5">{{ sucursalesDeTienda.length }} {{ sucursalesDeTienda.length === 1 ? 'sucursal' : 'sucursales' }} de {{ tienda.nombre || 'esta tienda' }}</p>
+          </div>
+        </div>
+        <div *ngIf="sucursalesDeTienda.length; else sinSucursales" class="space-y-1">
+          <div
+            *ngFor="let suc of sucursalesDeTienda"
+            class="flex items-center gap-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] px-4 py-3 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors cursor-pointer"
+            (click)="suc.activo && goToSucursal(suc.id)"
+          >
+            <div class="w-10 h-10 rounded-xl overflow-hidden bg-white dark:bg-[#2c2c2e] shrink-0 flex items-center justify-center">
+              <img loading="lazy"
+                [src]="suc?.logo_img ? imageUrl(suc.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                [alt]="suc.nombre"
+                class="w-full h-full object-cover" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5">
+                <p class="text-[14px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white truncate">{{ suc.nombre }}</p>
+                <span class="px-1.5 py-0.5 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b] shrink-0">Sucursal</span>
+              </div>
+              <p class="text-[11px] text-[#86868b] dark:text-[#a1a1a6] truncate mt-0.5">
+                <span *ngIf="suc.serie" class="font-mono">Serie {{ suc.serie }} · </span>{{ suc.direccion || 'Sin dirección' }}
+              </p>
+            </div>
+            <span class="w-2 h-2 rounded-full shrink-0" [ngClass]="suc.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
+            <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+        <ng-template #sinSucursales>
+          <p class="text-[13px] text-[#86868b] dark:text-[#a1a1a6] mt-2">Esta tienda aún no tiene sucursales.</p>
+        </ng-template>
       </div>
 
       <!-- TAB: Diseño -->
@@ -578,13 +646,6 @@
 
       <!-- TAB: Suscripción — solo superuser -->
       <div *ngIf="activeTab === 'suscripcion' && isSuperUser" class="space-y-4">
-        <div class="flex justify-end">
-          <button (click)="loadSuscripcion(true)" [disabled]="loadingSuscripcion"
-            class="h-8 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-colors disabled:opacity-50">
-            {{ loadingSuscripcion ? 'Cargando…' : 'Recargar' }}
-          </button>
-        </div>
-
         <div *ngIf="loadingSuscripcion" class="rounded-2xl p-8 text-center">
           <p class="text-[13px] text-[#86868b]">Cargando suscripción…</p>
         </div>
@@ -656,6 +717,12 @@
             </div>
             <div *ngIf="suscripcion?.uso_mensual as uso" class="p-5 space-y-4">
               <div *ngIf="suscripcion?.plan_actual as plan">
+                <div *ngIf="getPlanInicio(uso, plan) || getPlanVencimiento(uso, plan)" class="flex flex-wrap items-center gap-x-5 gap-y-1 pb-3 text-[12px] text-[#86868b]">
+                  <span *ngIf="getPlanInicio(uso, plan) as inicio">Inicio: <span class="font-medium text-[#1d1d1f] dark:text-white">{{ inicio | date:'dd/MM/yyyy' }}</span></span>
+                  <span *ngIf="getPlanVencimiento(uso, plan) as vencimiento">Renovación: <span class="font-medium text-[#1d1d1f] dark:text-white">{{ vencimiento | date:'dd/MM/yyyy' }}</span></span>
+                  <span *ngIf="getPlanDiasRestantes() != null" class="px-2.5 py-1 rounded-full text-[11px] font-semibold"
+                    [ngClass]="getPlanDiasRestantes()! <= 5 ? 'bg-[#ff3b30]/15 text-[#ff3b30]' : 'bg-[#30d158]/15 text-[#30d158]'">{{ getPlanDiasRestantes() }} días restantes</span>
+                </div>
                 <div class="flex justify-between text-[13px] mb-1.5">
                   <span class="text-[#1d1d1f] dark:text-white font-medium">Boletas</span>
                   <span class="font-mono text-[#86868b]">{{ getBoletasEmitidas(uso) }} / {{ isIlimitado(plan.limite_boletas) ? '∞' : plan.limite_boletas }}</span>
@@ -671,6 +738,24 @@
                 </div>
                 <div class="h-2 rounded-full bg-black/[0.06] dark:bg-white/[0.08] overflow-hidden">
                   <div class="h-full rounded-full bg-[#7d7aff] transition-all" [style.width.%]="getUsoPorcentaje(getFacturasEmitidas(uso), plan.limite_facturas)"></div>
+                </div>
+              </div>
+              <div *ngIf="suscripcion?.plan_actual as plan">
+                <div class="flex justify-between text-[13px] mb-1.5">
+                  <span class="text-[#1d1d1f] dark:text-white font-medium">Personal</span>
+                  <span class="font-mono text-[#86868b]">{{ getNumPersonal() }} / {{ isIlimitado(plan.limite_personal) ? '∞' : plan.limite_personal }}</span>
+                </div>
+                <div class="h-2 rounded-full bg-black/[0.06] dark:bg-white/[0.08] overflow-hidden">
+                  <div class="h-full rounded-full bg-[#30d158] transition-all" [style.width.%]="getUsoPorcentaje(getNumPersonal(), plan.limite_personal)"></div>
+                </div>
+              </div>
+              <div *ngIf="suscripcion?.plan_actual as plan">
+                <div class="flex justify-between text-[13px] mb-1.5">
+                  <span class="text-[#1d1d1f] dark:text-white font-medium">Productos</span>
+                  <span class="font-mono text-[#86868b]">{{ getNumProductos() }} / {{ plan.limite_productos == null ? '—' : (isIlimitado(plan.limite_productos) ? '∞' : plan.limite_productos) }}</span>
+                </div>
+                <div class="h-2 rounded-full bg-black/[0.06] dark:bg-white/[0.08] overflow-hidden">
+                  <div class="h-full rounded-full bg-[#ff9f0a] transition-all" [style.width.%]="getUsoPorcentaje(getNumProductos(), plan.limite_productos)"></div>
                 </div>
               </div>
             </div>
@@ -705,6 +790,15 @@
         </div>
       </div>
       </ng-container>
+      </div>
+
+      <!-- TAB: Configuración SUNAT — mismo formulario de actualizar, solo secciones SUNAT -->
+      <div *ngIf="activeTab === 'sunat' && !esSucursal" class="space-y-4">
+        <div>
+          <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Configuración SUNAT</h2>
+          <p class="text-[12px] text-[#86868b] mt-0.5">Certificados, clave SOL y claves de guías de {{ tienda.nombre || 'la tienda' }}.</p>
+        </div>
+        <app-dialogupdattienda [tiendaInput]="tienda" [soloSunat]="true"></app-dialogupdattienda>
       </div>
 
       <!-- TAB: Configuración — solo superusuarios (admin tienda no ve eliminar ni config) -->

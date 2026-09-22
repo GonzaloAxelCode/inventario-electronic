@@ -7,14 +7,14 @@
   <ng-container *ngIf="visibleTiendas.length; else noTiendas">
 
     <!-- Apple inset header — sin fondo, solo tipografía -->
-     <div class="flex items-baseline justify-between px-1 mb-3">
+     <div *ngIf="mostrarContador" class="flex items-baseline justify-between px-1 mb-3">
        <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">
-         {{ visibleTiendas.length }} {{ visibleTiendas.length === 1 ? 'tienda' : 'tiendas' }}
+         {{ getGruposJerarquia(visibleTiendas).length }} {{ getGruposJerarquia(visibleTiendas).length === 1 ? 'tienda' : 'tiendas' }}
        </p>
      </div>
 
-    <!-- Una tarjeta por tienda padre con sus sucursales dentro -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <!-- Una tarjeta por tienda padre con sus sucursales dentro (ancho completo si es solo una) -->
+    <div class="grid grid-cols-1 gap-4" [ngClass]="getGruposJerarquia(visibleTiendas).length > 1 ? 'sm:grid-cols-2' : ''">
       <div *ngFor="let grupo of getGruposJerarquia(visibleTiendas)"
         class="rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] p-5"
       >
@@ -22,12 +22,20 @@
         <div class="cursor-pointer" (click)="grupo.padre.activo && showDialogDetailTienda(grupo.padre)">
           <ng-container *ngTemplateOutlet="tarjetaTienda; context: { $implicit: grupo.padre }"></ng-container>
         </div>
-        <!-- Sucursales de este padre -->
+        <!-- Sucursales de este padre (expandible) -->
         <div *ngIf="grupo.sucursales.length" class="mt-4">
-          <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] px-1 mb-2">
-            Sucursales de {{ grupo.padre.nombre }} · {{ grupo.sucursales.length }}
-          </p>
-          <div class="md:ml-4 space-y-1">
+          <button
+            type="button"
+            (click)="toggleSucursales(grupo.padre.id)"
+            [attr.aria-expanded]="sucursalesAbiertas(grupo.padre.id)"
+            class="w-full flex items-center gap-1.5 px-1 mb-1 text-[11px] font-medium tracking-widest uppercase text-[#86868b] hover:text-[#1d1d1f] dark:hover:text-white transition-colors"
+          >
+            <svg class="w-3 h-3 shrink-0 transition-transform duration-200" [ngClass]="{ 'rotate-90': sucursalesAbiertas(grupo.padre.id) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+            </svg>
+            <span>Sucursales · {{ grupo.sucursales.length }}</span>
+          </button>
+          <div *ngIf="sucursalesAbiertas(grupo.padre.id)" class="md:ml-4 space-y-1">
             <div
               *ngFor="let suc of grupo.sucursales"
               class="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-colors cursor-pointer"
@@ -45,7 +53,7 @@
                   <span class="px-1.5 py-0.5 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b] shrink-0">Sucursal</span>
                 </div>
                 <p class="text-[11px] text-[#86868b] dark:text-[#a1a1a6] truncate mt-0.5">
-                  <span *ngIf="suc.serie" class="font-mono">Serie {{ suc.serie }} · </span>{{ suc.direccion || 'Sin dirección' }}
+                  <span *ngIf="suc.subscripcion_data?.nombre_plan" class="font-medium text-[#7d7aff]">Plan {{ suc.subscripcion_data?.nombre_plan }} · </span><span *ngIf="suc.serie" class="font-mono">Serie {{ suc.serie }} · </span>{{ suc.direccion || 'Sin dirección' }}
                 </p>
               </div>
               <span class="w-2 h-2 rounded-full shrink-0" [ngClass]="suc.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
@@ -55,6 +63,17 @@
             </div>
           </div>
         </div>
+        <!-- Crear sucursal de este padre -->
+        <button
+          type="button"
+          (click)="crearSucursal.emit(grupo.padre)"
+          class="mt-4 w-full h-9 rounded-full border border-black/[0.12] dark:border-white/[0.2] text-[12px] font-medium text-[#1d1d1f] dark:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.06] transition-colors inline-flex items-center justify-center gap-1.5"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+          </svg>
+          Crear sucursal
+        </button>
       </div>
     </div>
 
@@ -101,6 +120,18 @@
         <div class="rounded-xl bg-white dark:bg-black/[0.2] px-2 py-2">
           <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ stats.num_personal }}</p>
           <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Personal</p>
+        </div>
+      </div>
+      <div *ngIf="tienda.subscripcion_data as plan" class="mt-3 rounded-xl bg-[#7d7aff]/[0.07] dark:bg-[#7d7aff]/[0.12] px-3 py-2.5">
+        <div class="flex items-center justify-between gap-2">
+          <p class="text-[12px] font-semibold text-[#1d1d1f] dark:text-white">Plan {{ plan.nombre_plan || '—' }}</p>
+          <span *ngIf="plan.periodo_facturacion" class="text-[10px] uppercase tracking-wide text-[#86868b] shrink-0">{{ plan.periodo_facturacion }}</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5 mt-2">
+          <span *ngIf="plan.limite_facturas != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_facturas }} facturas</span>
+          <span *ngIf="plan.limite_boletas != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_boletas }} boletas</span>
+          <span *ngIf="plan.limite_personal != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_personal }} personal</span>
+          <span *ngIf="plan.limite_productos != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_productos }} productos</span>
         </div>
       </div>
     </ng-template>

@@ -9,6 +9,7 @@ import { adminStoreGuard, superUserGuard } from './guards/superuser.guard';
 import { AdminlayoutComponent } from './layouts/adminlayout/adminlayout.component';
 import { AuthlayoutComponent } from './layouts/authlayout/authlayout.component';
 import { MainlayoutComponent } from './layouts/mainlayout/mainlayout.component';
+import { LoginComponent } from './pages/login/login.component';
 
 import { normalUserGuard } from './guards/appuser.guard';
 
@@ -88,6 +89,18 @@ const routes: Routes = [
 						path: 'temas',
 						loadComponent: () => import('./components/settingscomponents/temassettings/temassettings.component').then(m => m.TemasSettingsComponent)
 					},
+					{
+						path: 'suscripcion',
+						loadComponent: () => import('./components/settingscomponents/suscripcionsettings/suscripcionsettings.component').then(m => m.SuscripcionsettingsComponent)
+					},
+					{
+						path: 'mi-tienda',
+						loadComponent: () => import('./components/settingscomponents/mitiendasettings/mitiendasettings.component').then(m => m.MitiendasettingsComponent)
+					},
+					{
+						path: 'modulos',
+						loadComponent: () => import('./components/settingscomponents/modulossettings/modulossettings.component').then(m => m.ModulossettingsComponent)
+					},
 				]
 			},
 		]
@@ -132,7 +145,9 @@ const routes: Routes = [
 		children: [
 			{
 				path: '',
-				loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
+				// Eager (no lazy): LoginComponent ya va en el bundle principal y así
+				// /login siempre renderiza, incluso sin red (logout con wifi apagado).
+				component: LoginComponent,
 			}
 		]
 	},

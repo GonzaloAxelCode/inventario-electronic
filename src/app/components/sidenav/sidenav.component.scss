@@ -20,10 +20,10 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .drawer {
-  border-right-color: rgba(163, 230, 53, 0.1);
+  border-right-color: rgba(255, 255, 255, 0.08);
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(20px);
-  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(163, 230, 53, 0.05);
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 /* Sidebar */
@@ -34,6 +34,8 @@ body {
   height: 100vh;
   width: 100%;
   transition: background-color 200ms ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Logo */
@@ -83,15 +85,15 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .nav-link-active {
-  background: linear-gradient(135deg, #a3e635, #84cc16);
+  background: #fff;
   color: #000;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(163, 230, 53, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 :host-context([tuiTheme="dark"]) .nav-link:hover:not(.nav-link-active) {
-  background: rgba(163, 230, 53, 0.1);
-  color: #a3e635;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
 }
 
 .nav-icon {
@@ -107,7 +109,7 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .sidebar-footer {
-  border-top-color: rgba(163, 230, 53, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.08);
 }
 
 /* User Menu Trigger */
@@ -125,22 +127,22 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .user-menu-trigger:hover {
-  background: rgba(163, 230, 53, 0.1);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .user-avatar {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, #a3e635, #84cc16);
+  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #000;
+  color: #fff;
   font-size: 0.875rem;
   font-weight: 700;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(163, 230, 53, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .user-info {
@@ -170,7 +172,7 @@ body {
   right: 0;
   margin-bottom: 0.5rem;
   border-radius: 16px;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(163, 230, 53, 0.1);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
   padding: 0.5rem;
   z-index: 50;
   animation: dropdown-enter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -204,15 +206,15 @@ body {
   width: 2.75rem;
   height: 2.75rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, #a3e635, #84cc16);
+  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #000;
+  color: #fff;
   font-size: 1rem;
   font-weight: 700;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(163, 230, 53, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .dropdown-divider {
@@ -221,7 +223,7 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .dropdown-divider {
-  background: rgba(163, 230, 53, 0.15);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .dropdown-item {
@@ -241,8 +243,8 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .dropdown-item:hover {
-  background: rgba(163, 230, 53, 0.1);
-  color: #a3e635;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
 }
 
 .dropdown-item.no-hover {

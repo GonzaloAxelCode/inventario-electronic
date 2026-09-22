@@ -189,26 +189,14 @@
             <!-- INFO PRINCIPAL -->
             <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
 
-              <!-- ICONO -->
-              <div class="flex flex-col items-center justify-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
-                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-700 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                  </path>
-                </svg>
-                <tui-badge [appearance]="getEstadoBadge(pedido.estado)" tuiStatus size="s">
-                  {{pedido.estado}}
-                </tui-badge>
-              </div>
-
               <div class="flex-1 min-w-0">
-                <!-- Numero Pedido -->
-                <div class="flex items-center gap-2 mb-0.5 sm:mb-1">
-                  <span class="text-sm sm:text-base font-extrabold text-neutral-900 dark:text-white">
+                <!-- Numero Pedido + Cliente -->
+                <div class="flex items-center gap-2 mb-0.5 sm:mb-1 min-w-0">
+                  <span class="text-sm sm:text-base font-extrabold text-neutral-900 dark:text-white shrink-0">
                     {{pedido.numero_pedido}}
                   </span>
-                  <span *ngIf="pedido.prioridad === 'URGENTE'" class="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-md text-[9px] sm:text-[10px] font-semibold bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400">
-                    URGENTE
+                  <span class="text-[11px] sm:text-sm font-semibold text-neutral-700 dark:text-neutral-200 truncate">
+                    · {{ getClienteNombre(pedido) }}
                   </span>
                 </div>
 
@@ -220,23 +208,35 @@
                     </svg>
                     {{ formatDate(pedido.fecha_hora) }}
                   </span>
-                  <span class="hidden xs:flex items-center gap-1">
-                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
-                    {{ getClienteNombre(pedido) }}
+                  <span *ngIf="pedido.tipo_pedido !== 'MOSTRADOR'" class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-semibold" [class]="getTipoClase(pedido.tipo_pedido)">
+                    {{ pedido.tipo_pedido }}
                   </span>
-                  <tui-badge size="s" tuiStatus appearance="neutral">{{ pedido.metodo_pago }}</tui-badge>
+                  <span *ngIf="pedido.canal_venta !== 'PRESENCIAL'" class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-semibold" [class]="getCanalClase(pedido.canal_venta)">
+                    {{ pedido.canal_venta }}
+                  </span>
+                  <span *ngIf="pedido.prioridad !== 'NORMAL'" class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-semibold" [class]="getPrioridadClase(pedido.prioridad)">
+                    {{ pedido.prioridad }}
+                  </span>
+                  <tui-badge *ngIf="pedido.metodo_pago !== 'Efectivo'" size="s" tuiStatus appearance="neutral">{{ pedido.metodo_pago }}</tui-badge>
                 </div>
               </div>
             </div>
 
             <!-- TOTALES -->
-            <div class="flex items-center gap-4 sm:gap-6 flex-shrink-0">
+            <div class="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold" [class]="getEstadoClase(pedido.estado)">
+                {{ pedido.estado }}
+              </span>
               <div class="text-right min-w-[80px] sm:min-w-[100px]">
                 <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400 uppercase">Total</p>
                 <p class="text-base sm:text-lg font-extrabold text-neutral-900 dark:text-white whitespace-nowrap">S/. {{pedido.total}}</p>
               </div>
+              <button type="button" (click)="pedirEliminar(pedido, $event)" title="Eliminar pedido"
+                class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2.25 2.25 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
@@ -250,13 +250,23 @@
 
           <!-- Header de la card -->
           <div class="p-4 pb-3 border-b border-neutral-100 dark:border-neutral-700/50">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-extrabold text-neutral-900 dark:text-white">{{ pedido.numero_pedido }}</span>
-              <tui-badge [appearance]="getEstadoBadge(pedido.estado)" tuiStatus size="s">{{ pedido.estado }}</tui-badge>
+            <div class="flex items-center justify-between mb-2 gap-2">
+              <span class="text-sm font-extrabold text-neutral-900 dark:text-white truncate">{{ pedido.numero_pedido }}</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold shrink-0" [class]="getEstadoClase(pedido.estado)">
+                {{ pedido.estado }}
+              </span>
             </div>
-            <span *ngIf="pedido.prioridad === 'URGENTE'" class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400">
-              URGENTE
-            </span>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span *ngIf="pedido.tipo_pedido !== 'MOSTRADOR'" class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-semibold" [class]="getTipoClase(pedido.tipo_pedido)">
+                {{ pedido.tipo_pedido }}
+              </span>
+              <span *ngIf="pedido.canal_venta !== 'PRESENCIAL'" class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-semibold" [class]="getCanalClase(pedido.canal_venta)">
+                {{ pedido.canal_venta }}
+              </span>
+              <span *ngIf="pedido.prioridad !== 'NORMAL'" class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-semibold" [class]="getPrioridadClase(pedido.prioridad)">
+                {{ pedido.prioridad }}
+              </span>
+            </div>
           </div>
 
           <!-- Cuerpo de la card -->
@@ -284,7 +294,7 @@
             </div>
 
             <!-- Pago -->
-            <div class="flex items-center gap-1.5">
+            <div *ngIf="pedido.metodo_pago !== 'Efectivo'" class="flex items-center gap-1.5">
               <tui-badge size="s" tuiStatus appearance="neutral">{{ pedido.metodo_pago }}</tui-badge>
             </div>
 
@@ -296,14 +306,22 @@
 
           <!-- Footer de la card -->
           <div class="px-4 py-3 bg-neutral-50 dark:bg-neutral-700/30 border-t border-neutral-100 dark:border-neutral-700/50">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-2">
               <div>
                 <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Total</p>
                 <p class="text-lg font-extrabold text-neutral-900 dark:text-white">S/. {{ pedido.total }}</p>
               </div>
-              <div *ngIf="pedido.costo_envio > 0" class="text-right">
-                <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">Envio</p>
-                <p class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">S/. {{ pedido.costo_envio }}</p>
+              <div class="flex items-center gap-2">
+                <div *ngIf="pedido.costo_envio > 0" class="text-right">
+                  <p class="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">Envio</p>
+                  <p class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">S/. {{ pedido.costo_envio }}</p>
+                </div>
+                <button type="button" (click)="pedirEliminar(pedido, $event)" title="Eliminar pedido"
+                  class="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all shrink-0">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2.25 2.25 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
               </div>
             </div>
           </div>

@@ -217,14 +217,12 @@ export const clienteReducer = createReducer(
     })),
 
     on(loadResumenClientes, (state) => {
-        console.log('[ClienteReducer] loadResumenClientes');
         return {
             ...state,
             loadingResumen: true,
         };
     }),
     on(loadResumenClientesSuccess, (state, { resumen }) => {
-        console.log('[ClienteReducer] loadResumenClientesSuccess:', resumen);
         return {
             ...state,
             resumenClientes: resumen,

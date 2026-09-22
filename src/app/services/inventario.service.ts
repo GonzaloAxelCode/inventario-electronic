@@ -4,7 +4,6 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { URL_BASE } from './utils/endpoints';
-import { printError } from './utils/print-errors';
 
 export interface PaginationPage {
     page_size?: number
@@ -47,7 +46,10 @@ export class InventarioService {
         return this.http.get<any>(
             `${this.siteURL}/inventarios/`
         ).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
     fetchSearchInventarios(
@@ -64,14 +66,20 @@ export class InventarioService {
             { query },
             { params }
         ).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
     fetchInventariosPorTiendaWithPaginationBackend(page: number, page_size: number): Observable<PaginationInventariosResponse> {
         return this.http.get<PaginationInventariosResponse>(
             `${this.siteURL}/inventarios/?page=${page}&page_size=${page_size}`
         ).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
@@ -82,7 +90,7 @@ export class InventarioService {
 
         return this.http.post<Inventario>(`${this.siteURL}/inventarios/create/`, inventario).pipe(
             catchError(error => {
-                printError(error)
+                console.error(error)
                 return throwError(() => error)
             })
         );
@@ -91,30 +99,39 @@ export class InventarioService {
     updateStock(inventarioId: number, cantidad: number): Observable<any> {
 
         return this.http.patch(`${this.siteURL}/inventarios/actualizar-stock/${inventarioId}/`, { cantidad }).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
     actualizarInventario(inventarioUpdated: Partial<Inventario>): Observable<any> {
 
         return this.http.patch(`${this.siteURL}/inventarios/actualizar/${inventarioUpdated.id}/`, inventarioUpdated).pipe(
-            catchError(error => throwError(() => {
-                console.log(error)
-                return error
-            }))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
     verificarStock(inventarioId: number): Observable<any> {
         return this.http.get(`${this.siteURL}/inventarios/verificar-stock/${inventarioId}/`).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
     eliminarInventario(inventarioId: number): Observable<any> {
 
         return this.http.delete(`${this.siteURL}/inventarios/eliminar/${inventarioId}/`).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
@@ -132,25 +149,37 @@ export class InventarioService {
 
     fetchDistribucionStock(): Observable<DistribucionStockResponse> {
         return this.http.get<DistribucionStockResponse>(`${this.siteURL}/inventarios/distribucion-stock/`).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
     fetchPorRangoPrecios(): Observable<PorRangoPreciosResponse> {
         return this.http.get<PorRangoPreciosResponse>(`${this.siteURL}/inventarios/por-rango-precios/`).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
     fetchValorizacionInventario(): Observable<ValorizacionInventarioResponse> {
         return this.http.get<ValorizacionInventarioResponse>(`${this.siteURL}/inventarios/valorizacion/`).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
     fetchTopCategoriasCompra(): Observable<TopCategoriasCompraResponse> {
         return this.http.get<TopCategoriasCompraResponse>(`${this.siteURL}/inventarios/top-categorias-compra/`).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 

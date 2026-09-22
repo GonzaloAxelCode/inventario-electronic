@@ -5,8 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TuiAppearance, TuiButton, TuiDataList, TuiDropdown, TuiIcon, TuiPopup, TuiTextfield, TuiTitle } from '@taiga-ui/core';
 
 import { User } from '@/app/models/user.models';
-import { clearTokensAction } from '@/app/state/actions/auth.actions';
-import { clearUserAction } from '@/app/state/actions/user.actions';
+import { LogoutService } from '@/app/services/logout.service';
 import { AppState } from '@/app/state/app.state';
 import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
@@ -42,7 +41,7 @@ export class HeaderComponent {
 
   userState$!: Observable<UserState>;
   user: User = initialStateUser.user;
-  constructor(public sidebarService: SidebarService, private store: Store<AppState>, public router: Router) {
+  constructor(public sidebarService: SidebarService, private store: Store<AppState>, public router: Router, private logoutService: LogoutService) {
 
     this.userState$ = this.store.select(selectUsersState);
     this.userState$.subscribe(userState => {
@@ -57,9 +56,6 @@ export class HeaderComponent {
   }
 
   logout() {
-    this.store.dispatch(clearTokensAction())
-    this.store.dispatch(clearUserAction())
-
-    this.router.navigate(['/login']);
+    this.logoutService.logout();
   }
 }

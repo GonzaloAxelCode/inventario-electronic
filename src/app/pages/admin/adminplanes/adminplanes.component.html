@@ -31,7 +31,7 @@
                 <span class="text-[#30d158] font-bold">✓</span><span>{{ c }}</span>
               </li>
             </ul>
-            <div class="grid grid-cols-3 gap-2 mt-3 text-center">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 text-center">
               <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-2 py-2">
                 <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Boletas</p>
                 <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ isIlimitado(plan.limite_boletas) ? '∞' : plan.limite_boletas }}</p>
@@ -43,6 +43,10 @@
               <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-2 py-2">
                 <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Personal</p>
                 <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ isIlimitado(plan.limite_personal) ? '∞' : plan.limite_personal }}</p>
+              </div>
+              <div class="rounded-xl bg-black/[0.03] dark:bg-white/[0.05] px-2 py-2">
+                <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Productos</p>
+                <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ plan.limite_productos == null ? '—' : (isIlimitado(plan.limite_productos) ? '∞' : plan.limite_productos) }}</p>
               </div>
             </div>
             <div *ngIf="isSuperUser" class="mt-4">

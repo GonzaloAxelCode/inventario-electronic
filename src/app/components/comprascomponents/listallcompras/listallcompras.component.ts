@@ -60,6 +60,7 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
   lengthPages = 0;
   searchActive = false;
   expanded = false;
+  private itemsExpandidos = new Set<number>();
 
   tipoComprobantes = ['', '01', '03'];
   tipoComprobanteLabels: Record<string, string> = {
@@ -269,6 +270,15 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
 
   showCompraDetail(compra: ComprobanteCompra): void {
     this.dialogCompraDetail.open(compra).subscribe();
+  }
+
+  toggleItems(id: number): void {
+    if (this.itemsExpandidos.has(id)) this.itemsExpandidos.delete(id);
+    else this.itemsExpandidos.add(id);
+  }
+
+  mostrarItems(id: number): boolean {
+    return this.itemsExpandidos.has(id);
   }
 
   verArchivo(url: string, tipo: 'pdf' | 'xml'): void {

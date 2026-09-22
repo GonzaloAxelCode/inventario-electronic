@@ -23,7 +23,7 @@ import { TuiAmountPipe } from '@taiga-ui/addon-commerce';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiPlatform } from "@taiga-ui/cdk";
 import { TuiAlertService, TuiAppearance, TuiButton, TuiDropdown, TuiExpand, TuiIcon, TuiLabel, TuiLoader, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
-import { TuiCheckbox, TuiChip, TuiComboBox, TuiDataListWrapper, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiSegmented, TuiStepper, TuiSwitch, TuiTooltip } from '@taiga-ui/kit';
+import { TuiCheckbox, TuiChip, TuiComboBox, TuiDataListWrapper, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiSegmented, TuiStepper, TuiSwitch, TuiTextarea, TuiTooltip } from '@taiga-ui/kit';
 import { TuiAppBar } from '@taiga-ui/layout';
 import { TuiComboBoxModule, TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout } from 'rxjs';
@@ -68,6 +68,7 @@ import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout 
     TuiAppBar,
     BarcodeScannerComponent,
     TuiSegmented,
+    TuiTextarea,
   ],
   animations: [
     trigger('expandCollapse', [
@@ -166,8 +167,8 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
       nombreControl?.clearValidators();
     } else {
       docExistenteControl?.clearValidators();
-      docNuevoControl?.setValidators([Validators.required]);
-      clienteControl?.setValidators([Validators.required]);
+      docNuevoControl?.clearValidators();
+      clienteControl?.clearValidators();
       nombreControl?.clearValidators();
     }
 
@@ -296,8 +297,6 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
 
     this.pedidoForm = this.fb.group({
       usuarioId: [this.userId],
-      metodoPago: [this.listMetodosPago[3], Validators.required],
-      formaPago: [this.formasPago[0], Validators.required],
       tipo_pedido: ['MOSTRADOR'],
       canal_venta: ['PRESENCIAL'],
       prioridad: ['NORMAL'],
@@ -309,12 +308,9 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
       telefono_cliente: [""],
       documento_cliente_existente: [""],
       productos: this.fb.array([], [Validators.required, Validators.minLength(1)]),
-      observaciones: [""],
       notas_internas: [""],
       direccion_envio: [""],
       referencia_ubicacion: [""],
-      costo_envio: [0],
-      referencia_externa: [""],
     });
 
     this.productosFormArray.valueChanges.subscribe(() => {
@@ -522,25 +518,29 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
 
   registrarPedido() {
     const formValue = this.pedidoForm.value;
+    const cliNumero = formValue.documento_cliente || formValue.cliente?.numero || '';
+    const cliNombre = formValue.nombre_cliente || formValue.cliente?.nombre_completo || '';
+    const cliCorreo = formValue.correo_cliente || undefined;
+    const cliTelefono = formValue.telefono_cliente || undefined;
+    const cliDireccion = formValue.direccion_cliente || undefined;
+    const tieneCliente = this.vistaActiva !== 'sin_cliente'
+      && !!(cliNumero || cliNombre || cliCorreo || cliTelefono || cliDireccion);
     const createPedido: CreatePedido = {
-      cliente: this.vistaActiva === 'sin_cliente' ? undefined : {
-        tipo_documento: formValue.cliente?.ruc?.length === 11 ? '6' : '1',
-        numero: formValue.documento_cliente || formValue.cliente?.numero || '',
-        nombre_completo: formValue.nombre_cliente || formValue.cliente?.nombre_completo || '',
-        correo_cliente: formValue.correo_cliente || undefined,
-        telefono_cliente: formValue.telefono_cliente || undefined,
-        direccion_cliente: formValue.direccion_cliente || undefined,
-      },
+      estado: 'PENDIENTE',
+      cliente: tieneCliente ? {
+        tipo_documento: formValue.cliente?.ruc?.length === 11 || cliNumero.length === 11 ? '6' : '1',
+        numero: cliNumero,
+        nombre_completo: cliNombre,
+        correo_cliente: cliCorreo,
+        telefono_cliente: cliTelefono,
+        direccion_cliente: cliDireccion,
+      } : undefined,
       tipo_pedido: formValue.tipo_pedido || undefined,
       canal_venta: formValue.canal_venta || undefined,
       prioridad: formValue.prioridad || undefined,
-      metodoPago: formValue.metodoPago,
-      observaciones: formValue.observaciones || undefined,
       notas_internas: formValue.notas_internas || undefined,
       direccion_envio: formValue.direccion_envio || undefined,
       referencia_ubicacion: formValue.referencia_ubicacion || undefined,
-      costo_envio: formValue.costo_envio || 0,
-      referencia_externa: formValue.referencia_externa || undefined,
       productos: formValue.productos.map((p: any) => ({
         inventarioId: p.inventarioId,
         cantidad_final: parseInt(p.cantidad_final),

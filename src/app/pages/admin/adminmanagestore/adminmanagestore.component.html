@@ -14,7 +14,7 @@
         </div>
         <p *ngIf="gestionSubtitle$ | async as subtitle" class="text-[13px] leading-5 text-[#86868b] dark:text-[#a1a1a6] mt-2 font-normal">
           {{ subtitle }}
-          <ng-container *ngIf="filteredTiendas$ | async as filtered"> · {{ filtered.length }} {{ filtered.length === 1 ? 'tienda' : 'tiendas' }}</ng-container>
+          <ng-container *ngIf="(isSuperUser$ | async) && (filteredTiendas$ | async) as filtered"> · {{ filtered.length }} {{ filtered.length === 1 ? 'tienda' : 'tiendas' }}</ng-container>
         </p>
         <p *ngIf="(isSuperUser$ | async) === false" class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mt-1">
           Mostrando solo tu tienda y sucursales asociadas
@@ -22,6 +22,7 @@
       </div>
       <div class="flex items-center gap-2">
         <button
+          *ngIf="isSuperUser$ | async"
           type="button"
           (click)="showDialog()"
           class="inline-flex items-center justify-center gap-1.5 h-9 px-6 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium tracking-[-0.01em] transition-colors">
@@ -33,49 +34,19 @@
       </div>
     </div>
 
-    <!-- Aside propietarios + tiendas al costado -->
-    <div class="grid gap-8 items-start" [ngClass]="(isSuperUser$ | async) ? 'lg:grid-cols-[300px_1fr]' : 'grid-cols-1'">
-      <!-- Aside: selector de propietario (solo superuser) -->
-      <aside *ngIf="isSuperUser$ | async" class="w-full lg:w-auto shrink-0">
-        <div class="lg:sticky lg:top-6 space-y-6">
-          <section *ngIf="ownerOptions$ | async as owners">
-            <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white mb-1">Propietarios</h2>
-            <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mb-4">Elige un propietario para ver sus tiendas al costado.</p>
-            <div class="space-y-1">
-              <button
-                *ngFor="let owner of owners"
-                type="button"
-                (click)="setOwner(owner.ownerId)"
-                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors"
-                [ngClass]="selectedOwnerId === owner.ownerId ? 'bg-black/[0.05] dark:bg-white/[0.08]' : 'hover:bg-black/[0.03] dark:hover:bg-white/[0.05]'">
-                <span class="w-8 h-8 rounded-full bg-[#30d158]/15 flex items-center justify-center text-[12px] font-semibold text-[#30d158] shrink-0">
-                  {{ (owner.ownerName || '?').charAt(0).toUpperCase() }}
-                </span>
-                <span class="flex-1 min-w-0">
-                  <span class="block text-[13px] font-medium text-[#1d1d1f] dark:text-white truncate">{{ owner.ownerName }}</span>
-                  <span class="block text-[11px] text-[#86868b]">{{ owner.tiendaCount }} {{ owner.tiendaCount === 1 ? 'tienda' : 'tiendas' }}</span>
-                </span>
-                <span *ngIf="selectedOwnerId === owner.ownerId" class="w-2 h-2 rounded-full bg-[#30d158] shrink-0"></span>
-              </button>
-            </div>
-          </section>
+    <!-- Tiendas padre (todas, sin filtro por propietario) -->
+    <div>
+      <ng-container *ngIf="filteredTiendas$ | async as filtered">
+        <div [tuiSkeleton]="(loadingTiendas$ | async) === true" class="rounded-2xl">
+          <app-tabletiendas [tiendas]="filtered" [mostrarContador]="(isSuperUser$ | async) === true" (crearSucursal)="showDialog($event)"></app-tabletiendas>
         </div>
-      </aside>
-
-      <!-- Tiendas al costado -->
-      <div class="min-w-0">
-        <ng-container *ngIf="filteredTiendas$ | async as filtered">
-          <div [tuiSkeleton]="(loadingTiendas$ | async) === true" class="rounded-2xl">
-            <app-tabletiendas [tiendas]="filtered"></app-tabletiendas>
-          </div>
-          <p *ngIf="filtered.length === 0 && (isSuperUser$ | async) === false" class="text-[13px] text-[#86868b] dark:text-[#a1a1a6] mt-6 text-center">
-            No se encontraron sucursales. Se muestra tu tienda principal.
-          </p>
-          <p *ngIf="filtered.length === 0 && (isSuperUser$ | async) === true" class="text-[13px] text-[#86868b] dark:text-[#a1a1a6] mt-6 text-center">
-            Este propietario aún no tiene tiendas.
-          </p>
-        </ng-container>
-      </div>
+        <p *ngIf="filtered.length === 0 && (isSuperUser$ | async) === false" class="text-[13px] text-[#86868b] dark:text-[#a1a1a6] mt-6 text-center">
+          No se encontraron sucursales. Se muestra tu tienda principal.
+        </p>
+        <p *ngIf="filtered.length === 0 && (isSuperUser$ | async) === true" class="text-[13px] text-[#86868b] dark:text-[#a1a1a6] mt-6 text-center">
+          Aún no hay tiendas creadas.
+        </p>
+      </ng-container>
     </div>
   </div>
 </div>

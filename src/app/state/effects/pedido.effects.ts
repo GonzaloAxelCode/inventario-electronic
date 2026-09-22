@@ -118,8 +118,8 @@ export class PedidoEffects {
             exhaustMap(({ pedidoId }) =>
                 this.pedidoService.eliminarPedido(pedidoId).pipe(
                     map((response) => {
-                        this.alertService.showSuccess(response.mensaje || 'Pedido eliminado permanentemente', 'Exito').subscribe();
-                        return eliminarPedidoExito({ pedidoId, mensaje: response.mensaje });
+                        this.alertService.showSuccess(response?.mensaje || 'Pedido eliminado permanentemente', 'Exito').subscribe();
+                        return eliminarPedidoExito({ pedidoId, mensaje: response?.mensaje });
                     }),
                     catchError((error) => {
                         this.alertService.showError('Error al eliminar el pedido', 'Error').subscribe();

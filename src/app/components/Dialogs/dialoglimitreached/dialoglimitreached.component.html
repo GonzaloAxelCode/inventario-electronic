@@ -1,0 +1,17 @@
+<div class="w-full min-w-[280px] max-w-[400px] pt-2 text-center">
+  <div class="w-12 h-12 mx-auto rounded-full bg-[#ff3b30]/10 flex items-center justify-center mb-3">
+    <svg class="w-6 h-6 text-[#ff3b30]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+  </div>
+
+  <h3 class="text-[15px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Límite alcanzado para {{ tipoLabel }}</h3>
+  <p class="text-[12px] font-mono text-[#86868b] mt-1">{{ data.usados }} / {{ data.limite }} {{ unidadLabel }}</p>
+  <p class="text-[13px] leading-5 text-[#1d1d1f] dark:text-white/90 mt-3">
+    Actualiza tu plan para {{ accionLabel }}<span *ngIf="data.diasRestantes != null || data.fechaReset"> o espera
+      <span *ngIf="data.diasRestantes != null" class="font-semibold">{{ data.diasRestantes }} {{ data.diasRestantes === 1 ? 'día' : 'días' }}</span><span *ngIf="data.fechaReset"> hasta el {{ data.fechaReset }}</span><span *ngIf="esMensual"> para restablecer</span></span>.
+  </p>
+
+  <div class="flex gap-2 mt-5">
+    <button tuiButton appearance="outline-grayscale" size="m" type="button" (click)="onClose()" class="flex-1 !rounded-full">Entendido</button>
+    <button tuiButton appearance="primary-grayscale" size="m" type="button" (click)="onVerPlan()" class="flex-1 !rounded-full">Ver mi plan</button>
+  </div>
+</div>

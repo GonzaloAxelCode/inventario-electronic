@@ -1,0 +1,119 @@
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;" class="w-full max-w-3xl space-y-4 sm:space-y-5">
+
+  <!-- Otros módulos -->
+  <section>
+    <div class="px-1 mb-3">
+      <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white flex items-center gap-2">
+        <svg class="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+        </svg>
+        Otros módulos
+      </h2>
+      <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">Activa o desactiva los módulos opcionales.</p>
+    </div>
+
+    <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 divide-y divide-stone-100 dark:divide-white/5 px-4 sm:px-5">
+
+      <!-- Guias de Remision -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
+               [class]="featureFlags.guiasRemisionEnabled() ? 'bg-amber-500/15' : 'bg-stone-100 dark:bg-white/10'">
+            <svg class="w-5 h-5" [class]="featureFlags.guiasRemisionEnabled() ? 'text-amber-500' : 'text-stone-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white flex items-center gap-2 flex-wrap">
+              Guias de Remision
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400">Beta</span>
+            </p>
+            <p class="text-xs text-stone-500 dark:text-stone-400">
+              {{ featureFlags.guiasRemisionEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 p-1 rounded-full bg-stone-100 dark:bg-white/10 self-start sm:self-center shrink-0" role="group" aria-label="Guías de remisión">
+          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
+            [class]="!featureFlags.guiasRemisionEnabled() ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
+            (click)="featureFlags.guiasRemisionEnabled() && toggleGuiasRemision()">
+            No
+          </button>
+          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
+            [class]="featureFlags.guiasRemisionEnabled() ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
+            (click)="!featureFlags.guiasRemisionEnabled() && toggleGuiasRemision()">
+            Si
+          </button>
+        </div>
+      </div>
+
+      <!-- Compras -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
+               [class]="featureFlags.comprasEnabled() ? 'bg-violet-500/15' : 'bg-stone-100 dark:bg-white/10'">
+            <svg class="w-5 h-5" [class]="featureFlags.comprasEnabled() ? 'text-violet-500' : 'text-stone-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white flex items-center gap-2 flex-wrap">
+              Compras
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-600 dark:text-violet-400">Beta</span>
+            </p>
+            <p class="text-xs text-stone-500 dark:text-stone-400">
+              {{ featureFlags.comprasEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 p-1 rounded-full bg-stone-100 dark:bg-white/10 self-start sm:self-center shrink-0" role="group" aria-label="Módulo de compras">
+          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
+            [class]="!featureFlags.comprasEnabled() ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
+            (click)="featureFlags.comprasEnabled() && toggleCompras()">
+            No
+          </button>
+          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
+            [class]="featureFlags.comprasEnabled() ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
+            (click)="!featureFlags.comprasEnabled() && toggleCompras()">
+            Si
+          </button>
+        </div>
+      </div>
+
+      <!-- Ganancias -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
+               [class]="featureFlags.gananciasEnabled() ? 'bg-emerald-500/15' : 'bg-stone-100 dark:bg-white/10'">
+            <svg class="w-5 h-5" [class]="featureFlags.gananciasEnabled() ? 'text-emerald-500' : 'text-stone-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white flex items-center gap-2 flex-wrap">
+              Ganancias
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">Beta</span>
+            </p>
+            <p class="text-xs text-stone-500 dark:text-stone-400">
+              {{ featureFlags.gananciasEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 p-1 rounded-full bg-stone-100 dark:bg-white/10 self-start sm:self-center shrink-0" role="group" aria-label="Módulo de ganancias">
+          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
+            [class]="!featureFlags.gananciasEnabled() ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
+            (click)="featureFlags.gananciasEnabled() && toggleGanancias()">
+            No
+          </button>
+          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
+            [class]="featureFlags.gananciasEnabled() ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
+            (click)="!featureFlags.gananciasEnabled() && toggleGanancias()">
+            Si
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>

@@ -87,6 +87,10 @@ export class DialogselectproductsComponent implements OnInit {
     this.context.completeWith(inventario);
   }
 
+  cerrarSinSeleccion(): void {
+    this.context.completeWith(null as any);
+  }
+
   getColorClass(cantidad: number): string {
     if (cantidad >= 0 && cantidad <= 3) {
       return 'text-red-500';

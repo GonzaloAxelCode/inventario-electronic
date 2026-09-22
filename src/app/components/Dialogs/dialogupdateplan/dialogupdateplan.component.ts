@@ -42,6 +42,7 @@ export class DialogupdateplanComponent {
       limite_boletas: [this.plan.limite_boletas ?? 0, [Validators.required, Validators.min(0)]],
       limite_facturas: [this.plan.limite_facturas ?? 0, [Validators.required, Validators.min(0)]],
       limite_personal: [this.plan.limite_personal ?? 0, [Validators.required, Validators.min(0)]],
+      limite_productos: [this.plan.limite_productos ?? 0, [Validators.required, Validators.min(0)]],
       precio_mensual: [this.plan.precio_mensual ?? '', Validators.required],
       precio_anual: [this.plan.precio_anual ?? '', Validators.required],
       moneda: [this.plan.moneda ?? 'PEN', Validators.required],

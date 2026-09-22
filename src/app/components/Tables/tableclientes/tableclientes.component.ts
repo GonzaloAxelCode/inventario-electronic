@@ -71,7 +71,6 @@ export class TableClientesComponent implements OnInit {
 
     this.form.valueChanges.subscribe(values => {
       this.onSubmitSearch()
-      console.log(values)
     });
   }
 
@@ -97,7 +96,6 @@ export class TableClientesComponent implements OnInit {
   }
 
   protected onViewCliente(cliente: any): void {
-    console.log('Ver cliente:', cliente);
   }
 
   getInitials(fullname: string): string {

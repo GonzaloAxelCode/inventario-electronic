@@ -9,6 +9,7 @@ import { URL_BASE } from './utils/endpoints';
 export interface QuerySearchVenta {
     metodo_pago: string;
     tipo_comprobante: string;
+    tipo_venta: string;
     nombre_cliente: string;
     numero_documento_cliente: string;
     numero_comprobante: string;
@@ -178,6 +179,7 @@ export class VentaService {
             body.query = {
                 metodo_pago: query.metodo_pago || "",
                 tipo_comprobante: query.tipo_comprobante || "",
+                tipo_venta: query.tipo_venta || "",
                 nombre_cliente: query.nombre_cliente || "",
                 numero_documento_cliente: query.numero_documento_cliente || "",
                 numero_comprobante: query.numero_comprobante || "",

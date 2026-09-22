@@ -1,0 +1,81 @@
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;" class="w-full max-w-3xl space-y-4 sm:space-y-5">
+
+  <div class="px-1">
+    <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white">Mi tienda</h2>
+    <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">Datos generales y estado de tu negocio.</p>
+  </div>
+
+  <section *ngIf="tienda?.nombre; else sinTienda" class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5">
+    <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+      <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden border border-stone-200/70 dark:border-white/10 bg-stone-100 dark:bg-white/5 shrink-0">
+        <img loading="lazy"
+          [src]="tienda.logo_img ? imageUrl(tienda.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+          [alt]="tienda.nombre"
+          class="w-full h-full object-cover" />
+      </div>
+      <div class="min-w-0 flex-1">
+        <h3 class="text-base sm:text-lg font-semibold tracking-tight text-stone-900 dark:text-white truncate">{{ tienda.nombre }}</h3>
+        <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400 truncate">{{ tienda.razon_social || '—' }} · RUC {{ tienda.ruc || '—' }}</p>
+      </div>
+      <span *ngIf="tienda.activo !== undefined" class="px-2.5 py-1 rounded-full text-[11px] font-semibold shrink-0"
+        [class]="tienda.activo ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-stone-100 dark:bg-white/10 text-stone-500 dark:text-stone-400'">
+        {{ tienda.activo ? 'Activa' : 'Inactiva' }}
+      </span>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mt-4">
+      <span *ngIf="sunatOK" class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">SUNAT configurado</span>
+      <span *ngIf="!sunatOK" class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400">{{ sunatFaltante }}</span>
+      <span *ngIf="tienda.serie" class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-mono text-stone-500 dark:text-stone-400 border border-stone-200/70 dark:border-white/10">Serie {{ tienda.serie }}</span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 mt-5 pt-5 border-t border-stone-100 dark:border-white/5">
+      <div class="space-y-0.5 min-w-0">
+        <label class="text-[11px] font-medium text-stone-400">Razón social</label>
+        <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white break-words">{{ tienda.razon_social || '—' }}</p>
+      </div>
+      <div class="space-y-0.5 min-w-0">
+        <label class="text-[11px] font-medium text-stone-400">RUC</label>
+        <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white font-mono">{{ tienda.ruc || '—' }}</p>
+      </div>
+      <div class="space-y-0.5 min-w-0">
+        <label class="text-[11px] font-medium text-stone-400">Dirección</label>
+        <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white break-words">{{ tienda.direccion || '—' }}</p>
+      </div>
+      <div class="space-y-0.5 min-w-0">
+        <label class="text-[11px] font-medium text-stone-400">Propietario</label>
+        <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white break-words">{{ propietarioUsername || '—' }}</p>
+      </div>
+      <div class="space-y-0.5 min-w-0">
+        <label class="text-[11px] font-medium text-stone-400">Límite de personal</label>
+        <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white">{{ limitePersonalTexto }}</p>
+      </div>
+      <div class="space-y-0.5 min-w-0">
+        <label class="text-[11px] font-medium text-stone-400">Teléfono</label>
+        <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white">{{ tienda.telefono || '—' }}</p>
+      </div>
+      <div class="space-y-0.5 min-w-0">
+        <label class="text-[11px] font-medium text-stone-400">Email</label>
+        <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white break-all">{{ tienda.email || '—' }}</p>
+      </div>
+      <div class="space-y-0.5 min-w-0">
+        <label class="text-[11px] font-medium text-stone-400">Usuario SOL</label>
+        <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white font-mono">{{ tienda.sol_user || (tienda.tiene_sol ? 'Configurado' : '—') }}</p>
+      </div>
+      <div class="space-y-0.5 min-w-0">
+        <label class="text-[11px] font-medium text-stone-400">Keys SUNAT guías</label>
+        <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white">{{ (tienda.tiene_credenciales_guia ?? (tienda.tiene_client_id && tienda.tiene_client_secret)) ? 'Configurado' : '—' }}</p>
+      </div>
+      <div class="space-y-0.5 min-w-0">
+        <label class="text-[11px] font-medium text-stone-400">Fecha creación</label>
+        <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white">{{ tienda.date_created ? (tienda.date_created | date:'dd/MM/yyyy') : '—' }}</p>
+      </div>
+    </div>
+  </section>
+
+  <ng-template #sinTienda>
+    <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5">
+      <p class="text-sm text-stone-500 dark:text-stone-400">Sin tienda asignada.</p>
+    </div>
+  </ng-template>
+</div>

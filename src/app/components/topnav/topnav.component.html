@@ -1,6 +1,56 @@
 <!-- Main Layout -->
 <div class="relative flex flex-col h-screen w-full">
   <header class="topnav-header bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
+    <!-- Nav top solo para móviles: logo + hamburguesa, nada más -->
+    <div class="mobile-topnav">
+      <a routerLink="/app" class="logo-link">
+        <img
+          [src]="tienda.logo_img ? tienda.logo_img : 'https://res.cloudinary.com/ddksrkond/image/upload/c_crop,w_500,h_210,g_auto/v1764500497/logofinal_pdsf0v.png'"
+          class="logo-img" alt="Logo">
+      </a>
+      <div class="mobile-menu-container relative">
+        <button (click)="toggleMobileMenu(); $event.stopPropagation()" class="mobile-menu-button">
+          <svg class="w-6 h-6 text-neutral-600 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+
+        <div *ngIf="mobileMenuOpen" class="mobile-dropdown bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+          <div class="mobile-dropdown-header">
+            <div class="dropdown-avatar">{{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}</div>
+            <div>
+              <p class="dropdown-name text-neutral-900 dark:text-white">{{ user.first_name }}</p>
+              <p class="dropdown-email text-neutral-500 dark:text-neutral-400">{{ user.username }}</p>
+            </div>
+          </div>
+          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
+          <nav class="mobile-nav-links">
+            <ng-container *ngFor="let item of allNavItems">
+              <a *ngIf="(!item.superuserOnly || user.is_superuser) && (!item.featureFlag || (item.featureFlag === 'guiasRemision' && featureFlags.guiasRemisionEnabled()) || (item.featureFlag === 'tiktok' && featureFlags.tiktokEnabled()) || (item.featureFlag === 'compras' && featureFlags.comprasEnabled()) || (item.featureFlag === 'ganancias' && featureFlags.gananciasEnabled()))"
+                [routerLink]="item.route"
+                (click)="closeMobileMenu()"
+                [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+                routerLinkActive="nav-link-active"
+                class="mobile-nav-link text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" [attr.d]="item.icon"/>
+                </svg>
+                {{ item.label }}
+              </a>
+            </ng-container>
+          </nav>
+          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
+          <button (click)="toggleTheme($event)" class="dropdown-item text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
+            <app-darkmode></app-darkmode><span>Tema</span>
+          </button>
+          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
+          <button (click)="logout2()" class="dropdown-item text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">
+            <svg class="dropdown-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="topnav-container">
     <!-- Logo -->
     <div class="topnav-logo">
@@ -65,7 +115,7 @@
       </div>
     </div>
 
-    <!-- Right Side: User Menu + Mobile Menu Button -->
+    <!-- Right Side: User Menu -->
     <div class="topnav-right">
       <!-- User Menu -->
       <div class="user-menu-container relative hidden md:block">
@@ -90,7 +140,7 @@
               {{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}
             </div>
             <div>
-              <p class="dropdown-name text-neutral-900 dark:text-white">{{ user.first_name }} {{ user.last_name }}</p>
+              <p class="dropdown-name text-neutral-900 dark:text-white">{{ user.first_name }}</p>
               <p class="dropdown-email text-neutral-500 dark:text-neutral-400">{{ user.username }}</p>
             </div>
           </div>
@@ -116,49 +166,6 @@
         </div>
       </div>
 
-      <!-- Mobile Menu Button -->
-      <div class="mobile-menu-container md:hidden">
-        <button (click)="toggleMobileMenu(); $event.stopPropagation()" class="mobile-menu-button">
-          <svg class="w-6 h-6 text-neutral-600 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
-        </button>
-
-        <div *ngIf="mobileMenuOpen" class="mobile-dropdown bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
-          <div class="mobile-dropdown-header">
-            <div class="dropdown-avatar">{{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}</div>
-            <div>
-              <p class="dropdown-name text-neutral-900 dark:text-white">{{ user.first_name }} {{ user.last_name }}</p>
-              <p class="dropdown-email text-neutral-500 dark:text-neutral-400">{{ user.username }}</p>
-            </div>
-          </div>
-          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
-          <nav class="mobile-nav-links">
-            <ng-container *ngFor="let item of allNavItems">
-              <a *ngIf="(!item.superuserOnly || user.is_superuser) && (!item.featureFlag || (item.featureFlag === 'guiasRemision' && featureFlags.guiasRemisionEnabled()) || (item.featureFlag === 'tiktok' && featureFlags.tiktokEnabled()) || (item.featureFlag === 'compras' && featureFlags.comprasEnabled()) || (item.featureFlag === 'ganancias' && featureFlags.gananciasEnabled()))"
-                [routerLink]="item.route"
-                (click)="closeMobileMenu()"
-                [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
-                routerLinkActive="nav-link-active"
-                class="mobile-nav-link text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" [attr.d]="item.icon"/>
-                </svg>
-                {{ item.label }}
-              </a>
-            </ng-container>
-          </nav>
-          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
-          <button (click)="toggleTheme($event)" class="dropdown-item text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
-            <app-darkmode></app-darkmode><span>Tema</span>
-          </button>
-          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
-          <button (click)="logout2()" class="dropdown-item text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">
-            <svg class="dropdown-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-            Cerrar Sesión
-          </button>
-        </div>
-      </div>
     </div>
   </div>
   </header>

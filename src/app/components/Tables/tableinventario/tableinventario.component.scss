@@ -2,6 +2,18 @@
     display: block;
 }
 
+// Inputs de búsqueda sin fondo (modo selección de productos)
+:host ::ng-deep .campo-plano {
+    --tui-background-base: transparent;
+    --tui-background-base-hover: transparent;
+    --tui-background-base-active: transparent;
+    --tui-background-base-pressed: transparent;
+
+    input {
+        background: transparent !important;
+    }
+}
+
 // Animación sutil para las cards
 @keyframes fadeInUp {
     from {

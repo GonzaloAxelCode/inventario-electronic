@@ -2,7 +2,7 @@ import { Cliente, ClienteCreate, ClienteUpdate, ResumenClientes, ClientesFrecuen
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { URL_BASE } from './utils/endpoints';
 import { getAuthDataFromLocalStorage } from './utils/localstorage-functions';
 export interface QuerySearchCliente {
@@ -92,7 +92,6 @@ export class ClienteService {
     fetchResumenClientes(): Observable<ResumenClientes> {
         const headers = this.getAuthHeaders();
         return this.http.get<ResumenClientes>(`${this.siteURL}/clientes/resumen/`, { headers }).pipe(
-            tap(response => console.log('[ClienteService] Resumen response:', response)),
             catchError(error => {
                 console.error('[ClienteService] Resumen error:', error);
                 return throwError(() => error);

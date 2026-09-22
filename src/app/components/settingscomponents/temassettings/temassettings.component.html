@@ -1,175 +1,83 @@
-<div class="max-w-4xl p-2 sm:p-6 space-y-6">
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;" class="w-full max-w-3xl space-y-4 sm:space-y-5">
 
   <!-- Apariencia -->
   <section>
-    <h2 class="text-base sm:text-xl font-bold dark:text-white mb-1 flex items-center gap-2">
-      <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-      </svg>
-      Apariencia
-    </h2>
-    <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mb-3">Personaliza la apariencia de la interfaz.</p>
+    <div class="px-1 mb-3">
+      <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white flex items-center gap-2">
+        <svg class="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+        Apariencia
+      </h2>
+      <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">Personaliza la apariencia de la interfaz.</p>
+    </div>
 
-    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-4">
+    <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 divide-y divide-stone-100 dark:divide-white/5 px-4 sm:px-5">
 
-      <!-- Dark Mode Segmented Toggle -->
-      <div class="flex items-center justify-between py-2 sm:py-3 border-b border-neutral-200 dark:border-neutral-700">
-        <div class="flex items-center gap-2 sm:gap-3">
-          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
-               [class]="isDarkMode ? 'bg-indigo-100 dark:bg-indigo-900/30' : 'bg-amber-100'">
-            <svg *ngIf="!isDarkMode" class="w-4 h-4 sm:w-5 sm:h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Modo oscuro: segmentado iOS -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
+               [class]="isDarkMode ? 'bg-indigo-500/15 dark:bg-indigo-400/15' : 'bg-amber-500/15'">
+            <svg *ngIf="!isDarkMode" class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
             </svg>
-            <svg *ngIf="isDarkMode" class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg *ngIf="isDarkMode" class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
             </svg>
           </div>
-          <div>
-            <p class="text-xs sm:text-sm font-medium dark:text-white">Modo Oscuro</p>
-            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white">Modo Oscuro</p>
+            <p class="text-xs text-stone-500 dark:text-stone-400">
               {{ isDarkMode ? 'Interfaz oscura' : 'Interfaz clara' }}
             </p>
           </div>
         </div>
-        <div class="segmented-toggle">
-          <button class="segmented-option" [class.active]="!isDarkMode" (click)="!isDarkMode || toggleDarkMode()">
+        <div class="flex items-center gap-1 p-1 rounded-full bg-stone-100 dark:bg-white/10 self-start sm:self-center shrink-0" role="group" aria-label="Modo de apariencia">
+          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
+            [class]="!isDarkMode ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
+            (click)="!isDarkMode || toggleDarkMode()">
             Claro
           </button>
-          <button class="segmented-option" [class.active]="isDarkMode" (click)="isDarkMode || toggleDarkMode()">
+          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
+            [class]="isDarkMode ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
+            (click)="isDarkMode || toggleDarkMode()">
             Oscuro
           </button>
         </div>
       </div>
 
-      <!-- Layout Segmented Toggle -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-2 sm:py-3 border-b border-neutral-200 dark:border-neutral-700" [class.opacity-50]="isMobile" [class.pointer-events-none]="isMobile">
-        <div class="flex items-center gap-2 sm:gap-3">
-          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
-               [class]="isTopnavLayout ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-blue-100 dark:bg-blue-900/30'">
-            <svg *ngIf="!isTopnavLayout" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Barra de navegación: segmentado iOS -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4" [class.opacity-50]="isMobile" [class.pointer-events-none]="isMobile">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
+               [class]="isTopnavLayout ? 'bg-emerald-500/15' : 'bg-blue-500/15'">
+            <svg *ngIf="!isTopnavLayout" class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6v12"/>
             </svg>
-            <svg *ngIf="isTopnavLayout" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg *ngIf="isTopnavLayout" class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
           </div>
-          <div>
-            <p class="text-xs sm:text-sm font-medium dark:text-white">Barra de Navegación</p>
-            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white">Barra de Navegación</p>
+            <p class="text-xs text-stone-500 dark:text-stone-400">
               {{ isTopnavLayout ? 'Navegación superior' : 'Navegación lateral' }}
               <span *ngIf="isMobile" class="text-amber-600 dark:text-amber-400 ml-1">(No disponible en móvil)</span>
             </p>
           </div>
         </div>
-        <div class="segmented-toggle" *ngIf="!isMobile">
-          <button class="segmented-option" [class.active]="!isTopnavLayout" (click)="!isTopnavLayout || toggleLayout()">
+        <div *ngIf="!isMobile" class="flex items-center gap-1 p-1 rounded-full bg-stone-100 dark:bg-white/10 self-start sm:self-center shrink-0" role="group" aria-label="Tipo de navegación">
+          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
+            [class]="!isTopnavLayout ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
+            (click)="!isTopnavLayout || toggleLayout()">
             Lateral
           </button>
-          <button class="segmented-option" [class.active]="isTopnavLayout" (click)="isTopnavLayout || toggleLayout()">
+          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
+            [class]="isTopnavLayout ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
+            (click)="isTopnavLayout || toggleLayout()">
             Superior
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Modulos -->
-  <section>
-    <h2 class="text-base sm:text-xl font-bold dark:text-white mb-1 flex items-center gap-2">
-      <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-      </svg>
-      Modulos
-    </h2>
-    <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mb-3">Activa o desactiva los módulos opcionales.</p>
-
-    <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-3">
-
-      <!-- Guias de Remision -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-2 sm:py-3">
-        <div class="flex items-center gap-2 sm:gap-3">
-          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
-               [class]="featureFlags.guiasRemisionEnabled() ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-neutral-200 dark:bg-neutral-700'">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5" [class]="featureFlags.guiasRemisionEnabled() ? 'text-amber-600 dark:text-amber-400' : 'text-neutral-500 dark:text-neutral-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-xs sm:text-sm font-medium dark:text-white flex items-center gap-2">
-              Guias de Remision
-              <span class="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Beta</span>
-            </p>
-            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
-              {{ featureFlags.guiasRemisionEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
-            </p>
-          </div>
-        </div>
-        <div class="segmented-toggle">
-          <button class="segmented-option" [class.active]="!featureFlags.guiasRemisionEnabled()" (click)="featureFlags.guiasRemisionEnabled() && toggleGuiasRemision()">
-            No
-          </button>
-          <button class="segmented-option" [class.active]="featureFlags.guiasRemisionEnabled()" (click)="!featureFlags.guiasRemisionEnabled() && toggleGuiasRemision()">
-            Si
-          </button>
-        </div>
-      </div>
-
-      <!-- Compras -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-2 sm:py-3 border-t border-neutral-200 dark:border-neutral-700">
-        <div class="flex items-center gap-2 sm:gap-3">
-          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
-               [class]="featureFlags.comprasEnabled() ? 'bg-violet-100 dark:bg-violet-900/30' : 'bg-neutral-200 dark:bg-neutral-700'">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5" [class]="featureFlags.comprasEnabled() ? 'text-violet-600 dark:text-violet-400' : 'text-neutral-500 dark:text-neutral-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-xs sm:text-sm font-medium dark:text-white flex items-center gap-2">
-              Compras
-              <span class="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400">Beta</span>
-            </p>
-            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
-              {{ featureFlags.comprasEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
-            </p>
-          </div>
-        </div>
-        <div class="segmented-toggle">
-          <button class="segmented-option" [class.active]="!featureFlags.comprasEnabled()" (click)="featureFlags.comprasEnabled() && toggleCompras()">
-            No
-          </button>
-          <button class="segmented-option" [class.active]="featureFlags.comprasEnabled()" (click)="!featureFlags.comprasEnabled() && toggleCompras()">
-            Si
-          </button>
-        </div>
-      </div>
-
-      <!-- Ganancias -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-2 sm:py-3 border-t border-neutral-200 dark:border-neutral-700">
-        <div class="flex items-center gap-2 sm:gap-3">
-          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
-               [class]="featureFlags.gananciasEnabled() ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-neutral-200 dark:bg-neutral-700'">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5" [class]="featureFlags.gananciasEnabled() ? 'text-emerald-600 dark:text-emerald-400' : 'text-neutral-500 dark:text-neutral-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-xs sm:text-sm font-medium dark:text-white flex items-center gap-2">
-              Ganancias
-              <span class="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">Beta</span>
-            </p>
-            <p class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">
-              {{ featureFlags.gananciasEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
-            </p>
-          </div>
-        </div>
-        <div class="segmented-toggle">
-          <button class="segmented-option" [class.active]="!featureFlags.gananciasEnabled()" (click)="featureFlags.gananciasEnabled() && toggleGanancias()">
-            No
-          </button>
-          <button class="segmented-option" [class.active]="featureFlags.gananciasEnabled()" (click)="!featureFlags.gananciasEnabled() && toggleGanancias()">
-            Si
           </button>
         </div>
       </div>

@@ -208,6 +208,7 @@ export class ListallventasComponent {
   estados_sunat = ["Todos", "Pendiente", "Aceptado", "Rechazado"]
   metodos_pago = ["Todos", "YAPE", "Efectivo", "Deposito", "Plin"]
   tipoComprobantes = ["Todos", "Factura", "Boleta", "Anonima"]
+  tiposVenta = ["Todos", "PRESENCIAL", "PEDIDO"]
   tipoDocumento = ["Dni", "Ruc"]
 
 
@@ -217,6 +218,7 @@ export class ListallventasComponent {
     nombre_cliente: new FormControl(""),
     metodo_pago: new FormControl(""),
     tipo_comprobante: new FormControl(""),
+    tipo_venta: new FormControl(""),
     numero_comprobante: new FormControl(""),
     serie: new FormControl(""),
     numero_documento_cliente: new FormControl(""),
@@ -258,6 +260,7 @@ export class ListallventasComponent {
     const query: Partial<QuerySearchVenta> = {
       metodo_pago: val(this.form.value.metodo_pago),
       tipo_comprobante: val(this.form.value.tipo_comprobante),
+      tipo_venta: val(this.form.value.tipo_venta),
       nombre_cliente: val(this.form.value.nombre_cliente),
       numero_documento_cliente: val(this.form.value.numero_documento_cliente),
       numero_comprobante: val(this.form.value.numero_comprobante),
@@ -299,6 +302,7 @@ export class ListallventasComponent {
         const query: Partial<QuerySearchVenta> = {
           metodo_pago: val(this.form.value.metodo_pago),
           tipo_comprobante: val(this.form.value.tipo_comprobante),
+          tipo_venta: val(this.form.value.tipo_venta),
           nombre_cliente: val(this.form.value.nombre_cliente),
           numero_documento_cliente: val(this.form.value.numero_documento_cliente),
           numero_comprobante: val(this.form.value.numero_comprobante),

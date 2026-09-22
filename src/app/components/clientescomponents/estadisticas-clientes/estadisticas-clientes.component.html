@@ -1,195 +1,139 @@
-<div class="flex flex-col gap-4 p-2 sm:p-4 overflow-hidden">
+<div class="flex flex-col gap-4 sm:gap-5" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;">
 
   <div>
-    <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Estadísticas de Clientes</h3>
-    <p class="text-sm text-neutral-500 dark:text-neutral-400">Resumen y análisis de clientes</p>
+    <h3 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white">Estadísticas</h3>
+    <p class="text-xs text-stone-400 mt-0.5">Resumen de tu cartera de clientes</p>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-          <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        </div>
-        <div>
-          <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ resumen.total_clientes }}</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Total Clientes</p>
-        </div>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10">
+      <div class="w-9 h-9 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-3">
+        <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.7">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
       </div>
+      <p class="text-2xl font-bold tracking-tight text-stone-900 dark:text-white">{{ resumen.total_clientes }}</p>
+      <p class="text-[11px] text-stone-400 mt-0.5">Total clientes</p>
     </div>
 
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-          <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-        </div>
-        <div>
-          <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ resumen.nuevos_hoy }}</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Nuevos Hoy</p>
-        </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10">
+      <div class="w-9 h-9 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-3">
+        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.7">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
       </div>
+      <p class="text-2xl font-bold tracking-tight text-stone-900 dark:text-white">{{ resumen.nuevos_hoy }}</p>
+      <p class="text-[11px] text-stone-400 mt-0.5">Nuevos hoy</p>
     </div>
 
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-          <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </div>
-        <div>
-          <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ resumen.nuevos_semana }}</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Nuevos esta Semana</p>
-        </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10">
+      <div class="w-9 h-9 rounded-2xl bg-amber-500/10 flex items-center justify-center mb-3">
+        <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.7">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
       </div>
+      <p class="text-2xl font-bold tracking-tight text-stone-900 dark:text-white">{{ resumen.nuevos_semana }}</p>
+      <p class="text-[11px] text-stone-400 mt-0.5">Esta semana</p>
     </div>
 
-    <div class="p-4 bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-          <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-        </div>
-        <div>
-          <p class="text-2xl font-bold text-neutral-900 dark:text-white">{{ resumen.nuevos_mes }}</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Nuevos este Mes</p>
-        </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10">
+      <div class="w-9 h-9 rounded-2xl bg-violet-500/10 flex items-center justify-center mb-3">
+        <svg class="w-4 h-4 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.7">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
       </div>
+      <p class="text-2xl font-bold tracking-tight text-stone-900 dark:text-white">{{ resumen.nuevos_mes }}</p>
+      <p class="text-[11px] text-stone-400 mt-0.5">Este mes</p>
     </div>
-
   </div>
 
-  <div class="flex items-center gap-2">
-    <span class="text-xs text-neutral-500 dark:text-neutral-400">Período:</span>
+  <div class="flex items-center gap-2 px-1">
+    <span class="text-[11px] text-stone-400">Período:</span>
     <select
-      class="text-xs px-2 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+      class="text-xs px-3 h-9 rounded-full border border-stone-200 dark:border-white/10 bg-white dark:bg-neutral-800 text-stone-900 dark:text-white"
       [ngModel]="selectedMonth"
       (ngModelChange)="onMonthChange($event)">
       <option *ngFor="let m of monthNames; let i = index" [ngValue]="i + 1">{{ m }}</option>
     </select>
     <select
-      class="text-xs px-2 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+      class="text-xs px-3 h-9 rounded-full border border-stone-200 dark:border-white/10 bg-white dark:bg-neutral-800 text-stone-900 dark:text-white"
       [ngModel]="selectedYear"
       (ngModelChange)="onYearChange($event)">
       <option *ngFor="let y of yearNumbers" [ngValue]="y">{{ y }}</option>
     </select>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-2.5 sm:gap-3">
 
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Clientes Más Frecuentes</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Por número de compras realizadas</p>
+    <section class="p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10">
+      <h4 class="text-sm font-semibold text-stone-900 dark:text-white">Más frecuentes</h4>
+      <p class="text-[11px] text-stone-400 mb-3">Por número de compras</p>
 
-      <div *ngIf="loadingFrecuentes">
-        <div class="space-y-3">
-          <div *ngFor="let i of [1, 2, 3, 4, 5]" class="flex items-center gap-3">
-            <div class="w-4 h-3 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
-            <div class="flex-1">
-              <div class="flex justify-between mb-1">
-                <div class="h-3 w-24 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
-                <div class="h-3 w-16 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
-              </div>
-              <div class="h-2 bg-neutral-200 dark:bg-neutral-600 rounded-full animate-pulse"></div>
-            </div>
-          </div>
+      <div *ngIf="loadingFrecuentes" class="divide-y divide-stone-100 dark:divide-white/5">
+        <div *ngFor="let i of [1, 2, 3, 4, 5]" class="flex items-center gap-3 py-2.5 animate-pulse">
+          <div class="h-3 w-24 bg-stone-200 dark:bg-white/10 rounded-full"></div>
+          <div class="h-3 w-16 bg-stone-200 dark:bg-white/10 rounded-full ml-auto"></div>
         </div>
       </div>
       <ng-template [ngIf]="!loadingFrecuentes">
-        <div *ngIf="clientesFrecuentes.length > 0; else emptyFrecuentes" class="space-y-3 overflow-auto">
-          <div *ngFor="let cliente of clientesFrecuentes; let i = index" class="flex items-center gap-3">
-            <span class="text-xs font-bold text-neutral-400 w-4">{{ i + 1 }}</span>
-            <div class="flex-1">
-              <div class="flex justify-between items-center mb-1 gap-2">
-                <div class="min-w-0">
-                  <span class="text-sm font-medium text-neutral-900 dark:text-white truncate block">{{ cliente.nombre }}</span>
-                  <span class="block text-xs text-neutral-500 dark:text-neutral-400 truncate">
-                    <ng-container *ngIf="cliente.dni">DNI: {{ cliente.dni }}</ng-container>
-                    <ng-container *ngIf="cliente.dni && cliente.ruc"> · </ng-container>
-                    <ng-container *ngIf="cliente.ruc">RUC: {{ cliente.ruc }}</ng-container>
-                    <ng-container *ngIf="!cliente.dni && !cliente.ruc">
-                      <ng-container *ngIf="cliente.celular">Cel: {{ cliente.celular }}</ng-container>
-                      <ng-container *ngIf="!cliente.celular">—</ng-container>
-                    </ng-container>
-                  </span>
-                </div>
-                <span class="text-sm font-bold text-neutral-600 dark:text-neutral-300 shrink-0">{{ cliente.total_compras }} compras</span>
-              </div>
-              <div class="w-full bg-neutral-100 dark:bg-neutral-700 rounded-full h-2">
-                <div class="bg-blue-500 h-2 rounded-full transition-all duration-700"
-                  [style.width.%]="(cliente.total_compras / maxCompras) * 100">
-                </div>
-              </div>
+        <div *ngIf="clientesFrecuentes.length > 0; else emptyFrecuentes" class="divide-y divide-stone-100 dark:divide-white/5">
+          <div *ngFor="let cliente of clientesFrecuentes; let i = index" class="flex items-center gap-2.5 py-2.5 min-w-0">
+            <span class="w-6 h-6 rounded-full bg-stone-100 dark:bg-white/10 text-[11px] font-bold text-stone-500 dark:text-stone-300 flex items-center justify-center shrink-0">{{ i + 1 }}</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-stone-900 dark:text-white truncate">{{ cliente.nombre }}</p>
+              <p class="text-[11px] text-stone-400 truncate">
+                <ng-container *ngIf="cliente.dni">DNI: {{ cliente.dni }}</ng-container>
+                <ng-container *ngIf="cliente.dni && cliente.ruc"> · </ng-container>
+                <ng-container *ngIf="cliente.ruc">RUC: {{ cliente.ruc }}</ng-container>
+                <ng-container *ngIf="!cliente.dni && !cliente.ruc">
+                  <ng-container *ngIf="cliente.celular">Cel: {{ cliente.celular }}</ng-container>
+                  <ng-container *ngIf="!cliente.celular">—</ng-container>
+                </ng-container>
+              </p>
             </div>
+            <span class="text-xs font-bold text-stone-900 dark:text-white whitespace-nowrap shrink-0">{{ cliente.total_compras }} compras</span>
           </div>
         </div>
       </ng-template>
       <ng-template #emptyFrecuentes>
-        <div class="flex items-center justify-center h-28 text-neutral-400 text-sm">
-          No hay datos de clientes frecuentes para este período
-        </div>
+        <p class="text-center text-xs text-stone-400 py-8">Sin datos en este período</p>
       </ng-template>
-    </div>
+    </section>
 
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Clientes Que Más Compraron</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Por monto total gastado en soles</p>
+    <section class="p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10">
+      <h4 class="text-sm font-semibold text-stone-900 dark:text-white">Mejores clientes</h4>
+      <p class="text-[11px] text-stone-400 mb-3">Por monto total en soles</p>
 
-      <div *ngIf="loadingTop">
-        <div class="space-y-3">
-          <div *ngFor="let i of [1, 2, 3, 4, 5]" class="flex items-center gap-3">
-            <div class="w-4 h-3 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
-            <div class="flex-1">
-              <div class="flex justify-between mb-1">
-                <div class="h-3 w-24 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
-                <div class="h-3 w-20 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse"></div>
-              </div>
-              <div class="h-2 bg-neutral-200 dark:bg-neutral-600 rounded-full animate-pulse"></div>
-            </div>
-          </div>
+      <div *ngIf="loadingTop" class="divide-y divide-stone-100 dark:divide-white/5">
+        <div *ngFor="let i of [1, 2, 3, 4, 5]" class="flex items-center gap-3 py-2.5 animate-pulse">
+          <div class="h-3 w-24 bg-stone-200 dark:bg-white/10 rounded-full"></div>
+          <div class="h-3 w-20 bg-stone-200 dark:bg-white/10 rounded-full ml-auto"></div>
         </div>
       </div>
       <ng-template [ngIf]="!loadingTop">
-        <div *ngIf="topClientes.length > 0; else emptyTop" class="space-y-3 overflow-auto">
-          <div *ngFor="let cliente of topClientes; let i = index" class="flex items-center gap-3">
-            <span class="text-xs font-bold text-neutral-400 w-4">{{ i + 1 }}</span>
-            <div class="flex-1">
-              <div class="flex justify-between items-center mb-1 gap-2">
-                <div class="min-w-0">
-                  <span class="text-sm font-medium text-neutral-900 dark:text-white truncate block">{{ cliente.nombre }}</span>
-                  <span class="block text-xs text-neutral-500 dark:text-neutral-400 truncate">
-                    <ng-container *ngIf="cliente.dni">DNI: {{ cliente.dni }}</ng-container>
-                    <ng-container *ngIf="cliente.dni && cliente.ruc"> · </ng-container>
-                    <ng-container *ngIf="cliente.ruc">RUC: {{ cliente.ruc }}</ng-container>
-                    <ng-container *ngIf="!cliente.dni && !cliente.ruc">
-                      <ng-container *ngIf="cliente.celular">Cel: {{ cliente.celular }}</ng-container>
-                      <ng-container *ngIf="!cliente.celular">—</ng-container>
-                    </ng-container>
-                  </span>
-                </div>
-                <span class="text-sm font-bold text-green-600 dark:text-green-400 shrink-0">S/ {{ cliente.total_gastado | number:'1.2-2' }}</span>
-              </div>
-              <div class="w-full bg-neutral-100 dark:bg-neutral-700 rounded-full h-2">
-                <div class="bg-green-500 h-2 rounded-full transition-all duration-700"
-                  [style.width.%]="(cliente.total_gastado / maxGastado) * 100">
-                </div>
-              </div>
+        <div *ngIf="topClientes.length > 0; else emptyTop" class="divide-y divide-stone-100 dark:divide-white/5">
+          <div *ngFor="let cliente of topClientes; let i = index" class="flex items-center gap-2.5 py-2.5 min-w-0">
+            <span class="w-6 h-6 rounded-full bg-stone-100 dark:bg-white/10 text-[11px] font-bold text-stone-500 dark:text-stone-300 flex items-center justify-center shrink-0">{{ i + 1 }}</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-stone-900 dark:text-white truncate">{{ cliente.nombre }}</p>
+              <p class="text-[11px] text-stone-400 truncate">
+                <ng-container *ngIf="cliente.dni">DNI: {{ cliente.dni }}</ng-container>
+                <ng-container *ngIf="cliente.dni && cliente.ruc"> · </ng-container>
+                <ng-container *ngIf="cliente.ruc">RUC: {{ cliente.ruc }}</ng-container>
+                <ng-container *ngIf="!cliente.dni && !cliente.ruc">
+                  <ng-container *ngIf="cliente.celular">Cel: {{ cliente.celular }}</ng-container>
+                  <ng-container *ngIf="!cliente.celular">—</ng-container>
+                </ng-container>
+              </p>
             </div>
+            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap shrink-0">S/ {{ cliente.total_gastado | number:'1.2-2' }}</span>
           </div>
         </div>
       </ng-template>
       <ng-template #emptyTop>
-        <div class="flex items-center justify-center h-28 text-neutral-400 text-sm">
-          No hay datos de compras para este período
-        </div>
+        <p class="text-center text-xs text-stone-400 py-8">Sin datos en este período</p>
       </ng-template>
-    </div>
+    </section>
 
   </div>
 

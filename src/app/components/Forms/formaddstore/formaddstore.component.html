@@ -16,44 +16,79 @@
     <!-- Grid responsivo -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-      <!-- Nombre -->
+      <!-- RUC + lupa consulta SUNAT (al inicio) -->
       <div>
+        <div class="flex items-start gap-2">
+          <tui-input
+            formControlName="ruc"
+            class="flex-1"
+            placeholder="11 dígitos"
+            inputmode="numeric"
+            maxlength="11"
+            [readOnly]="isAdminTienda || esSucursal"
+          >
+            RUC <span class="text-[#ff3b30]">*</span>
+          </tui-input>
+          <button
+            *ngIf="isSuperUser && !isAdminTienda && !esSucursal"
+            type="button"
+            (click)="consultarRucManual()"
+            [disabled]="consultandoRuc || tiendaForm.get('ruc')?.invalid"
+            title="Consultar RUC en SUNAT"
+            aria-label="Consultar RUC en SUNAT"
+            class="h-11 w-11 shrink-0 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black flex items-center justify-center transition-colors disabled:opacity-40"
+          >
+            <svg *ngIf="!consultandoRuc" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"/></svg>
+            <svg *ngIf="consultandoRuc" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+          </button>
+        </div>
+        <p *ngIf="isAdminTienda" class="text-[10px] text-[#86868b] mt-1">Se hereda de la tienda padre</p>
+        <p *ngIf="isSuperUser && !isAdminTienda && !esSucursal && consultandoRuc" class="text-[10px] text-[#0071e3] mt-1">Consultando RUC en SUNAT…</p>
+        <p *ngIf="isSuperUser && !isAdminTienda && !esSucursal && rucError" class="text-[10px] text-[#ff3b30] mt-1">{{ rucError }}</p>
+        <p *ngIf="tiendaForm.get('ruc')?.touched && tiendaForm.get('ruc')?.hasError('pattern')" class="text-[10px] text-[#ff3b30] mt-1">El RUC debe tener 11 dígitos numéricos</p>
+      </div>
+
+      <!-- Razon Social -->
+      <div>
+         <tui-input
+           formControlName="razon_social"
+           class="w-full"
+           [readOnly]="isAdminTienda || esSucursal || razonSocialBloqueada"
+         >
+          Razón Social <span class="text-[#ff3b30]">*</span>
+        </tui-input>
+        <p *ngIf="isAdminTienda" class="text-[10px] text-[#86868b] mt-1">Se hereda de la tienda padre</p>
+        <p *ngIf="!isAdminTienda && !esSucursal && razonSocialBloqueada" class="text-[10px] text-[#86868b] mt-1">Obtenida automáticamente de SUNAT según el RUC</p>
+      </div>
+
+      <!-- Nombre (ancho completo) -->
+      <div class="lg:col-span-2">
         <tui-input 
           formControlName="nombre" 
           placeholder="Ingrese el nombre de la tienda" 
           class="w-full"
         >
-          Nombre
+          Nombre <span class="text-[#ff3b30]">*</span>
         </tui-input>
         <div *ngIf="tiendaForm.get('nombre')?.touched && tiendaForm.get('nombre')?.invalid" class="text-red-500 text-sm">
           El nombre es obligatorio
         </div>
       </div>
-<!-- Razon Social -->
-      <div>
-         <tui-input 
-           formControlName="razon_social" 
-           class="w-full"
-           [readOnly]="isAdminTienda || esSucursal"
-         >
-          Razón Social
-        </tui-input>
-        <p *ngIf="isAdminTienda" class="text-[10px] text-[#86868b] mt-1">Se hereda de la tienda padre</p>
-      </div>
 
-  <div>
-        <tui-input 
-          formControlName="representante" 
-          placeholder="Ingrese el representante de la tienda" 
-          class="w-full"
-        >
-          Representante de la tienda
-        </tui-input>
+      <!-- Jerarquía (debajo del nombre) — solo superusuario, obligatoria -->
+      <div *ngIf="isSuperUser" class="lg:col-span-2">
+        <tui-select formControlName="tienda_padre_select" class="w-full">
+          Jerarquía <span class="text-[#ff3b30]">*</span>
+          <select tuiSelect [items]="jerarquiaOptions" placeholder="Seleccione jerarquía"></select>
+        </tui-select>
+        <div *ngIf="tiendaForm.get('tienda_padre_select')?.touched && tiendaForm.get('tienda_padre_select')?.invalid" class="text-red-500 text-sm">
+          La jerarquía es obligatoria
+        </div>
       </div>
 
   <div>
         <tui-select formControlName="serie" class="w-full">
-          Serie de comprobantes
+          Serie de comprobantes <span class="text-[#ff3b30]">*</span>
           <select tuiSelect [items]="seriesOptions" placeholder="Seleccione serie (001-010)"></select>
         </tui-select>
         <div *ngIf="tiendaForm.get('serie')?.touched && tiendaForm.get('serie')?.invalid" class="text-red-500 text-sm">
@@ -61,16 +96,37 @@
         </div>
       </div>
 
-      <!-- RUC -->
-      <div>
-         <tui-input 
-           formControlName="ruc" 
-           class="w-full"
-           [readOnly]="isAdminTienda || esSucursal"
-         >
-          RUC
+      <!-- Propietario (solo tienda padre) -->
+      <div *ngIf="!esSucursal && !isAdminTienda">
+        <tui-input
+          formControlName="propietario_username"
+          placeholder="Nombre de usuario del propietario"
+          autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          class="w-full"
+        >
+          Usuario del propietario <span class="text-[#ff3b30]">*</span>
         </tui-input>
-        <p *ngIf="isAdminTienda" class="text-[10px] text-[#86868b] mt-1">Se hereda de la tienda padre</p>
+        <div *ngIf="tiendaForm.get('propietario_username')?.touched && tiendaForm.get('propietario_username')?.invalid" class="text-red-500 text-sm">
+          El usuario del propietario es obligatorio
+        </div>
+      </div>
+
+      <div *ngIf="!esSucursal && !isAdminTienda">
+        <tui-input
+          formControlName="propietario_password"
+          placeholder="Contraseña del propietario"
+          autocomplete="new-password"
+          type="password"
+          class="w-full"
+        >
+          Contraseña del propietario <span class="text-[#ff3b30]">*</span>
+        </tui-input>
+        <div *ngIf="tiendaForm.get('propietario_password')?.touched && tiendaForm.get('propietario_password')?.invalid" class="text-red-500 text-sm">
+          La contraseña es obligatoria
+        </div>
       </div>
 
       <!-- Dirección -->
@@ -110,8 +166,8 @@
         </tui-input>
       </div>
 
-       <!-- Credenciales SOL SUNAT — solo superusuarios -->
-       <div *ngIf="isSuperUser" class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+       <!-- Credenciales SOL SUNAT — solo superusuarios, no en sucursal (hereda del padre) -->
+       <div *ngIf="isSuperUser && !esSucursal" class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
          <div>
            <tui-input formControlName="sol_user" placeholder="Usuario SOL" class="w-full" [readOnly]="esSucursal">Usuario SOL</tui-input>
          </div>
@@ -120,11 +176,10 @@
          </div>
        </div>
 
-       <!-- Certificados clave privada y pública SUNAT — se envían como string -->
-       <div class="lg:col-span-2 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] p-4" [class.opacity-50]="esSucursal" [class.pointer-events-none]="esSucursal">
-         <p class="text-[12px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white mb-1">Certificados clave SUNAT
-           <span *ngIf="esSucursal" class="text-[10px] text-[#86868b] dark:text-[#a1a1a6] ml-1">(Heredado del padre)</span>
-         </p>
+       <!-- Certificados clave privada y pública SUNAT — se envían como string (no en sucursal) -->
+       <div *ngIf="!esSucursal" class="lg:col-span-2 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] p-4">
+          <p class="text-[12px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white mb-1">Certificados clave SUNAT
+          </p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">Clave privada</p>
@@ -198,24 +253,15 @@
 
     </div>
 
-    <!-- Jerarquía — solo superusuario, opcional (vacío = tienda padre) -->
-      <div *ngIf="isSuperUser" class="rounded-2xl bg-transparent overflow-hidden">
-        <div class="px-4 py-2.5"><p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Jerarquía</p></div>
-        <div class="p-4">
-            <label class="text-[11px] font-medium text-[#1d1d1f] dark:text-white">¿Registrar como tienda padre o sucursal?</label>
-            <tui-select formControlName="tienda_padre_select" class="w-full mt-1">
-              Jerarquía
-              <select tuiSelect [items]="jerarquiaOptions" placeholder="Tienda padre (por defecto)"></select>
-            </tui-select>
-          </div>
-      </div>
-
     <!-- Botones -->
+    <div *ngIf="createError" class="rounded-xl bg-[#ff3b30]/[0.07] dark:bg-[#ff3b30]/[0.12] border border-[#ff3b30]/30 px-4 py-3 text-[12px] leading-5 text-[#ff3b30]">
+      {{ createError }}
+    </div>
     <div class="w-full flex gap-2">
       <button
         type="submit"
         class="flex-1 h-11 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-colors disabled:opacity-40"
-        [disabled]="tiendaForm.invalid"
+        [disabled]="tiendaForm.invalid || creandoTienda"
       >
         {{ isAdminTienda ? 'Crear Sucursal' : 'Crear Tienda' }}
         <tui-loader [showLoader]="!!(loadingCreateTienda$  | async)?.loadingCreateTienda"></tui-loader>

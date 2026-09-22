@@ -3,9 +3,7 @@ import { User } from '@/app/models/user.models';
 import { SidebarService } from '@/app/services/ui/sidebar-service.service';
 import { FeatureFlagsService } from '@/app/services/ui/feature-flags.service';
 import { URL_BASE } from '@/app/services/utils/endpoints';
-import { clearTokensAction } from '@/app/state/actions/auth.actions';
-import { clearInventariosFromCache } from '@/app/state/actions/inventario.actions';
-import { clearUserAction } from '@/app/state/actions/user.actions';
+import { LogoutService } from '@/app/services/logout.service';
 import { getLoginUserDataFromLocalStorage } from '@/app/services/utils/localstorage-functions';
 import { AppState } from '@/app/state/app.state';
 import { UserState } from '@/app/state/reducers/user.reducer';
@@ -93,7 +91,8 @@ export class SidenavComponent implements OnInit {
     private store: Store<AppState>,
     public router: Router,
     public sidebarService: SidebarService,
-    public featureFlags: FeatureFlagsService
+    public featureFlags: FeatureFlagsService,
+    private logoutService: LogoutService
   ) {
     this.isAuthenticated$ = this.store.select(selectAuth).pipe(
       map(authState => authState.isAuthenticated)
@@ -143,18 +142,13 @@ export class SidenavComponent implements OnInit {
   }
 
   logout() {
-    this.store.dispatch(clearTokensAction());
-    this.store.dispatch(clearUserAction());
+    this.logoutService.logout();
     this.onClose();
-    this.router.navigate(['/login']);
   }
 
   logout2() {
-    this.store.dispatch(clearTokensAction());
-    this.store.dispatch(clearUserAction());
-    this.store.dispatch(clearInventariosFromCache());
+    this.logoutService.logout();
     this.onClose();
-    this.router.navigate(['/login']);
   }
 
   isActiveRoute(route: string): boolean {

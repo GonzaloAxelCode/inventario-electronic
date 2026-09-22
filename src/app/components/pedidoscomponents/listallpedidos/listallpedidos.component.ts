@@ -1,7 +1,8 @@
 import { Pedido } from '@/app/models/pedido.models';
 import { DialogPedidoDetailService } from '@/app/services/dialogs-services/dialog-pedido-detail.service';
+import { PedidoSalaService } from '@/app/services/pedido-sala.service';
 import { PAGE_SIZE_PEDIDOS } from '@/app/services/utils/pages-sizes';
-import { cargarPedidos, cancelarPedido } from '@/app/state/actions/pedido.actions';
+import { cargarPedidos, cancelarPedido, eliminarPedido } from '@/app/state/actions/pedido.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectPedido } from '@/app/state/selectors/pedido.selectors';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
@@ -10,10 +11,11 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { Store } from '@ngrx/store';
 import { TuiDay, TuiDayLike, TuiDayRange } from '@taiga-ui/cdk';
 import { TuiButton, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiBadge, TuiPagination, TuiSwitch } from '@taiga-ui/kit';
+import { TUI_CONFIRM, TuiBadge, TuiConfirmData, TuiConfirmService, TuiPagination, TuiSwitch } from '@taiga-ui/kit';
 import { TuiExpand } from '@taiga-ui/experimental';
 import { TuiSearch } from '@taiga-ui/layout';
 import { TuiInputDateRangeModule, TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
+import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { Subject, takeUntil } from 'rxjs';
 import * as dayjs from 'dayjs';
 import * as advancedFormat from 'dayjs/plugin/advancedFormat';
@@ -46,12 +48,15 @@ dayjs.locale('es');
     TuiSelectModule,
   ],
   templateUrl: './listallpedidos.component.html',
-  styleUrl: './listallpedidos.component.scss'
+  styleUrl: './listallpedidos.component.scss',
+  providers: [TuiConfirmService],
 })
 export class ListallpedidosComponent implements OnInit, OnDestroy {
 
   private store = inject(Store<AppState>);
   private dialogPedidoDetail = inject(DialogPedidoDetailService);
+  private pedidoSalaService = inject(PedidoSalaService);
+  private readonly dialogs = inject(TuiResponsiveDialogService);
   private destroy$ = new Subject<void>();
 
   pedidos: Pedido[] = [];
@@ -84,7 +89,7 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
     metodo_pago: new FormControl(''),
   });
 
-  readonly estados = ['COTIZADO', 'PENDIENTE', 'CONFIRMADO', 'EN_PREPARACION', 'LISTO', 'ENTREGADO', 'CANCELADO'];
+  readonly estados = ['PENDIENTE', 'CONFIRMADO', 'EN_PREPARACION', 'LISTO', 'ENTREGADO', 'VENCIDO', 'CANCELADO'];
   readonly tiposPedido = ['MESA', 'DELIVERY', 'TAKEAWAY', 'MOSTRADOR'];
   readonly canalesVenta = ['PRESENCIAL', 'WHATSAPP', 'WEB', 'TELEFONO', 'TIKTOK'];
   readonly estadosPago = ['PENDIENTE', 'PARCIAL', 'PAGADO'];
@@ -161,6 +166,7 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
       case 'EN_PREPARACION': return 'primary';
       case 'LISTO': return 'success';
       case 'ENTREGADO': return 'positive';
+      case 'VENCIDO': return 'negative';
       case 'CANCELADO': return 'negative';
       default: return 'neutral';
     }
@@ -172,6 +178,47 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
       case 'PARCIAL': return 'warning';
       case 'PENDIENTE': return 'negative';
       default: return 'neutral';
+    }
+  }
+
+  getEstadoClase(estado: string): string {
+    switch (estado) {
+      case 'PENDIENTE': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300';
+      case 'CONFIRMADO': return 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300';
+      case 'EN_PREPARACION': return 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300';
+      case 'LISTO': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300';
+      case 'ENTREGADO': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300';
+      case 'VENCIDO': return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300';
+      case 'CANCELADO': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300';
+      default: return 'bg-neutral-200 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300';
+    }
+  }
+
+  getTipoClase(tipo: string): string {
+    switch (tipo) {
+      case 'MESA': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300';
+      case 'DELIVERY': return 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300';
+      case 'TAKEAWAY': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300';
+      case 'MOSTRADOR': return 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300';
+      default: return 'bg-neutral-200 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300';
+    }
+  }
+
+  getCanalClase(canal: string): string {
+    switch (canal) {
+      case 'PRESENCIAL': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300';
+      case 'WHATSAPP': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300';
+      case 'WEB': return 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300';
+      case 'TELEFONO': return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300';
+      case 'TIKTOK': return 'bg-neutral-800 text-white dark:bg-white dark:text-neutral-900';
+      default: return 'bg-neutral-200 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300';
+    }
+  }
+
+  getPrioridadClase(prioridad: string): string {
+    switch (prioridad) {
+      case 'URGENTE': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300';
+      default: return 'bg-neutral-200 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300';
     }
   }
 
@@ -191,7 +238,36 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
   }
 
   onPedidoClick(pedido: Pedido) {
-    this.dialogPedidoDetail.open(pedido).subscribe();
+    this.dialogPedidoDetail.open(pedido).subscribe((ok) => {
+      if (ok) this.refrescarPaginaActual();
+    });
+  }
+
+  private refrescarPaginaActual(): void {
+    const filters = this.buildFilters();
+    this.store.dispatch(cargarPedidos({ page: this.indexPage + 1, page_size: PAGE_SIZE_PEDIDOS, filters }));
+  }
+
+  pedirEliminar(pedido: Pedido, event: MouseEvent): void {
+    event.stopPropagation();
+    const data: TuiConfirmData = {
+      content: `¿Eliminar permanentemente el pedido ${pedido.numero_pedido}? Esta acción no se puede deshacer.`,
+      yes: 'Eliminar',
+      no: 'Cancelar',
+    };
+
+    this.dialogs
+      .open<boolean>(TUI_CONFIRM, {
+        label: 'Eliminar Pedido',
+        size: 's',
+        data,
+      })
+      .subscribe((confirm) => {
+        if (confirm) {
+          this.pedidoSalaService.removePedido(pedido.id);
+          this.store.dispatch(eliminarPedido({ pedidoId: pedido.id }));
+        }
+      });
   }
 
   goToPage(index: number): void {

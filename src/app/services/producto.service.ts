@@ -4,7 +4,6 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { URL_BASE } from './utils/endpoints';
-import { printError } from './utils/print-errors';
 import { QuerySearchProduct } from './utils/querys';
 export interface PaginationPage {
     page_size?: number
@@ -28,7 +27,10 @@ export class ProductoService {
     private http = inject(HttpClient);
     fetchLoadProductos(page: number, page_size: number): Observable<PaginationResponse> {
         return this.http.get<PaginationResponse>(`${this.siteURL}/productos/?page=${page}&page_size=${page_size}`).pipe(
-            catchError(error => throwError(error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
@@ -36,7 +38,10 @@ export class ProductoService {
 
     getProducto(id: number): Observable<Producto> {
         return this.http.get<Producto>(`${this.siteURL}/productos/${id}/`).pipe(
-            catchError(error => throwError(error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
     createProducto(producto: FormData): Observable<Producto> {
@@ -45,7 +50,7 @@ export class ProductoService {
             producto
         ).pipe(
             catchError(error => {
-                printError(error);
+                console.error(error);
                 return throwError(error);
             })
         );
@@ -60,7 +65,10 @@ export class ProductoService {
             { ...query },
             { params }
         ).pipe(
-            catchError(error => throwError(error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
     updateProducto(producto: FormData): Observable<Producto> {
@@ -83,7 +91,7 @@ export class ProductoService {
         // Send PUT request to the correct endpoint
         return this.http.put<Producto>(`${this.siteURL}/productos/update/${id}/`, requestData).pipe(
             catchError(error => {
-                printError(error);
+                console.error(error);
                 return throwError(error);
             })
         );
@@ -91,14 +99,20 @@ export class ProductoService {
 
     deactivateProducto(id: number, activo: boolean): Observable<any> {
         return this.http.patch(`${this.siteURL}/productos/update/${id}/`, { activo }).pipe(
-            catchError(error => throwError(error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
 
     deleteProducto(id: number): Observable<any> {
         return this.http.delete(`${this.siteURL}/productos/delete/${id}/`).pipe(
-            catchError(error => throwError(error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 }

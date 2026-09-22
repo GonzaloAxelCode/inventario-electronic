@@ -7,25 +7,22 @@ import { WA_LOCAL_STORAGE, WA_WINDOW } from '@ng-web-apis/common';
 import { TUI_DARK_MODE, TUI_DARK_MODE_KEY } from '@taiga-ui/core';
 import { FeatureFlagsService } from '@/app/services/ui/feature-flags.service';
 import { LayoutService } from '@/app/services/ui/layout-service.service';
-import { Tienda } from '@/app/models/tienda.models';
 import { User } from '@/app/models/user.models';
 import { getLoginUserDataFromLocalStorage } from '@/app/services/utils/localstorage-functions';
 import { AppState } from '@/app/state/app.state';
 import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
-import { PlanbadgeComponent } from '@/app/components/planbadge/planbadge.component';
 
 @Component({
   selector: 'app-myaccount',
   standalone: true,
-  imports: [CommonModule, PlanbadgeComponent],
+  imports: [CommonModule],
   templateUrl: './myaccount.component.html',
   styleUrl: './myaccount.component.scss'
 })
 export class MyaccountComponent implements OnInit {
   userState$!: Observable<UserState>;
   user: User = initialStateUser.user;
-  tienda!: Tienda;
 
   private readonly key = inject(TUI_DARK_MODE_KEY);
   private readonly storage = inject(WA_LOCAL_STORAGE);
@@ -48,7 +45,6 @@ export class MyaccountComponent implements OnInit {
   ngOnInit() {
     this.userState$.subscribe(userState => {
       this.user = userState.user;
-      this.tienda = userState.user?.tienda_data || {} as Tienda;
       this.syncPreferencesFromUser();
     });
     this.isMobile = this.mobileMedia.matches;

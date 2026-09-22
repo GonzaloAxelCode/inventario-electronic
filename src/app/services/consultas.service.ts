@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { URL_BASE } from './utils/endpoints';
 
 @Injectable({
@@ -23,7 +24,12 @@ export class ConsultaService {
             headers: {
                 'Content-Type': 'application/json',
             }
-        });
+        }).pipe(
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
+        );
     }
 
     consultarRUC(ruc: string): Observable<any> {
@@ -33,6 +39,11 @@ export class ConsultaService {
         };
         return this.http.post<any>(this.baseUrl, body, {
             headers: { 'Content-Type': 'application/json' }
-        });
+        }).pipe(
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
+        );
     }
 }

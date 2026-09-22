@@ -22,12 +22,14 @@ export interface Pedido {
     numero_pedido: string;
     usuario?: number;
     tienda?: number;
+    venta_id?: number | null;
     tipo_pedido: string;
     canal_venta: string;
     prioridad: string;
     fecha_hora: string;
     fecha_realizacion?: string;
     fecha_vencimiento?: string | null;
+    fecha_eliminacion?: string | null;
     fecha_entrega_estimada?: string | null;
     fecha_cancelacion?: string | null;
     metodo_pago: string;
@@ -47,6 +49,7 @@ export interface Pedido {
     nombre_cliente: string;
     email_cliente?: string;
     telefono_cliente?: string;
+    direccion_cliente?: string;
     direccion_envio?: string;
     referencia_ubicacion?: string;
     observaciones?: string;
@@ -59,6 +62,7 @@ export interface Pedido {
 }
 
 export interface CreatePedido {
+    estado?: string;
     cliente?: {
         tipo_documento: string;
         numero: string;
@@ -70,7 +74,7 @@ export interface CreatePedido {
     tipo_pedido?: string;
     canal_venta?: string;
     prioridad?: string;
-    metodoPago: string;
+    metodoPago?: string;
     observaciones?: string;
     notas_internas?: string;
     direccion_envio?: string;

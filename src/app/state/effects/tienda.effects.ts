@@ -61,7 +61,7 @@ export class TiendaEffects {
                     }),
                     catchError(error => {
                         this.alertService.showError('Error al crear la tienda', 'Error').subscribe();
-                        console.log(error)
+                        console.error(error)
                         return of(createTiendaFail({ error }));
                     })
                 )
@@ -79,7 +79,7 @@ export class TiendaEffects {
                     }),
                     catchError(error => {
                         this.alertService.showError('Error al actualizar la tienda', 'Error').subscribe();
-                        console.log(error)
+                        console.error(error)
                         return of(updateTiendaFail({ error }));
                     })
                 )

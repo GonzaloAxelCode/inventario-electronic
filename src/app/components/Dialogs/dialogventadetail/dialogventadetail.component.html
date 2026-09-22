@@ -1,10 +1,13 @@
-<div class="flex flex-col h-full overflow-hidden">
+<div class="flex flex-col h-full overflow-hidden" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;">
 
   <!-- Header móvil (solo en móvil): boleta + total arriba del modal -->
-  <div class="lg:hidden shrink-0 flex items-center justify-between gap-3 px-5 py-3 border-b border-stone-200/60 dark:border-stone-700/40 bg-white dark:bg-stone-900">
+  <div class="lg:hidden shrink-0 flex items-center justify-between gap-3 px-5 py-3 border-b border-stone-200/60 dark:border-stone-700/40">
     <div class="min-w-0">
       <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">{{ comprobante.tipo_comprobante | uppercase }}</p>
       <h2 class="text-lg font-semibold tracking-tight text-stone-900 dark:text-white truncate">{{ comprobante.serie }}-{{ comprobante.correlativo }}</h2>
+      <span *ngIf="esVentaDePedido" class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
+        {{ pedidoOrigenLabel }}
+      </span>
     </div>
     <div class="flex items-center gap-2 shrink-0">
       <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
@@ -15,11 +18,21 @@
     </div>
   </div>
 
+  <!-- Toggle Apple: Detalle / Vista previa -->
+  <div class="shrink-0 px-5 lg:px-8 pt-3">
+    <div class="grid grid-cols-2 gap-1 p-1 rounded-full bg-stone-100 dark:bg-white/10 max-w-xs mx-auto">
+      <button type="button" (click)="vista = 'detalle'"
+        [class]="vista === 'detalle' ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">Detalle</button>
+      <button type="button" (click)="vista = 'previa'"
+        [class]="vista === 'previa' ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">Vista previa</button>
+    </div>
+  </div>
+
   <!-- Contenido principal -->
   <div class="flex-1 flex flex-col lg:flex-row min-h-0">
 
     <!-- Sidebar acciones - Estilo Apple -->
-    <div *ngIf="venta.estado !== 'ANULADA'" class="grid grid-cols-3 sm:grid-cols-4 lg:flex lg:flex-col gap-3 p-3 pt-4 lg:pt-8 lg:pr-4 lg:pb-4 lg:pl-4 lg:w-[168px] shrink-0 border-b lg:border-b-0 lg:border-r border-stone-200/60 dark:border-stone-700/40 bg-stone-50/40 dark:bg-stone-900/20" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;">
+    <div *ngIf="venta.estado !== 'ANULADA' && vista === 'detalle'" class="grid grid-cols-3 sm:grid-cols-4 lg:flex lg:flex-col gap-3 p-3 pt-4 lg:pt-8 lg:pr-4 lg:pb-4 lg:pl-4 lg:w-[168px] shrink-0 border-b lg:border-b-0 lg:border-r border-stone-200/60 dark:border-stone-700/40" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;">
       <ng-container *ngIf="selectedState === 'original' && venta.comprobante?.estado_sunat === 'ACEPTADO'">
         <!-- Grupo Documentos -->
         <div class="flex lg:flex-col gap-2 lg:shrink-0 w-full col-span-3 sm:col-span-4 lg:col-span-1">
@@ -91,9 +104,9 @@
         </div>
       </ng-container>
       <!-- Grupo Acción peligrosa - siempre visible -->
-      <div class="flex lg:flex-col gap-2 lg:shrink-0 w-full lg:mt-auto col-span-3 sm:col-span-4 lg:col-span-1">
+      <div class="flex lg:flex-col gap-2 lg:shrink-0 w-full lg:mt-auto col-span-3 sm:col-span-4 lg:col-span-1 justify-center">
         <p class="hidden lg:block text-[10px] font-semibold text-stone-400 uppercase tracking-widest px-1 mb-1">Acción</p>
-<button *ngIf="venta.estado !== 'ANULADA'" (click)="confirmarAnular()" [disabled]="loadingAnularVenta" class="group flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 px-2 sm:px-3 py-2 sm:py-2.5 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-800/30 shadow-sm hover:shadow-md hover:bg-red-100 dark:hover:bg-red-900/30 hover:scale-[1.01] active:scale-[0.98] transition-all w-full text-left disabled:opacity-50 disabled:cursor-not-allowed">
+<button *ngIf="venta.estado !== 'ANULADA'" (click)="confirmarAnular()" [disabled]="loadingAnularVenta" class="group flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 px-6 sm:px-3 py-2 sm:py-2.5 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-800/30 shadow-sm hover:shadow-md hover:bg-red-100 dark:hover:bg-red-900/30 hover:scale-[1.01] active:scale-[0.98] transition-all w-auto lg:w-full text-left disabled:opacity-50 disabled:cursor-not-allowed">
           <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-sm shrink-0">
             <tui-loader *ngIf="loadingAnularVenta" size="s" class="!text-white"></tui-loader>
             <svg *ngIf="!loadingAnularVenta" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
@@ -113,7 +126,7 @@
     <div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
 
       <!-- Columna izquierda: Detalle -->
-      <div class="flex-1 overflow-y-auto">
+      <div *ngIf="vista === 'detalle'" class="flex-1 overflow-y-auto">
         <div class="max-w-4xl mx-auto px-5 py-5 lg:px-8 lg:py-6 space-y-5">
 
           <!-- Header (solo en desktop, en móvil se muestra arriba del modal) -->
@@ -121,6 +134,9 @@
             <div>
               <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">{{ comprobante.tipo_comprobante | uppercase }}</p>
               <h2 class="text-2xl font-semibold tracking-tight text-stone-900 dark:text-white">{{ comprobante.serie }}-{{ comprobante.correlativo }}</h2>
+              <span *ngIf="esVentaDePedido" class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
+                {{ pedidoOrigenLabel }}
+              </span>
               <p class="text-xs text-stone-400 mt-0.5">{{ venta.fecha_realizacion || venta.fecha_hora | date:'mediumDate' }} · {{ venta.fecha_hora | date:'shortTime' }}</p>
             </div>
             <div class="flex items-center gap-3">
@@ -174,6 +190,12 @@
 
           <!-- Grid info de la venta -->
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div class="space-y-0.5" *ngIf="esVentaDePedido">
+              <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Origen</p>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
+                {{ pedidoOrigenLabel }}
+              </span>
+            </div>
             <div class="space-y-0.5">
               <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Estado</p>
               <p class="text-sm font-medium text-stone-900 dark:text-white">{{ venta.estado || 'Completada' }}</p>
@@ -331,17 +353,18 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Columna derecha: Vista previa Desktop -->
-        <div class="hidden lg:block shrink-0 border-l border-stone-200/60 dark:border-stone-700/40 overflow-y-auto">
+        <!-- Columna derecha: Vista previa (toggle) -->
+        <div *ngIf="vista === 'previa'" class="hidden lg:block flex-1 shrink-0 overflow-auto">
         <div class="p-5">
 
           <!-- Boleta Ticket Térmico - ancho reducido -->
           <div *ngIf="venta.comprobante.tipo_comprobante === 'Boleta'">
             <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-3 text-center">Vista previa</p>
             <div class="flex justify-center">
-              <div class="rounded-2xl border border-stone-300/60 overflow-hidden bg-white shadow-sm">
-                <div class="p-4 bg-white text-black text-[11px] leading-relaxed w-[260px]" style="font-family: 'Courier New', Courier, monospace;">
+              <div class="bg-white">
+                <div class="p-4 bg-white text-black text-[11px] leading-relaxed w-[260px] max-w-full" style="font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; letter-spacing: 0;">
                   <div class="text-center border-b border-dashed border-stone-300 pb-2 mb-2">
                     <img *ngIf="tiendaLogo" [src]="tiendaLogo" alt="Logo" class="w-10 h-10 mx-auto mb-1 object-contain" />
                     <p class="text-xs font-bold uppercase tracking-wide text-black">{{ tiendaNombre }}</p>
@@ -411,7 +434,7 @@
             <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-3 text-center">Vista previa</p>
             <div class="flex justify-center">
               <div class="rounded-xl border border-stone-300/60 overflow-hidden bg-white shadow-sm">
-                <div class="p-5 bg-white text-black text-[11px] leading-relaxed w-[480px]" style="font-family: Arial, sans-serif;">
+                <div class="p-5 bg-white text-black text-[11px] leading-relaxed w-[480px] max-w-full overflow-x-auto" style="font-family: Arial, sans-serif;">
                   <div class="flex items-start justify-between border-b-2 border-black pb-3 mb-3">
                     <div>
                       <img *ngIf="tiendaLogo" [src]="tiendaLogo" alt="Logo" class="w-16 h-16 object-contain mb-1" />
@@ -503,12 +526,12 @@
   </div>
 
   <!-- Vista previa mobile - Boleta ticket térmico (solo visible en móvil) -->
-  <div *ngIf="venta.comprobante.tipo_comprobante === 'Boleta'" class="block lg:hidden shrink-0 border-t border-stone-200/60 dark:border-stone-700/40">
+  <div *ngIf="venta.comprobante.tipo_comprobante === 'Boleta' && vista === 'previa'" class="block lg:hidden shrink-0 border-t border-stone-200/60 dark:border-stone-700/40">
     <div class="p-4 flex justify-center">
       <div class="w-full max-w-[280px]">
         <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-3 text-center">Vista previa</p>
-        <div class="rounded-2xl border border-stone-300/60 overflow-hidden bg-white shadow-sm">
-          <div class="p-4 bg-white text-black text-[11px] leading-relaxed" style="font-family: 'Courier New', Courier, monospace;">
+        <div class="bg-white">
+          <div class="p-4 bg-white text-black text-[11px] leading-relaxed" style="font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; letter-spacing: 0;">
             <div class="text-center border-b border-dashed border-stone-300 pb-2 mb-2">
               <img *ngIf="tiendaLogo" [src]="tiendaLogo" alt="Logo" class="w-10 h-10 mx-auto mb-1 object-contain" />
               <p class="text-xs font-bold uppercase tracking-wide text-black">{{ tiendaNombre }}</p>
@@ -576,7 +599,7 @@
   </div>
 
   <!-- Vista previa mobile - Factura PDF ancho (solo visible en móvil) -->
-  <div *ngIf="venta.comprobante.tipo_comprobante === 'Factura'" class="block lg:hidden shrink-0 border-t border-stone-200/60 dark:border-stone-700/40">
+  <div *ngIf="venta.comprobante.tipo_comprobante === 'Factura' && vista === 'previa'" class="block lg:hidden shrink-0 border-t border-stone-200/60 dark:border-stone-700/40">
     <div class="p-4 flex justify-center">
       <div class="w-full max-w-[400px]">
         <p class="text-[10px] font-medium text-stone-400 uppercase tracking-widest mb-3 text-center">Vista previa</p>

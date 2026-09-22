@@ -1,13 +1,13 @@
-<section class="py-10 overflow-y-hidden" [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario">
+<section class="overflow-y-hidden" [ngClass]="mode === 'select_product_sale_mode' ? '' : 'py-10'"
+  [tuiSkeleton]="!!(inventariosState$ | async)?.loadingProductosInventario">
 
-  <!-- Header estilo Gestion de Productos -->
-  <header tuiSubheader class="text-center">
+  <header tuiSubheader class="text-center" *ngIf="mode !== 'select_product_sale_mode'">
     <div class="flex justify-center gap-4 items-center">
       <h2 tuiHeader>
         <div tuiTitle>
           <div tuiNavigationLogo class="justify-center">
             <tui-icon icon="@tui.gitlab" />
-            <span tuiFade>{{ mode === 'select_product_sale_mode' ? 'Seleccionar Productos' : 'Gestión de Inventario' }}</span>
+            <span tuiFade>Gestión de Inventario</span>
           </div>
         </div>
       </h2>
@@ -27,8 +27,75 @@
   </tui-block-status>
 
   <ng-template #contenido>
-    <!-- Buscador (FIJO, fuera del scroll) -->
-    <div class="flex justify-center px-4 sm:px-6 py-4">
+    <!-- Toolbar fija (modo selección): buscador ancho completo + categoría + vista -->
+    <div *ngIf="mode === 'select_product_sale_mode'"
+      class="sticky top-0 z-20 px-4 sm:px-6 py-3 space-y-2.5">
+      <search tuiSearch class="w-full">
+        <form [formGroup]="form" (submit)="onSubmitSearch()">
+          <fieldset tuiTextfieldSize="m" class="flex items-center gap-2">
+            <tui-textfield iconStart="@tui.search" class="w-full flex-1 campo-plano">
+              <input tuiTheme="ligth" formControlName="nombre" placeholder="Buscar producto por nombre o código..." tuiTextfield />
+            </tui-textfield>
+            <!-- Escanear SKU con cámara (solo móvil) -->
+            <button *ngIf="soportaCamara" type="button" (click)="mostrarEscanerCamara = true"
+              aria-label="Escanear código de barras"
+              class="sm:hidden shrink-0 w-10 h-10 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 flex items-center justify-center active:scale-95 transition-all">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75V5.25c0-.621.504-1.125 1.125-1.125h1.5m4.5 0h1.5c.621 0 1.125.504 1.125 1.125v1.5m0 10.5v1.5c0 .621-.504 1.125-1.125 1.125h-1.5m-4.5 0h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5M6 9v6M9.25 9v6M12.5 9v6M15.75 9v6M18.5 9v6"/>
+              </svg>
+            </button>
+          </fieldset>
+        </form>
+      </search>
+      <div class="flex items-center gap-2">
+        <!-- Combo de categoría con búsqueda -->
+        <div class="relative flex-1 min-w-0">
+          <tui-textfield iconStart="@tui.tag" class="w-full campo-plano">
+            <input tuiTextfield [(ngModel)]="categoriaBusqueda" [ngModelOptions]="{standalone: true}"
+              (focus)="categoriaDropdownAbierto = true" (input)="categoriaDropdownAbierto = true"
+              (blur)="cerrarCategoriaDropdown()" placeholder="Buscar categoría..." />
+          </tui-textfield>
+          <div *ngIf="categoriaDropdownAbierto"
+            class="absolute left-0 right-0 top-full mt-1 max-h-56 overflow-y-auto rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-white dark:bg-neutral-800 shadow-xl z-30 py-1">
+            <button type="button" (click)="elegirCategoria(null)"
+              class="w-full text-left px-4 py-2 text-sm hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-neutral-900 dark:text-white"
+              [class.font-semibold]="selectedCategoriaId === null">
+              Todas las categorías
+            </button>
+            <button type="button" *ngFor="let cat of categoriasFiltradas(selectCategorias$ | async)"
+              (click)="elegirCategoria(cat)"
+              class="w-full text-left px-4 py-2 text-sm hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-neutral-900 dark:text-white"
+              [class.font-semibold]="selectedCategoriaId === cat.id">
+              {{ cat.nombre }}
+            </button>
+            <p *ngIf="categoriasFiltradas(selectCategorias$ | async).length === 0"
+              class="px-4 py-2 text-xs text-neutral-400">Sin coincidencias</p>
+          </div>
+        </div>
+        <!-- Toggle lista / grilla -->
+        <div class="inline-flex items-center rounded-full bg-neutral-200/70 dark:bg-neutral-800 p-1 shrink-0" role="tablist" aria-label="Cambiar vista">
+          <button type="button" role="tab" [attr.aria-selected]="viewMode === 'lista'" (click)="setViewMode('lista')"
+            class="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all"
+            [ngClass]="viewMode === 'lista' ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm' : 'text-neutral-500 dark:text-neutral-400'">
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            Lista
+          </button>
+          <button type="button" role="tab" [attr.aria-selected]="viewMode === 'grilla'" (click)="setViewMode('grilla')"
+            class="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all"
+            [ngClass]="viewMode === 'grilla' ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm' : 'text-neutral-500 dark:text-neutral-400'">
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+            </svg>
+            Grilla
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buscador (modo normal) -->
+    <div *ngIf="mode !== 'select_product_sale_mode'" class="flex justify-center px-4 sm:px-6 py-4">
       <search tuiSearch class="w-full max-w-[60%]">
         <form [formGroup]="form" (submit)="onSubmitSearch()">
           <fieldset tuiTextfieldSize="m" class="grid grid-cols-1 gap-2 sm:gap-3">
@@ -40,8 +107,8 @@
       </search>
     </div>
 
-    <!-- Tabs estilo ChatGPT debajo del search -->
-    <div class="flex justify-center px-4 sm:px-6 pb-4">
+    <!-- Tabs de categoría (modo normal) -->
+    <div *ngIf="mode !== 'select_product_sale_mode'" class="flex justify-center px-4 sm:px-6 pb-4">
       <div class="inline-flex items-center gap-1 p-1 bg-neutral-100 dark:bg-neutral-800 rounded-xl max-w-[60%] overflow-x-auto">
         <button (click)="onCategoriaTabChange(null)"
           class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap"
@@ -75,47 +142,85 @@
       <!-- Caso 2: mostrar contenido si hay inventarios -->
       <div *ngIf="currentInventarios.length > 0">
         
-        <!-- Grid de Cards Moderno -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 sm:gap-6 px-2 sm:px-0 pb-4">
+        <!-- Vista LISTA (modo selección) -->
+        <div *ngIf="mode === 'select_product_sale_mode' && viewMode === 'lista'" class="space-y-2 px-2 sm:px-0 pb-4">
           <div *ngFor="let inventario of currentInventarios; trackBy: trackByFn"
-            [class]="mode === 'select_product_sale_mode' 
-              ? 'group relative bg-white dark:bg-neutral-800 rounded-3xl shadow-md transition-all duration-300 overflow-hidden border border-neutral-200 dark:border-neutral-700'
-              : 'group relative bg-white dark:bg-neutral-800 rounded-3xl shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden border border-neutral-200 dark:border-neutral-700 hover:-translate-y-1'"
-            [class.border-transparent]="mode === 'select_product_sale_mode' && inventario.cantidad > 0 && inventario.costo_venta > 0 && inventario.activo"
-            [class.opacity-60]="mode === 'select_product_sale_mode' && (inventario.cantidad <= 0 || inventario.costo_venta <= 0 || !inventario.activo)"
-            [class.cursor-not-allowed]="mode === 'select_product_sale_mode' && (inventario.cantidad <= 0 || inventario.costo_venta <= 0 || !inventario.activo)"
-            [class.cursor-pointer]="mode === 'select_product_sale_mode' && inventario.cantidad > 0 && inventario.costo_venta > 0 && inventario.activo"
-            [class.hover:shadow-2xl]="mode === 'select_product_sale_mode' && inventario.cantidad > 0 && inventario.costo_venta > 0 && inventario.activo"
-            [class.hover:-translate-y-2]="mode === 'select_product_sale_mode' && inventario.cantidad > 0 && inventario.costo_venta > 0 && inventario.activo"
-            [class.hover:scale-105]="mode === 'select_product_sale_mode' && inventario.cantidad > 0 && inventario.costo_venta > 0 && inventario.activo"
-            [class.active:scale-95]="mode === 'select_product_sale_mode' && inventario.cantidad > 0 && inventario.costo_venta > 0 && inventario.activo"
-            [class.hover:border-emerald-400]="mode === 'select_product_sale_mode' && inventario.cantidad > 0 && inventario.costo_venta > 0 && inventario.activo">
+            class="flex items-center gap-3 p-3 rounded-2xl border bg-white dark:bg-neutral-800 transition-all"
+            [ngClass]="puedeSeleccionarse(inventario)
+              ? 'border-black/[0.08] dark:border-white/[0.08] shadow-sm hover:shadow-md hover:border-[#0071e3]/50 cursor-pointer active:scale-[0.99]'
+              : 'border-black/[0.06] dark:border-white/[0.06]'"
+            (click)="seleccionar(inventario)">
+            <div class="w-14 h-14 rounded-xl overflow-hidden bg-neutral-100 dark:bg-white/[0.04] shrink-0">
+              <img [src]="inventario?.imagen_producto ? URL_BASE + inventario.imagen_producto : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+                [alt]="inventario.producto_nombre" class="w-full h-full object-cover"
+                [class.opacity-60]="!puedeSeleccionarse(inventario)" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-sm text-neutral-900 dark:text-white truncate leading-tight">{{ inventario.producto_nombre }}</p>
+              <p class="text-[11px] font-mono text-neutral-400 mt-0.5 truncate">{{ inventario.producto_sku }}</p>
+              <p class="text-[11px] mt-0.5" [ngClass]="puedeSeleccionarse(inventario) ? 'text-neutral-500 dark:text-neutral-400' : 'text-[#ff9f0a]'">
+                {{ puedeSeleccionarse(inventario) ? ('Stock: ' + inventario.cantidad) : motivoNoDisponible(inventario) }}
+              </p>
+            </div>
+            <div class="text-right shrink-0">
+              <p class="text-[15px] font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">S/. {{ inventario.costo_venta }}</p>
+            </div>
+            <button *ngIf="puedeSeleccionarse(inventario)" type="button"
+              (click)="seleccionar(inventario); $event.stopPropagation()"
+              class="shrink-0 h-9 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-all hover:opacity-90 active:scale-95">
+              Agregar
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid de Cards Moderno -->
+        <div *ngIf="mode !== 'select_product_sale_mode' || viewMode === 'grilla'"
+          class="grid gap-5 sm:gap-6 px-2 sm:px-0 pb-4"
+          [ngClass]="mode === 'select_product_sale_mode' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'">
+          <div *ngFor="let inventario of currentInventarios; trackBy: trackByFn"
+            class="group relative bg-white dark:bg-neutral-800 rounded-3xl border overflow-hidden transition-all duration-300"
+            [ngClass]="mode === 'select_product_sale_mode'
+              ? (puedeSeleccionarse(inventario)
+                ? 'border-black/[0.08] dark:border-white/[0.08] shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[#0071e3]/50 cursor-pointer'
+                : 'border-black/[0.06] dark:border-white/[0.06]')
+              : 'border-neutral-200 dark:border-neutral-700 shadow-md hover:shadow-2xl hover:-translate-y-1'"
+            (click)="mode === 'select_product_sale_mode' ? seleccionar(inventario) : null">
             
             <!-- Imagen del producto -->
-            <div class="relative m-2 rounded-2xl overflow-hidden aspect-[4/3] bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700"
-              (click)="mode === 'select_product_sale_mode' && inventario.cantidad > 0 && inventario.costo_venta > 0 && inventario.activo ? cerrarDialogo(inventario) : onSetImageProduct(inventario); open = true;">
+            <div class="relative m-2 rounded-2xl overflow-hidden aspect-[4/3] bg-neutral-100 dark:bg-white/[0.04]"
+              (click)="seleccionar(inventario)">
               <img [src]="inventario?.imagen_producto ? URL_BASE + inventario.imagen_producto : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
                 [alt]="inventario.producto_nombre"
-                class="w-full h-full object-cover cursor-pointer group-hover:scale-110 transition-transform duration-500 ease-out" />
+                class="w-full h-full object-cover transition-transform duration-500 ease-out"
+                [class.group-hover:scale-105]="mode !== 'select_product_sale_mode' || puedeSeleccionarse(inventario)"
+                [class.opacity-60]="mode === 'select_product_sale_mode' && !puedeSeleccionarse(inventario)" />
               
-              <!-- Overlay gradient sutil -->
-              <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <!-- Overlay sutil solo en disponibles -->
+              <div *ngIf="mode !== 'select_product_sale_mode' || puedeSeleccionarse(inventario)"
+                class="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               
-              <!-- Badge de stock bajo -->
-              <div *ngIf="inventario.cantidad <= 3" 
+              <!-- Badge de disponibilidad (modo selección) -->
+              <span *ngIf="mode === 'select_product_sale_mode'"
+                class="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full shadow"
+                [ngClass]="puedeSeleccionarse(inventario) ? 'bg-[#30d158] text-white' : 'bg-black/55 text-white backdrop-blur-sm'">
+                {{ puedeSeleccionarse(inventario) ? 'Disponible' : motivoNoDisponible(inventario) }}
+              </span>
+
+              <!-- Badge de stock bajo (modo normal) -->
+              <div *ngIf="mode !== 'select_product_sale_mode' && inventario.cantidad <= 3" 
                 class="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-rose-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-sm">
                 Stock Bajo
               </div>
               
-              <!-- Badge de estado -->
-              <div *ngIf="!inventario.activo" 
+              <!-- Badge de estado (modo normal) -->
+              <div *ngIf="mode !== 'select_product_sale_mode' && !inventario.activo" 
                 class="absolute top-3 left-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-sm">
                 Inactivo
               </div>
 
               <!-- Icono de agregar en modo selección -->
-              <div *ngIf="mode === 'select_product_sale_mode'" 
-                class="absolute bottom-3 right-3 w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110">
+              <div *ngIf="mode === 'select_product_sale_mode' && puedeSeleccionarse(inventario)" 
+                class="absolute bottom-3 right-3 w-10 h-10 bg-[#0071e3] rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 pointer-events-none">
                 <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                 </svg>
@@ -154,8 +259,8 @@
                 </div>
               </div>
 
-              <!-- Advertencias -->
-              <div class="mb-3" *ngIf="inventario.cantidad <= 0 || !inventario.activo">
+              <!-- Advertencias (modo normal) -->
+              <div class="mb-3" *ngIf="mode !== 'select_product_sale_mode' && (inventario.cantidad <= 0 || !inventario.activo)">
                 <div class="flex items-center gap-1.5 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl text-[10px] border border-amber-200/50 dark:border-amber-700/30">
                   <span class="text-amber-500">!</span>
                   <span class="text-amber-700 dark:text-amber-300 font-medium">
@@ -163,6 +268,19 @@
                     <span *ngIf="!inventario.activo"> Inactivo</span>
                   </span>
                 </div>
+              </div>
+
+              <!-- Acción principal (modo selección) -->
+              <div *ngIf="mode === 'select_product_sale_mode'" class="mt-3">
+                <button *ngIf="puedeSeleccionarse(inventario)" type="button"
+                  (click)="seleccionar(inventario); $event.stopPropagation()"
+                  class="w-full h-9 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-all hover:opacity-90 active:scale-[0.98]">
+                  Agregar
+                </button>
+                <p *ngIf="!puedeSeleccionarse(inventario)"
+                  class="text-center text-[12px] text-[#86868b] dark:text-[#a1a1a6] py-2">
+                  No disponible para la venta
+                </p>
               </div>
 
               <!-- Botones de acción - Modo Normal -->
@@ -237,6 +355,12 @@
   </ng-template>
 
 </section>
+
+<!-- Escáner de código de barras con cámara (solo móvil) -->
+<app-camera-scanner *ngIf="mostrarEscanerCamara"
+  (codigoEscaneado)="onCodigoEscaneadoPorCamara($event)"
+  (cerrar)="mostrarEscanerCamara = false">
+</app-camera-scanner>
 
 <!-- Modal de preview responsive -->
 <ng-template [(tuiPreviewDialog)]="open">

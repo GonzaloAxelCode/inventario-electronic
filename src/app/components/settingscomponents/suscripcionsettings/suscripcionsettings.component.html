@@ -1,0 +1,20 @@
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;" class="w-full max-w-3xl space-y-4 sm:space-y-5">
+
+  <div class="px-1">
+    <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white">Suscripción</h2>
+    <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">Plan actual, límites, uso del mes y vigencia.</p>
+  </div>
+
+  <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5">
+    <h3 class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white mb-1">Suscripción de mi tienda</h3>
+    <p class="text-xs text-stone-500 dark:text-stone-400 mb-4">Plan actual, límites, uso del mes y vigencia.</p>
+
+    <div class="flex flex-wrap gap-2 mb-4">
+      <span *ngIf="sunatOK" class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">SUNAT configurado</span>
+      <span *ngIf="!sunatOK" class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400">{{ sunatFaltante }}</span>
+    </div>
+
+    <app-planbadge *ngIf="tiendaId" mode="card" [tiendaId]="tiendaId" [usoPersonal]="numPersonal" [usoProductos]="numProductos"></app-planbadge>
+    <p *ngIf="!tiendaId" class="text-sm text-stone-500 dark:text-stone-400">Sin tienda asignada.</p>
+  </section>
+</div>

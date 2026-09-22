@@ -1,165 +1,172 @@
-<div class="max-w-4xl mx-auto p-4" *ngIf="guia">
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;" class="max-w-4xl mx-auto min-w-0" *ngIf="guia">
   <!-- BOTONES DE ACCIÓN -->
-  <div class="flex justify-between items-center mb-4 no-print">
+  <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4 no-print min-w-0">
     <button (click)="cerrar.emit()"
-      class="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200
-             rounded-lg text-sm font-medium hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">
+      class="inline-flex items-center justify-center h-11 px-5 bg-stone-100 dark:bg-white/10 text-stone-900 dark:text-white
+             rounded-full text-sm font-semibold hover:opacity-90 transition-opacity shrink-0">
       Volver a la lista
     </button>
     <div class="flex gap-2">
+      <button (click)="onEnviarSunat()" *ngIf="esBorrador" [disabled]="enviando"
+        class="flex-1 sm:flex-none inline-flex items-center justify-center h-11 px-6 bg-emerald-600 text-white rounded-full text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50">
+        {{ enviando ? 'Enviando…' : 'Enviar a SUNAT' }}
+      </button>
       <button (click)="onImprimir()"
-        class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+        class="flex-1 sm:flex-none inline-flex items-center justify-center h-11 px-6 bg-black dark:bg-white text-white dark:text-black rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
         Imprimir
       </button>
       <button (click)="onAnular()"
         *ngIf="guia.estado !== 'ANULADA' && guia.estado !== 'ENTREGADA'"
-        class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
+        class="flex-1 sm:flex-none inline-flex items-center justify-center h-11 px-6 bg-red-500 text-white rounded-full text-sm font-semibold hover:bg-red-600 transition-colors">
         Anular
       </button>
     </div>
   </div>
 
   <!-- DOCUMENTO -->
-  <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 print:shadow-none print:border-none">
+  <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 print:shadow-none print:border-none overflow-hidden min-w-0">
 
     <!-- HEADER DEL DOCUMENTO -->
-    <div class="p-6 border-b border-neutral-200 dark:border-neutral-700">
-      <div class="flex justify-between items-start">
-        <div>
-          <h1 class="text-lg font-bold text-neutral-900 dark:text-white">GUÍA DE REMISIÓN REMITENTE</h1>
-          <p class="text-sm text-neutral-500 dark:text-neutral-400">RUC: {{ guia.ruc_remitente }}</p>
-          <p class="text-sm font-semibold text-neutral-700 dark:text-neutral-300">{{ guia.razon_social_remitente }}</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ guia.direccion_remitente }}</p>
+    <div class="p-4 sm:p-6 border-b border-stone-200/70 dark:border-white/10">
+      <div class="flex flex-col sm:flex-row justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-[10px] uppercase tracking-wide text-stone-400 mb-1">Guía de remisión remitente</p>
+          <h1 class="text-base sm:text-lg font-semibold tracking-tight text-stone-900 dark:text-white">GUÍA DE REMISIÓN REMITENTE</h1>
+          <p class="text-[11px] text-stone-400 mt-1">RUC: {{ guia.ruc_remitente }}</p>
+          <p class="text-sm font-semibold text-stone-900 dark:text-white mt-0.5">{{ guia.razon_social_remitente }}</p>
+          <p class="text-[11px] text-stone-400">{{ guia.direccion_remitente }}</p>
         </div>
-        <div class="text-right">
-          <div class="bg-neutral-100 dark:bg-neutral-700 rounded-lg px-4 py-2 mb-2">
-            <p class="text-xs text-neutral-500 dark:text-neutral-400">N° Documento</p>
-            <p class="text-lg font-extrabold text-neutral-900 dark:text-white">{{ guia.serie }}-{{ guia.correlativo }}</p>
+        <div class="sm:text-right shrink-0">
+          <div class="bg-stone-100 dark:bg-white/10 rounded-2xl px-4 py-2.5 mb-2 inline-block sm:block">
+            <p class="text-[10px] text-stone-400">N° Documento</p>
+            <p class="text-lg font-semibold tracking-tight text-stone-900 dark:text-white">{{ guia.serie }}-{{ guia.correlativo }}</p>
           </div>
-          <span class="px-3 py-1 rounded-full text-xs font-semibold"
-            [ngClass]="getEstadoClass(guia.estado)">
-            {{ guia.estado_display }}
-          </span>
+          <div>
+            <span class="inline-block px-3 py-1 rounded-full text-[11px] font-semibold"
+              [ngClass]="getEstadoClass(guia.estado)">
+              {{ guia.estado_display }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- FECHAS -->
-    <div class="p-6 border-b border-neutral-200 dark:border-neutral-700 grid grid-cols-2 gap-4">
-      <div>
-        <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Fecha de emisión</p>
-        <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ formatoLargo(guia.fecha_emision) }}</p>
+    <div class="p-4 sm:p-6 border-b border-stone-200/70 dark:border-white/10 grid grid-cols-2 gap-4">
+      <div class="min-w-0">
+        <p class="text-[10px] text-stone-400 uppercase tracking-wide">Fecha de emisión</p>
+        <p class="text-sm font-medium text-stone-900 dark:text-white mt-0.5">{{ formatoLargo(guia.fecha_emision) }}</p>
       </div>
-      <div>
-        <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Fecha de traslado</p>
-        <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ formatoLargo(guia.fecha_traslado) }}</p>
+      <div class="min-w-0">
+        <p class="text-[10px] text-stone-400 uppercase tracking-wide">Fecha de traslado</p>
+        <p class="text-sm font-medium text-stone-900 dark:text-white mt-0.5">{{ formatoLargo(guia.fecha_traslado) }}</p>
       </div>
     </div>
 
     <!-- REMITENTE / DESTINATARIO -->
-    <div class="p-6 border-b border-neutral-200 dark:border-neutral-700 grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="bg-neutral-50 dark:bg-neutral-700/50 rounded-lg p-4">
-        <h3 class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase mb-2">Remitente</h3>
-        <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ guia.razon_social_remitente }}</p>
-        <p class="text-xs text-neutral-600 dark:text-neutral-400">RUC: {{ guia.ruc_remitente }}</p>
-        <p class="text-xs text-neutral-600 dark:text-neutral-400">{{ guia.direccion_remitente }}</p>
+    <div class="p-4 sm:p-6 border-b border-stone-200/70 dark:border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div class="bg-stone-100/60 dark:bg-white/5 rounded-3xl p-4 min-w-0">
+        <h3 class="text-[10px] font-semibold text-stone-400 uppercase tracking-wide mb-2">Remitente</h3>
+        <p class="text-sm font-semibold text-stone-900 dark:text-white">{{ guia.razon_social_remitente }}</p>
+        <p class="text-[11px] text-stone-400 mt-0.5">RUC: {{ guia.ruc_remitente }}</p>
+        <p class="text-[11px] text-stone-400">{{ guia.direccion_remitente }}</p>
       </div>
-      <div class="bg-neutral-50 dark:bg-neutral-700/50 rounded-lg p-4">
-        <h3 class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase mb-2">Destinatario</h3>
-        <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ guia.razon_social_destinatario }}</p>
-        <p class="text-xs text-neutral-600 dark:text-neutral-400">RUC: {{ guia.ruc_destinatario }}</p>
-        <p class="text-xs text-neutral-600 dark:text-neutral-400">{{ guia.direccion_destinatario }}</p>
+      <div class="bg-stone-100/60 dark:bg-white/5 rounded-3xl p-4 min-w-0">
+        <h3 class="text-[10px] font-semibold text-stone-400 uppercase tracking-wide mb-2">Destinatario</h3>
+        <p class="text-sm font-semibold text-stone-900 dark:text-white">{{ guia.razon_social_destinatario }}</p>
+        <p class="text-[11px] text-stone-400 mt-0.5">RUC: {{ guia.ruc_destinatario }}</p>
+        <p class="text-[11px] text-stone-400">{{ guia.direccion_destinatario }}</p>
       </div>
     </div>
 
     <!-- PUNTO PARTIDA / LLEGADA -->
-    <div class="p-6 border-b border-neutral-200 dark:border-neutral-700 grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase mb-1">Punto de partida</p>
-        <p class="text-sm text-neutral-800 dark:text-neutral-200">{{ guia.punto_partida }}</p>
+    <div class="p-4 sm:p-6 border-b border-stone-200/70 dark:border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="min-w-0">
+        <p class="text-[10px] text-stone-400 uppercase tracking-wide mb-1">Punto de partida</p>
+        <p class="text-sm text-stone-900 dark:text-white">{{ guia.punto_partida }}</p>
       </div>
-      <div>
-        <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase mb-1">Punto de llegada</p>
-        <p class="text-sm text-neutral-800 dark:text-neutral-200">{{ guia.punto_llegada }}</p>
+      <div class="min-w-0">
+        <p class="text-[10px] text-stone-400 uppercase tracking-wide mb-1">Punto de llegada</p>
+        <p class="text-sm text-stone-900 dark:text-white">{{ guia.punto_llegada }}</p>
       </div>
     </div>
 
     <!-- TRANSPORTISTA -->
-    <div class="p-6 border-b border-neutral-200 dark:border-neutral-700 bg-blue-50/50 dark:bg-blue-900/10">
-      <h3 class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase mb-3">Datos del Transportista</h3>
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <div>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Razón Social</p>
-          <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.datos_transportista.razon_social }}</p>
+    <div class="p-4 sm:p-6 border-b border-stone-200/70 dark:border-white/10 bg-stone-100/60 dark:bg-white/5">
+      <h3 class="text-[10px] font-semibold text-stone-400 uppercase tracking-wide mb-3">Datos del Transportista</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div class="min-w-0">
+          <p class="text-[10px] text-stone-400">Razón Social</p>
+          <p class="text-sm font-medium text-stone-900 dark:text-white mt-0.5 truncate">{{ guia.datos_transportista.razon_social }}</p>
         </div>
-        <div>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">RUC</p>
-          <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.datos_transportista.ruc }}</p>
+        <div class="min-w-0">
+          <p class="text-[10px] text-stone-400">RUC</p>
+          <p class="text-sm font-medium text-stone-900 dark:text-white mt-0.5">{{ guia.datos_transportista.ruc }}</p>
         </div>
-        <div>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Placa Vehículo</p>
-          <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ guia.datos_transportista.placa_vehiculo }}</p>
+        <div class="min-w-0">
+          <p class="text-[10px] text-stone-400">Placa Vehículo</p>
+          <p class="text-sm font-semibold text-stone-900 dark:text-white mt-0.5">{{ guia.datos_transportista.placa_vehiculo }}</p>
         </div>
-        <div>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Chofer</p>
-          <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.datos_transportista.nombre_chofer }}</p>
+        <div class="min-w-0">
+          <p class="text-[10px] text-stone-400">Chofer</p>
+          <p class="text-sm font-medium text-stone-900 dark:text-white mt-0.5">{{ guia.datos_transportista.nombre_chofer }}</p>
         </div>
-        <div>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">DNI</p>
-          <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.datos_transportista.dni_chofer }}</p>
+        <div class="min-w-0">
+          <p class="text-[10px] text-stone-400">DNI</p>
+          <p class="text-sm font-medium text-stone-900 dark:text-white mt-0.5">{{ guia.datos_transportista.dni_chofer }}</p>
         </div>
-        <div>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">N° Licencia</p>
-          <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.datos_transportista.numero_licencia }}</p>
+        <div class="min-w-0">
+          <p class="text-[10px] text-stone-400">N° Licencia</p>
+          <p class="text-sm font-medium text-stone-900 dark:text-white mt-0.5">{{ guia.datos_transportista.numero_licencia }}</p>
         </div>
       </div>
     </div>
 
     <!-- DETALLE DE MERCADERÍAS -->
-    <div class="p-6">
-      <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Detalle de Mercaderías</h3>
+    <div class="p-4 sm:p-6 min-w-0">
+      <h3 class="text-[13px] font-semibold tracking-tight text-stone-900 dark:text-white mb-3">Detalle de Mercaderías</h3>
 
       <!-- Tabla desktop -->
-      <div class="hidden md:block overflow-x-auto">
+      <div class="hidden md:block overflow-x-auto -mx-1 px-1">
         <table class="w-full text-sm">
           <thead>
-            <tr class="border-b border-neutral-300 dark:border-neutral-600">
-              <th class="text-left py-2 px-3 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Código</th>
-              <th class="text-left py-2 px-3 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Descripción</th>
-              <th class="text-center py-2 px-3 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Unidad</th>
-              <th class="text-right py-2 px-3 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Cantidad</th>
-              <th class="text-right py-2 px-3 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Peso (kg)</th>
+            <tr class="border-b border-stone-200 dark:border-white/10">
+              <th class="text-left py-2 px-3 text-[10px] font-semibold text-stone-400 uppercase tracking-wide">Código</th>
+              <th class="text-left py-2 px-3 text-[10px] font-semibold text-stone-400 uppercase tracking-wide">Descripción</th>
+              <th class="text-center py-2 px-3 text-[10px] font-semibold text-stone-400 uppercase tracking-wide">Unidad</th>
+              <th class="text-right py-2 px-3 text-[10px] font-semibold text-stone-400 uppercase tracking-wide">Cantidad</th>
+              <th class="text-right py-2 px-3 text-[10px] font-semibold text-stone-400 uppercase tracking-wide">Peso (kg)</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of guia.items" class="border-b border-neutral-100 dark:border-neutral-700">
-              <td class="py-3 px-3 font-mono text-xs text-neutral-600 dark:text-neutral-400">{{ item.codigo }}</td>
-              <td class="py-3 px-3 text-neutral-900 dark:text-white font-medium">{{ item.descripcion }}</td>
-              <td class="py-3 px-3 text-center text-neutral-600 dark:text-neutral-400">{{ item.unidad_medida }}</td>
-              <td class="py-3 px-3 text-right font-semibold text-neutral-900 dark:text-white">{{ item.cantidad }}</td>
-              <td class="py-3 px-3 text-right text-neutral-600 dark:text-neutral-400">{{ item.peso_kg }}</td>
+            <tr *ngFor="let item of guia.items" class="border-b border-stone-100 dark:border-white/5">
+              <td class="py-3 px-3 font-mono text-xs text-stone-400">{{ item.codigo }}</td>
+              <td class="py-3 px-3 text-stone-900 dark:text-white font-medium">{{ item.descripcion }}</td>
+              <td class="py-3 px-3 text-center text-stone-400">{{ item.unidad_medida }}</td>
+              <td class="py-3 px-3 text-right font-semibold text-stone-900 dark:text-white">{{ item.cantidad }}</td>
+              <td class="py-3 px-3 text-right text-stone-400">{{ item.peso_kg }}</td>
             </tr>
           </tbody>
           <tfoot>
-            <tr class="border-t-2 border-neutral-300 dark:border-neutral-600 font-semibold">
-              <td colspan="3" class="py-3 px-3 text-right text-xs uppercase text-neutral-500 dark:text-neutral-400">Totales</td>
-              <td class="py-3 px-3 text-right text-neutral-900 dark:text-white">{{ getTotalCantidad() }}</td>
-              <td class="py-3 px-3 text-right text-neutral-900 dark:text-white">{{ getTotalPeso() }} kg</td>
+            <tr class="border-t-2 border-stone-200 dark:border-white/10 font-semibold">
+              <td colspan="3" class="py-3 px-3 text-right text-[10px] uppercase tracking-wide text-stone-400">Totales</td>
+              <td class="py-3 px-3 text-right text-stone-900 dark:text-white">{{ getTotalCantidad() }}</td>
+              <td class="py-3 px-3 text-right text-stone-900 dark:text-white">{{ getTotalPeso() }} kg</td>
             </tr>
           </tfoot>
         </table>
       </div>
 
       <!-- Cards mobile -->
-      <div class="block md:hidden space-y-2">
+      <div class="block md:hidden space-y-2 min-w-0">
         <div *ngFor="let item of guia.items; let i = index"
-          class="bg-neutral-50 dark:bg-neutral-700/50 rounded-lg p-3 border border-neutral-200 dark:border-neutral-600">
-          <div class="flex justify-between items-start mb-1">
-            <span class="font-mono text-xs text-blue-600 dark:text-blue-400">{{ item.codigo }}</span>
-            <span class="text-xs font-semibold text-neutral-900 dark:text-white">x{{ item.cantidad }}</span>
+          class="bg-stone-100/60 dark:bg-white/5 rounded-2xl p-3 border border-stone-200/70 dark:border-white/10 min-w-0">
+          <div class="flex justify-between items-start gap-2 mb-1">
+            <span class="font-mono text-[11px] text-stone-400 truncate">{{ item.codigo }}</span>
+            <span class="text-xs font-semibold text-stone-900 dark:text-white shrink-0">x{{ item.cantidad }}</span>
           </div>
-          <p class="text-sm font-medium text-neutral-900 dark:text-white mb-1">{{ item.descripcion }}</p>
-          <div class="flex justify-between text-xs text-neutral-500 dark:text-neutral-400">
+          <p class="text-sm font-medium text-stone-900 dark:text-white mb-1">{{ item.descripcion }}</p>
+          <div class="flex justify-between text-[11px] text-stone-400">
             <span>{{ item.unidad_medida }}</span>
             <span>{{ item.peso_kg }} kg</span>
           </div>
@@ -167,28 +174,42 @@
       </div>
 
       <!-- Resumen -->
-      <div class="mt-4 flex justify-end gap-6 text-sm">
+      <div class="mt-4 flex flex-wrap justify-end gap-x-6 gap-y-1 text-sm">
         <div class="text-right">
-          <span class="text-neutral-500 dark:text-neutral-400">Peso total:</span>
-          <span class="ml-2 font-bold text-neutral-900 dark:text-white">{{ guia.peso_total_kg }} kg</span>
+          <span class="text-stone-400 text-xs">Peso total:</span>
+          <span class="ml-2 font-semibold text-stone-900 dark:text-white">{{ guia.peso_total_kg }} kg</span>
         </div>
         <div class="text-right">
-          <span class="text-neutral-500 dark:text-neutral-400">Bultos:</span>
-          <span class="ml-2 font-bold text-neutral-900 dark:text-white">{{ guia.num_bultos }}</span>
+          <span class="text-stone-400 text-xs">Bultos:</span>
+          <span class="ml-2 font-semibold text-stone-900 dark:text-white">{{ guia.num_bultos }}</span>
         </div>
       </div>
     </div>
 
+    <!-- ENVÍO SUNAT -->
+    <div *ngIf="guia.envio?.numero_guia || guia.envio?.xml_url || guia.envio?.pdf_url || guia.envio?.cdr_url" class="p-4 sm:p-6 border-t border-stone-200/70 dark:border-white/10 bg-emerald-500/5">
+      <p class="text-[10px] text-stone-400 uppercase tracking-wide mb-2">Envío SUNAT{{ guia.envio?.ambiente ? ' · ' + guia.envio?.ambiente : '' }}</p>
+      <p *ngIf="guia.envio?.numero_guia" class="text-sm font-semibold text-stone-900 dark:text-white mb-2">{{ guia.envio?.numero_guia }}</p>
+      <div class="flex flex-wrap gap-2">
+        <a *ngIf="guia.envio?.xml_url" [href]="guia.envio?.xml_url" target="_blank"
+          class="h-9 px-4 rounded-full text-xs font-semibold bg-stone-100 dark:bg-white/10 text-stone-700 dark:text-stone-200 inline-flex items-center">XML</a>
+        <a *ngIf="guia.envio?.pdf_url" [href]="guia.envio?.pdf_url" target="_blank"
+          class="h-9 px-4 rounded-full text-xs font-semibold bg-black dark:bg-white text-white dark:text-black inline-flex items-center">PDF</a>
+        <a *ngIf="guia.envio?.cdr_url" [href]="guia.envio?.cdr_url" target="_blank"
+          class="h-9 px-4 rounded-full text-xs font-semibold bg-stone-100 dark:bg-white/10 text-stone-700 dark:text-stone-200 inline-flex items-center">CDR</a>
+      </div>
+    </div>
+
     <!-- OBSERVACIONES -->
-    <div *ngIf="guia.observaciones" class="p-6 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700/30">
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase mb-1">Observaciones</p>
-      <p class="text-sm text-neutral-800 dark:text-neutral-200">{{ guia.observaciones }}</p>
+    <div *ngIf="guia.observaciones" class="p-4 sm:p-6 border-t border-stone-200/70 dark:border-white/10 bg-stone-100/60 dark:bg-white/5">
+      <p class="text-[10px] text-stone-400 uppercase tracking-wide mb-1">Observaciones</p>
+      <p class="text-sm text-stone-900 dark:text-white">{{ guia.observaciones }}</p>
     </div>
 
     <!-- MOTIVO -->
-    <div class="p-6 border-t border-neutral-200 dark:border-neutral-700">
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 uppercase mb-1">Motivo del traslado</p>
-      <p class="text-sm font-medium text-neutral-900 dark:text-white">{{ guia.motivo_traslado_display }}</p>
+    <div class="p-4 sm:p-6 border-t border-stone-200/70 dark:border-white/10">
+      <p class="text-[10px] text-stone-400 uppercase tracking-wide mb-1">Motivo del traslado</p>
+      <p class="text-sm font-medium text-stone-900 dark:text-white">{{ guia.motivo_traslado_display }}</p>
     </div>
   </div>
 </div>

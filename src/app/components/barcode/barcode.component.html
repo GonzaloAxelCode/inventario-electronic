@@ -1,5 +1,3 @@
 
-<svg
-  [attr.id]="'barcode-' + sku"
-  class="max-w-[120px] h-auto"
-></svg>
+<svg #barcodeSvg class="w-full h-auto"></svg>
+<p *ngIf="error" class="text-center font-mono text-xs tracking-widest">{{ sku }}</p>

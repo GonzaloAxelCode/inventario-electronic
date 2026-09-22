@@ -8,81 +8,8 @@
         </div>
     </header>
 
-    <!-- ============ VISTA: LANDING ============ -->
-    <main class="icloud-home" *ngIf="view === 'landing'">
-
-        <div class="icloud-home__orbit">
-            <div class="icloud-home__center">
-                <img src="/assets/LOGOS/logo-dark-theme2000x2000.png" alt="GV Software Plus" />
-            </div>
-
-            <span class="icloud-home__sat icloud-home__sat--1"><mat-icon>mail</mat-icon></span>
-            <span class="icloud-home__sat icloud-home__sat--2"><mat-icon>photo_library</mat-icon></span>
-            <span class="icloud-home__sat icloud-home__sat--3"><mat-icon>palette</mat-icon></span>
-            <span class="icloud-home__sat icloud-home__sat--4"><mat-icon>insights</mat-icon></span>
-            <span class="icloud-home__sat icloud-home__sat--5"><mat-icon>notifications</mat-icon></span>
-            <span class="icloud-home__sat icloud-home__sat--6"><mat-icon>apps</mat-icon></span>
-            <span class="icloud-home__sat icloud-home__sat--7"><mat-icon>inventory</mat-icon></span>
-            <span class="icloud-home__sat icloud-home__sat--8"><mat-icon>point_of_sale</mat-icon></span>
-        </div>
-
-        <h1 class="icloud-home__wordmark">Gonza <span style="color: #ff9500; font-weight: 700;">Fact</span></h1>
-
-        <button type="button" class="icloud-home__cta" (click)="onStartLogin()">
-            Iniciar sesión
-        </button>
-
-        <p class="icloud-home__tagline">
-            Transforma tu negocio con tecnología,<br />
-            automatiza tus procesos y enfócate<br />
-            en lo que realmente importa: crecer.
-        </p>
-
-        <section class="icloud-home__cards">
-            <article class="icloud-home__card">
-                <div class="icloud-home__card-icon-wrap icloud-home__card-icon-wrap--blue">
-                    <mat-icon>inventory_2</mat-icon>
-                </div>
-                <h3>Gestión de Inventario</h3>
-                <p>
-                    Control rápido y organizado de todos tus productos. Mantén tu inventario siempre actualizado con alertas de stock bajo y seguimiento en tiempo real de cada movimiento.
-                </p>
-            </article>
-
-            <article class="icloud-home__card">
-                <div class="icloud-home__card-icon-wrap icloud-home__card-icon-wrap--purple">
-                    <mat-icon>auto_awesome</mat-icon>
-                </div>
-                <h3>Automatización Inteligente</h3>
-                <p>
-                    Automatiza tareas repetitivas y ahorra tiempo valioso. Nuestro sistema se encarga de los procesos para que tú puedas enfocarte en hacer crecer tu negocio.
-                </p>
-            </article>
-
-            <article class="icloud-home__card">
-                <div class="icloud-home__card-icon-wrap icloud-home__card-icon-wrap--green">
-                    <mat-icon>devices</mat-icon>
-                </div>
-                <h3>Multiplataforma</h3>
-                <p>
-                    Accede desde cualquier dispositivo, en cualquier lugar. Nuestras aplicaciones web y móviles se adaptan perfectamente a tu flujo de trabajo.
-                </p>
-            </article>
-
-            <article class="icloud-home__card">
-                <div class="icloud-home__card-icon-wrap icloud-home__card-icon-wrap--orange">
-                    <mat-icon>trending_up</mat-icon>
-                </div>
-                <h3>Analítica y Reportes</h3>
-                <p>
-                    Toma decisiones inteligentes con datos en tiempo real. Reportes detallados y estadísticas que te muestran el panorama completo de tu negocio.
-                </p>
-            </article>
-        </section>
-    </main>
-
     <!-- ============ VISTA: LOGIN ============ -->
-    <div class="icloud-auth" *ngIf="view === 'login'">
+    <div class="icloud-auth">
         <!-- Fondo con aura animada -->
         <div class="icloud-auth__aura" aria-hidden="true">
             <span class="icloud-auth__blob icloud-auth__blob--a"></span>
@@ -96,10 +23,6 @@
             class="icloud-auth__card"
             novalidate
         >
-            <button type="button" class="icloud-auth__back" (click)="onBackToLanding()" aria-label="Volver">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-            </button>
-
             <h1 class="icloud-auth__wordmark">Gonza <span style="color: #ff9500; font-weight: 700;">Fact</span></h1>
             <p class="icloud-auth__subtitle">Accede a tu cuenta para gestionar tu negocio de forma inteligente</p>
 
@@ -110,7 +33,13 @@
                         type="text"
                         formControlName="username"
                         placeholder=" "
-                        autocomplete="off"
+                        autocomplete="username"
+                        autocapitalize="off"
+                        autocorrect="off"
+                        spellcheck="false"
+                        enterkeyhint="next"
+                        (blur)="trimUsernameOnBlur()"
+                        (paste)="onUsernamePaste($event)"
                         class="icloud-auth__input--stacked"
                         id="ic-username"
                     />
@@ -123,6 +52,14 @@
                         formControlName="password"
                         placeholder=" "
                         autocomplete="current-password"
+                        autocapitalize="off"
+                        autocorrect="off"
+                        spellcheck="false"
+                        enterkeyhint="go"
+                        (paste)="onPasswordPaste($event)"
+                        (keydown)="checkCapsLock($event)"
+                        (keyup)="checkCapsLock($event)"
+                        (blur)="hideCapsLockHint()"
                         class="icloud-auth__input--stacked"
                         id="ic-password"
                     />
@@ -132,6 +69,14 @@
                         formControlName="password"
                         placeholder=" "
                         autocomplete="current-password"
+                        autocapitalize="off"
+                        autocorrect="off"
+                        spellcheck="false"
+                        enterkeyhint="go"
+                        (paste)="onPasswordPaste($event)"
+                        (keydown)="checkCapsLock($event)"
+                        (keyup)="checkCapsLock($event)"
+                        (blur)="hideCapsLockHint()"
                         class="icloud-auth__input--stacked"
                         id="ic-password"
                     />
@@ -153,11 +98,12 @@
                 </div>
             </div>
 
+            <div *ngIf="capsLockOn" class="icloud-auth__capslock" role="status">
+                <mat-icon>keyboard</mat-icon>
+                <span>Bloq Mayús activado: la contraseña distingue mayúsculas y minúsculas.</span>
+            </div>
+
             <div class="icloud-auth__row">
-                <label class="icloud-auth__checkbox">
-                    <input type="checkbox" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}" />
-                    <span>Mantener sesión iniciada</span>
-                </label>
                 <a href="javascript:void(0)" class="icloud-auth__link" (click)="openForgotModal()">¿Has olvidado la contraseña? ↗</a>
             </div>
 
@@ -171,7 +117,33 @@
             </button>
 
             <div
-                *ngIf="(authState$ | async)?.errors?.detail"
+                *ngIf="(authState$ | async)?.errors?.networkError"
+                class="icloud-auth__error icloud-auth__error--network"
+                role="alert"
+            >
+                <mat-icon class="icloud-auth__error-icon">wifi_off</mat-icon>
+                <span>Sin conexión con el servidor. Revisa tu wifi o que el backend esté encendido e inténtalo de nuevo.</span>
+                <button type="button" class="icloud-auth__retry" (click)="onSubmit()">
+                    <mat-icon>refresh</mat-icon>
+                    Reintentar
+                </button>
+            </div>
+
+            <div
+                *ngIf="(authState$ | async)?.errors?.serverError"
+                class="icloud-auth__error icloud-auth__error--network"
+                role="alert"
+            >
+                <mat-icon class="icloud-auth__error-icon">cloud_off</mat-icon>
+                <span>Ocurrió un problema en el servidor. Inténtalo de nuevo en unos momentos.</span>
+                <button type="button" class="icloud-auth__retry" (click)="onSubmit()">
+                    <mat-icon>refresh</mat-icon>
+                    Reintentar
+                </button>
+            </div>
+
+            <div
+                *ngIf="(authState$ | async)?.errors?.detail && !(authState$ | async)?.errors?.networkError && !(authState$ | async)?.errors?.serverError"
                 class="icloud-auth__error"
             >
                 Datos incorrectos. Por favor, verifica tu usuario y contraseña.
@@ -179,9 +151,9 @@
         </form>
 
         <div class="icloud-auth__legal">
-            <a href="javascript:void(0)">Privacidad</a>
+            <a href="javascript:void(0)" (click)="openPrivacyModal()">Privacidad</a>
             <span class="icloud-auth__dot">•</span>
-            <a href="javascript:void(0)">Términos</a>
+            <a href="javascript:void(0)" (click)="openTermsModal()">Términos</a>
         </div>
     </div>
 
@@ -214,6 +186,95 @@
 
             <button class="icloud-modal__cancel" (click)="closeForgotModal()">
                 Cancelar
+            </button>
+        </div>
+    </div>
+
+    <!-- ============ MODAL: PRIVACIDAD ============ -->
+    <div class="icloud-modal-overlay" *ngIf="showPrivacyModal" (click)="closePrivacyModal()">
+        <div class="icloud-modal icloud-modal--wide" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-label="Política de privacidad">
+            <button class="icloud-modal__close" (click)="closePrivacyModal()" aria-label="Cerrar">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+            </button>
+
+            <div class="icloud-modal__icon">
+                <mat-icon>privacy_tip</mat-icon>
+            </div>
+
+            <h2 class="icloud-modal__title">Política de privacidad</h2>
+            <p class="icloud-modal__text">Gonza Fact · Última actualización: 21 de septiembre de 2026</p>
+
+            <div class="icloud-modal__body">
+                <h3>1. Responsable del tratamiento</h3>
+                <p>GV Software Plus, titular de la aplicación Gonza Fact, es responsable del tratamiento de los datos personales que se registran y gestionan a través del sistema.</p>
+
+                <h3>2. Datos que recopilamos</h3>
+                <p>Recopilamos únicamente los datos necesarios para operar el sistema: credenciales de acceso (usuario y contraseña), datos de tu negocio (productos, inventario, ventas, compras, clientes y comprobantes) y datos técnicos mínimos (sesión y preferencias guardadas en tu propio navegador o dispositivo).</p>
+
+                <h3>3. Finalidad</h3>
+                <p>Utilizamos tus datos para autenticarte, permitir la gestión de tu inventario, ventas y reportes, mantener tu sesión activa y brindarte soporte. No utilizamos tus datos con fines publicitarios ni los vendemos a terceros.</p>
+
+                <h3>4. Almacenamiento y seguridad</h3>
+                <p>Las contraseñas se almacenan cifradas y nunca se muestran en el sistema. Los tokens de sesión y la caché de trabajo (por ejemplo, inventario) pueden guardarse localmente en tu navegador o dispositivo para que la aplicación funcione con rapidez. Al cerrar sesión, los tokens y la caché local se eliminan de ese equipo.</p>
+
+                <h3>5. Tus derechos</h3>
+                <p>Puedes solicitar en cualquier momento el acceso, rectificación, cancelación u oposición sobre tus datos personales escribiendo al administrador del sistema o al contacto de soporte. Atenderemos tu solicitud conforme a la Ley N.º 29733, Ley de Protección de Datos Personales del Perú, y su reglamento.</p>
+
+                <h3>6. Conservación</h3>
+                <p>Conservamos tus datos mientras mantengas una cuenta activa o mientras sean necesarios para la operación del servicio y el cumplimiento de obligaciones legales y tributarias.</p>
+
+                <h3>7. Cambios a esta política</h3>
+                <p>Podremos actualizar esta política para reflejar mejoras del servicio o cambios normativos. La versión vigente estará siempre disponible desde esta pantalla de acceso.</p>
+            </div>
+
+            <button class="icloud-modal__cancel" (click)="closePrivacyModal()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+    <!-- ============ MODAL: TÉRMINOS ============ -->
+    <div class="icloud-modal-overlay" *ngIf="showTermsModal" (click)="closeTermsModal()">
+        <div class="icloud-modal icloud-modal--wide" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-label="Términos del servicio">
+            <button class="icloud-modal__close" (click)="closeTermsModal()" aria-label="Cerrar">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+            </button>
+
+            <div class="icloud-modal__icon">
+                <mat-icon>description</mat-icon>
+            </div>
+
+            <h2 class="icloud-modal__title">Términos del servicio</h2>
+            <p class="icloud-modal__text">Gonza Fact · Última actualización: 21 de septiembre de 2026</p>
+
+            <div class="icloud-modal__body">
+                <h3>1. Objeto</h3>
+                <p>Gonza Fact es un sistema de gestión comercial (inventario, ventas, compras, clientes y reportes) provisto por GV Software Plus. Al acceder con tus credenciales aceptas estos términos.</p>
+
+                <h3>2. Cuentas y credenciales</h3>
+                <p>Tu usuario y contraseña son personales e intransferibles. Eres responsable de mantenerlos en secreto, de no compartirlos y de toda actividad realizada con tu cuenta. Si sospechas un uso no autorizado, avisa de inmediato al administrador para restablecer tu acceso.</p>
+
+                <h3>3. Uso aceptable</h3>
+                <p>Te comprometes a usar el sistema solo para la gestión legítima de tu negocio, a registrar información veraz y a no intentar vulnerar la seguridad, acceder a cuentas ajenas ni alterar los datos de otros usuarios o tiendas.</p>
+
+                <h3>4. Funciones y disponibilidad</h3>
+                <p>Las funciones disponibles dependen del plan o permisos contratados para tu cuenta. Procuramos mantener el servicio disponible de forma continua, pero pueden existir interrupciones por mantenimiento, conectividad o causas ajenas a nuestro control.</p>
+
+                <h3>5. Tus datos y respaldos</h3>
+                <p>La información que registras (productos, ventas, clientes, etc.) pertenece a tu negocio. Te recomendamos mantener tus propios respaldos y revisar periódicamente tus comprobantes y reportes, en especial para fines contables y tributarios.</p>
+
+                <h3>6. Propiedad intelectual</h3>
+                <p>El software, el diseño, los logotipos y los contenidos de Gonza Fact son propiedad de GV Software Plus. No está permitido copiarlos, modificarlos, revenderlos ni otorgar sublicencias sin autorización escrita.</p>
+
+                <h3>7. Limitación de responsabilidad</h3>
+                <p>En la medida permitida por la ley, GV Software Plus no será responsable por pérdidas derivadas del uso indebido del sistema, de la información registrada por los usuarios o de interrupciones ajenas a su control.</p>
+
+                <h3>8. Suspensión y cambios</h3>
+                <p>Podremos suspender cuentas que incumplan estos términos o actualizarlos cuando sea necesario. Te avisaremos de cambios relevantes y la versión vigente estará disponible desde la pantalla de acceso.</p>
+            </div>
+
+            <button class="icloud-modal__cancel" (click)="closeTermsModal()">
+                Cerrar
             </button>
         </div>
     </div>

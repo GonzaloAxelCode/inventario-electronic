@@ -11,6 +11,7 @@ export interface Venta {
     estado: string;
     activo: boolean;
     tipo_comprobante: string
+    tipo_venta?: string;
     productos: ProductSale[]
     subtotal: number;
     gravado_total: number
@@ -130,6 +131,8 @@ export interface CreateVenta {
     direccion_cliente: string,
     telefono_cliente: string,
     is_send_sunat: boolean
+    is_pedido?: boolean;
+    pedido_id?: number | null;
 }
 
 export interface ClienteTemp {
@@ -173,6 +176,9 @@ export interface ProductSale {
     descuento?: number
     cantidad_total_vendida: number;
     producto_imagen?: string
+    sku?: string;
+    is_deleted?: boolean;
+    is_updated?: boolean;
 
 
 

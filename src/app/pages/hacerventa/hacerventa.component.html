@@ -9,7 +9,7 @@
         <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
             class="flex gap-6 overflow-x-auto whitespace-nowrap -mb-px">
             <button tuiTab type="button">Venta normal</button>
-            <button tuiTab type="button">Vender por pedido</button>
+            <button tuiTab type="button">Pedidos pendientes</button>
         </nav>
     </header>
 
@@ -29,7 +29,7 @@
                             <div>
                                 <h3 class="text-base font-semibold text-neutral-900 dark:text-white">Carrito de compra</h3>
                                 <p class="text-sm text-neutral-500 dark:text-neutral-400">
-                                    {{ productosFormArray.length }} {{ productosFormArray.length === 1 ? 'producto agregado' : 'productos agregados' }}
+                                    {{ lineasProductos().length }} {{ lineasProductos().length === 1 ? 'producto agregado' : 'productos agregados' }}
                                 </p>
                             </div>
 
@@ -42,7 +42,8 @@
                         <!-- Lista de productos -->
                         <div class="space-y-6">
 
-                            <div *ngFor="let item of productosFormArray.controls; let i = index" [formGroup]="item"
+                            <ng-container *ngFor="let item of productosFormArray.controls; let i = index">
+                                <div *ngIf="!item.get('es_servicio')?.value" [formGroup]="item"
                                 class="relative py-4 sm:py-5">
 
                                 <button tuiIconButton iconStart="@tui.x" type="button" appearance="flat"
@@ -120,10 +121,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                                </div>
+                            </ng-container>
 
                             <!-- Estado vacio -->
-                            <div *ngIf="productosFormArray.length === 0"
+                            <div *ngIf="lineasProductos().length === 0"
                                 class="text-center py-16 sm:py-20">
                                 <svg class="w-10 h-10 mx-auto mb-3 text-neutral-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
@@ -138,9 +140,14 @@
                         </div>
                     </div>
 
+                    <ng-container *ngTemplateOutlet="panelVenta"></ng-container>
+                </div>
+            </div>
+
+<ng-template #panelVenta>
                     <!-- ==================== PANEL LATERAL DERECHO ==================== -->
                     <div class="order-2 lg:sticky lg:top-4 lg:self-start">
-                        <div class="rounded-2xl bg-white dark:bg-neutral-800">
+                        <div>
 
                             <!-- Seccion: Cliente -->
                             <div class="p-5">
@@ -389,40 +396,45 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2 mt-3 pt-3">
-                                        <img src="https://www.proactivanet.com/wp-content/uploads/2023/01/PROACTIVANET-Logo-Sunat.png"
-                                            class="object-contain w-14 opacity-60" alt="SUNAT">
+                                        <img src="https://res.cloudinary.com/ddksrkond/image/upload/v1789871722/APP%20INVENTARIO/sunat-seeklogo_u7yxus.png"
+                                            class="object-contain w-20 opacity-80" alt="SUNAT">
                                         <span class="text-[11px] text-neutral-500 dark:text-neutral-400">Emisión electrónica SUNAT</span>
                                     </div>
                                 </div>
 
                                 <!-- Boton finalizar -->
                                 <div *ngIf="(userPermissions$ | async)?.can_make_sale" class="mt-3">
+                                    <p *ngIf="sunatBloqueaVenta" class="text-amber-700 text-xs mt-2 mb-2 text-center bg-amber-50 rounded-lg px-3 py-2 font-medium">
+                                        SUNAT sin configurar ({{ sunatFaltante }}). <a routerLink="/app/settings/cuenta" class="underline font-semibold">Configura tus credenciales SUNAT en Ajustes</a>
+                                    </p>
+                                    <div class="hidden lg:block">
                                     <button *ngIf="ventaForm.get('tipoComprobante')?.value !== 'Anonima'"
-                                        [disabled]="!ventaForm.valid || ventaForm.get('productos')?.value.length === 0"
-                                        class="btn-finalizar w-full !rounded-lg"
-                                        tuiButton type="submit" (click)="hacerVenta()" appearance="primary-grayscale" size="l">
+                                        [disabled]="!ventaForm.valid || lineasProductos().length === 0 || sunatBloqueaVenta"
+                                        class="btn-finalizar w-full !rounded-full !bg-white !text-neutral-900 border border-neutral-200 shadow-sm"
+                                        tuiButton type="submit" (click)="hacerVenta()" appearance="flat" size="l">
                                         <span class="flex items-center justify-center gap-2.5">
-                                            <svg class="w-4.5 h-4.5 btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
+                                            <img src="https://res.cloudinary.com/ddksrkond/image/upload/v1789871722/APP%20INVENTARIO/sunat-seeklogo_u7yxus.png"
+                                                class="w-10 h-10 object-contain" alt="SUNAT">
                                             Finalizar venta
                                         </span>
                                     </button>
+                                    </div>
                                     <p *ngIf="rucRequiredError()" class="text-rose-600 text-xs mt-2 text-center bg-rose-50 rounded-lg px-3 py-2 font-medium">
                                         Para facturas solo se permite RUC (11 dígitos). No se puede continuar con DNI.
                                     </p>
 
+                                    <div class="hidden lg:block">
                                     <button *ngIf="ventaForm.get('tipoComprobante')?.value === 'Anonima'"
-                                        [disabled]="ventaForm.get('productos')?.value.length === 0"
-                                        class="btn-finalizar w-full !rounded-lg"
-                                        tuiButton type="submit" (click)="hacerVenta()" appearance="primary-grayscale" size="l">
+                                        [disabled]="lineasProductos().length === 0"
+                                        class="btn-finalizar w-full !rounded-full !bg-white !text-neutral-900 border border-neutral-200 shadow-sm"
+                                        tuiButton type="submit" (click)="hacerVenta()" appearance="flat" size="l">
                                         <span class="flex items-center justify-center gap-2.5">
-                                            <svg class="w-4.5 h-4.5 btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
+                                            <img src="https://res.cloudinary.com/ddksrkond/image/upload/v1789871722/APP%20INVENTARIO/sunat-seeklogo_u7yxus.png"
+                                                class="w-10 h-10 object-contain" alt="SUNAT">
                                             Finalizar venta anónima
                                         </span>
                                     </button>
+                                    </div>
                                 </div>
 
                                 <!-- Advertencia permisos -->
@@ -441,22 +453,21 @@
 
                         </div>
                     </div>
-                </div>
-            </div>
+            </ng-template>
 
-            <!-- ==================== TAB: VENDER POR PEDIDO ==================== -->
+            <!-- ==================== TAB: PEDIDOS PENDIENTES ==================== -->
             <div *ngIf="activeTab === 'pedido'">
-                <div class="max-w-7xl mx-auto">
+                <div class="w-full">
 
                     <!-- Header -->
                     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
                         <div>
                             <h2 class="text-base font-semibold text-neutral-900 dark:text-white mb-1">
-                                {{ pedidoFlowStep === 0 ? 'Seleccionar pedido' : 'Vender ' + pedidoSeleccionado?.numero_pedido }}
+                                {{ pedidoFlowStep === 0 ? 'Pedidos pendientes' : 'Vender ' + pedidoSeleccionado?.numero_pedido }}
                             </h2>
                             <p class="text-sm text-neutral-500 dark:text-neutral-400">
                                 {{ pedidoFlowStep === 0
-                                    ? 'Selecciona un pedido pendiente para procesar como venta'
+                                    ? 'Pedidos creados pendientes de procesar como venta'
                                     : 'Sigue los pasos para convertir el pedido en venta' }}
                             </p>
                         </div>
@@ -486,34 +497,23 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/>
                                     </svg>
                                     <h3 class="text-base font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
-                                        No hay pedidos en sala de ventas
+                                        No hay pedidos pendientes
                                     </h3>
                                     <p class="text-sm text-neutral-500 dark:text-neutral-400 max-w-xs mx-auto">
-                                        Ve a Pedidos, abre un pedido y haz clic en "Enviar a sala de ventas"
+                                        Crea un pedido y aparecerá aquí automáticamente
                                     </p>
                                 </div>
 
                                 <!-- Grid de pedidos -->
-                                <div *ngIf="pedidosSala.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div *ngIf="pedidosSala.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                     <div *ngFor="let pedido of pedidosSala"
                                         (click)="pedidoSeleccionado = pedido"
                                         [class]="pedidoSeleccionado?.id === pedido.id
                                             ? 'bg-white dark:bg-neutral-800 rounded-2xl p-5 ring-2 ring-neutral-900 dark:ring-emerald-400 cursor-pointer transition-colors relative'
                                             : 'bg-white dark:bg-neutral-800 rounded-2xl p-5 cursor-pointer transition-colors relative'">
 
-                                        <!-- Boton quitar pedido -->
-                                        <button
-                                            type="button"
-                                            (click)="quitarPedidoSala(pedido); $event.stopPropagation()"
-                                            class="absolute top-3 right-3 p-1.5 rounded-lg text-neutral-400 hover:bg-rose-50 hover:text-rose-600 transition-colors z-10"
-                                            title="Quitar pedido de la sala">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
-
                                         <!-- Header del pedido -->
-                                        <div class="flex items-start justify-between mb-4 pr-8">
+                                        <div class="flex items-start justify-between mb-4">
                                             <div>
                                                 <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Pedido</p>
                                                 <p class="text-base font-semibold text-neutral-900 dark:text-white">{{ pedido.numero_pedido }}</p>
@@ -521,9 +521,6 @@
                                             <div class="flex flex-col items-end gap-1">
                                                 <span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 font-medium">
                                                     {{ pedido.estado }}
-                                                </span>
-                                                <span class="text-[11px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-white/10 text-neutral-600 dark:text-neutral-300 font-medium">
-                                                    {{ pedido.tipo_pedido }}
                                                 </span>
                                             </div>
                                         </div>
@@ -604,7 +601,7 @@
                             <div *ngIf="pedidoFlowStep === 1" class="space-y-4">
 
                                 <!-- Header resumen compacto -->
-                                <div class="flex items-center justify-between gap-3 py-3 px-4 bg-white dark:bg-neutral-800 rounded-2xl shadow-sm">
+                                <div class="flex items-center justify-between gap-3 py-3">
                                     <div class="flex items-center gap-3 min-w-0">
                                         <div class="w-9 h-9 rounded-full bg-neutral-100 dark:bg-white/10 flex items-center justify-center shrink-0">
                                             <svg class="w-4.5 h-4.5 text-neutral-600 dark:text-neutral-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -625,7 +622,7 @@
                                 </div>
 
                                 <!-- Preview de comprobante -->
-                                <div class="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm overflow-hidden">
+                                <div>
                                     <!-- Header del comprobante -->
                                     <div class="p-4 sm:p-5">
                                         <div class="flex items-start justify-between gap-3">
@@ -717,7 +714,7 @@
                         <div *ngIf="pedidoFlowStep > 0" class="w-full lg:w-[360px] lg:sticky lg:top-4 space-y-4">
 
                             <!-- Seccion: Comprobante -->
-                            <div class="bg-white dark:bg-neutral-800 rounded-2xl p-4 shadow-sm">
+                            <div>
                                 <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Comprobante</h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
                                     <tui-select formControlName="tipoComprobante" class="w-full">
@@ -773,9 +770,9 @@
                                     </div>
                                 </div>
 
-                                <div class="flex items-center gap-2 mb-4 py-2 px-3 bg-white dark:bg-neutral-800 rounded-2xl">
-                                    <img src="https://www.proactivanet.com/wp-content/uploads/2023/01/PROACTIVANET-Logo-Sunat.png"
-                                        class="object-contain w-9 h-9 opacity-70" alt="SUNAT">
+                                <div class="flex items-center gap-2 mb-4 py-2">
+                                    <img src="https://res.cloudinary.com/ddksrkond/image/upload/v1789871722/APP%20INVENTARIO/sunat-seeklogo_u7yxus.png"
+                                        class="object-contain w-14 h-14 opacity-90" alt="SUNAT">
                                     <div>
                                         <p class="text-[11px] font-medium text-neutral-700 dark:text-neutral-300">Electrónico SUNAT</p>
                                         <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Comprobante oficial</p>
@@ -786,13 +783,12 @@
                                 <div *ngIf="(userPermissions$ | async)?.can_make_sale">
                                     <button
                                         [disabled]="productosFormArray.length === 0 || processingVenta"
-                                        class="w-full py-3 px-4 bg-neutral-900 text-white font-semibold text-sm rounded-full hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-                                        tuiButton type="button" (click)="confirmarVentaPedido()" size="l">
-                                        <tui-loader *ngIf="processingVenta" size="s" class="!text-white"></tui-loader>
+                                        class="w-full !rounded-full !bg-white !text-neutral-900 border border-neutral-200 shadow-sm hover:!bg-neutral-50 disabled:opacity-50 font-semibold"
+                                        tuiButton type="button" appearance="flat" (click)="confirmarVentaPedido()" size="l">
+                                        <tui-loader *ngIf="processingVenta" size="s"></tui-loader>
                                         <ng-container *ngIf="!processingVenta">
-                                            <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
+                                            <img src="https://res.cloudinary.com/ddksrkond/image/upload/v1789871722/APP%20INVENTARIO/sunat-seeklogo_u7yxus.png"
+                                                class="w-10 h-10 object-contain" alt="SUNAT">
                                             Finalizar venta
                                         </ng-container>
                                     </button>
@@ -819,4 +815,20 @@
 
         </form>
     </tui-loader>
+
+    <!-- Barra inferior móvil: total + finalizar siempre visible (sobre el teclado) -->
+    <div *ngIf="(userPermissions$ | async)?.can_make_sale && barraMovilVisible" class="barra-venta-movil lg:hidden">
+        <div class="flex items-center gap-3">
+            <div class="min-w-0 shrink-0">
+                <p class="text-[11px] text-neutral-500 dark:text-neutral-400 leading-none mb-1">Total</p>
+                <p class="text-lg font-bold text-neutral-900 dark:text-white leading-none">{{ salesTotals.total | currency:'S/' }}</p>
+            </div>
+            <button tuiButton type="button" (click)="accionMovil()" [disabled]="barraMovilDeshabilitada"
+                appearance="flat" size="m" class="flex-1 !rounded-full !bg-white !text-neutral-900 border border-neutral-200 shadow-sm">
+                <tui-loader *ngIf="processingVenta && activeTab === 'pedido'" size="s"></tui-loader>
+                {{ barraMovilEsAnonima ? 'Finalizar venta anónima' : 'Finalizar venta' }}
+            </button>
+        </div>
+    </div>
+    <div class="h-20 lg:hidden" aria-hidden="true"></div>
 </div>

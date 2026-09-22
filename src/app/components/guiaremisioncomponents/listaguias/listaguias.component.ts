@@ -52,6 +52,8 @@ export class ListaguiasComponent implements OnInit, OnDestroy {
         this.lengthPages = state.length_pages ?? 0;
         this.cdr.markForCheck();
       });
+
+    this.store.dispatch(cargarGuias({ page: 1, page_size: 10 }));
   }
 
   ngOnDestroy(): void {
@@ -77,11 +79,14 @@ export class ListaguiasComponent implements OnInit, OnDestroy {
   }
 
   getEstadoClass(estado: string): string {
-    switch (estado) {
+    switch ((estado || '').toUpperCase()) {
       case 'EMITIDA': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
       case 'EN_TRANSITO': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
       case 'ENTREGADA': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
       case 'ANULADA': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+      case 'ACEPTADO': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300';
+      case 'RECHAZADO': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+      case 'BORRADOR': return 'bg-stone-200 text-stone-700 dark:bg-white/10 dark:text-stone-300';
       default: return 'bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-300';
     }
   }

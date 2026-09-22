@@ -4,7 +4,6 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { URL_BASE } from './utils/endpoints';
-import { printError } from './utils/print-errors';
 
 
 @Injectable({
@@ -17,14 +16,17 @@ export class CategoriaService {
 
   fetchCategorias(): Observable<Categoria[]> {
     return this.http.get<Categoria[]>(`${this.siteURL}/categorias/`).pipe(
-      catchError(error => throwError(error))
+      catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
     );
   }
 
   createCategoria(categoria: CategoriaCreate): Observable<Categoria> {
     return this.http.post<Categoria>(`${this.siteURL}/categorias/create/`, { ...categoria }).pipe(
       catchError(error => {
-        printError(error)
+        console.error(error)
         return throwError(error)
       })
     );
@@ -33,7 +35,7 @@ export class CategoriaService {
   updateCategoria(categoria: CategoriaUpdate): Observable<Categoria> {
     return this.http.put<Categoria>(`${this.siteURL}/categorias/update/${categoria.id}/`, categoria).pipe(
       catchError(error => {
-        printError(error)
+        console.error(error)
         return throwError(error)
       })
     );
@@ -42,7 +44,7 @@ export class CategoriaService {
   deleteCategoria(id: number): Observable<any> {
     return this.http.delete(`${this.siteURL}/categorias/delete/${id}/`).pipe(
       catchError(error => {
-        printError(error)
+        console.error(error)
         return throwError(error)
       })
     );
@@ -50,7 +52,10 @@ export class CategoriaService {
 
   fetchPorcentajePorCategoria(): Observable<PorcentajeCategoriaResponse> {
     return this.http.get<PorcentajeCategoriaResponse>(`${this.siteURL}/inventarios/porcentaje-por-categoria/`).pipe(
-      catchError(error => throwError(error))
+      catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
     );
   }
 }

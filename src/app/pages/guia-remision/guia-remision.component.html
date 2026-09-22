@@ -1,22 +1,23 @@
-<main class="p-2 sm:p-6">
-  <div class="max-w-7xl mx-auto">
+<main style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;" class="p-3 sm:p-6">
+  <div class="max-w-7xl mx-auto min-w-0">
 
-    <!-- Header Apple sin fondo -->
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div>
-        <h2 class="text-lg sm:text-xl font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Guías de Remisión</h2>
-        <p class="text-xs text-[#86868b] dark:text-[#a1a1a6]">Gestiona guías de remisión electrónicas</p>
+    <!-- Header Apple -->
+    <div class="mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="min-w-0">
+        <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white">Guías de Remisión</h2>
+        <p class="text-xs text-stone-400 dark:text-stone-400 mt-0.5">Gestiona guías de remisión electrónicas</p>
       </div>
-      <a routerLink="/app/guia-remision/nueva" class="inline-flex items-center gap-1.5 h-8 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium hover:bg-black dark:hover:bg-[#f5f5f7] transition-colors">
+      <a routerLink="/app/guia-remision/nueva" class="inline-flex items-center justify-center gap-1.5 h-11 px-6 rounded-full bg-black dark:bg-white text-white dark:text-black text-sm font-semibold hover:opacity-90 transition-opacity shrink-0">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
         Nueva Guía
       </a>
     </div>
 
     <!-- FILTROS DE BUSQUEDA -->
-    <search tuiSearch>
+    <search tuiSearch class="block bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5 mb-5">
       <!-- Rango de fechas -->
-      <div class="mb-4 w-full">
+      <p class="text-[11px] text-stone-400 mb-1.5">Escoje buscar las guías entre dos fechas</p>
+      <div class="mb-4 w-full min-w-0">
         <tui-input-date-range (ngModelChange)="onRangeChange($event)" [maxLength]="maxLength" [ngModel]="range"
           class="w-full">
           Escoje buscar las guías entre dos fechas
@@ -24,48 +25,45 @@
       </div>
 
       <!-- Toolbar: Resultados + Acciones -->
-      <fieldset class="mb-4">
-        <div class="flex flex-wrap items-center justify-between gap-2 sm:gap-3 bg-neutral-50 dark:bg-neutral-800/50 rounded-xl px-3 sm:px-4 py-2 sm:py-3">
+      <fieldset class="mb-1">
+        <div class="flex flex-wrap items-center justify-between gap-2 sm:gap-3 bg-transparent border-0 px-1 sm:px-2 py-1">
 
           <!-- Izquierda: Contador -->
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-neutral-500 dark:text-neutral-400">Resultados:</span>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-neutral-200 dark:bg-neutral-700 text-xs font-bold text-neutral-900 dark:text-white">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-[11px] text-stone-400">Resultados:</span>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-white dark:bg-stone-800 shadow-sm text-xs font-semibold text-stone-900 dark:text-white">
               0
             </span>
           </div>
 
           <!-- Derecha: Acciones -->
-          <div class="flex items-center gap-2">
-            <!-- Toggle Vista -->
-            <div class="flex items-center gap-0.5 bg-neutral-200 dark:bg-neutral-700 rounded-lg p-0.5">
+          <div class="flex items-center gap-2 min-w-0">
+            <!-- Toggle Vista: segmentado iOS -->
+            <div class="flex items-center gap-0.5 bg-white dark:bg-stone-800 rounded-full p-1 shadow-sm">
               <button type="button" (click)="viewMode = 'table'"
-                [class]="viewMode === 'table' ? 'px-2.5 py-1.5 rounded-md bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm transition-all' : 'px-2.5 py-1.5 rounded-md text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 transition-all'">
+                [class]="viewMode === 'table' ? 'p-2 rounded-full bg-black dark:bg-white text-white dark:text-black shadow-sm transition-all' : 'p-2 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-all'">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
                 </svg>
               </button>
               <button type="button" (click)="viewMode = 'grid'"
-                [class]="viewMode === 'grid' ? 'px-2.5 py-1.5 rounded-md bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm transition-all' : 'px-2.5 py-1.5 rounded-md text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 transition-all'">
+                [class]="viewMode === 'grid' ? 'p-2 rounded-full bg-black dark:bg-white text-white dark:text-black shadow-sm transition-all' : 'p-2 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-all'">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>
                 </svg>
               </button>
             </div>
 
-            <!-- Separador -->
-            <div class="w-px h-6 bg-neutral-300 dark:bg-neutral-600"></div>
-
             <!-- Boton Limpiar -->
             <button appearance="flat" iconStart="@tui.rotate-cw" size="s" tuiButton type="button"
-              (click)="clearFilters()" class="!rounded-lg">
+              (click)="clearFilters()" class="!rounded-full">
               <span class="text-xs">Limpiar</span>
             </button>
 
             <!-- Toggle Filtros -->
             <button type="button" (click)="expanded = !expanded"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-              [class]="expanded ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900' : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600'">
+              class="flex items-center gap-1.5 h-9 px-4 rounded-full text-xs font-semibold transition-all"
+              [class]="expanded ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-white dark:bg-stone-800 text-stone-900 dark:text-white shadow-sm hover:opacity-90'">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/>
               </svg>
@@ -77,17 +75,17 @@
 
       <form [formGroup]="form" (submit)="onSearch()">
         <tui-expand [expanded]="expanded">
-          <div class="space-y-3 pb-3">
-            <div class="flex flex-wrap xl:flex-nowrap gap-3 w-full">
-              <tui-textfield iconStart="@tui.search" class="w-full">
+          <div class="space-y-3 pt-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full min-w-0">
+              <tui-textfield iconStart="@tui.search" class="w-full min-w-0">
                 <input size="s" formControlName="numero_guia" placeholder="N° Guía" tuiTextfield />
               </tui-textfield>
 
-              <tui-textfield iconStart="@tui.search" class="w-full">
+              <tui-textfield iconStart="@tui.search" class="w-full min-w-0">
                 <input size="s" formControlName="nombre_destinatario" placeholder="Destinatario" tuiTextfield />
               </tui-textfield>
 
-              <tui-select class="w-full" formControlName="estado">
+              <tui-select class="w-full min-w-0" formControlName="estado">
                 <ng-container ngProjectAs="tuiLabel">
                   <span>Estado</span>
                 </ng-container>
@@ -96,8 +94,8 @@
             </div>
 
             <div class="flex flex-row items-center gap-3">
-              <button type="submit" iconStart="@tui.search" tuiButton appearance="textfield"
-                class="col-span-1 w-full flex-1">
+              <button type="submit" iconStart="@tui.search" tuiButton appearance="primary"
+                class="col-span-1 w-full flex-1 !rounded-full">
                 Buscar
               </button>
             </div>
@@ -106,15 +104,18 @@
       </form>
     </search>
 
-    <!-- EMPTY STATE Apple sin fondo -->
-    <div class="flex flex-col items-center justify-center py-16 text-center rounded-2xl border border-dashed border-black/[0.08] dark:border-white/[0.08] bg-transparent">
-      <div class="w-12 h-12 rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center mb-3">
-        <svg class="w-6 h-6 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-      </div>
-      <h2 class="text-[15px] font-semibold text-[#1d1d1f] dark:text-white">No hay guías de remisión</h2>
-      <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mt-1">Las guías que registres aparecerán aquí</p>
-      <a routerLink="/app/guia-remision/nueva" class="mt-4 inline-flex items-center gap-1.5 h-8 px-5 rounded-full bg-[#0071e3] text-white text-[13px] font-medium hover:bg-[#0077ed]">Crear primera guía</a>
-    </div>
+    <!-- LISTA -->
+    <app-listaguias (verDetalle)="onVerDetalle($event)" (editarGuia)="onVerDetalle($event)"></app-listaguias>
 
+  </div>
+
+  <!-- MODAL DETALLE -->
+  <div *ngIf="guiaSeleccionada" class="fixed inset-0 z-50 overflow-y-auto">
+    <div class="absolute inset-0 bg-black/40" (click)="cerrarDetalle()"></div>
+    <div class="relative max-w-4xl mx-auto my-4 sm:my-8 px-3 sm:px-4">
+      <div class="bg-stone-50 dark:bg-neutral-900 rounded-3xl p-3 sm:p-5 shadow-xl">
+        <app-detalleguia [guia]="guiaSeleccionada" (cerrar)="cerrarDetalle()"></app-detalleguia>
+      </div>
+    </div>
   </div>
 </main>

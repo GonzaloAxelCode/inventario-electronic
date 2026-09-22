@@ -33,8 +33,8 @@
           </button>
         </div>
 
-        <!-- Stats rápidos (tienda del admin) -->
-        <div *ngIf="user.tienda_data?.tienda_stats as stats" class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <!-- Stats rápidos (tienda del admin) — no aplica a superuser -->
+        <div *ngIf="!user.is_superuser && user.tienda_data?.tienda_stats as stats" class="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <div class="rounded-2xl bg-[#7d7aff]/[0.08] dark:bg-[#7d7aff]/[0.12] px-5 py-4">
             <p class="text-[18px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white truncate">{{ stats.nombre_suscripcion || '—' }}</p>
             <p class="text-[11px] uppercase tracking-wide text-[#86868b] mt-1.5">Mi suscripción</p>
@@ -84,7 +84,7 @@
             <!-- Accesos directos (superuser sin tienda) -->
             <section *ngIf="user.is_superuser">
               <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white mb-4">Accesos directos</h2>
-              <div class="grid sm:grid-cols-3 gap-3">
+              <div class="grid sm:grid-cols-2 gap-3">
                 <a routerLink="/admin/store" class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] p-5 hover:bg-black/[0.05] dark:hover:bg-white/[0.08] transition-colors group">
                   <div class="w-9 h-9 rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center mb-3">
                     <svg class="w-4 h-4 text-[#1d1d1f] dark:text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
@@ -98,13 +98,6 @@
                   </div>
                   <p class="text-[14px] font-semibold text-[#1d1d1f] dark:text-white">Suscripciones</p>
                   <p class="text-[12px] text-[#86868b] mt-0.5">Planes y límites</p>
-                </a>
-                <a routerLink="/admin/config" class="rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] p-5 hover:bg-black/[0.05] dark:hover:bg-white/[0.08] transition-colors group">
-                  <div class="w-9 h-9 rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center mb-3">
-                    <svg class="w-4 h-4 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                  </div>
-                  <p class="text-[14px] font-semibold text-[#1d1d1f] dark:text-white">Configuración</p>
-                  <p class="text-[12px] text-[#86868b] mt-0.5">Ajustes del panel</p>
                 </a>
               </div>
             </section>
@@ -138,10 +131,6 @@
                     <dt class="text-[#86868b]">Miembro desde</dt>
                     <dd class="font-medium text-[#1d1d1f] dark:text-white">{{ user.date_joined | date:'MMM yyyy' }}</dd>
                   </div>
-                  <div class="flex items-baseline justify-between gap-4 py-2.5">
-                    <dt class="text-[#86868b]">Superuser</dt>
-                    <dd class="font-medium text-[#1d1d1f] dark:text-white">{{ user.is_superuser ? 'sí' : 'no' }}</dd>
-                  </div>
                   <div *ngIf="user.es_empleado" class="flex items-baseline justify-between gap-4 py-2.5">
                     <dt class="text-[#86868b]">Empleado</dt>
                     <dd class="font-medium text-[#0071e3]">sí</dd>
@@ -149,17 +138,10 @@
                 </dl>
 </section>
               
-              <!-- Selección de propietario -->
+              <!-- Propietario único (sin selector) -->
               <section *ngIf="!user.is_superuser">
-                <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white mb-4">Propietarios</h2>
-                <div class="space-y-2">
-                  <select [(ngModel)]="selectedOwnerId" class="w-full rounded-border px-3 py-2 bg-white dark:bg-neutral-800 text-[12px] font-medium text-[#1d1d1f] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#30d158] dark:focus:ring-[#30d158] transition-colors">
-                    <option [ngValue]="null">Todos los propietarios</option>
-                    <option *ngFor="let owner of ownerStoreCounts$ | async" [ngValue]="owner.ownerId">
-                      {{ owner.ownerName }} ({{ owner.tiendaCount }} tienda{{ owner.tiendaCount !== 1 ? 's' : '' }})
-                    </option>
-                  </select>
-                </div>
+                <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white mb-4">Propietario</h2>
+                <p class="text-[13px] font-medium text-[#1d1d1f] dark:text-white px-3 py-2.5">{{ (ownerStoreCounts$ | async)?.[0]?.ownerName || '—' }}</p>
               </section>
             
               <section *ngIf="!user.is_superuser">
@@ -167,10 +149,6 @@
                 <div class="space-y-1">
                   <a routerLink="/admin/store" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-colors group">
                     <span class="text-[13px] font-medium text-[#1d1d1f] dark:text-white flex-1">Mis sucursales</span>
-                    <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                  </a>
-                  <a routerLink="/app/settings/cuenta" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-colors group">
-                    <span class="text-[13px] font-medium text-[#1d1d1f] dark:text-white flex-1">Mi cuenta en la app</span>
                     <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                   </a>
                 </div>

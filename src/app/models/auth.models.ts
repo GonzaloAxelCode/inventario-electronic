@@ -14,6 +14,10 @@ export interface AuthState {
 
 export interface AuthErrors {
     detail?: string;
+    /** Error de red: backend caído o sin internet (no hay respuesta HTTP). */
+    networkError?: boolean;
+    /** Error 5xx del backend: mensaje genérico, nunca el cuerpo crudo. */
+    serverError?: boolean;
     new_password?: string[];
     non_field_errors?: string[];
     token?: string[];

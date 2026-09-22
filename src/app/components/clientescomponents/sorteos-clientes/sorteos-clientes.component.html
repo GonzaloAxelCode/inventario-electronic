@@ -1,8 +1,8 @@
-<div class="flex flex-col gap-4 p-4">
+<div class="flex flex-col gap-4 p-4" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;">
 
   <!-- Header -->
   <div class="px-4 sm:px-0">
-    <h3 class="text-xl font-bold text-neutral-900 dark:text-white">Sorteo de Clientes</h3>
+    <h3 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white">Sorteo de clientes</h3>
     <p class="text-sm text-neutral-500 dark:text-neutral-400" *ngIf="!sorteoListo">Selecciona los clientes que participarán y confirma para girar la ruleta</p>
     <p class="text-sm text-neutral-500 dark:text-neutral-400" *ngIf="sorteoListo">Participantes confirmados: {{ sorteoParticipants.length }}. ¡Gira la ruleta!</p>
   </div>
@@ -50,7 +50,7 @@
     </div>
 
     <!-- Lista de participantes / Selección -->
-    <div class="w-full bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-lg overflow-hidden">
+    <div class="w-full bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 shadow-sm overflow-hidden">
       <!-- Header -->
       <div class="p-4 sm:p-5 border-b border-neutral-200 dark:border-neutral-700">
         <div class="flex items-center justify-between mb-1">
@@ -85,7 +85,7 @@
         <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           <button *ngFor="let filtro of filtros" (click)="setFiltro(filtro.key)"
             [ngClass]="filtroActivo === filtro.key
-              ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/25'
+              ? 'bg-black dark:bg-white text-white dark:text-black shadow-sm'
               : 'bg-white dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-600'"
             class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0">
             <span class="text-sm">{{ filtro.icon }}</span>
@@ -102,7 +102,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
           <input type="text" [(ngModel)]="busquedaSorteo" placeholder="Buscar cliente por nombre, documento o teléfono..."
-            class="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50" />
+            class="w-full pl-10 pr-4 py-2.5 text-sm rounded-2xl border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-stone-400/50" />
         </div>
         <button (click)="toggleTodosSorteo()"
           [ngClass]="todosFiltradosSeleccionados ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900' : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200'"
@@ -117,7 +117,7 @@
           <div *ngFor="let c of (sorteoListo ? sorteoParticipants : clientesSorteoFiltrados); let i = index"
             [ngClass]="{
               'bg-neutral-50 dark:bg-neutral-700/50': !sorteoListo && !isSorteoSeleccionado(c.id!),
-              'bg-emerald-50 dark:bg-emerald-900/20': isSorteoSeleccionado(c.id!) && !sorteoListo,
+              'bg-stone-100 dark:bg-white/10': isSorteoSeleccionado(c.id!) && !sorteoListo,
               'border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20': sorteoListo,
               'ring-2 ring-yellow-400': winner?.id === c.id
             }"
@@ -126,9 +126,9 @@
 
             <!-- Checkbox -->
             <div *ngIf="!sorteoListo"
-              [ngClass]="isSorteoSeleccionado(c.id!) ? 'border-emerald-500 bg-emerald-500' : 'border-neutral-300 dark:border-neutral-600'"
-              class="w-5 h-5 sm:w-6 sm:h-6 rounded-md border-2 flex items-center justify-center shrink-0 transition-all duration-200">
-              <svg *ngIf="isSorteoSeleccionado(c.id!)" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              [ngClass]="isSorteoSeleccionado(c.id!) ? 'border-black dark:border-white bg-black dark:bg-white' : 'border-neutral-300 dark:border-neutral-600'"
+              class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200">
+              <svg *ngIf="isSorteoSeleccionado(c.id!)" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white dark:text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
               </svg>
             </div>
@@ -161,8 +161,8 @@
       <!-- Botón Listo -->
       <div class="p-4 sm:p-5 border-t border-neutral-200 dark:border-neutral-700" *ngIf="!sorteoListo">
         <button (click)="confirmarSorteo()" [disabled]="sorteoSeleccionados.size < 2"
-          [ngClass]="sorteoSeleccionados.size >= 2 ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 hover:opacity-90' : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 cursor-not-allowed'"
-          class="w-full py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base transition-all duration-200">
+          [ngClass]="sorteoSeleccionados.size >= 2 ? 'bg-black text-white dark:bg-white dark:text-black hover:opacity-90' : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 cursor-not-allowed'"
+          class="w-full py-3.5 rounded-full font-semibold text-sm sm:text-base transition-all duration-200">
           Listo ({{ sorteoSeleccionados.size }} participantes)
         </button>
       </div>

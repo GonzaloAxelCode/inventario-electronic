@@ -1,0 +1,20 @@
+<div class="w-full min-w-[280px] max-w-[360px]">
+  <div class="flex flex-col items-center text-center pt-2">
+    <div class="w-12 h-12 rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center text-[14px] font-semibold text-[#1d1d1f] dark:text-white uppercase">
+      {{ (data.user.first_name?.charAt(0) || data.user.username?.charAt(0) || '?') }}{{ (data.user.last_name?.charAt(0) || '') }}
+    </div>
+    <p class="text-[15px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white mt-3">{{ data.user.username }}</p>
+    <p *ngIf="data.user.first_name || data.user.last_name" class="text-[12px] text-[#86868b] dark:text-[#a1a1a6]">{{ data.user.first_name }} {{ data.user.last_name }}</p>
+  </div>
+
+  <div class="mt-5 space-y-2">
+    <button tuiButton appearance="primary-grayscale" size="m" class="w-full !rounded-full" (click)="choose('edit')">Editar</button>
+    <button *ngIf="data.isSuperUser" tuiButton appearance="outline-grayscale" size="m" class="w-full !rounded-full" (click)="choose('password')">Cambiar contraseña</button>
+    <button tuiButton appearance="outline-grayscale" size="m" class="w-full !rounded-full" (click)="choose('permissions')"
+      [disabled]="data.user.is_superuser || data.isSelfAdmin || data.isDeleted">Permisos</button>
+    <button *ngIf="!data.isDeleted" tuiButton appearance="outline-destructive" size="m" class="w-full !rounded-full" (click)="choose('delete')"
+      [disabled]="data.user.is_superuser || data.isSelfAdmin">Eliminar</button>
+    <button *ngIf="data.isDeleted && data.isSuperUser" tuiButton appearance="primary" size="m" class="w-full !rounded-full" (click)="choose('delete')">Restaurar</button>
+    <button tuiButton appearance="flat" size="m" class="w-full !rounded-full" (click)="onCancel()">Cerrar</button>
+  </div>
+</div>

@@ -29,9 +29,23 @@
         <tui-icon tuiPassword />
       </tui-textfield>
     </div>
+    <!-- Hacer propietario (toggle): solo superusuario y tienda sin propietario -->
+    <div *ngIf="mostrarTogglePropietario" class="col-span-1 md:col-span-2 flex items-center justify-between gap-3 rounded-2xl border border-black/[0.08] dark:border-white/[0.1] px-4 py-3">
+      <div class="min-w-0">
+        <p class="text-[13px] font-medium text-[#1d1d1f] dark:text-white">Administrador de esta tienda</p>
+        <p class="text-[11px] text-[#86868b] dark:text-[#a1a1a6]">El personal será propietario de la tienda.</p>
+      </div>
+      <label class="relative inline-flex cursor-pointer items-center shrink-0" aria-label="Hacer propietario">
+        <input type="checkbox" formControlName="is_propietario" class="peer sr-only" />
+        <span class="relative block h-6 w-11 rounded-full bg-black/[0.12] dark:bg-white/[0.15] transition-colors peer-checked:bg-[#30d158] after:absolute after:left-0.5 after:top-0.5 after:block after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5"></span>
+      </label>
+    </div>
     <!-- Botones -->
+    <div *ngIf="limitePersonalAlcanzado" class="col-span-1 md:col-span-2 rounded-xl bg-[#ff3b30]/[0.07] dark:bg-[#ff3b30]/[0.12] border border-[#ff3b30]/30 px-4 py-3 text-[12px] leading-5 text-[#ff3b30]">
+      Límite del plan alcanzado ({{ limitePersonalInfo.usados }}/{{ limitePersonalInfo.limite }}). No se puede crear más personal en esta tienda.
+    </div>
     <div class="col-span-1 md:col-span-2 w-full flex gap-2">
-      <button type="submit" [disabled]="userForm.invalid || !!(loadingCreateUser$ | async)?.loadingCreateUser"
+      <button type="submit" [disabled]="userForm.invalid || limitePersonalAlcanzado || !!(loadingCreateUser$ | async)?.loadingCreateUser"
         class="flex-1 h-11 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-colors disabled:opacity-40">
         Crear Personal <tui-loader [showLoader]="!!(loadingCreateUser$ | async)?.loadingCreateUser"></tui-loader>
       </button>

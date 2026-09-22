@@ -7,8 +7,7 @@ import { TuiInputModule, TuiTextareaModule, } from '@taiga-ui/legacy';
 
 import { Categoria } from '@/app/models/categoria.models';
 import { Inventario } from '@/app/models/inventario.models';
-import { Producto, ProductoState } from '@/app/models/producto.models';
-import { URL_BASE } from '@/app/services/utils/endpoints';
+import { Producto, ProductoState } from '@/app/models/producto.models';import { URL_BASE } from '@/app/services/utils/endpoints';
 import { updateProductoAction, updateProductoFail, updateProductoSuccess } from '@/app/state/actions/producto.actions';
 import { actualizarInventario, actualizarInventarioFail, actualizarInventarioSuccess } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
@@ -16,6 +15,7 @@ import { selectCategoriaState } from '@/app/state/selectors/categoria.selectors'
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { Actions, ofType } from '@ngrx/effects';
+import { BarcodeComponent } from '@/app/components/barcode/barcode.component';
 import { TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
 import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { TuiInputNumber } from '@taiga-ui/kit';
@@ -37,7 +37,7 @@ import { Subject, takeUntil } from 'rxjs';
     TuiTextfield, TuiNumberFormat,
     FormsModule, TuiComboBoxModule,
     TuiSelectModule, TuiTabs, TuiTextfieldControllerModule, TuiExpand, TuiGroup, TuiHintUnstyledComponent,
-    TuiInputNumber
+    TuiInputNumber, BarcodeComponent
   ],
   providers: [],
   templateUrl: './dialogupdateproduct.component.html',

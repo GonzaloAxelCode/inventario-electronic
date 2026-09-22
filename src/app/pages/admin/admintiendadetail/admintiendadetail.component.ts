@@ -15,9 +15,11 @@ import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiButtonLoading, TuiConfirmData, TuiTab, TuiTabs } from '@taiga-ui/kit';
 import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { TableUsersComponent } from '../../../components/Tables/tableusers/tableusers.component';
+import { DialogupdattiendaComponent } from '../../../components/Dialogs/dialogupdattienda/dialogupdattienda.component';
 import { DialogUpdateTiendaService } from '@/app/services/dialogs-services/dialog-updatetienda.service';
+import { DialogUpdateLogosService } from '@/app/services/dialogs-services/dialog-update-logos.service';
 
 @Component({
   selector: 'app-admintiendadetail',
@@ -25,16 +27,26 @@ import { DialogUpdateTiendaService } from '@/app/services/dialogs-services/dialo
   imports: [
     CommonModule, TuiButton, TuiAppearance, TuiLoader,
     TuiInputModule, TuiSelectModule, FormsModule, TuiTextfield, ReactiveFormsModule,
-    TuiButtonLoading, TuiTabs, TuiTab, TuiDataList, TableUsersComponent
+    TuiButtonLoading, TuiTabs, TuiTab, TuiDataList, TableUsersComponent, DialogupdattiendaComponent
   ],
   templateUrl: './admintiendadetail.component.html',
   styleUrl: './admintiendadetail.component.scss'
 })
 export class AdmintiendadetailComponent implements OnInit {
   tienda: Tienda = {} as Tienda;
+  tiendasEstado: Tienda[] = [];
+  private currentTiendaId: number | null = null;
   tiendaForm!: FormGroup;
   URL_BASE = URL_BASE;
   imageUrl = imageUrl;
+
+  /** Username del propietario (objeto nuevo o legacy). */
+  get propietarioUsername(): string {
+    const p: any = (this.tienda as any)?.propietario;
+    if (p != null && typeof p === 'object') return p.username || p.full_name || '';
+    const pd: any = (this.tienda as any)?.propietario_data;
+    return pd?.username || '';
+  }
   private destroy$ = new Subject<void>();
   selectedLogo: File | null = null;
   logoPreview: string | null = null;
@@ -55,7 +67,8 @@ export class AdmintiendadetailComponent implements OnInit {
   selectedPlanId: number | null = null;
   changingPlan = false;
 
-  activeTab: 'update' | 'config' | 'personal' | 'diseno' | 'suscripcion' = 'update';
+  activeTab: 'update' | 'config' | 'personal'
+  | 'diseno' | 'suscripcion' | 'sunat' | 'sucursales' = 'update';
   readonly seriesOptions = ['001','002','003','004','005','006','007','008','009','010'];
   isSuperUser = false;
   selectedTicket: 't80_1' | 't80_2' | 't80_3' | 't80_4' | 't80_5' | 't80_6' = 't80_1';
@@ -97,6 +110,7 @@ export class AdmintiendadetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private dialogUpdateTienda: DialogUpdateTiendaService,
+    private dialogUpdateLogos: DialogUpdateLogosService,
     private tiendaService: TiendaService
   ) {}
 
@@ -326,7 +340,13 @@ export class AdmintiendadetailComponent implements OnInit {
     return Number(uso.facturas_emitidas ?? (uso as any).total_facturas ?? 0);
   }
 
-  getUsoMesLabel(uso: UsoMensualTienda | null | undefined): string {
+  getNumPersonal(): number {
+    return this.tienda?.users_tienda?.length ?? this.tienda?.tienda_stats?.num_personal ?? 0;
+  }
+
+  getNumProductos(): number {
+    return Number(this.tienda?.tienda_stats?.num_productos ?? 0);
+  }  getUsoMesLabel(uso: UsoMensualTienda | null | undefined): string {
     if (!uso) return '';
     if (typeof uso.mes === 'string') return uso.mes.slice(0, 7); // "2026-09-01" -> "2026-09"
     if (typeof uso.mes === 'number' && uso.anio) return `${uso.mes}/${uso.anio}`;
@@ -341,8 +361,66 @@ export class AdmintiendadetailComponent implements OnInit {
     return Math.min(100, Math.round((u / l) * 100));
   }
 
+  // Inicio del periodo del plan: plan_desde del backend, si no fecha_inicio/uso.mes/fecha_creacion
+  getPlanInicio(uso: UsoMensualTienda | null | undefined, plan: PlanSuscripcion | null | undefined): Date | null {
+    const s: any = this.suscripcion as any;
+    const t: any = this.tienda as any;
+    const u: any = uso as any;
+    const raw = s?.plan_desde || t?.plan_desde || u?.fecha_inicio || (typeof uso?.mes === 'string' ? uso.mes : null) || (plan as any)?.fecha_creacion;
+    if (!raw) return null;
+    const d = new Date(raw);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  // Vencimiento: plan_hasta del backend, si no fecha_fin/fecha_vencimiento, si no inicio + periodo
+  getPlanVencimiento(uso: UsoMensualTienda | null | undefined, plan: PlanSuscripcion | null | undefined): Date | null {
+    const s: any = this.suscripcion as any;
+    const t: any = this.tienda as any;
+    const u: any = uso as any;
+    const rawFin = s?.plan_hasta || t?.plan_hasta || u?.fecha_fin || u?.fecha_vencimiento;
+    if (rawFin) {
+      const d = new Date(rawFin);
+      if (!isNaN(d.getTime())) return d;
+    }
+    const inicio = this.getPlanInicio(uso, plan);
+    if (!inicio) return null;
+    const fin = new Date(inicio);
+    if ((plan?.periodo_facturacion || '').toLowerCase() === 'anual') {
+      fin.setFullYear(fin.getFullYear() + 1);
+    } else {
+      fin.setMonth(fin.getMonth() + 1);
+    }
+    return fin;
+  }
+
+  // Días restantes del plan (vienen del backend)
+  getPlanDiasRestantes(): number | null {
+    const s: any = this.suscripcion as any;
+    const t: any = this.tienda as any;
+    const v = s?.plan_dias_restantes ?? t?.plan_dias_restantes;
+    return v == null ? null : Number(v);
+  }
+
   isIlimitado(limite: number | null | undefined): boolean {
     return Number(limite ?? 0) >= 999999;
+  }
+
+  /** La tienda es sucursal: SUNAT se hereda del padre (sin tab propio). */
+  get esSucursal(): boolean {
+    return !!((this.tienda as any)?.tienda_padre);
+  }
+
+  /** Sucursales de esta tienda padre: anidadas del GET o derivadas de la lista plana. */
+  get sucursalesDeTienda(): Tienda[] {
+    const nested = (this.tienda as any)?.sucursales;
+    if (nested?.length) return nested;
+    const id = this.tienda?.id;
+    if (id == null) return [];
+    return (this.tiendasEstado ?? []).filter(t => t?.id !== id && t?.tienda_padre === id);
+  }
+
+  goToSucursal(id: number): void {
+    this.router.navigate(['/admin/store', id]);
   }
 
   setTab(tab: typeof this.activeTab) {
@@ -376,8 +454,20 @@ export class AdmintiendadetailComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     let hasDispatchedLoad = false;
 
-    this.store.select(selectTiendaState).subscribe((state) => {
-      const found = state.tiendas?.find(t => t.id === id) || (state.miTienda?.id === id ? state.miTienda : null);
+    // Reactivo a cambios de ruta (padre <-> sucursal) y del estado
+    combineLatest([this.route.paramMap, this.store.select(selectTiendaState)])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([params, state]) => {
+      const routeId = Number(params.get('id')) || id;
+      if (routeId !== this.currentTiendaId) {
+        // Cambió de tienda (p. ej. entró a una sucursal): vista fresca desde Información
+        this.currentTiendaId = routeId;
+        hasDispatchedLoad = false;
+        this.activeTab = 'update';
+        try { window.scrollTo({ top: 0 }); } catch { /* SSR/seguro */ }
+      }
+      this.tiendasEstado = state.tiendas ?? [];
+      const found = state.tiendas?.find(t => t.id === routeId) || (state.miTienda?.id === routeId ? state.miTienda : null);
       if (found) {
         this.tienda = found as Tienda;
         this.logoPreview = imageUrl((found as Tienda).logo_img);
@@ -442,6 +532,17 @@ export class AdmintiendadetailComponent implements OnInit {
     this.dialogUpdateTienda.open(this.tienda as any).subscribe(result => {
       if (result) {
         // El store se actualiza vía updateTiendaSuccess; refresca la vista
+        this.cdRef.markForCheck();
+      }
+    });
+  }
+
+  openLogosModal(): void {
+    if (!this.tienda?.id) return;
+    this.dialogUpdateLogos.open(this.tienda as Tienda).subscribe(actualizada => {
+      if (actualizada) {
+        this.tienda = { ...this.tienda, ...(actualizada as any) };
+        this.alerts.open('Logos actualizados.').subscribe();
         this.cdRef.markForCheck();
       }
     });

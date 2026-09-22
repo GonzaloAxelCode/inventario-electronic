@@ -1,4 +1,5 @@
 import { User } from '@/app/models/user.models';
+import { getPropietarioId, getPropietarioLabel } from '@/app/models/tienda.models';
 import { loadUserAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
@@ -43,16 +44,13 @@ export class AdminhomeComponent implements OnInit {
       const tiendas = tiendaState.tiendas ?? [];
       const ownerMap = new Map<number, { name: string; count: number }>();
       for (const t of tiendas) {
-        const ownerId = t.propietario;
+        const ownerId = getPropietarioId(t);
         if (ownerId != null) {
           const existing = ownerMap.get(ownerId);
           if (existing) {
             existing.count++;
           } else {
-            const name = t.propietario_data
-              ? `${t.propietario_data.first_name || ''} ${t.propietario_data.last_name || ''}`.trim()
-              : `Propietario #${ownerId}`;
-            ownerMap.set(ownerId, { name, count: 1 });
+            ownerMap.set(ownerId, { name: getPropietarioLabel(t), count: 1 });
           }
         }
       }

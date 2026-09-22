@@ -5,6 +5,7 @@ import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { CommonModule, NgForOf } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, inject, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
@@ -15,6 +16,8 @@ import { map, Observable, take } from 'rxjs';
 import { Categoria } from '@/app/models/categoria.models';
 import { DialogCreateInventarioService } from '@/app/services/dialogs-services/dialog-create-inventario.service';
 import { DialogCreateProductService } from '@/app/services/dialogs-services/dialog-create-product.service';
+import { DialogLimiteAlcanzadoService } from '@/app/services/dialogs-services/dialog-limite-alcanzado.service';
+import { TiendaService } from '@/app/services/tienda.service';
 import { DialogEditInventarioDetailService } from '@/app/services/dialogs-services/dialog-edit-inventario.service';
 import { DialogUpdateProductService } from '@/app/services/dialogs-services/dialog-updateproduct.service';
 import { capitalize } from '@/app/services/utils/capitalize';
@@ -23,7 +26,7 @@ import { PAGE_SIZE_PRODUCTS } from '@/app/services/utils/pages-sizes';
 import { QuerySearchProduct } from '@/app/services/utils/querys';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
-import { selectPermissions } from '@/app/state/selectors/user.selectors';
+import { selectPermissions, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { generarBarcode } from '@/app/utils/barcode';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { tuiCountFilledControls } from '@taiga-ui/cdk';
@@ -204,7 +207,31 @@ export class TableproductComponent implements OnInit, AfterViewInit, OnDestroy {
     );
     this.store.select(selectProductoState).subscribe((state) => {
       this.productos = state.productos
-      console.log(state.productos)
+    })
+    // Límites del plan: si se alcanzó el de productos, crear abre el modal de límite
+    this.store.select(selectUsersState).subscribe((userState) => {
+      const user: any = userState.user;
+      const tiendaId = Number(user?.tienda) || 0;
+      const stats: any = user?.tienda_data?.tienda_stats;
+      if (stats?.num_productos != null) {
+        this.usoProductos = Number(stats.num_productos);
+      } else {
+        this.productosState$?.pipe(take(1)).subscribe((s) => {
+          if (s?.count != null) this.usoProductos = Number(s.count);
+        });
+      }
+      if (tiendaId && this.planLimitsLoadedForTienda !== tiendaId) {
+        this.planLimitsLoadedForTienda = tiendaId;
+        this.tiendaService.getPlanYSuscripcion(tiendaId).subscribe({
+          next: (data) => {
+            const v: any = (data?.plan_actual as any)?.limite_productos;
+            this.planLimiteProductos = v ?? null;
+          },
+          error: () => {
+            this.planLimitsLoadedForTienda = null;
+          },
+        });
+      }
     })
 
 
@@ -272,10 +299,37 @@ export class TableproductComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private readonly dialogCreateProductService = inject(DialogCreateProductService);
+  private readonly tiendaService = inject(TiendaService);
+  private readonly dialogLimiteAlcanzado = inject(DialogLimiteAlcanzadoService);
+  private readonly router = inject(Router);
+
+  // Límite de productos del plan y uso actual
+  planLimiteProductos: number | null = null;
+  usoProductos = 0;
+  private planLimitsLoadedForTienda: number | null = null;
+
   protected showDialogCreateProduct(): void {
+    if (this.limiteProductosAlcanzado()) {
+      this.dialogLimiteAlcanzado.open({
+        tipo: 'Producto',
+        usados: this.usoProductos,
+        limite: Number(this.planLimiteProductos),
+        diasRestantes: null,
+        fechaReset: null,
+      }).subscribe((verPlan) => {
+        if (verPlan) this.router.navigate(['/app/settings/suscripcion']);
+      });
+      return;
+    }
     this.dialogCreateProductService.open().subscribe((result: any) => {
 
     });
+  }
+
+  private limiteProductosAlcanzado(): boolean {
+    if (this.planLimiteProductos == null) return false;
+    if (Number(this.planLimiteProductos) >= 999999) return false;
+    return this.usoProductos >= Number(this.planLimiteProductos);
   }
 
 

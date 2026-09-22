@@ -1,0 +1,55 @@
+<div class="w-full min-w-[280px] max-w-[560px]">
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+    <!-- Logo claro -->
+    <div class="flex flex-col">
+      <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white mb-2">Logo claro</p>
+      <div class="w-full aspect-square rounded-xl overflow-hidden bg-white dark:bg-[#1c1c1e] ring-1 ring-black/[0.08] dark:ring-white/[0.08] cursor-pointer flex items-center justify-center" (click)="logoInput.click()">
+        <img *ngIf="logoPreview || tienda.logo_img" [src]="logoPreview || imageUrl(tienda.logo_img)" alt="Logo claro" class="w-full h-full object-contain p-2" />
+        <div *ngIf="!logoPreview && !tienda.logo_img" class="text-center p-4">
+          <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white mt-1">Subir logo</p>
+          <p class="text-[10px] text-[#86868b]">Toca para seleccionar</p>
+        </div>
+      </div>
+      <p *ngIf="selectedLogo" class="text-[10px] font-mono truncate mt-1 px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08]">{{ selectedLogo.name }}</p>
+      <button *ngIf="selectedLogo" type="button" (click)="selectedLogo=null; logoPreview=null; logoInput.value=''" class="text-[10px] text-[#ff3b30] mt-1 self-start">Quitar</button>
+      <input type="file" #logoInput (change)="onLogoSelected($event)" accept="image/png,image/jpeg,image/webp" class="hidden" />
+    </div>
+
+    <!-- Logo oscuro -->
+    <div class="flex flex-col">
+      <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white mb-2">Logo oscuro</p>
+      <div class="w-full aspect-square rounded-xl overflow-hidden bg-[#1d1d1f] dark:bg-white cursor-pointer flex items-center justify-center" (click)="logoDarkInput.click()">
+        <img *ngIf="logoDarkPreview || tienda.logo_img_dark" [src]="logoDarkPreview || imageUrl(tienda.logo_img_dark)" alt="Logo oscuro" class="w-full h-full object-contain p-2" />
+        <div *ngIf="!logoDarkPreview && !tienda.logo_img_dark" class="text-center p-4">
+          <p class="text-[11px] font-medium text-white dark:text-black mt-1">Logo dark</p>
+          <p class="text-[10px] text-white/60 dark:text-black/50">Para tema oscuro</p>
+        </div>
+      </div>
+      <p *ngIf="selectedLogoDark" class="text-[10px] font-mono truncate mt-1 px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08]">{{ selectedLogoDark.name }}</p>
+      <button *ngIf="selectedLogoDark" type="button" (click)="selectedLogoDark=null; logoDarkPreview=null; logoDarkInput.value=''" class="text-[10px] text-[#ff3b30] mt-1 self-start">Quitar</button>
+      <input type="file" #logoDarkInput (change)="onLogoDarkSelected($event)" accept="image/png,image/jpeg,image/webp" class="hidden" />
+    </div>
+
+    <!-- Banner -->
+    <div class="flex flex-col">
+      <p class="text-[11px] font-semibold text-[#1d1d1f] dark:text-white mb-2">Banner</p>
+      <div class="w-full aspect-square rounded-xl overflow-hidden bg-black/[0.03] dark:bg-white/[0.05] ring-1 ring-black/[0.08] dark:ring-white/[0.08] cursor-pointer flex items-center justify-center" (click)="bannerInput.click()">
+        <img *ngIf="bannerPreview || tienda.banner_img" [src]="bannerPreview || imageUrl(tienda.banner_img)" alt="Banner" class="w-full h-full object-cover" />
+        <div *ngIf="!bannerPreview && !tienda.banner_img" class="text-center p-4">
+          <p class="text-[11px] font-medium text-[#1d1d1f] dark:text-white mt-1">Subir banner</p>
+          <p class="text-[10px] text-[#86868b]">Toca para seleccionar</p>
+        </div>
+      </div>
+      <p *ngIf="selectedBanner" class="text-[10px] font-mono truncate mt-1 px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08]">{{ selectedBanner.name }}</p>
+      <button *ngIf="selectedBanner" type="button" (click)="selectedBanner=null; bannerPreview=null; bannerInput.value=''" class="text-[10px] text-[#ff3b30] mt-1 self-start">Quitar</button>
+      <input type="file" #bannerInput (change)="onBannerSelected($event)" accept="image/png,image/jpeg,image/webp" class="hidden" />
+    </div>
+  </div>
+
+  <div class="flex gap-2 mt-5">
+    <button tuiButton appearance="outline-grayscale" size="m" type="button" (click)="onCancel()" class="flex-1 !rounded-full">Cancelar</button>
+    <button tuiButton appearance="primary-grayscale" size="m" type="button" (click)="onSave()" [disabled]="!hasChanges || saving" class="flex-1 !rounded-full">
+      Guardar <tui-loader [showLoader]="saving" size="s"></tui-loader>
+    </button>
+  </div>
+</div>

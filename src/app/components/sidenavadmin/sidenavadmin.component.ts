@@ -1,9 +1,7 @@
 import { Tienda } from '@/app/models/tienda.models';
 import { User } from '@/app/models/user.models';
 import { SidebarService } from '@/app/services/ui/sidebar-service.service';
-import { clearTokensAction } from '@/app/state/actions/auth.actions';
-import { clearInventariosFromCache } from '@/app/state/actions/inventario.actions';
-import { clearUserAction } from '@/app/state/actions/user.actions';
+import { LogoutService } from '@/app/services/logout.service';
 import { AppState } from '@/app/state/app.state';
 import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
 import { selectAuth } from '@/app/state/selectors/auth.selectors';
@@ -76,7 +74,8 @@ export class SidenavadminComponent implements OnInit {
   constructor(
     private store: Store<AppState>,
     public router: Router,
-    public sidebarService: SidebarService
+    public sidebarService: SidebarService,
+    private logoutService: LogoutService
   ) {
     this.isAuthenticated$ = this.store.select(selectAuth).pipe(
       map(authState => authState.isAuthenticated)
@@ -132,11 +131,8 @@ export class SidenavadminComponent implements OnInit {
   }
 
   logout2() {
-    this.store.dispatch(clearTokensAction());
-    this.store.dispatch(clearUserAction());
-    this.store.dispatch(clearInventariosFromCache());
+    this.logoutService.logout();
     this.onClose();
-    this.router.navigate(['/login']);
   }
 
   isActiveRoute(route: string): boolean {

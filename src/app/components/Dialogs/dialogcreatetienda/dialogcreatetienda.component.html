@@ -1,1 +1,1 @@
-<app-formaddstore (cancelled)="close()"></app-formaddstore>
+<app-formaddstore [tiendaPadrePreset]="context.data?.tiendaPadre ?? null" (cancelled)="close()" (created)="close()"></app-formaddstore>

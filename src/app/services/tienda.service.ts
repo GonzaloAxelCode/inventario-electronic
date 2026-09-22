@@ -4,7 +4,6 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { URL_BASE } from './utils/endpoints';
-import { printError } from './utils/print-errors';
 
 @Injectable({
     providedIn: 'root',
@@ -16,14 +15,17 @@ export class TiendaService {
 
     fetchLoadTiendas(): Observable<any> {
         return this.http.get<Tienda[]>(`${this.siteURL}/tiendas/`).pipe(
-            catchError(error => throwError(error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
     fetchMiTienda(): Observable<Tienda> {
         return this.http.get<Tienda>(`${this.siteURL}/mi-tienda/`).pipe(
             catchError(error => {
-                printError(error);
+                console.error(error);
                 return throwError(error);
             })
         );
@@ -32,7 +34,7 @@ export class TiendaService {
     createTienda(tienda: FormData): Observable<Tienda> {
         return this.http.post<Tienda>(`${this.siteURL}/tiendas/create/`, tienda).pipe(
             catchError(error => {
-                printError(error)
+                console.error(error)
                 return throwError(error)
             })
         );
@@ -40,7 +42,7 @@ export class TiendaService {
     updateTIenda(newtienda: FormData, id: number): Observable<Tienda> {
         return this.http.post<Tienda>(`${this.siteURL}/tiendas/update/${id}/`, newtienda).pipe(
             catchError(error => {
-                printError(error)
+                console.error(error)
                 return throwError(error)
             })
         );
@@ -48,7 +50,7 @@ export class TiendaService {
     desactivateTienda({ id, activo }: { id: number, activo: boolean }): Observable<any> {
         return this.http.patch(`${this.siteURL}/tiendas/desactivate/${id}/`, { activo }).pipe(
             catchError(error => {
-                printError(error)
+                console.error(error)
                 return throwError(error)
             })
         );
@@ -57,7 +59,16 @@ export class TiendaService {
     updateTiendaStyles(id: number, body: { tipo_style_boleta_ticket: string; tipo_style_boleta_pdf: string; tipo_style_factura_pdf: string }): Observable<any> {
         return this.http.patch(`${this.siteURL}/tiendas/styles/${id}/`, body).pipe(
             catchError(error => {
-                printError(error)
+                console.error(error)
+                return throwError(error)
+            })
+        );
+    }
+
+    updateTiendaLogos(id: number, formData: FormData): Observable<Tienda> {
+        return this.http.patch<Tienda>(`${this.siteURL}/tiendas/${id}/logos/`, formData).pipe(
+            catchError(error => {
+                console.error(error)
                 return throwError(error)
             })
         );
@@ -65,7 +76,7 @@ export class TiendaService {
     eliminarTiendaPermanently(id: number): Observable<any> {
         return this.http.delete(`${this.siteURL}/tiendas/delete/${id}/`).pipe(
             catchError(error => {
-                printError(error)
+                console.error(error)
                 return throwError(error)
             })
         );
@@ -74,7 +85,7 @@ export class TiendaService {
     getPlanYSuscripcion(tiendaId: number): Observable<SuscripcionTiendaResponse> {
         return this.http.get<SuscripcionTiendaResponse>(`${this.siteURL}/tiendas/${tiendaId}/planes/`).pipe(
             catchError(error => {
-                printError(error)
+                console.error(error)
                 return throwError(error)
             })
         );
@@ -83,7 +94,7 @@ export class TiendaService {
     listPlanes(): Observable<PlanSuscripcion[]> {
         return this.http.get<PlanSuscripcion[]>(`${this.siteURL}/planes/`).pipe(
             catchError(error => {
-                printError(error)
+                console.error(error)
                 return throwError(error)
             })
         );
@@ -92,7 +103,7 @@ export class TiendaService {
     updatePlan(planId: number, body: PlanSuscripcionCreate): Observable<PlanSuscripcion> {
         return this.http.put<PlanSuscripcion>(`${this.siteURL}/planes/${planId}/`, body).pipe(
             catchError(error => {
-                printError(error)
+                console.error(error)
                 return throwError(error)
             })
         );
@@ -101,7 +112,7 @@ export class TiendaService {
     patchPlan(planId: number, body: PlanSuscripcionUpdate): Observable<PlanSuscripcion> {
         return this.http.patch<PlanSuscripcion>(`${this.siteURL}/planes/${planId}/`, body).pipe(
             catchError(error => {
-                printError(error)
+                console.error(error)
                 return throwError(error)
             })
         );
@@ -110,7 +121,7 @@ export class TiendaService {
     cambiarPlanTienda(tiendaId: number, plan_id: number): Observable<Tienda> {
         return this.http.patch<Tienda>(`${this.siteURL}/tiendas/${tiendaId}/cambiar-plan/`, { plan_id }).pipe(
             catchError(error => {
-                printError(error)
+                console.error(error)
                 return throwError(error)
             })
         );

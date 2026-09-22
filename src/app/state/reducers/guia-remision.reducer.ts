@@ -10,6 +10,9 @@ import {
     anularGuia,
     anularGuiaExito,
     anularGuiaError,
+    enviarGuia,
+    enviarGuiaExito,
+    enviarGuiaError,
 } from '../actions/guia-remision.actions';
 
 export interface GuiaRemisionState {
@@ -82,6 +85,20 @@ export const guiaRemisionReducer = createReducer(
         loading: false,
     })),
     on(anularGuiaError, (state, { error }) => ({
+        ...state,
+        error,
+        loading: false,
+    })),
+    on(enviarGuia, (state) => ({
+        ...state,
+        loading: true,
+    })),
+    on(enviarGuiaExito, (state, { guia }) => ({
+        ...state,
+        guias: guia?.id ? state.guias.map(g => g.id === guia.id ? { ...g, ...guia } : g) : state.guias,
+        loading: false,
+    })),
+    on(enviarGuiaError, (state, { error }) => ({
         ...state,
         error,
         loading: false,

@@ -7,23 +7,26 @@ import { Cliente } from "@/app/models/cliente.models";
 import { Inventario } from '@/app/models/inventario.models';
 import { ConsultaService } from '@/app/services/consultas.service';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
+import { DialogLimiteAlcanzadoService } from '@/app/services/dialogs-services/dialog-limite-alcanzado.service';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
-import { PedidoSalaService } from '@/app/services/pedido-sala.service';
+import { TiendaService } from '@/app/services/tienda.service';
 import { normalizeSku } from "@/app/services/search-services/producto-search.service";
 import { URL_BASE } from "@/app/services/utils/endpoints";
+import { PAGE_SIZE_PEDIDOS } from '@/app/services/utils/pages-sizes';
 import { loadClientes } from "@/app/state/actions/cliente.actions";
 import { crearVenta, crearVentaExito, crearVentaError } from "@/app/state/actions/venta.actions";
-import { eliminarPedido } from "@/app/state/actions/pedido.actions";
+import { cargarPedidos, eliminarPedido } from "@/app/state/actions/pedido.actions";
 import { actualizarPedido, pagarPedido } from "@/app/state/actions/pedido.actions";
 import { AppState } from '@/app/state/app.state';
 import { selectClienteState } from "@/app/state/selectors/cliente.selectors";
 import { selectInventario } from '@/app/state/selectors/inventario.selectors';
+import { selectPedido } from '@/app/state/selectors/pedido.selectors';
 import { selectCurrenttUser, selectPermissions, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AsyncPipe, CommonModule, Location, NgForOf } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Actions, ofType } from "@ngrx/effects";
 import { Store } from '@ngrx/store';
@@ -43,6 +46,7 @@ import { catchError, finalize, map, Observable, of, Subject, take, takeUntil, ti
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule,
     AsyncPipe,
     NgForOf,
     TuiSwitch,
@@ -101,6 +105,9 @@ import { catchError, finalize, map, Observable, of, Subject, take, takeUntil, ti
 })
 export class HacerventaComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly tiendaService = inject(TiendaService);
+  private readonly dialogLimiteAlcanzado = inject(DialogLimiteAlcanzadoService);
   private readonly location = inject(Location);
   vistaActiva: 'buscar' | 'nuevo' | 'nuevo_dni_fisico' = 'buscar';
   activeTab: 'normal' | 'pedido' = 'normal';
@@ -112,16 +119,23 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   pedidosSala: any[] = [];
   private readonly placeholderImg = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
 
-  cargarPedidosSala() {
-    this.pedidosSala = this.pedidoSalaService.getPedidos()
-      .filter(p => p.estado !== 'ENTREGADO' && p.estado !== 'CANCELADO')
+  cargarPedidosPendientes() {
+    this.store.dispatch(cargarPedidos({ page: 1, page_size: PAGE_SIZE_PEDIDOS, filters: { estado: 'PENDIENTE' } }));
+  }
+
+  private mapearPedidosPendientes(pedidos: any[]) {
+    this.pedidosSala = (pedidos || [])
+      .filter(p => p.estado === 'PENDIENTE')
       .map(p => ({
         id: p.id,
         numero_pedido: p.numero_pedido,
         cliente: p.nombre_cliente || 'Sin cliente',
+        nombre_cliente: p.nombre_cliente || '',
         documento: p.numero_documento_cliente || '-',
+        numero_documento_cliente: p.numero_documento_cliente || '',
         telefono: p.telefono_cliente || '',
         email: p.email_cliente || '',
+        direccion_cliente: p.direccion_cliente || '',
         fecha: this.formatDatePedido(p.fecha_hora),
         hora: this.formatTimePedido(p.fecha_hora),
         total: p.total,
@@ -138,7 +152,11 @@ export class HacerventaComponent implements OnInit, OnDestroy {
         observaciones: p.observaciones,
         direccion_envio: p.direccion_envio,
         tipoComprobante: 'Boleta',
-        productos: (p.productos || p.productos_json || []).map((prod: any) => ({
+        productos: (p.productos || p.productos_json || []).map((prod: any) => {
+          const cantP = Number(prod.cantidad) || 0;
+          const puNetP = Number(prod.precio_unitario ?? prod.valor_unitario ?? 0) || 0;
+          const descP = Number(prod.descuento) || 0;
+          return {
           inventarioId: prod.producto || prod.inventarioId,
           productoId: prod.producto || prod.inventarioId,
           producto_nombre: prod.producto_nombre || 'Producto',
@@ -146,10 +164,11 @@ export class HacerventaComponent implements OnInit, OnDestroy {
           imagen_producto: this.onSetImageProduct(prod.imagen || prod.imagen_producto),
           nombre_categoria: prod.nombre_categoria || '',
           cantidad: prod.cantidad,
-          costo_original: prod.costo_original || prod.valor_unitario || prod.precio_unitario || 0,
-          descuento: prod.descuento || 0,
+          costo_original: prod.costo_original || (puNetP + (cantP > 0 ? descP / cantP : 0)) || 0,
+          descuento: descP,
           stock_actual: prod.stock_actual || 0
-        }))
+          };
+        })
       }));
   }
 
@@ -208,9 +227,18 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogService = inject(DialogService);
   private readonly dialogServiceVentaDetail = inject(DialogVentaDetailService);
-  private readonly pedidoSalaService = inject(PedidoSalaService);
   userPermissions$ = this.store.select(selectPermissions);
   tiendaUser!: number
+  tieneSol = false;
+  tieneCertificado = false;
+  // Límites del plan y uso del mes (para bloquear venta al llegar al límite)
+  planLimiteBoletas: number | null = null;
+  planLimiteFacturas: number | null = null;
+  usoBoletas = 0;
+  usoFacturas = 0;
+  planDiasRestantes: number | null = null;
+  planHasta: string | null = null;
+  private planLimitsLoadedForTienda: number | null = null;
   tiendaNombre = 'Mi Negocio';
   tiendaRuc = '';
   tiendaDireccion = '';
@@ -261,7 +289,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     this.activeTabIndex = index;
     this.location.replaceState(`/app/ventas/crear#${tab}`);
     if (tab === 'pedido') {
-      this.cargarPedidosSala();
+      this.cargarPedidosPendientes();
     }
   }
 
@@ -390,9 +418,13 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     this.loadingCreateVenta$ = this.store.select(selectVenta);
     this.showVentaDetailTemporary$ = this.store.select(selectVenta)
     this.store.select(selectUsersState).pipe(
-      map(userState => userState.user.tienda)
-    ).subscribe(tienda => {
-      this.tiendaUser = tienda || 0;
+      map(userState => userState.user)
+    ).subscribe(user => {
+      this.tiendaUser = (user as any)?.tienda || 0;
+      const td: any = (user as any)?.tienda_data;
+      this.tieneSol = !!td?.tiene_sol;
+      this.tieneCertificado = !!td?.tiene_certificado;
+      this.loadPlanLimits();
     });
     this.store.select(selectCurrenttUser).subscribe((state) => {
       this.userId = state.id
@@ -443,7 +475,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
         this.activeTab = fragment as typeof this.activeTab;
         this.activeTabIndex = this.validTabs.indexOf(fragment as any);
         if (fragment === 'pedido') {
-          this.cargarPedidosSala();
+          this.cargarPedidosPendientes();
         }
         this.cdr.markForCheck();
       }
@@ -467,6 +499,13 @@ export class HacerventaComponent implements OnInit, OnDestroy {
         .filter((cliente: Cliente) => cliente.document !== '00000000')
         .map((cliente: Cliente) => cliente.document + "-" + cliente.fullname);
     })
+
+    this.store.select(selectPedido)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((state) => {
+        if (this.activeTab !== 'pedido') return;
+        this.mapearPedidosPendientes(state.pedidos || []);
+      });
     this.ventaForm.get('tipoComprobante')?.valueChanges.subscribe((nuevoValor) => {
 
 
@@ -515,6 +554,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     if (this.pedidoFlowStep > 0) return;
 
     this.productosFormArray.controls.forEach((control, index) => {
+      if (control.get('es_servicio')?.value) return;
       const cantidad = parseInt(control.get('cantidad_final')?.value || '0');
       const stock = parseInt(control.get('stock_actual')?.value || '0');
 
@@ -549,8 +589,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   }
 
 
-  protected showDialog(): void {
-    this.dialogService.open().subscribe((result: any) => {
+  protected showDialog(): void {    this.dialogService.open().subscribe((result: any) => {
 
       if (result) {
 
@@ -586,6 +625,61 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     });
   }
 
+
+
+  // ==================== VENTA POR SERVICIO ====================
+  servicioDescripcion = '';
+  servicioPrecio: number | null = null;
+  servicioCantidad: number | null = 1;
+
+  /** Líneas de productos (sin servicios) con su índice real para eliminar. */
+  lineasProductos(): Array<{ control: FormGroup; index: number }> {
+    if (!this.productosFormArray) return [];
+    return this.productosFormArray.controls
+      .map((control, index) => ({ control: control as FormGroup, index }))
+      .filter(e => !e.control.get('es_servicio')?.value);
+  }
+
+  /** Líneas de servicios con su índice real para eliminar. */
+  lineasServicio(): Array<{ control: FormGroup; index: number }> {
+    if (!this.productosFormArray) return [];
+    return this.productosFormArray.controls
+      .map((control, index) => ({ control: control as FormGroup, index }))
+      .filter(e => !!e.control.get('es_servicio')?.value);
+  }
+
+  agregarServicio(): void {
+    const descripcion = (this.servicioDescripcion || '').trim();
+    const precio = Number(this.servicioPrecio);
+    const cantidad = Math.max(1, parseInt(String(this.servicioCantidad ?? '1'), 10) || 1);
+    if (!descripcion || !(precio > 0)) {
+      this.alerts.open('Ingresa la descripción y un precio válido para el servicio.', { label: 'Mensaje informacion', appearance: 'warning' }).subscribe();
+      return;
+    }
+    const nuevoServicio = this.fb.group({
+      inventarioId: [null],
+      productoId: [null],
+      es_servicio: [true],
+      cantidad_final: [String(cantidad), [Validators.required]],
+      producto_nombre: [descripcion],
+      nombre_categoria: ['Servicio'],
+      costo_venta: [precio],
+      costo_original: [precio],
+      stock_actual: [null],
+      producto_sku: ['SERVICIO'],
+      imagen_producto: [this.placeholderImg],
+      descuento: [0],
+    });
+    this.productosFormArray.push(nuevoServicio);
+    nuevoServicio.get('descuento')!.valueChanges.subscribe((desc: any) => {
+      this.actualizarCostoTotal(nuevoServicio, desc);
+    });
+    this.servicioDescripcion = '';
+    this.servicioPrecio = null;
+    this.servicioCantidad = 1;
+    this.calcularTotales();
+    this.cdr.markForCheck();
+  }
 
 
   buscarCliente() {
@@ -735,6 +829,30 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
     this.ventaForm.get('tipoComprobante')?.setValue(this.pedidoSeleccionado.tipoComprobante || 'Boleta');
     this.ventaForm.get('metodoPago')?.setValue(this.pedidoSeleccionado.metodoPago || this.listMetodosPago[3]);
+
+    // Copiar cliente del pedido al formulario de venta para que se envie en confirmarVentaPedido
+    const docPedido: string = (this.pedidoSeleccionado.numero_documento_cliente || this.pedidoSeleccionado.documento || '').toString().trim();
+    const nombrePedido: string = (this.pedidoSeleccionado.nombre_cliente || this.pedidoSeleccionado.cliente || '').toString().trim();
+    const tieneCliente = !!nombrePedido && nombrePedido !== 'Sin cliente' && nombrePedido !== 'Cliente Varios' || (!!docPedido && docPedido !== '-' && docPedido !== '00000000');
+    if (tieneCliente) {
+      const docLimpio = (docPedido === '-' || docPedido === '00000000') ? '' : docPedido;
+      this.ventaForm.patchValue({
+        documento_cliente: docLimpio,
+        nombre_cliente: (nombrePedido === 'Sin cliente' || nombrePedido === 'Cliente Varios') ? '' : nombrePedido,
+        correo_cliente: this.pedidoSeleccionado.email || '',
+        direccion_cliente: this.pedidoSeleccionado.direccion_cliente || '',
+        telefono_cliente: this.pedidoSeleccionado.telefono || '',
+        documento_cliente_existente: docLimpio ? `${docLimpio}-${nombrePedido}` : '',
+        cliente: {
+          nombre_o_razon_social: nombrePedido,
+          nombre_completo: nombrePedido,
+          ruc: docLimpio,
+          numero: docLimpio,
+        }
+      });
+    } else {
+      this.borrarCliente();
+    }
     this.calcularTotales();
   }
 
@@ -766,14 +884,28 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       this.ventaForm.get('tipoComprobante')?.setValue('Boleta');
     }
 
+    const pedidoDoc: string = (this.pedidoSeleccionado.numero_documento_cliente || this.pedidoSeleccionado.documento || '').toString().trim();
+    const pedidoNombre: string = (this.pedidoSeleccionado.nombre_cliente || this.pedidoSeleccionado.cliente || '').toString().trim();
+    const pedidoDocLimpio = (pedidoDoc === '-' || pedidoDoc === '00000000') ? '' : pedidoDoc;
+    const pedidoNombreLimpio = (pedidoNombre === 'Sin cliente' || pedidoNombre === 'Cliente Varios') ? '' : pedidoNombre;
+
     const preparedData = {
       ...this.ventaForm.value,
       tipoComprobante: this.ventaForm.get('tipoComprobante')?.value || 'Boleta',
-      correo_cliente: this.ventaForm.get('correo_cliente')?.value || '',
-      direccion_cliente: this.ventaForm.get('direccion_cliente')?.value || '',
-      telefono_cliente: this.ventaForm.get('telefono_cliente')?.value || '',
+      documento_cliente: this.ventaForm.get('documento_cliente')?.value || pedidoDocLimpio || '',
+      nombre_cliente: this.ventaForm.get('nombre_cliente')?.value || pedidoNombreLimpio || '',
+      correo_cliente: this.ventaForm.get('correo_cliente')?.value || this.pedidoSeleccionado.email || '',
+      direccion_cliente: this.ventaForm.get('direccion_cliente')?.value || this.pedidoSeleccionado.direccion_cliente || '',
+      telefono_cliente: this.ventaForm.get('telefono_cliente')?.value || this.pedidoSeleccionado.telefono || '',
+      cliente: this.ventaForm.get('cliente')?.value || (pedidoNombreLimpio || pedidoDocLimpio ? {
+        nombre_o_razon_social: pedidoNombreLimpio,
+        nombre_completo: pedidoNombreLimpio,
+        ruc: pedidoDocLimpio,
+        numero: pedidoDocLimpio,
+      } : null),
       estado: this.ventaForm.get("is_send_sunat")?.value,
       is_save_user: this.ventaForm.get("is_save_user")?.value,
+      is_pedido: true,
       pedido_id: this.pedidoSeleccionado.id,
     };
 
@@ -784,13 +916,10 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       take(1),
       takeUntil(this.destroy$)
     ).subscribe(({ venta }: any) => {
-      // Remover de la sala de ventas
-      this.pedidoSalaService.removePedido(this.pedidoSeleccionado.id);
-
-      // Marcar pedido como pagado
+      // Marcar pedido como pagado (sale de pendientes)
       this.store.dispatch(pagarPedido({
         pedidoId: this.pedidoSeleccionado.id,
-        data: { estado: 'PAGADO', estado_pago: 'PAGADO' }
+        data: { estado: 'COMPLETADO', estado_pago: 'PAGADO' }
       }));
 
       this.alerts.open('Venta realizada', {
@@ -809,7 +938,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       this.pedidoFlowStep = 0;
       this.borrarCliente();
       this.calcularTotales();
-      this.cargarPedidosSala();
+      this.cargarPedidosPendientes();
       this.processingVenta = false;
     });
 
@@ -823,38 +952,128 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     });
   }
 
-  quitarPedidoSala(pedido?: any) {
-    const pedidoQuitar = pedido || this.pedidoSeleccionado;
-    if (!pedidoQuitar) return;
-
-    this.alerts.open('Pedido quitado', {
-      label: `${pedidoQuitar.numero_pedido} fue quitado de la sala de ventas`,
-      appearance: "warning"
-    }).subscribe();
-
-    this.pedidoSalaService.removePedido(pedidoQuitar.id);
-
-    // Si el pedido quitado es el seleccionado, resetear el flujo
-    if (this.pedidoSeleccionado?.id === pedidoQuitar.id) {
-      while (this.productosFormArray.length) {
-        this.productosFormArray.removeAt(0);
-      }
-      this.pedidoSeleccionado = null;
-      this.pedidoFlowStep = 0;
-      this.borrarCliente();
-      this.calcularTotales();
-    }
-
-    this.cargarPedidosSala();
-  }
-
-
   actualizarCostoTotal(productoForm: FormGroup, descuento: number) {
 
   }
 
+  /** SUNAT listo solo si hay clave SOL y certificado (flags del GET). */
+  get sunatOK(): boolean {
+    return this.tieneSol && this.tieneCertificado;
+  }
+  /** Bloquea la venta electrónica si falta configuración SUNAT (no aplica a anónima ni sin envío SUNAT). */
+  get sunatBloqueaVenta(): boolean {
+    if (this.ventaForm?.get('tipoComprobante')?.value === 'Anonima') return false;
+    if (this.ventaForm?.get('is_send_sunat')?.value === false) return false;
+    return !this.sunatOK;
+  }
+
+  get sunatFaltante(): string {
+    const faltan: string[] = [];
+    if (!this.tieneSol) faltan.push('clave SOL');
+    if (!this.tieneCertificado) faltan.push('certificado');
+    return faltan.length ? 'Falta: ' + faltan.join(' + ') : '';
+  }
+
+  /** Carga límites del plan y uso del mes para bloquear la venta al llegar al límite. */
+  loadPlanLimits(): void {
+    const id = Number(this.tiendaUser);
+    if (!id || this.planLimitsLoadedForTienda === id) return;
+    this.planLimitsLoadedForTienda = id;
+    this.tiendaService.getPlanYSuscripcion(id).subscribe({
+      next: (data) => {
+        const plan: any = data?.plan_actual;
+        const uso: any = data?.uso_mensual;
+        const s: any = data as any;
+        this.planLimiteBoletas = plan?.limite_boletas ?? null;
+        this.planLimiteFacturas = plan?.limite_facturas ?? null;
+        this.usoBoletas = Number(uso?.boletas_emitidas ?? uso?.total_boletas ?? 0);
+        this.usoFacturas = Number(uso?.facturas_emitidas ?? uso?.total_facturas ?? 0);
+        this.planDiasRestantes = s?.plan_dias_restantes ?? null;
+        this.planHasta = s?.plan_hasta ?? null;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.planLimitsLoadedForTienda = null;
+      },
+    });
+  }
+
+  private esIlimitado(limite: number | null): boolean {
+    return Number(limite ?? 0) >= 999999;
+  }
+
+  /** Tipo con límite alcanzado según el comprobante elegido, o null si puede vender. */
+  get limiteAlcanzadoTipo(): 'Boleta' | 'Factura' | null {
+    const tipo = this.ventaForm?.get('tipoComprobante')?.value;
+    if (tipo === 'Boleta' && this.planLimiteBoletas != null && !this.esIlimitado(this.planLimiteBoletas)) {
+      if (this.usoBoletas >= Number(this.planLimiteBoletas)) return 'Boleta';
+    }
+    if (tipo === 'Factura' && this.planLimiteFacturas != null && !this.esIlimitado(this.planLimiteFacturas)) {
+      if (this.usoFacturas >= Number(this.planLimiteFacturas)) return 'Factura';
+    }
+    return null;
+  }
+
+  get limiteFechaReset(): string | null {
+    if (!this.planHasta) return null;
+    const d = new Date(this.planHasta);
+    if (isNaN(d.getTime())) return null;
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    return `${dd}/${mm}/${d.getFullYear()}`;
+  }
+
+  /** Barra inferior móvil: se oculta solo al elegir pedido (paso 0). */
+  get barraMovilVisible(): boolean {
+    if (this.activeTab === 'pedido' && this.pedidoFlowStep === 0) return false;
+    return true;
+  }
+
+  get barraMovilEsAnonima(): boolean {
+    return this.activeTab !== 'pedido' && this.ventaForm?.get('tipoComprobante')?.value === 'Anonima';
+  }
+
+  get barraMovilDeshabilitada(): boolean {
+    if (this.activeTab === 'pedido') {
+      return (this.productosFormArray?.length ?? 0) === 0 || this.processingVenta;
+    }
+    const sinLineas = this.lineasProductos().length === 0;
+    if (this.barraMovilEsAnonima) return sinLineas;
+    return !this.ventaForm?.valid || sinLineas || this.sunatBloqueaVenta;
+  }
+
+  accionMovil(): void {
+    if (this.activeTab === 'pedido' && this.pedidoFlowStep > 0) {
+      this.confirmarVentaPedido();
+      return;
+    }
+    this.hacerVenta();
+  }
+
   hacerVenta() {
     this.rucRequiredError.set(false);
+
+    const limiteTipo = this.limiteAlcanzadoTipo;
+    if (limiteTipo) {
+      const esBoleta = limiteTipo === 'Boleta';
+      this.dialogLimiteAlcanzado.open({
+        tipo: limiteTipo,
+        usados: esBoleta ? this.usoBoletas : this.usoFacturas,
+        limite: Number(esBoleta ? this.planLimiteBoletas : this.planLimiteFacturas),
+        diasRestantes: this.planDiasRestantes != null ? Number(this.planDiasRestantes) : null,
+        fechaReset: this.limiteFechaReset,
+      }).subscribe((verPlan) => {
+        if (verPlan) this.router.navigate(['/app/settings/suscripcion']);
+      });
+      return;
+    }
+
+    if (this.sunatBloqueaVenta) {
+      this.alerts.open('Configura tus credenciales SUNAT en Ajustes', {
+        label: 'SUNAT sin configurar',
+      }).subscribe();
+      return;
+    }
 
     const tipoComprobante = this.ventaForm.get('tipoComprobante')?.value;
     const documento = this.ventaForm.get('documento_cliente')?.value?.toString() || '';
@@ -876,7 +1095,6 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       estado: this.ventaForm.get("is_send_sunat")?.value,
       is_save_user: this.ventaForm.get("is_save_user")?.value
     }
-    console.log({ preparedData })
 
     this.store.dispatch(crearVenta({ venta: preparedData }));
 

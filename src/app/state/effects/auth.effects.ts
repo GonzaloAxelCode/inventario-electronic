@@ -2,6 +2,8 @@ import { AuthService } from '@/app/services/auth.service';
 import { ClienteCacheService } from '@/app/services/cliente-cache.service';
 import { InventarioCacheService } from '@/app/services/inventario-cache.service';
 
+import { AuthErrors } from '@/app/models/auth.models';
+
 import { saveAuthDataToLocalStorage, saveLoginUserDataToLocalStorage } from '@/app/services/utils/localstorage-functions';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
@@ -70,7 +72,9 @@ export class AuthEffects {
                                 refreshToken: '',
                                 accessToken: '',
                                 isAuthenticated: false,
-                                errors: error?.error,
+                                // Se normaliza a banderas seguras: la UI nunca renderiza
+                                // el cuerpo crudo del backend (stacktraces, "Unauthorized", HTML).
+                                errors: normalizeLoginError(error),
                                 isLoadingLogin: false,
                                 isLoadingLogout: false,
 
@@ -153,4 +157,30 @@ export class AuthEffects {
             ),
         { dispatch: false }
     );
+}
+
+/**
+ * Detecta fallos sin respuesta HTTP: backend caído, sin wifi/red
+ * (HttpErrorResponse con status 0) o timeout de la petición.
+ */
+export function isNetworkError(error: any): boolean {
+    return !!error && (error?.status === 0 || error?.name === 'TimeoutError');
+}
+
+/**
+ * Normaliza el fallo de login a banderas seguras para la UI:
+ * - red (status 0 / timeout) → networkError
+ * - 5xx del backend → serverError (genérico, sin stacktrace)
+ * - resto (400/401/403/...) → detail como simple bandera: la UI muestra
+ *   el mensaje fijo de credenciales, nunca el texto crudo del backend.
+ */
+export function normalizeLoginError(error: any): AuthErrors {
+    if (isNetworkError(error)) return { networkError: true };
+    if ((error?.status ?? 0) >= 500) return { serverError: true };
+    const body = error?.error;
+    const detail =
+        typeof body === 'object' && body !== null
+            ? (body.detail ?? body.non_field_errors?.[0] ?? 'Credenciales inválidas')
+            : 'Credenciales inválidas';
+    return { detail };
 }

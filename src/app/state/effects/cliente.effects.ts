@@ -178,10 +178,8 @@ export class ClienteEffects {
     loadResumenClientes$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loadResumenClientes),
-            tap(() => console.log('[ClienteEffects] loadResumenClientes dispatched')),
             exhaustMap(() =>
                 this.clienteService.fetchResumenClientes().pipe(
-                    tap(response => console.log('[ClienteEffects] Resumen success:', response)),
                     map(response => loadResumenClientesSuccess({ resumen: response })),
                     catchError(error => {
                         console.error('[ClienteEffects] Resumen error:', error);

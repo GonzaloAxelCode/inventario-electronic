@@ -1,0 +1,12 @@
+<form [formGroup]="form" (ngSubmit)="onSave()" class="w-full min-w-[280px] max-w-[400px] space-y-4 pt-2">
+  <tui-input formControlName="username" class="w-full">Username</tui-input>
+  <tui-input formControlName="first_name" class="w-full">Nombre</tui-input>
+  <tui-input formControlName="last_name" class="w-full">Apellido</tui-input>
+
+  <div class="flex gap-2 pt-2">
+    <button tuiButton appearance="outline-grayscale" size="m" type="button" (click)="onCancel()" class="flex-1 !rounded-full">Cancelar</button>
+    <button tuiButton appearance="primary-grayscale" size="m" type="submit" [disabled]="form.invalid || saving" class="flex-1 !rounded-full">
+      Guardar <tui-loader [showLoader]="saving" size="s"></tui-loader>
+    </button>
+  </div>
+</form>

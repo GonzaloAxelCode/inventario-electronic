@@ -1,15 +1,23 @@
 import { User } from '@/app/models/user.models';
+import { findTiendaById, getLimitePersonal, getUsoPersonal, limitePersonalAlcanzado, Tienda } from '@/app/models/tienda.models';
 import { DialogCreateUserService } from '@/app/services/dialogs-services/dialog-create-user.service';
+import { DialogLimiteAlcanzadoService } from '@/app/services/dialogs-services/dialog-limite-alcanzado.service';
 import { DialogEditUserPermissionService } from '@/app/services/dialogs-services/dialog-edit-user-permissions.service';
 import { DialogUpdatePasswordService } from '@/app/services/dialogs-services/dialog-update-password-user.service';
+import { DialogUserActionsService } from '@/app/services/dialogs-services/dialog-user-actions.service';
+import { DialogUserEditService } from '@/app/services/dialogs-services/dialog-user-edit.service';
+import { DialogUserResetPasswordService } from '@/app/services/dialogs-services/dialog-user-reset-password.service';
 import { UserService } from '@/app/services/user.service';
+import { TiendaService } from '@/app/services/tienda.service';
 import { desactivateUserAction, loadUsersAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
 import { UserState } from '@/app/state/reducers/user.reducer';
 import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
+import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAppearance, TuiButton, TuiDataList, TuiIcon, TuiLoader } from '@taiga-ui/core';
@@ -58,6 +66,17 @@ export class TableUsersComponent implements OnInit {
   private readonly dialogServiceEditPermissions = inject(DialogEditUserPermissionService);
   private readonly dialogServiceUpdatepassowrd = inject(DialogUpdatePasswordService);
   private readonly dialogServiceCreateuser = inject(DialogCreateUserService);
+  private readonly dialogUserActions = inject(DialogUserActionsService);
+  private readonly dialogUserEdit = inject(DialogUserEditService);
+  private readonly dialogUserResetPassword = inject(DialogUserResetPasswordService);
+  private readonly tiendaService = inject(TiendaService);
+  private readonly dialogLimiteAlcanzado = inject(DialogLimiteAlcanzadoService);
+  private readonly router = inject(Router);
+
+  // Límite de personal del plan y uso actual
+  planLimitePersonal: number | null = null;
+  private planLimitsLoadedForTienda: number | null = null;
+  tiendaActual: Tienda | null = null;
 
 
   constructor(
@@ -77,6 +96,13 @@ export class TableUsersComponent implements OnInit {
       })
     ).subscribe();
 
+    // Tienda actual (incluye anidadas) para el límite del plan
+    this.store.select(selectTiendaState).pipe(
+      tap(tiendaState => {
+        this.tiendaActual = findTiendaById(tiendaState.tiendas, Number(this.idtienda));
+      })
+    ).subscribe();
+
     this.store.select(selectCurrenttUser).pipe(
       tap(user => {
         this.currentUser = user as User | null;
@@ -88,6 +114,21 @@ export class TableUsersComponent implements OnInit {
         }
       })
     ).subscribe();
+
+    // Límite de personal del plan: si se alcanzó, crear abre el modal de límite
+    const tiendaId = Number(this.idtienda);
+    if (tiendaId && this.planLimitsLoadedForTienda !== tiendaId) {
+      this.planLimitsLoadedForTienda = tiendaId;
+      this.tiendaService.getPlanYSuscripcion(tiendaId).subscribe({
+        next: (data) => {
+          const v: any = (data?.plan_actual as any)?.limite_personal;
+          this.planLimitePersonal = v ?? null;
+        },
+        error: () => {
+          this.planLimitsLoadedForTienda = null;
+        },
+      });
+    }
   }
 
   loadDeletedUsers(): void {
@@ -125,23 +166,35 @@ export class TableUsersComponent implements OnInit {
     return allUsers.filter(u => u.id !== this.currentUser!.id);
   }
 
+  // Modal acciones del personal (Taiga UI)
+  openUserActions(user: User): void {
+    this.dialogUserActions.open({
+      user,
+      isSuperUser: this.isSuperUser,
+      isSelfAdmin: this.isSelfAdminTienda(user),
+      isDeleted: this.isUserDeleted(user),
+    }).subscribe((action) => {
+      if (!action) return;
+      switch (action) {
+        case 'edit':
+          this.openEditUserDialog(user);
+          break;
+        case 'password':
+          this.openResetPasswordDialog(user);
+          break;
+        case 'permissions':
+          this.showDialogEditPermissions(user);
+          break;
+        case 'delete':
+          this.openDeleteConfirm(user);
+          break;
+      }
+    });
+  }
+
   // Modal eliminar — solo visual, sin funcionalidad
   showDeleteConfirm = false;
   userToDelete: User | null = null;
-
-  // Modal editar usuario
-  showEditUserModal = false;
-  userToEdit: User | null = null;
-  editUserData = {
-    username: '',
-    first_name: '',
-    last_name: ''
-  };
-
-  // Modal resetear contraseña
-  showResetPasswordModal = false;
-  userToResetPassword: User | null = null;
-  newPassword = '';
 
   openDeleteConfirm(user: User): void {
     if (user.is_superuser || this.isSelfAdminTienda(user)) return;
@@ -154,62 +207,18 @@ export class TableUsersComponent implements OnInit {
     this.userToDelete = null;
   }
 
+  // Editar personal (Taiga UI)
   openEditUserDialog(user: User): void {
-    this.userToEdit = user;
-    this.editUserData = {
-      username: user.username || '',
-      first_name: user.first_name || '',
-      last_name: user.last_name || ''
-    };
-    this.showEditUserModal = true;
-  }
-
-  closeEditUserModal(): void {
-    this.showEditUserModal = false;
-    this.userToEdit = null;
-  }
-
-  confirmEditUser(): void {
-    if (!this.userToEdit) return;
-
-    this.userService.updateUserBasicData(this.userToEdit.id, this.editUserData).subscribe({
-      next: (response) => {
-        console.log('Usuario actualizado:', response);
+    this.dialogUserEdit.open(user).subscribe((ok) => {
+      if (ok) {
         this.store.dispatch(loadUsersAction({ idTienda: this.idtienda }));
-        this.closeEditUserModal();
-      },
-      error: (error) => {
-        console.error('Error al actualizar usuario:', error);
-        this.closeEditUserModal();
       }
     });
   }
 
+  // Cambiar contraseña (Taiga UI)
   openResetPasswordDialog(user: User): void {
-    this.userToResetPassword = user;
-    this.newPassword = '';
-    this.showResetPasswordModal = true;
-  }
-
-  closeResetPasswordModal(): void {
-    this.showResetPasswordModal = false;
-    this.userToResetPassword = null;
-    this.newPassword = '';
-  }
-
-  confirmResetPassword(): void {
-    if (!this.userToResetPassword || !this.newPassword) return;
-
-    this.userService.adminResetPassword(this.userToResetPassword.id, this.newPassword).subscribe({
-      next: (response) => {
-        console.log('Contraseña actualizada:', response);
-        this.closeResetPasswordModal();
-      },
-      error: (error) => {
-        console.error('Error al resetear contraseña:', error);
-        this.closeResetPasswordModal();
-      }
-    });
+    this.dialogUserResetPassword.open(user).subscribe();
   }
 
   confirmDelete(): void {
@@ -220,7 +229,6 @@ export class TableUsersComponent implements OnInit {
 
     this.userService.toggleUserDeleted(userId, !isCurrentlyDeleted).subscribe({
       next: (response) => {
-        console.log('Usuario eliminado/restaurado:', response);
         this.store.dispatch(loadUsersAction({ idTienda: this.idtienda }));
         this.closeDeleteConfirm();
       },
@@ -245,6 +253,22 @@ export class TableUsersComponent implements OnInit {
     });
   }
   protected showDialogCreateUser(idtienda: number): void {
+    // Límite del plan: prefiere subscripcion_data/stats de la tienda; fallback al endpoint de planes
+    const usoFallback = this.users?.length ?? 0;
+    const limite = getLimitePersonal(this.tiendaActual) ?? this.planLimitePersonal;
+    const uso = this.tiendaActual ? getUsoPersonal(this.tiendaActual, usoFallback) : usoFallback;
+    if (limite != null && Number(limite) < 999999 && uso >= Number(limite)) {
+      this.dialogLimiteAlcanzado.open({
+        tipo: 'Personal',
+        usados: uso,
+        limite: Number(limite),
+        diasRestantes: null,
+        fechaReset: null,
+      }).subscribe((verPlan) => {
+        if (verPlan) this.router.navigate(['/app/settings/suscripcion']);
+      });
+      return;
+    }
     this.dialogServiceCreateuser.open(idtienda).subscribe({
 
     });

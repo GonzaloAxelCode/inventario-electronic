@@ -1,785 +1,378 @@
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;" class="max-w-3xl mx-auto">
 <tui-loader [showLoader]="!!(loading$ | async)?.loadingCreate">
 
-    <!-- Toggle BOLETA / FACTURA -->
-   <div *ngIf="pasoActual === 1" class="flex flex-col items-center justify-center py-16 gap-8">
-  <div class="text-center">
-    <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200">Selecciona el tipo de comprobante</h3>
-    <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">El tipo determina los datos que vas a pedir al cliente</p>
-  </div>
+  <!-- ============ PASO 1: TIPO ============ -->
+  <div *ngIf="pasoActual === 1" class="flex flex-col items-center px-4 py-8 sm:py-12 gap-6">
+    <div class="text-center">
+      <h3 class="text-xl sm:text-2xl font-semibold tracking-tight text-stone-900 dark:text-white">Tipo de comprobante</h3>
+      <p class="text-xs sm:text-sm text-stone-400 mt-1">El tipo define los datos del proveedor</p>
+    </div>
 
-  <div class="flex flex-col sm:flex-row gap-5">
-
-    <!-- FACTURA -->
-    <div role="button" tabindex="0"
-      (click)="seleccionarTipoComprobante('01')"
-      (keydown.enter)="seleccionarTipoComprobante('01')"
-      [class.border-blue-500]="tipoComprobanteSeleccionado === '01'"
-      [class.border-neutral-200]="tipoComprobanteSeleccionado !== '01'"
-      [class.dark:border-neutral-700]="tipoComprobanteSeleccionado !== '01'"
-      class="relative w-72 text-left rounded-2xl border-2 bg-white dark:bg-neutral-800 p-6 transition-all cursor-pointer hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-
-      <div class="absolute top-4 right-4 h-5 w-5 rounded-full border-2 flex items-center justify-center transition-colors"
-        [class.border-blue-600]="tipoComprobanteSeleccionado === '01'"
-        [class.bg-blue-600]="tipoComprobanteSeleccionado === '01'"
-        [class.border-neutral-300]="tipoComprobanteSeleccionado !== '01'"
-        [class.dark:border-neutral-600]="tipoComprobanteSeleccionado !== '01'">
-        <svg *ngIf="tipoComprobanteSeleccionado === '01'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 6L9 17l-5-5"/>
-        </svg>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl">
+      <!-- FACTURA -->
+      <div role="button" tabindex="0" (click)="seleccionarTipoComprobante('01')" (keydown.enter)="seleccionarTipoComprobante('01')"
+        [class]="tipoComprobanteSeleccionado === '01' ? 'relative text-left rounded-3xl border-2 border-black dark:border-white bg-white dark:bg-neutral-800 p-5 transition-all cursor-pointer' : 'relative text-left rounded-3xl border border-stone-200 dark:border-white/10 bg-white dark:bg-neutral-800 p-5 transition-all cursor-pointer hover:border-stone-300 dark:hover:border-white/25'">
+        <div class="w-10 h-10 rounded-2xl bg-black dark:bg-white flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-white dark:text-black" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 2h9l3 3v17H6z"/><path stroke-linecap="round" d="M9 8h6M9 12h6M9 16h4"/></svg>
+        </div>
+        <p class="text-base font-semibold text-stone-900 dark:text-white">Factura</p>
+        <p class="text-xs text-stone-400 mt-0.5">Sustenta gasto · Requiere RUC</p>
       </div>
-
-      <div class="h-11 w-11 rounded-xl bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 2h9l3 3v17H6z"/><path d="M9 8h6M9 12h6M9 16h4"/>
-        </svg>
-      </div>
-
-      <p class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">Factura</p>
-      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1 leading-snug">Para empresas que necesitan sustentar gasto o costo</p>
-
-      <div class="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 rounded-full px-2.5 py-1">
-        Requiere RUC
+      <!-- BOLETA -->
+      <div role="button" tabindex="0" (click)="seleccionarTipoComprobante('03')" (keydown.enter)="seleccionarTipoComprobante('03')"
+        [class]="tipoComprobanteSeleccionado === '03' ? 'relative text-left rounded-3xl border-2 border-black dark:border-white bg-white dark:bg-neutral-800 p-5 transition-all cursor-pointer' : 'relative text-left rounded-3xl border border-stone-200 dark:border-white/10 bg-white dark:bg-neutral-800 p-5 transition-all cursor-pointer hover:border-stone-300 dark:hover:border-white/25'">
+        <div class="w-10 h-10 rounded-2xl bg-stone-100 dark:bg-white/10 flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-stone-600 dark:text-stone-300" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 2h12v19l-3-2-3 2-3-2-3 2z"/><path stroke-linecap="round" d="M9 7h6M9 11h6"/></svg>
+        </div>
+        <p class="text-base font-semibold text-stone-900 dark:text-white">Boleta</p>
+        <p class="text-xs text-stone-400 mt-0.5">Consumidor final · DNI o RUC</p>
       </div>
     </div>
 
-    <!-- BOLETA -->
-    <div role="button" tabindex="0"
-      (click)="seleccionarTipoComprobante('03')"
-      (keydown.enter)="seleccionarTipoComprobante('03')"
-      [class.border-emerald-500]="tipoComprobanteSeleccionado === '03'"
-      [class.border-neutral-200]="tipoComprobanteSeleccionado !== '03'"
-      [class.dark:border-neutral-700]="tipoComprobanteSeleccionado !== '03'"
-      class="relative w-72 text-left rounded-2xl border-2 bg-white dark:bg-neutral-800 p-6 transition-all cursor-pointer hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
-
-      <div class="absolute top-4 right-4 h-5 w-5 rounded-full border-2 flex items-center justify-center transition-colors"
-        [class.border-emerald-600]="tipoComprobanteSeleccionado === '03'"
-        [class.bg-emerald-600]="tipoComprobanteSeleccionado === '03'"
-        [class.border-neutral-300]="tipoComprobanteSeleccionado !== '03'"
-        [class.dark:border-neutral-600]="tipoComprobanteSeleccionado !== '03'">
-        <svg *ngIf="tipoComprobanteSeleccionado === '03'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 6L9 17l-5-5"/>
-        </svg>
-      </div>
-
-      <div class="h-11 w-11 rounded-xl bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 2h12v19l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6"/>
-        </svg>
-      </div>
-
-      <p class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">Boleta</p>
-      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1 leading-snug">Para personas naturales, consumidor final</p>
-
-      <div class="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 rounded-full px-2.5 py-1">
-        Requiere DNI
-      </div>
-    </div>
-
-   </div>
-  </div>
-
-  <!-- Botón Continuar -->
-  <div *ngIf="tipoComprobanteSeleccionado && pasoActual === 1" class="mt-6 flex justify-center">
-    <button type="button" (click)="irAlMetodoSeleccion()"
-      class="px-8 py-3 rounded-xl bg-blue-600 text-white font-semibold text-lg hover:bg-blue-700 transition-all shadow-lg">
+    <button *ngIf="tipoComprobanteSeleccionado" type="button" (click)="irAlMetodoSeleccion()"
+      class="w-full max-w-xl h-13 py-3.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-sm font-semibold active:scale-[0.99] transition">
       Continuar
     </button>
-   </div>
+  </div>
 
-   <!-- Step Indicator -->
-  <div *ngIf="pasoActual >= 2" class="px-4 py-4 border-b border-neutral-200 dark:border-neutral-700">
-    <nav class="flex items-center justify-center gap-2 text-sm">
+  <!-- ============ STEP INDICATOR ============ -->
+  <div *ngIf="pasoActual >= 2" class="px-2 sm:px-4 py-3 border-b border-stone-200/70 dark:border-white/10 overflow-x-auto">
+    <nav class="flex items-center gap-1.5 whitespace-nowrap min-w-max mx-auto w-fit max-w-full">
       <ng-container *ngIf="metodoSeleccionado === 'formulario'; else archivoStepsHeader">
-        <span
-          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
-          [class]="pasoActual >= 1 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-neutral-400'">Tipo de comprobante</span>
-        <span class="text-neutral-400">›</span>
-        <span
-          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
-          [class]="pasoActual >= 2 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-neutral-400'">Método de registro</span>
-        <span class="text-neutral-400">›</span>
-        <span
-          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
-          [class]="pasoActual >= 3 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-neutral-400'">Datos del comprobante</span>
-        <span class="text-neutral-400">›</span>
-        <span
-          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
-          [class]="pasoActual >= 4 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-neutral-400'">Productos</span>
-        <span class="text-neutral-400">›</span>
-        <span
-          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
-          [class]="pasoActual >= 5 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-neutral-400'">Confirmar y registrar</span>
+        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
+          [class]="pasoActual >= 1 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Tipo</span>
+        <span class="text-stone-300 text-xs">›</span>
+        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
+          [class]="pasoActual >= 2 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Método</span>
+        <span class="text-stone-300 text-xs">›</span>
+        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
+          [class]="pasoActual >= 3 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Datos</span>
+        <span class="text-stone-300 text-xs">›</span>
+        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
+          [class]="pasoActual >= 4 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Productos</span>
+        <span class="text-stone-300 text-xs">›</span>
+        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
+          [class]="pasoActual >= 5 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Confirmar</span>
       </ng-container>
       <ng-template #archivoStepsHeader>
-        <span
-          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
-          [class]="pasoActual >= 1 ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'text-neutral-400'">Tipo de comprobante</span>
-        <span class="text-neutral-400">›</span>
-        <span
-          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
-          [class]="pasoActual >= 2 ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'text-neutral-400'">Método de registro</span>
-        <span class="text-neutral-400">›</span>
-        <span
-          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
-          [class]="pasoActual >= 3 ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'text-neutral-400'">Subir archivos</span>
-        <span class="text-neutral-400">›</span>
-        <span
-          class="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
-          [class]="pasoActual >= 4 ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'text-neutral-400'">Confirmar y registrar</span>
+        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
+          [class]="pasoActual >= 1 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Tipo</span>
+        <span class="text-stone-300 text-xs">›</span>
+        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
+          [class]="pasoActual >= 2 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Método</span>
+        <span class="text-stone-300 text-xs">›</span>
+        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
+          [class]="pasoActual >= 3 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Archivos</span>
+        <span class="text-stone-300 text-xs">›</span>
+        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
+          [class]="pasoActual >= 4 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Confirmar</span>
       </ng-template>
     </nav>
   </div>
 
-  <!-- Seleccion de Metodo -->
-  <div *ngIf="pasoActual === 2"
-    class="flex flex-col items-center justify-center py-16 gap-8">
+  <!-- ============ PASO 2: MÉTODO ============ -->
+  <div *ngIf="pasoActual === 2" class="flex flex-col items-center px-4 py-8 sm:py-12 gap-6">
     <div class="text-center">
-      <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200">¿Cómo quieres registrar la compra?</h3>
-      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Selecciona el método de registro</p>
+      <h3 class="text-xl sm:text-2xl font-semibold tracking-tight text-stone-900 dark:text-white">¿Cómo lo registras?</h3>
+      <p class="text-xs sm:text-sm text-stone-400 mt-1">Elige el método de registro</p>
     </div>
-
-    <div class="flex flex-col sm:flex-row gap-5">
-      <!-- Llenar formulario -->
-      <div role="button" tabindex="0"
-        (click)="seleccionarMetodo('formulario')"
-        (keydown.enter)="seleccionarMetodo('formulario')"
-        [class.border-blue-500]="metodoSeleccionado === 'formulario'"
-        [class.border-neutral-200]="metodoSeleccionado !== 'formulario'"
-        [class.dark:border-neutral-700]="metodoSeleccionado !== 'formulario'"
-        class="relative w-72 text-center rounded-2xl border-2 bg-white dark:bg-neutral-800 p-6 transition-all cursor-pointer hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-
-        <div class="h-12 w-12 rounded-xl bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 mx-auto">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M9 13h6M9 17h6M9 9h6"/>
-            <polyline points="14 2 14 8 20 8"/>
-          </svg>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl">
+      <div role="button" tabindex="0" (click)="seleccionarMetodo('formulario')" (keydown.enter)="seleccionarMetodo('formulario')"
+        [class]="metodoSeleccionado === 'formulario' ? 'rounded-3xl border-2 border-black dark:border-white bg-white dark:bg-neutral-800 p-5 text-center cursor-pointer transition-all' : 'rounded-3xl border border-stone-200 dark:border-white/10 bg-white dark:bg-neutral-800 p-5 text-center cursor-pointer hover:border-stone-300 dark:hover:border-white/25 transition-all'">
+        <div class="w-10 h-10 mx-auto rounded-2xl bg-stone-100 dark:bg-white/10 flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-stone-600 dark:text-stone-300" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path stroke-linecap="round" d="M9 13h6M9 17h6M14 2v6h6"/></svg>
         </div>
-
-        <p class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">Llenar formulario</p>
-        <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Completa los datos manualmente</p>
+        <p class="text-base font-semibold text-stone-900 dark:text-white">Formulario</p>
+        <p class="text-xs text-stone-400 mt-0.5">Completa los datos a mano</p>
       </div>
-
-      <!-- Subir PDF y XML -->
-      <div role="button" tabindex="0"
-        (click)="seleccionarMetodo('archivo')"
-        (keydown.enter)="seleccionarMetodo('archivo')"
-        [class.border-emerald-500]="metodoSeleccionado === 'archivo'"
-        [class.border-neutral-200]="metodoSeleccionado !== 'archivo'"
-        [class.dark:border-neutral-700]="metodoSeleccionado !== 'archivo'"
-        class="relative w-72 text-center rounded-2xl border-2 bg-white dark:bg-neutral-800 p-6 transition-all cursor-pointer hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
-
-        <div class="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4 mx-auto">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2v4a2 2 0 0 0 2 2h4l-6 6-4-4z"/><path d="M20 12l-6 6v-4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v4l6 6-6 6h12"/>
-          </svg>
+      <div role="button" tabindex="0" (click)="seleccionarMetodo('archivo')" (keydown.enter)="seleccionarMetodo('archivo')"
+        [class]="metodoSeleccionado === 'archivo' ? 'rounded-3xl border-2 border-black dark:border-white bg-white dark:bg-neutral-800 p-5 text-center cursor-pointer transition-all' : 'rounded-3xl border border-stone-200 dark:border-white/10 bg-white dark:bg-neutral-800 p-5 text-center cursor-pointer hover:border-stone-300 dark:hover:border-white/25 transition-all'">
+        <div class="w-10 h-10 mx-auto rounded-2xl bg-stone-100 dark:bg-white/10 flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-stone-600 dark:text-stone-300" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0L7 9m5-5l5 5M4 20h16"/></svg>
         </div>
-
-        <p class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">Subir PDF y XML</p>
-        <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Importa datos desde archivos</p>
+        <p class="text-base font-semibold text-stone-900 dark:text-white">PDF y XML</p>
+        <p class="text-xs text-stone-400 mt-0.5">Importa desde archivos</p>
       </div>
     </div>
-
-    <!-- Volver -->
     <button type="button" (click)="tipoComprobanteSeleccionado = ''"
-      class="text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 underline">
-      Volver
-    </button>
-   </div>
+      class="text-xs font-medium text-stone-400 hover:text-stone-600 transition">Volver</button>
+  </div>
 
-      <form *ngIf="metodoSeleccionado === 'formulario' && pasoActual >= 3" [formGroup]="compraForm" (ngSubmit)="registrarCompra()" class="p-4 space-y-4">
+  <!-- ============ FORMULARIO (pasos 3-5) ============ -->
+  <form *ngIf="metodoSeleccionado === 'formulario' && pasoActual >= 3" [formGroup]="compraForm" (ngSubmit)="registrarCompra()" class="px-3 sm:px-4 py-4 space-y-4">
 
-      <!-- Step 3: Datos del comprobante -->
-      <div *ngIf="pasoActual === 3" class="space-y-4">
-        <!-- Server Error Banner -->
-        <div *ngIf="(compraError$ | async) && getServerError()"
-          class="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 flex items-start gap-2">
-          <svg class="w-4 h-4 text-red-500 dark:text-red-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-          </svg>
-          <span class="text-xs text-red-700 dark:text-red-300">{{ getServerError() }}</span>
-        </div>
+    <!-- Paso 3 -->
+    <div *ngIf="pasoActual === 3" class="space-y-4">
+      <div *ngIf="(compraError$ | async) && getServerError()"
+        class="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-xs font-medium text-red-600 dark:text-red-400">{{ getServerError() }}</div>
 
-        <!-- Botón para cambiar tipo de comprobante -->
-        <div class="flex justify-between items-center">
-          <button type="button" (click)="metodoSeleccionado = ''; tipoComprobanteSeleccionado = ''"
-            class="text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 underline">
-            ← Volver
-          </button>
-          <button type="button" (click)="tipoComprobanteSeleccionado = ''; metodoSeleccionado = ''; pasoActual = 1"
-            class="text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 underline">
-            Cambiar tipo de comprobante
-          </button>
-        </div>
-
-    <!-- Fila 1: Tipo + Serie + Correlativo -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      <!-- Tipo Comprobante (seleccionado vía toggle) -->
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
-          Tipo Comprobante
-        </label>
-        <div class="w-full px-3 py-2 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-200 text-sm">
+      <div class="flex items-center justify-between">
+        <button type="button" (click)="metodoSeleccionado = ''; tipoComprobanteSeleccionado = ''"
+          class="text-xs font-medium text-stone-400 hover:text-stone-600 transition">← Volver</button>
+        <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-stone-100 dark:bg-white/10 text-stone-500 dark:text-stone-300">
           {{ tipoComprobanteLabels[tipoComprobanteSeleccionado] || f['tipo_comprobante'].value }}
+        </span>
+      </div>
+
+      <!-- Card: Comprobante -->
+      <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5 space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Serie *</label>
+            <tui-textfield tuiTextfieldSize="m" [class.!border-red-500]="isFieldInvalid('serie')">
+              <input formControlName="serie" [placeholder]="f['tipo_comprobante'].value === '01' ? 'F001' : 'B001'" tuiTextfield (blur)="f['serie'].markAsTouched()" />
+            </tui-textfield>
+            <p *ngIf="getSerieError()" class="text-[11px] text-red-500 mt-1">{{ getSerieError() }}</p>
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Correlativo *</label>
+            <tui-textfield tuiTextfieldSize="m">
+              <input formControlName="correlativo" placeholder="0000123" tuiTextfield (blur)="f['correlativo'].markAsTouched()" />
+            </tui-textfield>
+            <p *ngIf="getCorrelativoError()" class="text-[11px] text-red-500 mt-1">{{ getCorrelativoError() }}</p>
+          </div>
+          <div>
+            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Emisión *</label>
+            <tui-textfield tuiTextfieldSize="m">
+              <input formControlName="fecha_emision" type="date" tuiTextfield (blur)="f['fecha_emision'].markAsTouched()" />
+            </tui-textfield>
+            <p *ngIf="getFechaEmisionError()" class="text-[11px] text-red-500 mt-1">{{ getFechaEmisionError() }}</p>
+          </div>
+          <div>
+            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Pago *</label>
+            <tui-select formControlName="forma_pago" class="w-full" tuiTextfieldSize="m" [tuiTextfieldLabelOutside]="true">
+              <tui-data-list *tuiDataList>
+                <button *ngFor="let fp of formasPago" tuiOption [value]="fp">{{ formasPagoLabels[fp] }}</button>
+              </tui-data-list>
+            </tui-select>
+            <p *ngIf="getFormaPagoError()" class="text-[11px] text-red-500 mt-1">{{ getFormaPagoError() }}</p>
+          </div>
+          <div>
+            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Moneda</label>
+            <tui-select formControlName="moneda" class="w-full" tuiTextfieldSize="m" [tuiTextfieldLabelOutside]="true">
+              <tui-data-list *tuiDataList>
+                <button *ngFor="let moneda of monedas" tuiOption [value]="moneda">{{ moneda }}</button>
+              </tui-data-list>
+            </tui-select>
+          </div>
+          <div>
+            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Doc. relacionado</label>
+            <tui-textfield tuiTextfieldSize="m">
+              <input formControlName="documento_relacionado" placeholder="OC-2026-001" tuiTextfield />
+            </tui-textfield>
+          </div>
+          <div class="col-span-2">
+            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Enlace verificación</label>
+            <tui-textfield tuiTextfieldSize="m">
+              <input formControlName="enlace_verificacion" placeholder="https://..." tuiTextfield (blur)="f['enlace_verificacion'].markAsTouched()" />
+            </tui-textfield>
+            <p *ngIf="getEnlaceVerificacionError()" class="text-[11px] text-red-500 mt-1">{{ getEnlaceVerificacionError() }}</p>
+          </div>
         </div>
-        <p *ngIf="(compraError$ | async)?.tipo_comprobante?.[0]" class="text-[11px] text-red-500 dark:text-red-400 mt-1">
-          {{ (compraError$ | async)?.tipo_comprobante?.[0] }}
-        </p>
-        <p class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-1">
-          {{ f['tipo_comprobante'].value === '01' ? 'Proveedor debe tener RUC' : 'Proveedor puede tener DNI o RUC' }}
-        </p>
-      </div>
+        <p class="text-[10px] text-stone-400">{{ f['tipo_comprobante'].value === '01' ? 'El proveedor debe tener RUC' : 'El proveedor puede tener DNI o RUC' }}</p>
+      </section>
 
-      <!-- Serie -->
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
-          Serie <span class="text-red-500">*</span>
-        </label>
-        <tui-textfield tuiTextfieldSize="m"
-          [class.!border-red-500]="isFieldInvalid('serie')">
-          <input formControlName="serie" [placeholder]="f['tipo_comprobante'].value === '01' ? 'F001' : 'B001'" tuiTextfield
-            (blur)="f['serie'].markAsTouched()" />
-        </tui-textfield>
-        <p *ngIf="getSerieError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
-          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-          </svg>
-          {{ getSerieError() }}
-        </p>
-      </div>
-
-      <!-- Correlativo -->
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
-          Correlativo <span class="text-red-500">*</span>
-        </label>
-        <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="correlativo" placeholder="0000123" tuiTextfield
-            (blur)="f['correlativo'].markAsTouched()" />
-        </tui-textfield>
-        <p *ngIf="getCorrelativoError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
-          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-          </svg>
-          {{ getCorrelativoError() }}
-        </p>
-      </div>
-    </div>
-
-    <!-- Fila 2: Fechas + Forma pago -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      <!-- Fecha Emision -->
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
-          Fecha Emision <span class="text-red-500">*</span>
-        </label>
-        <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="fecha_emision" type="date" tuiTextfield
-            (blur)="f['fecha_emision'].markAsTouched()" />
-        </tui-textfield>
-        <p *ngIf="getFechaEmisionError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
-          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-          </svg>
-          {{ getFechaEmisionError() }}
-        </p>
-      </div>
-
-      <!-- Fecha Vencimiento -->
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
-          Fecha Vencimiento
-        </label>
-        <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="fecha_vencimiento" type="date" tuiTextfield
-            (blur)="f['fecha_vencimiento'].markAsTouched()" />
-        </tui-textfield>
-        <p *ngIf="getVencimientoGroupError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
-          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-          </svg>
-          {{ getVencimientoGroupError() }}
-        </p>
-      </div>
-
-      <!-- Forma de Pago -->
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">
-          Forma de Pago <span class="text-red-500">*</span>
-        </label>
-        <tui-select formControlName="forma_pago" class="w-full" tuiTextfieldSize="m"
-          [tuiTextfieldLabelOutside]="true">
-          <tui-data-list *tuiDataList>
-            <button *ngFor="let fp of formasPago" tuiOption [value]="fp">
-              {{ formasPagoLabels[fp] }}
-            </button>
-          </tui-data-list>
-        </tui-select>
-        <p *ngIf="getFormaPagoError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
-          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-          </svg>
-          {{ getFormaPagoError() }}
-        </p>
-      </div>
-    </div>
-
-    <!-- Fila 3: Moneda + Doc.Relacionado + Enlace verificacion -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      <!-- Moneda -->
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Moneda</label>
-        <tui-select formControlName="moneda" class="w-full" tuiTextfieldSize="m"
-          [tuiTextfieldLabelOutside]="true">
-          <tui-data-list *tuiDataList>
-            <button *ngFor="let moneda of monedas" tuiOption [value]="moneda">
-              {{ moneda }}
-            </button>
-          </tui-data-list>
-        </tui-select>
-      </div>
-
-      <!-- Doc. Relacionado -->
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Doc. Relacionado</label>
-        <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="documento_relacionado" placeholder="OC-2026-001" tuiTextfield />
-        </tui-textfield>
-      </div>
-
-      <!-- Enlace Verificacion -->
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Enlace Verificacion</label>
-        <tui-textfield tuiTextfieldSize="m">
-          <input formControlName="enlace_verificacion" placeholder="https://..." tuiTextfield
-            (blur)="f['enlace_verificacion'].markAsTouched()" />
-        </tui-textfield>
-        <p *ngIf="getEnlaceVerificacionError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
-          <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-          </svg>
-          {{ getEnlaceVerificacionError() }}
-        </p>
-      </div>
-    </div>
-
-    <!-- Fila 4: Proveedor -->
-    <div class="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl p-4 border border-neutral-200 dark:border-neutral-700">
-      <div class="flex items-center gap-2 mb-3">
-        <svg class="w-4 h-4 text-neutral-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-        </svg>
-        <span class="text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider">Datos del Proveedor</span>
-        <span class="text-[10px] text-neutral-400 dark:text-neutral-500">(Opcional)</span>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <!-- Tipo Doc Proveedor -->
-        <div>
-          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Tipo Documento</label>
-          <tui-select formControlName="tipo_documento_proveedor" class="w-full" tuiTextfieldSize="m"
-            [tuiTextfieldLabelOutside]="true">
-            <tui-data-list *tuiDataList>
-              <button *ngFor="let td of tiposDocProveedor" tuiOption [value]="td"
-                [disabled]="!tiposDocProveedorPermitidos[f['tipo_comprobante'].value]?.includes(td)">
-                {{ tiposDocProveedorLabels[td] }}
-                <span *ngIf="!tiposDocProveedorPermitidos[f['tipo_comprobante'].value]?.includes(td)"
-                  class="text-[9px] text-neutral-400 ml-1">(No disponible)</span>
-              </button>
-            </tui-data-list>
-          </tui-select>
+      <!-- Card: Proveedor -->
+      <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-xs font-semibold text-stone-900 dark:text-white">Proveedor</p>
+          <span class="text-[10px] text-stone-400">Opcional</span>
         </div>
-
-        <!-- Nro. Documento -->
-        <div>
-          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nro. Documento</label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Tipo documento</label>
+            <tui-select formControlName="tipo_documento_proveedor" class="w-full" tuiTextfieldSize="m" [tuiTextfieldLabelOutside]="true">
+              <tui-data-list *tuiDataList>
+                <button *ngFor="let td of tiposDocProveedor" tuiOption [value]="td"
+                  [disabled]="!tiposDocProveedorPermitidos[f['tipo_comprobante'].value]?.includes(td)">
+                  {{ tiposDocProveedorLabels[td] }}
+                </button>
+              </tui-data-list>
+            </tui-select>
+          </div>
+          <div>
+            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Nro. documento</label>
             <tui-textfield tuiTextfieldSize="m">
               <input formControlName="numero_documento_proveedor"
                 [placeholder]="f['tipo_documento_proveedor'].value ? longitudesDocProveedor[f['tipo_documento_proveedor'].value]?.label : 'Seleccione tipo'"
-                tuiTextfield
-                (blur)="f['numero_documento_proveedor'].markAsTouched()" />
-              <span *ngIf="consultandoDocumento" class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></span>
-           </tui-textfield>
-           <p *ngIf="getNroDocProveedorError()" class="text-[11px] text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
-             <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 011-1z" clip-rule="evenodd"/>
-             </svg>
-             {{ getNroDocProveedorError() }}
-           </p>
-           <!-- Server-side error for numero_documento -->
-           <p *ngIf="(compraError$ | async)?.numero_documento_proveedor?.[0]"
-             class="text-[11px] text-red-500 dark:text-red-400 mt-1">
-             {{ (compraError$ | async)?.numero_documento_proveedor?.[0] }}
-           </p>
-           <!-- Proveedor no encontrado -->
-           <p *ngIf="proveedorNoEncontrado"
-             class="text-[11px] text-amber-600 dark:text-amber-400 mt-1">
-             No se encontro informacion para este documento. Complete los datos manualmente.
-           </p>
-        </div>
-
-        <!-- Nombre Proveedor -->
-        <div>
-          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nombre / Razon Social</label>
-            <tui-textfield tuiTextfieldSize="m">
-              <input formControlName="nombre_proveedor" placeholder="Se completara automaticamente" tuiTextfield
-                [disabled]="true" />
+                tuiTextfield (blur)="f['numero_documento_proveedor'].markAsTouched()" />
+              <span *ngIf="consultandoDocumento" class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-stone-400 border-t-transparent rounded-full animate-spin"></span>
             </tui-textfield>
+            <p *ngIf="getNroDocProveedorError()" class="text-[11px] text-red-500 mt-1">{{ getNroDocProveedorError() }}</p>
+            <p *ngIf="(compraError$ | async)?.numero_documento_proveedor?.[0]" class="text-[11px] text-red-500 mt-1">{{ (compraError$ | async)?.numero_documento_proveedor?.[0] }}</p>
+            <p *ngIf="proveedorNoEncontrado" class="text-[11px] text-amber-600 dark:text-amber-400 mt-1">Sin información para este documento.</p>
+          </div>
+          <div class="col-span-1 sm:col-span-2">
+            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Nombre / Razón social</label>
+            <tui-textfield tuiTextfieldSize="m" class="opacity-80">
+              <input formControlName="nombre_proveedor" placeholder="Se completa automáticamente" tuiTextfield readonly />
+            </tui-textfield>
+          </div>
         </div>
-      </div>
+        <p *ngIf="getProveedorGroupError()" class="text-[11px] text-amber-600 dark:text-amber-400 mt-2">{{ getProveedorGroupError() }}</p>
+      </section>
 
-      <!-- Error general del proveedor -->
-      <p *ngIf="getProveedorGroupError()" class="text-[11px] text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
-        <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-        </svg>
-        {{ getProveedorGroupError() }}
-      </p>
+      <!-- Card: Notas -->
+      <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5">
+        <label class="text-[11px] font-medium text-stone-400 mb-1 block">Observaciones</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="observaciones" placeholder="Notas adicionales…" tuiTextfield />
+        </tui-textfield>
+      </section>
+
+      <button type="button" (click)="pasoSiguiente()"
+        class="w-full h-13 py-3.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-sm font-semibold active:scale-[0.99] transition">
+        Siguiente →
+      </button>
     </div>
 
-    <!-- Fila 5: Observaciones -->
-    <div>
-      <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Observaciones</label>
-      <tui-textfield tuiTextfieldSize="m">
-        <input formControlName="observaciones" placeholder="Notas adicionales sobre la compra..." tuiTextfield />
-      </tui-textfield>
-    </div>
-
-    <!-- Fila 6: Archivo XML -->
-    <div>
-      <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Archivo XML</label>
-      <div *ngIf="!archivoFile"
-        class="border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg p-4 text-center cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
-        (click)="archivoInput.click()">
-        <input #archivoInput type="file" accept=".xml" class="hidden" (change)="onArchivoSelected($event)" />
-        <svg class="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-        </svg>
-        <p class="text-xs text-neutral-500 dark:text-neutral-400">Click para subir XML</p>
-        <p class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-1">El XML se parseara automaticamente</p>
-      </div>
-      <div *ngIf="archivoFile"
-        class="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3 border border-emerald-200 dark:border-emerald-700">
-        <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
-        <span class="text-sm text-emerald-700 dark:text-emerald-300 truncate flex-1">{{ archivoFile.name }}</span>
-        <button type="button" (click)="sincronizar()" [disabled]="parseando"
-          class="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs font-semibold transition-colors"
-          [class]="parseando
-            ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 cursor-wait'
-            : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'">
-          <svg *ngIf="!parseando" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-          </svg>
-          <span *ngIf="parseando" class="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
-          {{ parseando ? 'Sincronizando...' : 'Sincronizar' }}
-        </button>
-        <button type="button" (click)="archivoFile = null"
-          class="text-red-400 hover:text-red-600 text-sm font-bold p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
+    <!-- Paso 4: Productos -->
+    <div *ngIf="pasoActual === 4" class="space-y-4">
+      <div class="flex items-center justify-between px-1">
+        <p class="text-sm font-semibold text-stone-900 dark:text-white">Productos ({{ items.length }})</p>
+        <button iconStart="@tui.plus" tuiButton appearance="primary-grayscale" type="button" (click)="agregarItem()" size="s" class="!rounded-full">
+          Agregar
         </button>
       </div>
-     </div>
+      <p *ngIf="items.length === 0 && submitted" class="text-[11px] text-red-500 px-1">Agrega al menos un producto</p>
 
-        <!-- Navegación Step 3 -->
-        <div class="flex justify-end pt-2">
-          <button type="button" (click)="pasoSiguiente()"
-            class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors">
-            Siguiente →
-          </button>
-        </div>
-      </div>
-
-      <!-- Step 4: Productos -->
-      <div *ngIf="pasoActual === 4" class="space-y-4">
-
-    <!-- Productos -->
-    <div>
-      <div class="flex items-center justify-between gap-2 mb-3">
-        <div>
-          <h2 class="text-sm font-semibold text-neutral-900 dark:text-white">
-            Productos ({{ items.length }})
-          </h2>
-          <p *ngIf="items.length === 0 && submitted" class="text-[11px] text-red-500 dark:text-red-400">
-            Agrega al menos un producto
-          </p>
-        </div>
-        <button iconStart="@tui.plus" tuiButton appearance="primary-grayscale" type="button"
-          (click)="agregarItem()" size="s">
-          Agregar producto
-        </button>
-      </div>
-
-      <div class="space-y-3">
+      <div class="space-y-2.5">
         <div *ngFor="let item of itemsControls; let i = index" [formGroup]="item"
-          class="bg-white dark:bg-neutral-800 rounded-xl p-4 border border-neutral-200 dark:border-neutral-700 hover:shadow-sm transition-all">
-
+          class="bg-white dark:bg-neutral-800 rounded-3xl p-4 border border-stone-200/70 dark:border-white/10">
           <div class="flex items-start gap-2 mb-3">
-            <div class="flex-1">
-              <label class="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 block mb-1">
-                Producto <span class="text-red-500">*</span>
-              </label>
+            <div class="flex-1 min-w-0">
               <tui-textfield tuiTextfieldSize="m">
-                <input formControlName="producto" placeholder="Nombre del producto" tuiTextfield
-                  (blur)="item.get('producto')?.markAsTouched()" />
+                <input formControlName="producto" placeholder="Nombre del producto *" tuiTextfield (blur)="item.get('producto')?.markAsTouched()" />
               </tui-textfield>
-              <p *ngIf="getItemError(i, 'producto')" class="text-[11px] text-red-500 dark:text-red-400 mt-1">
-                {{ getItemError(i, 'producto') }}
-              </p>
+              <p *ngIf="getItemError(i, 'producto')" class="text-[11px] text-red-500 mt-1">{{ getItemError(i, 'producto') }}</p>
             </div>
             <button type="button" (click)="eliminarItem(i)"
-              class="mt-6 w-7 h-7 flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-500 dark:hover:text-red-400 transition-colors shrink-0">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-              </svg>
+              class="mt-1 w-8 h-8 shrink-0 flex items-center justify-center rounded-full bg-stone-100 dark:bg-white/10 text-stone-400 hover:text-red-500 active:scale-90 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2.25 2.25 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </button>
           </div>
-
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
-            <!-- Cantidad -->
-            <div>
-              <label class="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 block mb-1">
-                Cantidad <span class="text-red-500">*</span>
-              </label>
+            <div class="min-w-0">
+              <label class="text-[11px] font-medium text-stone-400 block mb-1">Cant. *</label>
               <tui-textfield tuiTextfieldSize="m">
-                <input formControlName="cantidad" type="number" tuiTextfield [min]="1"
-                  (blur)="item.get('cantidad')?.markAsTouched()" />
+                <input formControlName="cantidad" type="number" tuiTextfield [min]="1" (blur)="item.get('cantidad')?.markAsTouched()" />
               </tui-textfield>
-              <p *ngIf="getItemError(i, 'cantidad')" class="text-[11px] text-red-500 dark:text-red-400 mt-1">
-                {{ getItemError(i, 'cantidad') }}
-              </p>
+              <p *ngIf="getItemError(i, 'cantidad')" class="text-[11px] text-red-500 mt-1">{{ getItemError(i, 'cantidad') }}</p>
             </div>
-
-            <!-- P.Unitario -->
-            <div>
-              <label class="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 block mb-1">
-                P.Unitario <span class="text-red-500">*</span>
-              </label>
+            <div class="min-w-0">
+              <label class="text-[11px] font-medium text-stone-400 block mb-1">P. unit. *</label>
               <tui-textfield tuiTextfieldSize="m">
-                <input formControlName="precio_unitario" prefix="S/." type="number" tuiTextfield [min]="0"
-                  (blur)="item.get('precio_unitario')?.markAsTouched()" />
+                <input formControlName="precio_unitario" prefix="S/." type="number" tuiTextfield [min]="0" (blur)="item.get('precio_unitario')?.markAsTouched()" />
               </tui-textfield>
-              <p *ngIf="getItemError(i, 'precio_unitario')" class="text-[11px] text-red-500 dark:text-red-400 mt-1">
-                {{ getItemError(i, 'precio_unitario') }}
-              </p>
+              <p *ngIf="getItemError(i, 'precio_unitario')" class="text-[11px] text-red-500 mt-1">{{ getItemError(i, 'precio_unitario') }}</p>
             </div>
-
-            <!-- Descuento -->
-            <div>
-              <label class="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 block mb-1">Descuento</label>
+            <div class="min-w-0">
+              <label class="text-[11px] font-medium text-stone-400 block mb-1">Dscto.</label>
               <tui-textfield tuiTextfieldSize="m">
                 <input formControlName="descuento" prefix="S/." type="number" tuiTextfield [min]="0" />
               </tui-textfield>
             </div>
-
-            <!-- Subtotal -->
-            <div class="text-center pb-1">
-              <span class="text-[11px] text-neutral-400 block mb-1">Subtotal</span>
-              <span class="text-lg font-bold text-neutral-900 dark:text-white">S/. {{ getItemSubtotal(i) | number:'1.2-2' }}</span>
+            <div class="text-right rounded-2xl bg-stone-50 dark:bg-white/5 px-3 py-2">
+              <p class="text-[10px] text-stone-400">Subtotal</p>
+              <p class="text-base font-bold text-stone-900 dark:text-white whitespace-nowrap">S/ {{ getItemSubtotal(i) | number:'1.2-2' }}</p>
             </div>
           </div>
         </div>
 
         <div *ngIf="items.length === 0"
-          class="text-center py-10 text-neutral-400 dark:text-neutral-300 rounded-xl bg-neutral-50 dark:bg-neutral-800/50 border-2 border-dashed border-neutral-300 dark:border-neutral-700">
-          <svg class="w-10 h-10 mx-auto mb-3 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-          </svg>
-          <p class="text-sm font-bold mb-1">Sin productos</p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Haz clic en "Agregar producto" para comenzar</p>
-        </div>
-      </div>
-     </div>
-
-        <!-- Navegación Step 4 -->
-        <div class="flex justify-between pt-2">
-          <button type="button" (click)="pasoAnterior()"
-            class="px-4 py-2 rounded-lg bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-semibold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">
-            ← Anterior
-          </button>
-          <button type="button" (click)="pasoSiguiente()"
-            class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors">
-            Siguiente →
-          </button>
+          class="text-center py-12 rounded-3xl bg-white dark:bg-neutral-800 border-2 border-dashed border-stone-200 dark:border-white/15">
+          <p class="text-sm font-semibold text-stone-700 dark:text-stone-300">Sin productos</p>
+          <p class="text-xs text-stone-400 mt-1">Toca “Agregar” para comenzar</p>
         </div>
       </div>
 
-      <!-- Step 5: Totales y Confirmar -->
-      <div *ngIf="pasoActual === 5" class="space-y-4">
-     <!-- Totales solo lectura -->
-    <div class="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl p-4 border border-neutral-200 dark:border-neutral-700 space-y-2">
-      <h3 class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">Resumen de montos</h3>
-      <div class="flex justify-between items-center">
-        <span class="text-sm text-neutral-600 dark:text-neutral-400">Gravadas</span>
-        <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ totales.gravadas | number:'1.2-2' }}</span>
-      </div>
-      <div class="flex justify-between items-center">
-        <span class="text-sm text-neutral-600 dark:text-neutral-400">Op. Exoneradas</span>
-        <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_exoneradas | number:'1.2-2' }}</span>
-      </div>
-      <div class="flex justify-between items-center">
-        <span class="text-sm text-neutral-600 dark:text-neutral-400">Op. Inafectas</span>
-        <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_inafectas | number:'1.2-2' }}</span>
-      </div>
-      <div class="flex justify-between items-center">
-        <span class="text-sm text-neutral-600 dark:text-neutral-400">Op. Gratuitas</span>
-        <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ totales.op_gratuitas | number:'1.2-2' }}</span>
-      </div>
-      <div class="flex justify-between items-center">
-        <span class="text-sm text-neutral-600 dark:text-neutral-400">Descuentos</span>
-        <span class="text-sm font-bold text-red-600 dark:text-red-400">- S/. {{ totales.dctos_totales | number:'1.2-2' }}</span>
-      </div>
-      <div class="flex justify-between items-center">
-        <span class="text-sm text-neutral-600 dark:text-neutral-400">ICBPER</span>
-        <span class="text-sm font-bold text-neutral-900 dark:text-white">S/. {{ totales.icbper | number:'1.2-2' }}</span>
-      </div>
-      <div class="flex justify-between items-center pt-2 border-t border-neutral-200 dark:border-neutral-600">
-        <span class="text-sm font-semibold text-neutral-700 dark:text-neutral-300">IGV (18%)</span>
-        <span class="text-base font-bold text-neutral-900 dark:text-white">S/. {{ totales.igv | number:'1.2-2' }}</span>
-      </div>
-    </div>
-
-    <!-- Total + Botones -->
-    <div class="bg-gradient-to-br from-neutral-900 to-neutral-800 dark:from-neutral-700 dark:to-neutral-800 rounded-xl p-5 text-white">
-      <div class="flex justify-between items-center mb-4">
-        <span class="text-lg font-bold uppercase tracking-wider">Total</span>
-        <span class="text-3xl font-extrabold">S/. {{ totales.total | number:'1.2-2' }}</span>
-      </div>
-      <div class="flex gap-2">
-        <button tuiButton type="button" (click)="registrarCompra()" [disabled]="!puedeRegistrar" appearance="primary-grayscale" size="m" class="flex-1">
-          <span class="flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-           Registrar Comprobante
-           </span>
-         </button>
-       </div>
-      </div>
-
-        <!-- Navegación Step 5 -->
-        <div class="pt-2">
-          <button type="button" (click)="pasoAnterior()"
-            class="px-4 py-2 rounded-lg bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-semibold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors mb-3">
-            ← Anterior
-          </button>
-        </div>
-      </div>
-
-   </form>
-
-    <!-- Subir PDF y XML -->
-    <div *ngIf="metodoSeleccionado === 'archivo' && pasoActual === 3" class="p-4 space-y-4">
-
-     <div class="flex items-center justify-between mb-4">
-       <h3 class="text-lg font-semibold text-neutral-800 dark:text-neutral-200">Subir PDF y XML</h3>
-     </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <!-- PDF -->
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Archivo PDF</label>
-        <div *ngIf="!archivoPdf"
-          class="border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg p-4 text-center cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
-          (click)="pdfInput.click()">
-          <input #pdfInput type="file" accept=".pdf" class="hidden" (change)="onPdfSelected($event)" />
-          <svg class="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Click para subir PDF</p>
-        </div>
-        <div *ngIf="archivoPdf"
-          class="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 border border-blue-200 dark:border-blue-700">
-          <svg class="w-5 h-5 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          <span class="text-sm text-blue-700 dark:text-blue-300 truncate flex-1">{{ archivoPdf.name }}</span>
-          <button type="button" (click)="archivoPdf = null"
-            class="text-red-400 hover:text-red-600 text-sm font-bold p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- XML -->
-      <div>
-        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Archivo XML</label>
-        <div *ngIf="!archivoFile"
-          class="border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg p-4 text-center cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
-          (click)="archivoInput.click()">
-          <input #archivoInput type="file" accept=".xml" class="hidden" (change)="onArchivoSelected($event)" />
-          <svg class="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-          </svg>
-          <p class="text-xs text-neutral-500 dark:text-neutral-400">Click para subir XML</p>
-          <p class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-1">El XML se parseara automaticamente</p>
-        </div>
-        <div *ngIf="archivoFile"
-          class="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3 border border-emerald-200 dark:border-emerald-700">
-          <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          <span class="text-sm text-emerald-700 dark:text-emerald-300 truncate flex-1">{{ archivoFile.name }}</span>
-          <button type="button" (click)="archivoFile = null"
-            class="text-red-400 hover:text-red-600 text-sm font-bold p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Navegación -->
-    <div class="flex justify-between pt-2">
-      <button type="button" (click)="metodoSeleccionado = ''; pasoActual = 2"
-        class="px-4 py-2 rounded-lg bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-semibold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">
-        ← Volver
-      </button>
-      <button type="button" (click)="pasoSiguiente()"
-        [disabled]="!archivoFile && !archivoPdf"
-        class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-        Siguiente →
-      </button>
-     </div>
-   </div>
-
-    <!-- Step 4: Confirmar y Registrar (metodo archivo) -->
-    <div *ngIf="metodoSeleccionado === 'archivo' && pasoActual === 4" class="p-4 space-y-4">
-      <!-- Archivos adjuntos -->
-      <div class="flex flex-col gap-2">
-        <div *ngIf="archivoPdf" class="flex items-center gap-2 text-xs text-neutral-600 dark:text-neutral-400">
-          <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          <span> PDF: {{ archivoPdf.name }}</span>
-        </div>
-        <div *ngIf="archivoFile" class="flex items-center gap-2 text-xs text-neutral-600 dark:text-neutral-400">
-          <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          <span> XML: {{ archivoFile.name }}</span>
-        </div>
-      </div>
-
-      <!-- Botones -->
       <div class="flex gap-2">
         <button type="button" (click)="pasoAnterior()"
-          class="px-4 py-2 rounded-lg bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-semibold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">
-          ← Anterior
-        </button>
-        <button tuiButton type="button" (click)="guardarComprobante()" [disabled]="!puedeRegistrar" appearance="primary-grayscale" size="m" class="flex-1">
-          <span class="flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-           Guardar Comprobante
-          </span>
-        </button>
+          class="px-5 h-12 rounded-full text-sm font-medium text-stone-500 dark:text-stone-300 bg-stone-100 dark:bg-white/10 active:scale-[0.99] transition">← Atrás</button>
+        <button type="button" (click)="pasoSiguiente()"
+          class="flex-1 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black text-sm font-semibold active:scale-[0.99] transition">Siguiente →</button>
       </div>
     </div>
+
+    <!-- Paso 5: Resumen -->
+    <div *ngIf="pasoActual === 5" class="space-y-4">
+      <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5">
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between"><span class="text-stone-400">Gravadas</span><span class="font-semibold text-stone-900 dark:text-white">S/ {{ totales.gravadas | number:'1.2-2' }}</span></div>
+          <div class="flex justify-between"><span class="text-stone-400">Descuentos</span><span class="font-semibold text-red-500">- S/ {{ totales.dctos_totales | number:'1.2-2' }}</span></div>
+          <div class="flex justify-between"><span class="text-stone-400">IGV (18%)</span><span class="font-semibold text-stone-900 dark:text-white">S/ {{ totales.igv | number:'1.2-2' }}</span></div>
+        </div>
+      </section>
+      <section class="bg-black dark:bg-white rounded-3xl p-5">
+        <div class="flex justify-between items-baseline mb-4">
+          <span class="text-xs font-medium text-white/60 dark:text-black/60 uppercase tracking-widest">Total</span>
+          <span class="text-3xl font-bold tracking-tight text-white dark:text-black">S/ {{ totales.total | number:'1.2-2' }}</span>
+        </div>
+        <button tuiButton type="button" (click)="registrarCompra()" [disabled]="!puedeRegistrar" appearance="primary-grayscale" size="l"
+          class="w-full !rounded-full !bg-white dark:!bg-black !text-black dark:!text-white font-semibold disabled:opacity-50">
+          Registrar comprobante
+        </button>
+      </section>
+      <button type="button" (click)="pasoAnterior()"
+        class="px-5 h-12 rounded-full text-sm font-medium text-stone-500 dark:text-stone-300 bg-stone-100 dark:bg-white/10 active:scale-[0.99] transition">← Atrás</button>
+    </div>
+  </form>
+
+  <!-- ============ ARCHIVO: SUBIR ============ -->
+  <div *ngIf="metodoSeleccionado === 'archivo' && pasoActual === 3" class="px-3 sm:px-4 py-4 space-y-3">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4">
+        <p class="text-xs font-semibold text-stone-900 dark:text-white mb-2">PDF</p>
+        <div *ngIf="!archivoPdf" (click)="pdfInput.click()"
+          class="border-2 border-dashed border-stone-200 dark:border-white/15 rounded-2xl p-6 text-center cursor-pointer active:scale-[0.99] transition">
+          <input #pdfInput type="file" accept=".pdf" class="hidden" (change)="onPdfSelected($event)" />
+          <p class="text-xs text-stone-400">Toca para subir PDF</p>
+        </div>
+        <div *ngIf="archivoPdf" class="flex items-center gap-2 rounded-2xl bg-stone-50 dark:bg-white/5 p-3">
+          <span class="text-xs font-medium text-stone-700 dark:text-stone-200 truncate flex-1">{{ archivoPdf.name }}</span>
+          <button type="button" (click)="archivoPdf = null" class="w-8 h-8 rounded-full text-stone-400 hover:text-red-500 flex items-center justify-center shrink-0">×</button>
+        </div>
+      </section>
+      <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4">
+        <p class="text-xs font-semibold text-stone-900 dark:text-white mb-2">XML</p>
+        <div *ngIf="!archivoFile" (click)="archivoInput.click()"
+          class="border-2 border-dashed border-stone-200 dark:border-white/15 rounded-2xl p-6 text-center cursor-pointer active:scale-[0.99] transition">
+          <input #archivoInput type="file" accept=".xml" class="hidden" (change)="onArchivoSelected($event)" />
+          <p class="text-xs text-stone-400">Toca para subir XML</p>
+        </div>
+        <div *ngIf="archivoFile" class="flex items-center gap-2 rounded-2xl bg-stone-50 dark:bg-white/5 p-3">
+          <span class="text-xs font-medium text-stone-700 dark:text-stone-200 truncate flex-1">{{ archivoFile.name }}</span>
+          <button type="button" (click)="archivoFile = null" class="w-8 h-8 rounded-full text-stone-400 hover:text-red-500 flex items-center justify-center shrink-0">×</button>
+        </div>
+      </section>
+    </div>
+    <div class="flex gap-2">
+      <button type="button" (click)="metodoSeleccionado = ''; pasoActual = 2"
+        class="px-5 h-12 rounded-full text-sm font-medium text-stone-500 dark:text-stone-300 bg-stone-100 dark:bg-white/10 active:scale-[0.99] transition">← Atrás</button>
+      <button type="button" (click)="pasoSiguiente()" [disabled]="!archivoFile && !archivoPdf"
+        class="flex-1 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black text-sm font-semibold active:scale-[0.99] transition disabled:opacity-40">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- ============ ARCHIVO: CONFIRMAR ============ -->
+  <div *ngIf="metodoSeleccionado === 'archivo' && pasoActual === 4" class="px-3 sm:px-4 py-4 space-y-4">
+    <section class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 p-4 sm:p-5 space-y-2">
+      <div *ngIf="archivoPdf" class="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
+        <span class="w-6 h-6 rounded-lg bg-stone-100 dark:bg-white/10 flex items-center justify-center text-[10px] font-bold shrink-0">PDF</span>
+        <span class="truncate">{{ archivoPdf.name }}</span>
+      </div>
+      <div *ngIf="archivoFile" class="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
+        <span class="w-6 h-6 rounded-lg bg-stone-100 dark:bg-white/10 flex items-center justify-center text-[10px] font-bold shrink-0">XML</span>
+        <span class="truncate">{{ archivoFile.name }}</span>
+      </div>
+    </section>
+    <div class="flex gap-2">
+      <button type="button" (click)="pasoAnterior()"
+        class="px-5 h-12 rounded-full text-sm font-medium text-stone-500 dark:text-stone-300 bg-stone-100 dark:bg-white/10 active:scale-[0.99] transition">← Atrás</button>
+      <button tuiButton type="button" (click)="guardarComprobante()" [disabled]="!puedeRegistrar" appearance="primary-grayscale" size="m" class="flex-1 !rounded-full font-semibold">
+        Guardar comprobante
+      </button>
+    </div>
+  </div>
 </tui-loader>
+</div>

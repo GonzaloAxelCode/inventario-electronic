@@ -5,7 +5,6 @@ import { WA_LOCAL_STORAGE, WA_WINDOW } from '@ng-web-apis/common';
 import { TUI_DARK_MODE, TUI_DARK_MODE_KEY, TuiAppearance, TuiIcon, TuiLabel, TuiTitle } from '@taiga-ui/core';
 import { TuiSwitch, tuiSwitchOptionsProvider } from '@taiga-ui/kit';
 import { LayoutService, LayoutMode } from '@/app/services/ui/layout-service.service';
-import { FeatureFlagsService } from '@/app/services/ui/feature-flags.service';
 import { UserService } from '@/app/services/user.service';
 
 @Component({
@@ -26,7 +25,6 @@ export class TemasSettingsComponent implements OnInit {
 
   constructor(
     public layoutService: LayoutService,
-    public featureFlags: FeatureFlagsService,
     private userService: UserService
   ) {}
 
@@ -61,35 +59,6 @@ export class TemasSettingsComponent implements OnInit {
     this.saveConfig({ navbar_type: this.isTopnavLayout ? 'top' : 'normal' });
   }
 
-  toggleGuiasRemision(): void {
-    this.featureFlags.toggleGuiasRemision();
-    this.saveModulosConfig();
-  }
-
-  toggleCompras(): void {
-    this.featureFlags.toggleCompras();
-    this.saveModulosConfig();
-  }
-
-  toggleGanancias(): void {
-    this.featureFlags.toggleGanancias();
-    this.saveModulosConfig();
-  }
-
-  private saveModulosConfig(): void {
-    const modulos: string[] = [];
-    if (this.featureFlags.guiasRemisionEnabled()) {
-      modulos.push('guias-de-remision');
-    }
-    if (this.featureFlags.comprasEnabled()) {
-      modulos.push('compras');
-    }
-    if (this.featureFlags.gananciasEnabled()) {
-      modulos.push('ganancias');
-    }
-    this.saveConfig({ modulos_habilitados: modulos });
-  }
-
   private saveConfig(config: {
     theme?: 'light' | 'dark';
     navbar_type?: 'top' | 'normal';
@@ -97,7 +66,6 @@ export class TemasSettingsComponent implements OnInit {
   }): void {
     this.userService.updateUserConfig(config).subscribe({
       next: (response) => {
-        console.log('Configuración guardada:', response);
       },
       error: (error) => {
         console.error('Error al guardar configuración:', error);

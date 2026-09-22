@@ -93,7 +93,6 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     serie: ['', [Validators.required, Validators.pattern(/^[A-Za-z0-9]{1,10}$/)]],
     correlativo: ['', [Validators.required, Validators.pattern(/^\d{1,20}$/)]],
     fecha_emision: ['', [Validators.required, this.fechaNoFuturaValidator]],
-    fecha_vencimiento: [''],
     forma_pago: ['CONTADO', Validators.required],
     moneda: ['PEN', Validators.required],
     tipo_documento_proveedor: [''],
@@ -103,7 +102,7 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     enlace_verificacion: ['', this.urlValidator],
     observaciones: [''],
     items: this.fb.array([], [Validators.required, Validators.minLength(1)]),
-  }, { validators: [this.fechaVencimientoValidator, this.proveedorValidator] });
+  }, { validators: [this.proveedorValidator] });
 
   ngOnInit() {
      this.compraForm.get('tipo_comprobante')?.valueChanges
@@ -236,13 +235,6 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     return fecha > hoy ? { fechaFutura: true } : null;
   }
 
-  fechaVencimientoValidator(group: AbstractControl): ValidationErrors | null {
-    const emision = group.get('fecha_emision')?.value;
-    const vencimiento = group.get('fecha_vencimiento')?.value;
-    if (!emision || !vencimiento) return null;
-    return new Date(vencimiento) < new Date(emision) ? { vencimientoAnterior: true } : null;
-  }
-
   proveedorValidator(group: AbstractControl): ValidationErrors | null {
     const tipoDoc = group.get('tipo_documento_proveedor')?.value;
     const nroDoc = group.get('numero_documento_proveedor')?.value;
@@ -321,12 +313,6 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  getFechaVencimientoError(): string {
-    const ctrl = this.f['fecha_vencimiento'];
-    if (!ctrl.errors || !ctrl.touched) return '';
-    return '';
-  }
-
   getFormaPagoError(): string {
     const ctrl = this.f['forma_pago'];
     if (!ctrl.errors || !ctrl.touched) return '';
@@ -371,13 +357,6 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
    getServerError(): string {
      return this.compraServerError || '';
    }
-
-  getVencimientoGroupError(): string {
-    const group = this.compraForm;
-    if (!group.errors || !this.f['fecha_vencimiento']?.touched) return '';
-    if (group.errors['vencimientoAnterior']) return 'La fecha de vencimiento debe ser posterior a la de emision';
-    return '';
-  }
 
   getItemError(index: number, field: string): string {
     const item = this.items.at(index);
@@ -593,7 +572,6 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
       if (this.f['forma_pago'].invalid) errores.push('Forma de pago');
       if (this.items.length === 0) errores.push('Al menos un producto');
 
-      if (this.compraForm.errors?.['vencimientoAnterior']) errores.push('Fecha de vencimiento invalida');
       if (this.compraForm.errors?.['proveedorIncompleto']) errores.push('Datos del proveedor incompletos');
 
       this.alerts.open('Formulario incompleto', {
@@ -624,7 +602,6 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
       items: f.items,
     };
 
-    if (f.fecha_vencimiento) compra.fecha_vencimiento = f.fecha_vencimiento;
     if (f.documento_relacionado) compra.documento_relacionado = f.documento_relacionado;
     if (f.enlace_verificacion) compra.enlace_verificacion = f.enlace_verificacion;
     if (f.observaciones) compra.observaciones = f.observaciones;
@@ -634,8 +611,6 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
       compra.numero_documento_proveedor = f.numero_documento_proveedor;
       compra.nombre_proveedor = f.nombre_proveedor;
     }
-
-    if (this.archivoFile) compra.archivo_xml = this.archivoFile;
 
     this.store.dispatch(crearCompra({ compra }));
 
@@ -676,7 +651,6 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
       serie: '',
       correlativo: '',
       fecha_emision: '',
-      fecha_vencimiento: '',
       forma_pago: 'CONTADO',
       moneda: 'PEN',
       tipo_documento_proveedor: '',

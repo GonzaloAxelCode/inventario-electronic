@@ -1,3 +1,10 @@
-<div class="h-full flex flex-col">
+<div class="flex flex-col h-full min-h-[60vh]">
+  <!-- Título -->
+  <div class="px-4 sm:px-6 pt-4 pb-1 shrink-0">
+    <h2 class="text-base sm:text-lg font-bold text-neutral-900 dark:text-white leading-tight">Seleccionar productos</h2>
+    <p class="text-[11px] sm:text-xs text-neutral-500 dark:text-neutral-400 leading-tight">Busca y agrega productos al pedido</p>
+  </div>
+  <div class="flex-1 min-h-0">
     <app-tableinventario mode="select_product_sale_mode" [cerrarDialogo]="closeAndSelectProduct"></app-tableinventario>
+  </div>
 </div>

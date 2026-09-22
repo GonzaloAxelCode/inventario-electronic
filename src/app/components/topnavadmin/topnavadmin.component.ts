@@ -2,9 +2,7 @@ import { Tienda } from '@/app/models/tienda.models';
 import { User } from '@/app/models/user.models';
 import { FeatureFlagsService } from '@/app/services/ui/feature-flags.service';
 import { URL_BASE } from '@/app/services/utils/endpoints';
-import { clearTokensAction } from '@/app/state/actions/auth.actions';
-import { clearInventariosFromCache } from '@/app/state/actions/inventario.actions';
-import { clearUserAction } from '@/app/state/actions/user.actions';
+import { LogoutService } from '@/app/services/logout.service';
 import { AppState } from '@/app/state/app.state';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
@@ -33,7 +31,8 @@ export class TopnavAdminComponent implements OnInit {
   constructor(
     private store: Store<AppState>,
     public router: Router,
-    public featureFlags: FeatureFlagsService
+    public featureFlags: FeatureFlagsService,
+    private logoutService: LogoutService
   ) {}
 
   toggleTheme(event: Event): void {
@@ -77,10 +76,7 @@ export class TopnavAdminComponent implements OnInit {
   }
 
   logout2(): void {
-    this.store.dispatch(clearTokensAction());
-    this.store.dispatch(clearUserAction());
-    this.store.dispatch(clearInventariosFromCache());
-    this.router.navigate(['/login']);
+    this.logoutService.logout();
   }
 
   @HostListener('document:click', ['$event'])

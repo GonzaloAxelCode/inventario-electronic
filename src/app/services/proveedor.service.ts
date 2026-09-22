@@ -4,7 +4,6 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { URL_BASE } from './utils/endpoints';
-import { printError } from './utils/print-errors';
 
 @Injectable({
     providedIn: 'root',
@@ -15,14 +14,17 @@ export class ProveedorService {
 
     fetchProveedores(): Observable<Proveedor[]> {
         return this.http.get<Proveedor[]>(`${this.siteURL}/proveedores/`).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 
     createProveedor(proveedor: ProveedorCreate): Observable<Proveedor> {
         return this.http.post<Proveedor>(`${this.siteURL}/proveedores/create/`, { ...proveedor }).pipe(
             catchError(error => {
-                printError(error);
+                console.error(error);
                 return throwError(() => error);
             })
         );
@@ -31,7 +33,7 @@ export class ProveedorService {
     updateProveedor(proveedor: Proveedor): Observable<Proveedor> {
         return this.http.put<Proveedor>(`${this.siteURL}/proveedores/update/${proveedor.id}/`, proveedor).pipe(
             catchError(error => {
-                printError(error);
+                console.error(error);
                 return throwError(() => error);
             })
         );
@@ -41,7 +43,7 @@ export class ProveedorService {
         const url = `${this.siteURL}/proveedores/toggle/${proveedor.id}/`;
         return this.http.put<ToggleProveedorResponse>(url, { activo }).pipe(
             catchError(error => {
-                printError(error);
+                console.error(error);
                 return throwError(() => error);
             })
         );
@@ -51,7 +53,10 @@ export class ProveedorService {
         return this.http.get(`${this.siteURL}/proveedores/consultar/`, {
             params: { tipo_documento: tipoDocumento, numero_documento: numeroDocumento }
         }).pipe(
-            catchError(error => throwError(() => error))
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
         );
     }
 }

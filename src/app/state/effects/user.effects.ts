@@ -37,7 +37,6 @@ export class UserEffects {
             exhaustMap(() =>
                 this.userService.fetchCurrentUser().pipe(
                     tap((data: any) => {
-                        console.log('users/me response:', data);
                     }),
                     map((data: any) => {
                         const loginData = getLoginUserDataFromLocalStorage();
@@ -78,6 +77,12 @@ export class UserEffects {
                     switchMap((data: any) => {
                         const newUser = data.usuario;
                         this.alertService.showSuccess('Usuario creado exitosamente', 'Éxito').subscribe();
+
+                        // Solo asignar como propietario si se pidió con el toggle (is_propietario).
+                        // Si la tienda ya tenía propietario, no se toca.
+                        if ((user as any)?.is_propietario !== true) {
+                            return of(createUserSuccess({ user: newUser }));
+                        }
 
                         const formData = new FormData();
                         formData.append('propietario', String(newUser.id));

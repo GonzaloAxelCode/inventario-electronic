@@ -37,6 +37,7 @@ export const authReducer = createReducer(
   on(loginInAction, (state, payload) => ({
     ...state,
     ...payload,
+    errors: {},
     isLoadingLogin: true,
   })),
 

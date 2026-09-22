@@ -17,6 +17,8 @@ export interface User {
     tienda_data?: Tienda;
     rol?: 'superuser' | 'empleado' | 'usuario' | string;
     es_propietario?: boolean;
+    /** Flag de escritura: crear este usuario como propietario de la tienda. */
+    is_propietario?: boolean;
     permissions: UserPermissions;
     user_permissions_list: string[];
     all_permissions_meta: string[];

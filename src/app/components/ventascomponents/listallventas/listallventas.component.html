@@ -34,6 +34,13 @@
                   <select placeholder="Comprobante" size="s" tuiSelect [items]="tipoComprobantes"></select>
                 </tui-select>
 
+                <tui-select class="w-full" formControlName="tipo_venta">
+                  <ng-container ngProjectAs="tuiLabel">
+                    <span>Tipo Venta</span>
+                  </ng-container>
+                  <select placeholder="Tipo venta" size="s" tuiSelect [items]="tiposVenta"></select>
+                </tui-select>
+
                 <tui-textfield iconStart="@tui.search" class="w-full">
                   <input formControlName="numero_comprobante" placeholder="N° Comprobante" tuiTextfield />
                 </tui-textfield>
@@ -428,6 +435,13 @@
           <span>Tipo Comprobante</span>
         </ng-container>
         <select placeholder="Comprobante" size="s" tuiSelect [items]="tipoComprobantes"></select>
+      </tui-select>
+
+      <tui-select class="w-full" formControlName="tipo_venta">
+        <ng-container ngProjectAs="tuiLabel">
+          <span>Tipo Venta</span>
+        </ng-container>
+        <select placeholder="Tipo venta" size="s" tuiSelect [items]="tiposVenta"></select>
       </tui-select>
 
       <tui-textfield iconStart="@tui.search" class="w-full">

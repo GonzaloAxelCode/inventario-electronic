@@ -1,4 +1,4 @@
-import { GuiaRemisionRemitente, CreateGuiaRemision } from '@/app/models/guia-remision.models';
+import { GuiaRemisionRemitente, CreateGuiaRemision, EnvioGuiaResponse, GuiaSearchQuery } from '@/app/models/guia-remision.models';
 import { createAction, props } from '@ngrx/store';
 
 export enum GuiaRemisionActionTypes {
@@ -13,11 +13,15 @@ export enum GuiaRemisionActionTypes {
     ANULAR_GUIA = '[GuiaRemision] Anular Guia',
     ANULAR_GUIA_EXITO = '[GuiaRemision] Anular Guia Exito',
     ANULAR_GUIA_ERROR = '[GuiaRemision] Anular Guia Error',
+
+    ENVIAR_GUIA = '[GuiaRemision] Enviar Guia',
+    ENVIAR_GUIA_EXITO = '[GuiaRemision] Enviar Guia Exito',
+    ENVIAR_GUIA_ERROR = '[GuiaRemision] Enviar Guia Error',
 }
 
 export const cargarGuias = createAction(
     GuiaRemisionActionTypes.CARGAR_GUIAS,
-    props<{ page?: number; page_size?: number; busqueda?: string }>()
+    props<{ page?: number; page_size?: number; busqueda?: string; from_date?: string; to_date?: string; query?: GuiaSearchQuery }>()
 );
 
 export const cargarGuiasExito = createAction(
@@ -39,12 +43,12 @@ export const cargarGuiasError = createAction(
 
 export const crearGuia = createAction(
     GuiaRemisionActionTypes.CREAR_GUIA,
-    props<{ guia: CreateGuiaRemision }>()
+    props<{ guia: any }>()
 );
 
 export const crearGuiaExito = createAction(
     GuiaRemisionActionTypes.CREAR_GUIA_EXITO,
-    props<{ guia: GuiaRemisionRemitente }>()
+    props<{ guia: GuiaRemisionRemitente; envio?: EnvioGuiaResponse | null }>()
 );
 
 export const crearGuiaError = createAction(
@@ -64,5 +68,20 @@ export const anularGuiaExito = createAction(
 
 export const anularGuiaError = createAction(
     GuiaRemisionActionTypes.ANULAR_GUIA_ERROR,
+    props<{ error: any }>()
+);
+
+export const enviarGuia = createAction(
+    GuiaRemisionActionTypes.ENVIAR_GUIA,
+    props<{ id: number }>()
+);
+
+export const enviarGuiaExito = createAction(
+    GuiaRemisionActionTypes.ENVIAR_GUIA_EXITO,
+    props<{ guia: GuiaRemisionRemitente; envio?: EnvioGuiaResponse | null }>()
+);
+
+export const enviarGuiaError = createAction(
+    GuiaRemisionActionTypes.ENVIAR_GUIA_ERROR,
     props<{ error: any }>()
 );

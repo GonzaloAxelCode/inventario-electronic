@@ -1,7 +1,8 @@
 import { Categoria } from '@/app/models/categoria.models';
 import { Inventario } from '@/app/models/inventario.models';
-import { Producto, ProductoState } from '@/app/models/producto.models';
-import { TiendaState } from '@/app/models/tienda.models';
+import { normalizeSku } from '@/app/services/search-services/producto-search.service';
+import { CameraScannerComponent } from '@/app/components/camera-scanner/camera-scanner.component';
+import { Producto, ProductoState } from '@/app/models/producto.models';import { TiendaState } from '@/app/models/tienda.models';
 import { DialogEditInventarioDetailService } from '@/app/services/dialogs-services/dialog-edit-inventario.service';
 import { QuerySearchInventario } from '@/app/services/inventario.service';
 import { URL_BASE } from '@/app/services/utils/endpoints';
@@ -70,6 +71,7 @@ import { map, Observable, Subject, takeUntil } from 'rxjs';
     TuiHeader,
     TuiNavigation,
     TuiTextfield,
+    CameraScannerComponent,
     FormsModule,
     ReactiveFormsModule
   ],
@@ -140,6 +142,60 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
   activeTabIndex = 0
   compareCategorias = (a: Categoria, b: Categoria) => a && b && a.id === b.id;
 
+  /** Vista del catálogo en modo selección: lista o grilla de 2 columnas. */
+  viewMode: 'lista' | 'grilla' = 'lista';
+
+  /** Combo de categoría con búsqueda (modo selección). */
+  categoriaBusqueda = '';
+  categoriaDropdownAbierto = false;
+
+  /** Escáner de código de barras con cámara (solo móvil, modo selección). */
+  mostrarEscanerCamara = false;
+
+  get soportaCamara(): boolean {
+    return typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia;
+  }
+
+  onCodigoEscaneadoPorCamara(codigo: string): void {
+    this.mostrarEscanerCamara = false;
+    const sku = normalizeSku((codigo || '').trim());
+    if (!sku) return;
+
+    const coincidencia = (this.allInventarios || []).find(
+      (inv: any) => normalizeSku(inv?.producto_sku || '') === sku
+    );
+
+    if (coincidencia && this.puedeSeleccionarse(coincidencia)) {
+      this.seleccionar(coincidencia);
+      return;
+    }
+
+    this.form.get('nombre')?.setValue(sku);
+    this.onSubmitSearch();
+  }
+
+  setViewMode(mode: 'lista' | 'grilla'): void {
+    this.viewMode = mode;
+  }
+
+  categoriasFiltradas(cats: Categoria[] | null): Categoria[] {
+    if (!cats) return [];
+    const q = this.categoriaBusqueda.trim().toLowerCase();
+    if (!q) return cats;
+    return cats.filter(c => (c.nombre || '').toLowerCase().includes(q));
+  }
+
+  elegirCategoria(cat: Categoria | null): void {
+    this.selectedCategoriaId = cat?.id ?? null;
+    this.categoriaBusqueda = cat?.nombre ?? '';
+    this.categoriaDropdownAbierto = false;
+    this.onSubmitSearch();
+  }
+
+  cerrarCategoriaDropdown(): void {
+    setTimeout(() => { this.categoriaDropdownAbierto = false; }, 150);
+  }
+
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
     this.store.select(selectUsersState).pipe(
       map(userState => userState.user.tienda)
@@ -162,6 +218,8 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
     this.store.dispatch(clearSearchInventarios());
     this.isTheSearchWasDone = false;
     this.selectedCategoriaId = null;
+    this.categoriaBusqueda = '';
+    this.categoriaDropdownAbierto = false;
     // Resetear el scroll infinito a la lista normal
     this.currentIndex = 0;
     this.inventariosSearchToShow = [];
@@ -323,8 +381,7 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
     return inventario[key as keyof any];
   }
 
-  getColorClass(cantidad: number): string {
-    if (cantidad >= 0 && cantidad <= 3) {
+  getColorClass(cantidad: number): string {    if (cantidad >= 0 && cantidad <= 3) {
       return 'text-red-500';
     } else if (cantidad >= 4 && cantidad <= 10) {
       return 'text-yellow-400';
@@ -376,6 +433,32 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
     return name?.includes("(Delete)")
       ? "⚠️ Producto Eliminado"
       : "";
+  }
+
+  /** ¿El item se puede agregar a la venta en modo selección? */
+  puedeSeleccionarse(inv: any): boolean {
+    return !!inv && Number(inv.cantidad) > 0 && Number(inv.costo_venta) > 0 && !!inv.activo;
+  }
+
+  /** Motivo por el que un item no está disponible en modo selección. */
+  motivoNoDisponible(inv: any): string {
+    if (!inv) return '';
+    if (!inv.activo) return 'Inactivo';
+    if (Number(inv.cantidad) <= 0) return 'Sin stock';
+    if (Number(inv.costo_venta) <= 0) return 'Sin precio';
+    return '';
+  }
+
+  /** Click en la tarjeta: en selección agrega sin abrir preview; en normal abre preview. */
+  seleccionar(inv: any): void {
+    if (this.mode === 'select_product_sale_mode') {
+      if (this.puedeSeleccionarse(inv)) {
+        this.cerrarDialogo(inv);
+      }
+      return;
+    }
+    this.onSetImageProduct(inv);
+    this.open = true;
   }
 
   ngOnDestroy() {

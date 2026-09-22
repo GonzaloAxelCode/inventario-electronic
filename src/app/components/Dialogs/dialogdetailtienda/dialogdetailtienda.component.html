@@ -118,9 +118,10 @@
               </tui-input>
             </div>
 <div>
-              <tui-input formControlName="representante" placeholder="Ingrese el representante" class="w-full">
-                Representante de la tienda
-              </tui-input>
+              <div class="rounded-xl bg-black/[0.02] dark:bg-white/[0.03] px-4 py-3">
+                <p class="text-[10px] uppercase tracking-widest text-[#86868b]">Propietario</p>
+                <p class="text-[14px] font-medium text-[#1d1d1f] dark:text-white truncate mt-0.5">{{ propietarioUsername || 'Sin propietario' }}</p>
+              </div>
             </div>
 <div>
               <tui-input formControlName="serie" placeholder="Ingrese la serie de comprobantes" class="w-full">
@@ -219,7 +220,8 @@
                   <div class="mt-2 flex flex-wrap items-center gap-2">
                     <button type="button" (click)="certPrivadaInput.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
                     <span *ngIf="certPrivadaFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[160px]">{{ certPrivadaFileName }}</span>
-                    <span *ngIf="!certPrivadaFileName" class="text-[11px] text-[#86868b]">Ningún archivo</span>
+                    <span *ngIf="!certPrivadaFileName && tieneCertPrivadaGuardada" class="text-[11px] font-medium px-2 py-1 rounded-full bg-[#30d158]/15 text-[#30d158]">✓ Certificado cargado</span>
+                    <span *ngIf="!certPrivadaFileName && !tieneCertPrivadaGuardada" class="text-[11px] text-[#86868b]">Ningún archivo</span>
                     <button *ngIf="certPrivadaFileName" type="button" (click)="selectedCertPrivada=null; certPrivadaString=null; certPrivadaFileName=null; certPrivadaInput.value=''" class="text-[11px] text-[#ff3b30] hover:underline">Quitar</button>
                   </div>
                   <input type="file" #certPrivadaInput (change)="onCertPrivadaSelected($event)" accept=".pem,.key,.p12,.pfx,.crt,.cer,.txt" class="hidden" />
@@ -229,7 +231,8 @@
                   <div class="mt-2 flex flex-wrap items-center gap-2">
                     <button type="button" (click)="certPublicaInput.click()" class="h-7 px-3.5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[11px] font-medium">Seleccionar archivo</button>
                     <span *ngIf="certPublicaFileName" class="text-[11px] font-mono px-2 py-1 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[#1d1d1f] dark:text-white truncate max-w-[160px]">{{ certPublicaFileName }}</span>
-                    <span *ngIf="!certPublicaFileName" class="text-[11px] text-[#86868b]">Ningún archivo</span>
+                    <span *ngIf="!certPublicaFileName && tieneCertPublicaGuardada" class="text-[11px] font-medium px-2 py-1 rounded-full bg-[#30d158]/15 text-[#30d158]">✓ Certificado cargado</span>
+                    <span *ngIf="!certPublicaFileName && !tieneCertPublicaGuardada" class="text-[11px] text-[#86868b]">Ningún archivo</span>
                     <button *ngIf="certPublicaFileName" type="button" (click)="selectedCertPublica=null; certPublicaString=null; certPublicaFileName=null; certPublicaInput.value=''" class="text-[11px] text-[#ff3b30] hover:underline">Quitar</button>
                   </div>
                   <input type="file" #certPublicaInput (change)="onCertPublicaSelected($event)" accept=".crt,.cer,.pem,.pub,.key,.p12,.pfx,.txt" class="hidden" />

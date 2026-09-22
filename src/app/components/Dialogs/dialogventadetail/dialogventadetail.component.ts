@@ -64,6 +64,8 @@ export class DialogventadetailComponent implements OnInit {
   protected index = 0;
   protected length = 1;
   selectedState: 'original' | 'anulado' = ((this as any).context?.data?.comprobante_nota_credito ? 'anulado' : 'original') as 'original' | 'anulado';
+  /** Toggle Apple: detalle o vista previa del comprobante. */
+  vista: 'detalle' | 'previa' = 'detalle';
 
 
   public comprobante: ComprobanteElectronico = this.venta?.comprobante ?? {} as ComprobanteElectronico;
@@ -81,7 +83,7 @@ export class DialogventadetailComponent implements OnInit {
           return parsed;
         }
       }
-    } catch (e) { console.warn('productos_json parse error', e); }
+    } catch (e) { console.error('productos_json parse error', e); }
     const fallback = (this.venta as any)?.productos || [];
     this._productosDetalleCache = fallback;
     return fallback;
@@ -105,7 +107,7 @@ export class DialogventadetailComponent implements OnInit {
           return parsed;
         }
       }
-    } catch (e) { console.warn('clientes_json parse error', e); }
+    } catch (e) { console.error('clientes_json parse error', e); }
     this._clienteJsonCache = null;
     return null;
   }
@@ -154,8 +156,6 @@ export class DialogventadetailComponent implements OnInit {
   }
   constructor(private store: Store<AppState>, private sanitizer: DomSanitizer, private actions$: Actions
   ) {
-    console.log(this.venta)
-
   }
   numeroTelefonico = '';
   numeroInvalido = true;
@@ -450,6 +450,31 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
 
   get clienteNombre(): string {
     return this.venta?.nombre_cliente || this.comprobante?.nombre_cliente || 'cliente';
+  }
+
+  /** Tag "Pedido": true si la venta se origino desde un pedido. */
+  get esVentaDePedido(): boolean {
+    const v: any = this.venta as any;
+    return !!(
+      v?.is_pedido === true ||
+      v?.isPedido === true ||
+      v?.es_pedido === true ||
+      v?.pedido_id ||
+      v?.pedidoId ||
+      v?.pedido ||
+      v?.pedido_numero ||
+      v?.numero_pedido
+    );
+  }
+
+  get pedidoOrigenLabel(): string {
+    const v: any = this.venta as any;
+    const num =
+      v?.pedido_numero ??
+      v?.numero_pedido ??
+      v?.pedido?.numero_pedido ??
+      (v?.pedido_id != null ? `#${v.pedido_id}` : '');
+    return num ? `Pedido ${num}` : 'Pedido';
   }
 
   get comprobanteLink(): string {

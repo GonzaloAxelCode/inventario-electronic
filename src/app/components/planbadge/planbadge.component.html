@@ -52,6 +52,12 @@
       </div>
       <div *ngIf="data?.uso_mensual as uso" class="mt-4 space-y-3">
         <p class="text-[11px] font-semibold tracking-widest uppercase text-[#86868b]">Uso del mes {{ usoMesLabel(uso) }}</p>
+        <div *ngIf="planInicio(uso, plan) || planVencimiento(uso, plan)" class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[#86868b]">
+          <span *ngIf="planInicio(uso, plan) as inicio">Inicio: <span class="font-medium text-[#1d1d1f] dark:text-white">{{ inicio | date:'dd/MM/yyyy' }}</span></span>
+          <span *ngIf="planVencimiento(uso, plan) as vencimiento">Renovación: <span class="font-medium text-[#1d1d1f] dark:text-white">{{ vencimiento | date:'dd/MM/yyyy' }}</span></span>
+          <span *ngIf="planDiasRestantes() != null" class="px-2 py-0.5 rounded-full text-[11px] font-semibold"
+            [ngClass]="planDiasRestantes()! <= 5 ? 'bg-[#ff3b30]/15 text-[#ff3b30]' : 'bg-[#30d158]/15 text-[#30d158]'">{{ planDiasRestantes() }} días restantes</span>
+        </div>
         <div>
           <div class="flex justify-between text-[12px] mb-1">
             <span class="text-[#1d1d1f] dark:text-white font-medium">Boletas</span>
@@ -68,6 +74,24 @@
           </div>
           <div class="h-2 rounded-full bg-black/[0.06] dark:bg-white/[0.08] overflow-hidden">
             <div class="h-full rounded-full bg-[#7d7aff]" [style.width.%]="usoPorcentaje(facturasEmitidas(uso), plan.limite_facturas)"></div>
+          </div>
+        </div>
+        <div *ngIf="usoPersonal != null">
+          <div class="flex justify-between text-[12px] mb-1">
+            <span class="text-[#1d1d1f] dark:text-white font-medium">Personal</span>
+            <span class="font-mono text-[#86868b]">{{ usoPersonal }} / {{ isIlimitado(plan.limite_personal) ? '∞' : plan.limite_personal }}</span>
+          </div>
+          <div class="h-2 rounded-full bg-black/[0.06] dark:bg-white/[0.08] overflow-hidden">
+            <div class="h-full rounded-full bg-[#30d158]" [style.width.%]="usoPorcentaje(usoPersonal, plan.limite_personal)"></div>
+          </div>
+        </div>
+        <div *ngIf="usoProductos != null">
+          <div class="flex justify-between text-[12px] mb-1">
+            <span class="text-[#1d1d1f] dark:text-white font-medium">Productos</span>
+            <span class="font-mono text-[#86868b]">{{ usoProductos }} / {{ plan.limite_productos == null ? '—' : (isIlimitado(plan.limite_productos) ? '∞' : plan.limite_productos) }}</span>
+          </div>
+          <div class="h-2 rounded-full bg-black/[0.06] dark:bg-white/[0.08] overflow-hidden">
+            <div class="h-full rounded-full bg-[#ff9f0a]" [style.width.%]="usoPorcentaje(usoProductos, plan.limite_productos)"></div>
           </div>
         </div>
       </div>

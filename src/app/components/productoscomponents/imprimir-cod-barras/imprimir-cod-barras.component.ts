@@ -7,6 +7,7 @@ import { TuiDataList, TuiTextfield } from '@taiga-ui/core';
 import { TuiCheckbox } from '@taiga-ui/kit';
 import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { Producto } from '@/app/models/producto.models';
+import { ProductoService } from '@/app/services/producto.service';
 import { AppState } from '@/app/state/app.state';
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { loadProductosAction } from '@/app/state/actions/producto.actions';
@@ -31,6 +32,7 @@ interface LabelCopy {
 })
 export class ImprimirCodBarrasComponent implements OnInit, AfterViewChecked {
   private store = inject(Store<AppState>);
+  private productoService = inject(ProductoService);
   private cdr = inject(ChangeDetectorRef);
 
   @ViewChildren('barcodeSvg') barcodeSvgs!: QueryList<ElementRef<SVGElement>>;
@@ -38,6 +40,8 @@ export class ImprimirCodBarrasComponent implements OnInit, AfterViewChecked {
   // data
   productos: Producto[] = [];
   search = '';
+  categoriaFiltro = '';
+  cargandoCatalogo = false;
   filtered: Producto[] = [];
   selected: ItemBarras[] = [];
 
@@ -94,9 +98,11 @@ export class ImprimirCodBarrasComponent implements OnInit, AfterViewChecked {
 
   ngOnInit(): void {
     this.store.select(selectProductoState).subscribe(state => {
-      this.productos = state.productos || [];
-      this.applyFilter();
-      this.cdr.markForCheck();
+      if (state.productos?.length) {
+        this.productos = state.productos;
+        this.applyFilter();
+        this.cdr.markForCheck();
+      }
     });
     // si no hay productos, cargar primera página
     setTimeout(() => {
@@ -104,6 +110,36 @@ export class ImprimirCodBarrasComponent implements OnInit, AfterViewChecked {
         this.store.dispatch(loadProductosAction({ page: 1, page_size: PAGE_SIZE_PRODUCTS }));
       }
     }, 300);
+    this.cargarCatalogoCompleto();
+  }
+
+  /** Trae el catálogo completo para poder imprimir Todos o una categoría entera. */
+  private cargarCatalogoCompleto(): void {
+    this.cargandoCatalogo = true;
+    this.productoService.fetchLoadProductos(1, 1000).subscribe({
+      next: (res: any) => {
+        const lista: Producto[] = res?.results ?? res ?? [];
+        if (lista.length) {
+          this.productos = lista;
+          this.applyFilter();
+        }
+        this.cargandoCatalogo = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.cargandoCatalogo = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  get categorias(): string[] {
+    const set = new Set<string>();
+    for (const p of this.productos) {
+      const c = (p.categoria_nombre || '').trim();
+      if (c) set.add(c);
+    }
+    return [...set].sort((a, b) => a.localeCompare(b));
   }
 
   ngAfterViewChecked(): void {
@@ -118,29 +154,113 @@ export class ImprimirCodBarrasComponent implements OnInit, AfterViewChecked {
     this.applyFilter();
   }
 
-  private applyFilter() {
-    const q = this.search.trim().toLowerCase();
-    if (!q) {
-      this.filtered = this.productos.slice(0, 20);
-      return;
-    }
-    this.filtered = this.productos.filter(p =>
-      p.nombre.toLowerCase().includes(q) ||
-      p.sku.toLowerCase().includes(q) ||
-      (p.categoria_nombre || '').toLowerCase().includes(q)
-    ).slice(0, 20);
+  onCategoriaChange(v: string) {
+    this.categoriaFiltro = v;
+    this.applyFilter();
   }
 
-  addProducto(p: Producto) {
+  /** Todas las coincidencias (búsqueda + categoría) sin recorte, para agregar en bloque. */
+  private coincidencias(): Producto[] {
+    const q = this.search.trim().toLowerCase();
+    return this.productos.filter(p => {
+      const okCat = !this.categoriaFiltro || (p.categoria_nombre || '') === this.categoriaFiltro;
+      if (!okCat) return false;
+      if (!q) return true;
+      return p.nombre.toLowerCase().includes(q) ||
+        p.sku.toLowerCase().includes(q) ||
+        (p.categoria_nombre || '').toLowerCase().includes(q);
+    });
+  }
+
+  private applyFilter() {
+    this.filtered = this.coincidencias().slice(0, 50);
+  }
+
+  private addLista(lista: Producto[], cantidad = 1) {
+    for (const p of lista) {
+      const found = this.selected.find(s => s.producto.id === p.id);
+      if (found) {
+        found.cantidad += cantidad;
+      } else {
+        this.selected.push({ producto: p, cantidad });
+      }
+    }
+    this.scheduleRender();
+  }
+
+  /** Copias por producto para agregados en bloque (categoría / resultados / todos). */
+  copiasBulk = 1;
+
+  bulkInc() {
+    if (this.copiasBulk < 99) this.copiasBulk += 1;
+  }
+
+  bulkDec() {
+    if (this.copiasBulk > 1) this.copiasBulk -= 1;
+  }
+
+  /** Agrega los resultados visibles (búsqueda + categoría). */
+  addResultados() {
+    this.addLista(this.coincidencias(), this.copiasBulk);
+  }
+
+  /** Agrega toda la categoría seleccionada. */
+  addCategoriaActual() {
+    if (!this.categoriaFiltro) return;
+    this.addLista(this.productos.filter(p => (p.categoria_nombre || '') === this.categoriaFiltro), this.copiasBulk);
+  }
+
+  /** Agrega todo el catálogo. */
+  addTodos() {
+    this.addLista(this.productos, this.copiasBulk);
+  }
+
+  /** Vista previa recortada para no saturar el DOM con categorías grandes. */
+  get labelsPreview(): LabelCopy[] {
+    return this.labels.slice(0, 120);
+  }
+
+  get labelsOcultos(): number {
+    return Math.max(0, this.labels.length - this.labelsPreview.length);
+  }
+
+  addProducto(p: Producto, cantidad = 1) {
     const found = this.selected.find(s => s.producto.id === p.id);
     if (found) {
-      found.cantidad += 1;
+      found.cantidad += cantidad;
     } else {
-      this.selected.push({ producto: p, cantidad: 1 });
+      this.selected.push({ producto: p, cantidad });
     }
     this.search = '';
     this.applyFilter();
     this.scheduleRender();
+  }
+
+  // ---- Modal selector (agregar producto) ----
+  selectorAbierto = false;
+  modoSelector: 'producto' | 'categoria' = 'producto';
+
+  openSelector(modo: 'producto' | 'categoria' = 'producto') {
+    this.modoSelector = modo;
+    this.selectorAbierto = true;
+    this.cdr.markForCheck();
+  }
+
+  closeSelector() {
+    this.selectorAbierto = false;
+    this.cdr.markForCheck();
+  }
+
+  conteoCategoria(c: string): number {
+    return this.productos.filter(p => (p.categoria_nombre || '') === c).length;
+  }
+
+  elegirProductoDesdeSelector(p: Producto) {
+    this.addLista([p]);
+  }
+
+  cantidadEnCola(p: Producto): number {
+    return this.selected.find(s => s.producto.id === p.id)?.cantidad ?? 0;
   }
 
   removeItem(idx: number) {
@@ -210,6 +330,7 @@ export class ImprimirCodBarrasComponent implements OnInit, AfterViewChecked {
   }
 
   onConfigChange() {
+    if (this.papel === '58') this.columnas = 1;
     this.scheduleRender();
   }
 

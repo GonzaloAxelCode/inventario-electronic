@@ -47,18 +47,15 @@ export class EstadisticasClientesComponent implements OnInit {
   selectedYear = this.currentYear;
 
   ngOnInit(): void {
-    console.log('[Estadisticas] Dispatching loadResumenClientes');
     this.store.dispatch(loadResumenClientes());
     this.dispatchMonthActions();
 
     this.store.select(selectResumenClientes).subscribe(resumen => {
-      console.log('[Estadisticas] Resumen update:', resumen);
       this.resumen = resumen;
       this.cdr.markForCheck();
     });
 
     this.store.select(selectLoadingResumen).subscribe(loading => {
-      console.log('[Estadisticas] Loading resumen:', loading);
       this.loadingResumen = loading;
       this.cdr.markForCheck();
     });

@@ -1,5 +1,6 @@
 import { Tienda } from '@/app/models/tienda.models';
 import { User } from '@/app/models/user.models';
+import { faltanteSunat, isSunatConfigurado } from '@/app/utils/sunat-status';
 import { AppState } from '@/app/state/app.state';
 import { initialStateUser, UserState } from '@/app/state/reducers/user.reducer';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
@@ -28,7 +29,15 @@ export class PerfilsettingsComponent {
     this.userState$.subscribe(userState => {
       this.user = userState.user;
       this.tienda = userState.user?.tienda_data || {} as Tienda
-      console.log(this.user)
     });
+  }
+
+  get sunatOK(): boolean {
+    return isSunatConfigurado(this.tienda);
+  }
+
+  get sunatFaltante(): string {
+    const faltan = faltanteSunat(this.tienda);
+    return faltan.length ? 'Falta: ' + faltan.join(' + ') : '';
   }
 }

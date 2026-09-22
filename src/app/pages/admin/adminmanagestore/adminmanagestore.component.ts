@@ -1,17 +1,19 @@
 import { DialogcreatetiendaComponent } from '@/app/components/Dialogs/dialogcreatetienda/dialogcreatetienda.component';
 import { FormaddstoreComponent } from '@/app/components/Forms/formaddstore/formaddstore.component';
 import { TabletiendasComponent } from '@/app/components/Tables/tabletiendas/tabletiendas.component';
+import { getPropietarioId, Tienda } from '@/app/models/tienda.models';
 import { loadTiendasAction } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
 import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { TuiAppearance, TuiButton, TuiIcon, tuiDialog, TuiTitle } from '@taiga-ui/core';
+import { TuiAppearance, TuiButton, TuiDialogOptions, TuiDialogService, TuiIcon, TuiTitle } from '@taiga-ui/core';
+import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
 import { TuiSkeleton, TuiTab, TuiTabs } from '@taiga-ui/kit';
 import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
-import { BehaviorSubject, combineLatest, filter, map, Observable, take } from 'rxjs';
+import { combineLatest, map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-adminmanagestore',
@@ -39,24 +41,11 @@ export class AdminmanagestoreComponent implements OnInit {
   isSuperUser$!: Observable<boolean>;
   isAdminTienda$!: Observable<boolean>;
   filteredTiendas$!: Observable<any[]>;
-  ownerOptions$!: Observable<{ ownerId: number; ownerName: string; tiendaCount: number }[]>;
   gestionTitle$!: Observable<string>;
   gestionSubtitle$!: Observable<string>;
   loadingTiendas$!: Observable<boolean>;
 
-  selectedOwnerId: number | null = null;
-  private readonly selectedOwnerId$ = new BehaviorSubject<number | null>(null);
-
-  setOwner(id: number | null): void {
-    this.selectedOwnerId = id;
-    this.selectedOwnerId$.next(id);
-  }
-
-  private readonly dialog = tuiDialog(DialogcreatetiendaComponent, {
-    dismissible: true,
-    label: 'Nueva Tienda',
-    size: "l"
-  });
+  private readonly dialogService = inject(TuiDialogService);
 
   constructor(private store: Store<AppState>) {}
 
@@ -76,50 +65,15 @@ export class AdminmanagestoreComponent implements OnInit {
       map(tiendaState => tiendaState.loadingTiendas)
     );
 
-    this.ownerOptions$ = this.store.select(selectTiendaState).pipe(
-      map(tiendaState => {
-        const tiendas = (tiendaState.tiendas ?? []).filter((t: any) => t.propietario != null);
-        const ownerMap = new Map<number, { name: string; count: number }>();
-        for (const t of tiendas as any[]) {
-          const ownerId = t.propietario as number;
-          const existing = ownerMap.get(ownerId);
-          if (existing) {
-            existing.count++;
-          } else {
-            const name = t.propietario_data
-              ? `${t.propietario_data.first_name || ''} ${t.propietario_data.last_name || ''}`.trim() || t.propietario_data.username || `Propietario #${ownerId}`
-              : `Propietario #${ownerId}`;
-            ownerMap.set(ownerId, { name, count: 1 });
-          }
-        }
-        return Array.from(ownerMap.entries())
-          .map(([ownerId, { name, count }]) => ({ ownerId, ownerName: name, tiendaCount: count }))
-          .sort((a, b) => b.tiendaCount - a.tiendaCount);
-      })
-    );
-
-    // Sin opción "Todos": preseleccionar el primer propietario en cuanto haya datos
-    this.ownerOptions$.pipe(
-      filter(owners => owners.length > 0),
-      take(1)
-    ).subscribe(owners => this.setOwner(owners[0].ownerId));
-
     this.filteredTiendas$ = combineLatest([
       this.store.select(selectTiendaState),
-      this.store.select(selectCurrenttUser),
-      this.selectedOwnerId$
+      this.store.select(selectCurrenttUser)
     ]).pipe(
-      map(([tiendaState, user, selectedOwnerId]) => {
-        let tiendas = tiendaState.tiendas ?? [];
-        // Filtrar tiendas sin propietario
-        tiendas = tiendas.filter((t: any) => t.propietario != null);
+      map(([tiendaState, user]) => {
+        const tiendas = tiendaState.tiendas ?? [];
         if (!user) return tiendas;
-        if (user.is_superuser) {
-          if (selectedOwnerId != null) {
-            return tiendas.filter((t: any) => t.propietario === selectedOwnerId);
-          }
-          return tiendas;
-        }
+        // Superusuario: todas las tiendas padre sin filtrar por propietario
+        if (user.is_superuser) return tiendas;
         // Solo admin tienda (es_propietario === true) ve filtrado; resto no debería estar aquí (guard lo bloquea)
         if ((user as any).es_propietario !== true) return [];
         // Admin tienda: mostrar su tienda, sucursales y tiendas donde es propietario/miembro
@@ -132,7 +86,7 @@ export class AdminmanagestoreComponent implements OnInit {
           if (userTiendaId && t.id === userTiendaId) return true;
           if (userTiendaDataId && t.id === userTiendaDataId) return true;
           // Mostrar tiendas donde es propietario
-          if (t.propietario === userId) return true;
+          if (getPropietarioId(t) === userId) return true;
           // Mostrar tiendas donde es miembro
           if (t.users_tienda?.some((u: any) => u.id === userId)) return true;
           // Mostrar sucursales de la tienda del usuario (tienda_padre = userTiendaId)
@@ -156,8 +110,15 @@ export class AdminmanagestoreComponent implements OnInit {
     this.activeTab = tab;
   }
 
-  protected showDialog(): void {
-    this.dialog().subscribe({
+  protected showDialog(padre?: Tienda): void {
+    const component = new PolymorpheusComponent(DialogcreatetiendaComponent);
+    const options: Partial<TuiDialogOptions<any>> = {
+      dismissible: true,
+      label: padre?.id != null ? `Nueva sucursal de ${padre.nombre}` : 'Nueva Tienda',
+      size: 'l',
+      data: padre?.id != null ? { tiendaPadre: padre } : undefined,
+    };
+    this.dialogService.open(component, options).subscribe({
       next: (data) => {},
       complete: () => {},
     });
