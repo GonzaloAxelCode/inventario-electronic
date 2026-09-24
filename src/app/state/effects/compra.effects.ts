@@ -12,6 +12,9 @@ import {
     crearCompra,
     crearCompraExito,
     crearCompraError,
+    editarCompra,
+    editarCompraExito,
+    editarCompraError,
     searchCompras,
     searchComprasExito,
     searchComprasError,
@@ -37,8 +40,15 @@ export class CompraEffects {
     cargarComprasEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(cargarCompras),
-            switchMap(({ page, page_size }) =>
-                this.compraService.getComprobantes(page, page_size).pipe(
+            switchMap(({ page, page_size, from_date, to_date, query, infinity_scroll }) =>
+                this.compraService.listarComprasPost({
+                    page: page ?? 1,
+                    page_size: page_size ?? 10,
+                    infinity_scroll: infinity_scroll ?? false,
+                    from_date,
+                    to_date,
+                    query,
+                }).pipe(
                     map((response) =>
                         cargarComprasExito({
                             comprobantes: response.results,
@@ -62,7 +72,8 @@ export class CompraEffects {
                 this.compraService.crearComprobante(compra).pipe(
                     map((response) => {
                         this.alertService.showSuccess('Comprobante registrado exitosamente', 'Exito').subscribe();
-                        return crearCompraExito({ comprobante: response.comprobante });
+                        const comprobante = response?.comprobante ?? response?.data ?? response;
+                        return crearCompraExito({ comprobante });
                     }),
                     catchError((error) => {
                         this.alertService.showError('Error al registrar el comprobante', 'Error').subscribe();
@@ -73,11 +84,37 @@ export class CompraEffects {
         )
     );
 
+    editarCompraEffect = createEffect(() =>
+        this.actions$.pipe(
+            ofType(editarCompra),
+            exhaustMap(({ id, cambios }) =>
+                this.compraService.actualizarComprobante(id, cambios).pipe(
+                    map((response) => {
+                        this.alertService.showSuccess('Compra actualizada exitosamente', 'Exito').subscribe();
+                        const comprobante = response?.comprobante ?? response?.data ?? response;
+                        return editarCompraExito({ comprobante });
+                    }),
+                    catchError((error) => {
+                        this.alertService.showError('Error al actualizar la compra', 'Error').subscribe();
+                        return of(editarCompraError({ error }));
+                    })
+                )
+            )
+        )
+    );
+
     searchComprasEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(searchCompras),
-            switchMap(({ query, page, page_size }) =>
-                this.compraService.searchComprobantes(query, page, page_size).pipe(
+            switchMap(({ query, page, page_size, from_date, to_date, infinity_scroll }) =>
+                this.compraService.listarComprasPost({
+                    page: page ?? 1,
+                    page_size: page_size ?? 10,
+                    infinity_scroll: infinity_scroll ?? false,
+                    from_date: from_date ?? (query as any)?.fecha_desde ?? (query as any)?.from_date,
+                    to_date: to_date ?? (query as any)?.fecha_hasta ?? (query as any)?.to_date,
+                    query,
+                }).pipe(
                     map((response) =>
                         searchComprasExito({
                             comprobantes: response.results,

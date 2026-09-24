@@ -1,6 +1,7 @@
 import { CompraItem, ComprobanteCompra } from '@/app/models/compra.models';
+import { DialogEditarCompraService } from '@/app/services/dialogs-services/dialog-editar-compra.service';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TuiDialogContext, TuiButton, TuiAppearance } from '@taiga-ui/core';
 import { TuiBadge } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
@@ -15,6 +16,13 @@ import { injectContext } from '@taiga-ui/polymorpheus';
 export class DialogcompradetailComponent {
   protected readonly context = injectContext<TuiDialogContext<boolean, ComprobanteCompra>>();
   public compra: ComprobanteCompra = this.context.data ?? {} as ComprobanteCompra;
+  private readonly editarService = inject(DialogEditarCompraService);
+
+  editar(): void {
+    const compra = this.compra;
+    this.context.completeWith(true);
+    this.editarService.open(compra).subscribe();
+  }
 
   getTipoComprobante(tipo: string): string {
     return tipo === '01' ? 'Factura' : 'Boleta';
@@ -31,8 +39,26 @@ export class DialogcompradetailComponent {
 
   getProveedorRuc(): string {
     if (this.compra.numero_documento_proveedor) return this.compra.numero_documento_proveedor;
-    if (this.compra.proveedor && typeof this.compra.proveedor === 'object') return this.compra.proveedor.ruc;
+    if (this.compra.proveedor && typeof this.compra.proveedor === 'object') {
+      return this.compra.proveedor.numero_documento || this.compra.proveedor.ruc || '-';
+    }
     return '-';
+  }
+
+  getItemNombre(item: CompraItem): string {
+    return (item as any)?.descripcion ?? item?.producto ?? 'Producto';
+  }
+
+  getXmlUrl(): string | null {
+    return this.compra.xml_url ?? (this.compra as any).archivo_xml ?? null;
+  }
+
+  getPdfUrl(): string | null {
+    return this.compra.pdf_url ?? (this.compra as any).archivo_pdf ?? null;
+  }
+
+  getImageUrl(): string | null {
+    return (this.compra as any).image_url ?? null;
   }
 
   formatDate(fecha: string): string {

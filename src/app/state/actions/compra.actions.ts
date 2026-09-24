@@ -1,4 +1,4 @@
-import { ComprobanteCompra, ComprobanteFile, ComprobanteFilesResponse, CreateCompra } from '@/app/models/compra.models';
+import { ComprobanteCompra, ComprobanteFile, ComprobanteFilesResponse, CreateCompra, UpdateCompra } from '@/app/models/compra.models';
 import { QuerySearchCompra } from '@/app/services/compra.service';
 import { createAction, props } from '@ngrx/store';
 
@@ -10,6 +10,10 @@ export enum CompraActionTypes {
     CREAR_COMPRA = '[Compra] Crear Compra',
     CREAR_COMPRA_EXITO = '[Compra] Crear Compra Exito',
     CREAR_COMPRA_ERROR = '[Compra] Crear Compra Error',
+
+    EDITAR_COMPRA = '[Compra] Editar Compra',
+    EDITAR_COMPRA_EXITO = '[Compra] Editar Compra Exito',
+    EDITAR_COMPRA_ERROR = '[Compra] Editar Compra Error',
 
     SUBIR_FILES = '[Compra] Subir Files',
     SUBIR_FILES_EXITO = '[Compra] Subir Files Exito',
@@ -28,7 +32,14 @@ export enum CompraActionTypes {
 
 export const cargarCompras = createAction(
     CompraActionTypes.CARGAR_COMPRAS,
-    props<{ page?: number; page_size?: number }>()
+    props<{
+        page?: number;
+        page_size?: number;
+        from_date?: string;
+        to_date?: string;
+        query?: Partial<QuerySearchCompra>;
+        infinity_scroll?: boolean;
+    }>()
 );
 
 export const cargarComprasExito = createAction(
@@ -63,9 +74,31 @@ export const crearCompraError = createAction(
     props<{ error: any }>()
 );
 
+export const editarCompra = createAction(
+    CompraActionTypes.EDITAR_COMPRA,
+    props<{ id: number; cambios: UpdateCompra }>()
+);
+
+export const editarCompraExito = createAction(
+    CompraActionTypes.EDITAR_COMPRA_EXITO,
+    props<{ comprobante: ComprobanteCompra }>()
+);
+
+export const editarCompraError = createAction(
+    CompraActionTypes.EDITAR_COMPRA_ERROR,
+    props<{ error: any }>()
+);
+
 export const searchCompras = createAction(
     CompraActionTypes.SEARCH_COMPRAS,
-    props<{ query: Partial<QuerySearchCompra>; page?: number; page_size?: number }>()
+    props<{
+        query: Partial<QuerySearchCompra>;
+        page?: number;
+        page_size?: number;
+        from_date?: string;
+        to_date?: string;
+        infinity_scroll?: boolean;
+    }>()
 );
 
 export const searchComprasExito = createAction(

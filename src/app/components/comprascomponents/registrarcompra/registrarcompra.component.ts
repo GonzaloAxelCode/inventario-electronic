@@ -8,12 +8,13 @@ import { TuiSegmented } from '@taiga-ui/kit';
 import { Actions, ofType } from '@ngrx/effects';
   import { takeUntil, Subject, switchMap, filter, distinctUntilChanged, of, timeout, finalize } from 'rxjs';
   import { catchError, map } from 'rxjs/operators';
-import { crearCompra, crearCompraExito, subirFiles, subirFilesExito } from '@/app/state/actions/compra.actions';
+import { crearCompra, crearCompraExito } from '@/app/state/actions/compra.actions';
 import { AppState } from '@/app/state/app.state';
 import { CompraState } from '@/app/state/reducers/compra.reducer';
 import { selectCompra } from '@/app/state/selectors/compra.selectors';
   import { ConsultaService } from '@/app/services/consultas.service';
 import { Proveedor } from '@/app/models/proveedor.models';
+import { CreateCompra } from '@/app/models/compra.models';
 import { loadProveedores } from '@/app/state/actions/proveedor.actions';
 import { selectProveedores } from '@/app/state/selectors/proveedor.selectors';
 import { Observable } from 'rxjs';
@@ -53,7 +54,6 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
      map((state: CompraState) => state.error?.error || {})
    );
   tipoComprobanteSeleccionado = '';
-   metodoSeleccionado: string = '';
    pasoActual: number = 1;
 
    private consultaService = inject(ConsultaService);
@@ -96,6 +96,7 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
 
    archivoFile: File | null = null;
    archivoPdf: File | null = null;
+   archivoImagen: File | null = null;
    parseando = false;
 
   compraForm: FormGroup = this.fb.group({
@@ -161,16 +162,6 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
      this.compraForm.get('tipo_comprobante')?.setValue(tipo, { emitEvent: true });
    }
 
-   irAlMetodoSeleccion(): void {
-     this.metodoSeleccionado = '';
-     this.pasoActual = 2;
-   }
-
-   seleccionarMetodo(metodo: 'formulario' | 'archivo'): void {
-     this.metodoSeleccionado = metodo;
-     this.pasoActual = 3;
-   }
-
    pasoSiguiente(): void {
      this.pasoActual++;
    }
@@ -180,13 +171,7 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     }
 
     get puedeRegistrar(): boolean {
-      if (this.metodoSeleccionado === 'formulario') {
-        return this.compraForm.valid && this.items.length > 0;
-      }
-      if (this.metodoSeleccionado === 'archivo') {
-        return !!this.archivoFile || !!this.archivoPdf;
-      }
-      return false;
+      return this.compraForm.valid && this.items.length > 0;
     }
 
    setOrigenProveedor(origen: 'registrados' | 'consulta'): void {
@@ -514,22 +499,96 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     return parseFloat(((cantidad * precio) - descuento).toFixed(2));
   }
 
-  // ==================== ARCHIVO XML ====================
+   // ==================== ARCHIVO XML ====================
 
-   onArchivoSelected(event: Event) {
+   private labelTipo(tipo: string): string {
+     return this.tipoComprobanteLabels[tipo] || `tipo ${tipo}`;
+   }
+
+   /**
+    * El XML debe ser del mismo tipo que el seleccionado (01 factura / 03 boleta).
+    * Retorna false y muestra error si no coincide.
+    */
+   private xmlCoincideTipo(datos: { tipo_comprobante?: string }): boolean {
+     const tipoForm = this.compraForm.get('tipo_comprobante')?.value || this.tipoComprobanteSeleccionado || '01';
+     const xmlTipo = (datos.tipo_comprobante || '').trim();
+     if (xmlTipo !== tipoForm) {
+       const detalle = xmlTipo === '01' || xmlTipo === '03'
+         ? `El XML es una ${this.labelTipo(xmlTipo).toUpperCase()} pero seleccionaste ${this.labelTipo(tipoForm).toUpperCase()}`
+         : `El XML es de tipo ${xmlTipo} (solo se permiten facturas 01 y boletas 03)`;
+       this.alerts.open('El XML no coincide con el tipo', {
+         label: `${detalle}. Sube el XML correcto.`,
+         appearance: 'error'
+       }).subscribe();
+       return false;
+     }
+     return true;
+   }
+
+   /**
+    * El RUC manual o buscado debe coincidir con el RUC del XML.
+    * Si no se ingresó RUC, se autocompleta con el del XML. Sin XML no dice nada.
+    * Retorna false y muestra error si difieren (no se debe enviar).
+    */
+   private xmlCoincideRuc(datos: { numero_documento_proveedor?: string; nombre_proveedor?: string; tipo_documento_proveedor?: string }): boolean {
+     const xmlRuc = (datos.numero_documento_proveedor || '').trim();
+     if (!xmlRuc) return true;
+     const formRuc = ((this.compraForm.get('numero_documento_proveedor')?.value || '') as string).trim();
+     if (formRuc && formRuc !== xmlRuc) {
+       this.alerts.open('El RUC no coincide con el XML', {
+         label: `Ingresaste ${formRuc} pero el XML es de ${xmlRuc}. Deben ser el mismo RUC.`,
+         appearance: 'error'
+       }).subscribe();
+       return false;
+     }
+     if (!formRuc) {
+       // El XML trae catálogo 06 (6=RUC, 1=DNI); el formulario usa 07=RUC, 01=DNI
+       const tipoDocXml = datos.tipo_documento_proveedor === '1' ? '01' : '07';
+       this.origenProveedor = 'consulta';
+       this.proveedorRegistradoRuc = '';
+       this.proveedorNoEncontrado = false;
+       this.compraForm.patchValue({
+         numero_documento_proveedor: xmlRuc,
+         nombre_proveedor: datos.nombre_proveedor || '',
+         tipo_documento_proveedor: tipoDocXml,
+       });
+     }
+     return true;
+   }
+
+   private async validarXmlContraTipoSeleccionado(): Promise<boolean> {
+     if (!this.archivoFile) return true;
+     let datos;
+     try {
+       datos = await parseXmlCompra(this.archivoFile);
+     } catch {
+       return true; // el error de parseo se reporta en sincronizar/registrar
+     }
+     return this.xmlCoincideTipo(datos);
+   }
+
+   async onArchivoSelected(event: Event) {
      const input = event.target as HTMLInputElement;
      if (input.files && input.files.length > 0) {
        const file = input.files[0];
        const isXml = file.type === 'text/xml' || file.name.endsWith('.xml');
 
-       if (isXml) {
-         this.archivoFile = file;
-       } else {
+       if (!isXml) {
          this.alerts.open('Archivo invalido', {
            label: 'Solo se permiten archivos .xml',
            appearance: 'warning'
          }).subscribe();
+         return;
        }
+
+       this.archivoFile = file;
+       // Validar de inmediato contra el tipo seleccionado
+       const ok = await this.validarXmlContraTipoSeleccionado();
+       if (!ok) {
+         this.archivoFile = null;
+         input.value = '';
+       }
+       this.cdr.detectChanges();
      }
    }
 
@@ -550,6 +609,23 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
      }
    }
 
+   onImagenSelected(event: Event) {
+     const input = event.target as HTMLInputElement;
+     if (input.files && input.files.length > 0) {
+       const file = input.files[0];
+       const isImg = file.type.startsWith('image/') || /\.(jpe?g|png|webp)$/i.test(file.name);
+
+       if (isImg) {
+         this.archivoImagen = file;
+       } else {
+         this.alerts.open('Archivo invalido', {
+           label: 'Solo se permiten imágenes .jpg/.jpeg/.png/.webp',
+           appearance: 'warning'
+         }).subscribe();
+       }
+     }
+   }
+
   async sincronizar() {
     if (!this.archivoFile) return;
 
@@ -558,6 +634,22 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
 
     try {
       const datos = await parseXmlCompra(this.archivoFile);
+
+      // El XML debe coincidir con el tipo seleccionado: no mezclar factura/boleta
+      if (!this.xmlCoincideTipo(datos)) {
+        this.archivoFile = null;
+        return;
+      }
+
+      // El XML trae catálogo 06 (6=RUC, 1=DNI); el formulario usa 07=RUC, 01=DNI
+      const tipoDocXml = datos.tipo_documento_proveedor === '1' ? '01' : '07';
+
+      // Mostrar la vista "Por RUC" para que se vea el RUC autocompletado
+      if ((datos.numero_documento_proveedor || '').trim()) {
+        this.origenProveedor = 'consulta';
+        this.proveedorRegistradoRuc = '';
+        this.proveedorNoEncontrado = false;
+      }
 
       this.compraForm.patchValue({
         tipo_comprobante: datos.tipo_comprobante,
@@ -568,7 +660,7 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
         forma_pago: datos.forma_pago,
         nombre_proveedor: datos.nombre_proveedor,
         numero_documento_proveedor: datos.numero_documento_proveedor,
-        tipo_documento_proveedor: datos.tipo_documento_proveedor,
+        tipo_documento_proveedor: tipoDocXml,
       });
 
       this.items.clear();
@@ -604,9 +696,82 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ==================== REGISTRO ====================
+  // ==================== REGISTRO (endpoint único POST /api/compras/crear/) ====================
 
-  registrarCompra() {
+  /** Construye el payload nuevo: proveedor {id} o {nombre,tipo_documento,numero_documento} + items {descripcion,codigo}. */
+  private buildCompraPayload(datosXml?: any): CreateCompra | null {
+    const f = this.compraForm.value;
+    const t = this.totales;
+
+    const tipo = (f.tipo_comprobante || this.tipoComprobanteSeleccionado || datosXml?.tipo_comprobante || '01') as string;
+    const serie = ((f.serie || datosXml?.serie || '') as string).trim().toUpperCase();
+    const correlativo = ((f.correlativo || datosXml?.correlativo || '') as string).trim();
+    const fecha_emision = f.fecha_emision || datosXml?.fecha_emision || '';
+
+    // Items: formulario tiene prioridad; si no, los del XML parseado
+    let rawItems: any[] = [];
+    if (this.items.length > 0) rawItems = f.items;
+    else if (datosXml?.items?.length) rawItems = datosXml.items;
+
+    const items = (rawItems || []).map((it: any) => ({
+      cantidad: Number(it.cantidad),
+      precio_unitario: Number(it.precio_unitario),
+      descuento: Number(it.descuento ?? 0),
+      descripcion: it.descripcion ?? it.producto ?? '',
+      ...(it.codigo ? { codigo: it.codigo } : {}),
+    }));
+
+    if (!serie || !correlativo || !fecha_emision || items.length === 0) return null;
+
+    const compra: CreateCompra = {
+      tipo_comprobante: tipo,
+      serie,
+      correlativo,
+      fecha_emision,
+      forma_pago: f.forma_pago || datosXml?.forma_pago || 'CONTADO',
+      moneda: f.moneda || datosXml?.moneda || 'PEN',
+      total: t.total,
+      igv: t.igv,
+      gravadas: t.gravadas,
+      op_exoneradas: t.op_exoneradas,
+      op_inafectas: t.op_inafectas,
+      op_gratuitas: t.op_gratuitas,
+      dctos_totales: t.dctos_totales,
+      icbper: t.icbper,
+      items,
+    };
+
+    // Proveedor: {id} si es de registrados, o {nombre,tipo_documento,numero_documento}
+    const provSeleccionado = this.proveedorRegistradoSeleccionado;
+    if (this.origenProveedor === 'registrados' && provSeleccionado) {
+      compra.proveedor = { id: provSeleccionado.id };
+    } else {
+      const nombre = f.nombre_proveedor || datosXml?.nombre_proveedor || '';
+      const tipoDoc = f.tipo_documento_proveedor || datosXml?.tipo_documento_proveedor || '';
+      const nroDoc = f.numero_documento_proveedor || datosXml?.numero_documento_proveedor || '';
+      if (nombre || nroDoc) {
+        compra.proveedor = {
+          ...(nombre ? { nombre } : {}),
+          ...(tipoDoc ? { tipo_documento: tipoDoc } : {}),
+          ...(nroDoc ? { numero_documento: nroDoc } : {}),
+        };
+      }
+    }
+
+    if (f.documento_relacionado) compra.documento_relacionado = f.documento_relacionado;
+    if (f.enlace_verificacion) compra.enlace_verificacion = f.enlace_verificacion;
+    if (f.observaciones) compra.observaciones = f.observaciones;
+
+    // Archivos opcionales (multipart) — keys backend: xml / pdf / imagen.
+    // Si no hay archivos se envía JSON puro al mismo endpoint único.
+    if (this.archivoFile) compra.xml = this.archivoFile;
+    if (this.archivoPdf) compra.pdf = this.archivoPdf;
+    if (this.archivoImagen) compra.imagen = this.archivoImagen;
+
+    return compra;
+  }
+
+  async registrarCompra() {
     this.submitted = true;
     this.markAllAsTouched();
 
@@ -629,35 +794,37 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const f = this.compraForm.value;
-    const t = this.totales;
+    // Verificación final con el XML (si se subió): debe coincidir tipo y RUC.
+    // El tipo o el RUC pudieron cambiar después de subir el archivo.
+    // Sin XML no se dice nada.
+    if (this.archivoFile) {
+      let datos;
+      try {
+        datos = await parseXmlCompra(this.archivoFile);
+      } catch (error: any) {
+        this.alerts.open('No se pudo leer el XML', {
+          label: error.message || 'Sube un XML válido o quítalo para continuar',
+          appearance: 'error'
+        }).subscribe();
+        return;
+      }
+      if (!this.xmlCoincideTipo(datos)) {
+        this.archivoFile = null;
+        return;
+      }
+      if (!this.xmlCoincideRuc(datos)) {
+        return;
+      }
+    }
 
-    const compra: any = {
-      tipo_comprobante: f.tipo_comprobante,
-      serie: f.serie.trim().toUpperCase(),
-      correlativo: f.correlativo.trim(),
-      fecha_emision: f.fecha_emision,
-      forma_pago: f.forma_pago,
-      moneda: f.moneda,
-      total: t.total,
-      igv: t.igv,
-      gravadas: t.gravadas,
-      op_exoneradas: t.op_exoneradas,
-      op_inafectas: t.op_inafectas,
-      op_gratuitas: t.op_gratuitas,
-      dctos_totales: t.dctos_totales,
-      icbper: t.icbper,
-      items: f.items,
-    };
-
-    if (f.documento_relacionado) compra.documento_relacionado = f.documento_relacionado;
-    if (f.enlace_verificacion) compra.enlace_verificacion = f.enlace_verificacion;
-    if (f.observaciones) compra.observaciones = f.observaciones;
-
-    if (f.tipo_documento_proveedor && f.numero_documento_proveedor && f.nombre_proveedor) {
-      compra.tipo_documento_proveedor = f.tipo_documento_proveedor;
-      compra.numero_documento_proveedor = f.numero_documento_proveedor;
-      compra.nombre_proveedor = f.nombre_proveedor;
+    // Sin archivos -> JSON; con archivos -> multipart (mismo endpoint único)
+    const compra = this.buildCompraPayload();
+    if (!compra) {
+      this.alerts.open('Formulario incompleto', {
+        label: 'Revisa serie, correlativo, fecha e items',
+        appearance: 'warning'
+      }).subscribe();
+      return;
     }
 
     this.store.dispatch(crearCompra({ compra }));
@@ -667,27 +834,6 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.limpiarFormulario();
-    });
-  }
-
-  guardarComprobante() {
-    const f = this.compraForm.value;
-    const tipoComprobante = f.tipo_comprobante || this.tipoComprobanteSeleccionado;
-
-    this.store.dispatch(subirFiles({
-      tipoComprobante,
-      xml: this.archivoFile || undefined,
-      pdf: this.archivoPdf || undefined,
-      observaciones: f.observaciones || undefined,
-    }));
-
-    this.actions$.pipe(
-      ofType(subirFilesExito),
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      this.limpiarFormulario();
-      this.pasoActual = 1;
-      this.metodoSeleccionado = '';
     });
   }
 
@@ -710,9 +856,12 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     });
     this.archivoFile = null;
     this.archivoPdf = null;
+    this.archivoImagen = null;
     this.origenProveedor = 'registrados';
     this.proveedorRegistradoRuc = '';
     this.proveedorNoEncontrado = false;
+    this.tipoComprobanteSeleccionado = '';
+    this.pasoActual = 1;
   }
 
   ngOnDestroy() {

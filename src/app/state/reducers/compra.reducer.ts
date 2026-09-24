@@ -7,6 +7,9 @@ import {
     crearCompra,
     crearCompraExito,
     crearCompraError,
+    editarCompra,
+    editarCompraExito,
+    editarCompraError,
     searchCompras,
     searchComprasExito,
     searchComprasError,
@@ -32,6 +35,7 @@ export interface CompraState {
     index_page: any;
     length_pages: any;
     loadingCreate: boolean;
+    loadingUpdate: boolean;
     loadingUpload: boolean;
     comprobantes_files: ComprobanteFile[];
     loadingFiles: boolean;
@@ -50,6 +54,7 @@ export const initialState: CompraState = {
     index_page: null,
     length_pages: null,
     loadingCreate: false,
+    loadingUpdate: false,
     loadingUpload: false,
     comprobantes_files: [],
     loadingFiles: false,
@@ -91,6 +96,23 @@ export const compraReducer = createReducer(
         ...state,
         error,
         loadingCreate: false,
+    })),
+    on(editarCompra, (state) => ({
+        ...state,
+        loadingUpdate: true,
+        error: undefined
+    })),
+    on(editarCompraExito, (state, { comprobante }) => ({
+        ...state,
+        comprobantes: state.comprobantes.map((c) => c.id === comprobante.id ? comprobante : c),
+        comprobantes_search: state.comprobantes_search.map((c) => c.id === comprobante.id ? comprobante : c),
+        loadingUpdate: false,
+        error: undefined
+    })),
+    on(editarCompraError, (state, { error }) => ({
+        ...state,
+        error,
+        loadingUpdate: false,
     })),
     on(searchCompras, (state) => ({
         ...state,

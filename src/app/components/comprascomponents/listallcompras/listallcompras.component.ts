@@ -1,17 +1,17 @@
-import { ComprobanteCompra, ComprobanteFile } from '@/app/models/compra.models';
+import { ComprobanteCompra } from '@/app/models/compra.models';
 import { PAGE_SIZE_COMPRAS } from '@/app/services/utils/pages-sizes';
 import { QuerySearchCompra } from '@/app/services/compra.service';
 import { DialogCompraDetailService } from '@/app/services/dialogs-services/dialog-compra-detail.service';
-import { cargarCompras, cargarFiles, searchCompras, clearSearchCompras } from '@/app/state/actions/compra.actions';
+import { cargarCompras, searchCompras, clearSearchCompras } from '@/app/state/actions/compra.actions';
 import { AppState } from '@/app/state/app.state';
-import { selectCompra, selectCompraFiles } from '@/app/state/selectors/compra.selectors';
+import { selectCompra } from '@/app/state/selectors/compra.selectors';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { TuiBadge, TuiPagination } from '@taiga-ui/kit';
-import { TuiBlockStatus } from '@taiga-ui/layout';
-import { TuiButton, TuiDataList, TuiExpand, TuiLabel, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TuiPagination } from '@taiga-ui/kit';
+import { TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
+import { TuiButton, TuiDataList, TuiDialog, TuiLabel, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { Subject, takeUntil } from 'rxjs';
 import * as dayjs from 'dayjs';
@@ -30,17 +30,17 @@ dayjs.locale('es');
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    TuiBadge,
     TuiPagination,
     TuiBlockStatus,
     TuiLoader,
     TuiButton,
-    TuiExpand,
     TuiLabel,
     TuiTextfield,
     TuiDataList,
     TuiSelectModule,
     TuiTextfieldControllerModule,
+    TuiDialog,
+    TuiSearch,
   ],
   templateUrl: './listallcompras.component.html',
   styleUrl: './listallcompras.component.scss'
@@ -53,14 +53,13 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
   private dialogCompraDetail = inject(DialogCompraDetailService);
 
   compras: ComprobanteCompra[] = [];
-  files: ComprobanteFile[] = [];
-  viewMode: string = 'registrados';
   loading = false;
   loadingSearch = false;
   indexPage = 0;
   lengthPages = 0;
+  totalCount = 0;
   searchActive = false;
-  expanded = false;
+  filtrosOpen = false;
   private itemsExpandidos = new Set<number>();
 
   tipoComprobantes = ['Todos', '01', '03'];
@@ -76,69 +75,45 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
     'CONTADO': 'Contado',
     'CREDITO': 'Credito'
   };
+  conArchivoOptions = ['Todos', 'Sí', 'No'];
 
   form = new FormGroup({
     nombre: new FormControl(''),
     tipo_comprobante: new FormControl('Todos'),
     serie: new FormControl(''),
     correlativo: new FormControl(''),
+    numero_comprobante: new FormControl(''),
     moneda: new FormControl('Todos'),
     forma_pago: new FormControl('Todos'),
     proveedor: new FormControl(''),
+    con_pdf: new FormControl('Todos'),
+    con_xml: new FormControl('Todos'),
     fecha_desde: new FormControl(''),
     fecha_hasta: new FormControl(''),
     total_min: new FormControl(''),
     total_max: new FormControl(''),
   });
 
-  get esViewSubidos(): boolean {
-    return this.viewMode === 'subidos';
-  }
-
-  get esViewRegistrados(): boolean {
-    return this.viewMode === 'registrados';
-  }
-
   ngOnInit() {
     this.store.dispatch(cargarCompras({ page: 1, page_size: PAGE_SIZE_COMPRAS }));
-
-    if (this.viewMode === 'subidos') {
-      this.store.dispatch(cargarFiles());
-    }
 
     this.store.select(selectCompra)
       .pipe(takeUntil(this.destroy$))
       .subscribe((state) => {
-        if (state.search_found) {
-          this.compras = (state.comprobantes_search || []).map((c) => {
-            let items = c.items;
-            if (typeof items === 'string') {
-              try { items = JSON.parse(items); } catch { items = []; }
-            }
-            return { ...c, items };
-          });
-        } else {
-          this.compras = (state.comprobantes || []).map((c) => {
-            let items = c.items;
-            if (typeof items === 'string') {
-              try { items = JSON.parse(items); } catch { items = []; }
-            }
-            return { ...c, items };
-          });
-        }
+        const list = state.search_found ? (state.comprobantes_search || []) : (state.comprobantes || []);
+        this.compras = list.map((c) => {
+          let items = c.items;
+          if (typeof items === 'string') {
+            try { items = JSON.parse(items); } catch { items = []; }
+          }
+          return { ...c, items };
+        });
         this.loading = !!state.loading;
         this.loadingSearch = !!state.loadingSearch;
         this.indexPage = state.index_page ?? 0;
         this.lengthPages = state.length_pages ?? 0;
+        this.totalCount = state.count ?? 0;
         this.searchActive = state.search_found;
-        this.cdr.markForCheck();
-      });
-
-    this.store.select(selectCompraFiles)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((state) => {
-        this.files = state.files;
-        this.loading = state.loadingFiles;
         this.cdr.markForCheck();
       });
   }
@@ -148,25 +123,48 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onSubmitSearch() {
+  /** Arma el query combinable estilo ventas (POST {query:{...}} + from_date/to_date). */
+  private buildQuery(): Partial<QuerySearchCompra> {
     const f = this.form.value;
     const query: Partial<QuerySearchCompra> = {};
-
     if (f.nombre) query.nombre = f.nombre;
-    // Los selects mandan string vacío cuando es 'Todos'
     query.tipo_comprobante = !f.tipo_comprobante || f.tipo_comprobante === 'Todos' ? '' : f.tipo_comprobante;
     if (f.serie) query.serie = f.serie;
     if (f.correlativo) query.correlativo = f.correlativo;
+    if (f.numero_comprobante) (query as any).numero_comprobante = f.numero_comprobante;
     query.moneda = !f.moneda || f.moneda === 'Todos' ? '' : f.moneda;
     query.forma_pago = !f.forma_pago || f.forma_pago === 'Todos' ? '' : f.forma_pago;
     if (f.proveedor) query.proveedor = f.proveedor;
-    if (f.fecha_desde) query.fecha_desde = f.fecha_desde;
-    if (f.fecha_hasta) query.fecha_hasta = f.fecha_hasta;
+    if (f.con_pdf === 'Sí') (query as any).con_pdf = true;
+    else if (f.con_pdf === 'No') (query as any).con_pdf = false;
+    if (f.con_xml === 'Sí') (query as any).con_xml = true;
+    else if (f.con_xml === 'No') (query as any).con_xml = false;
     if (f.total_min) query.total_min = f.total_min;
     if (f.total_max) query.total_max = f.total_max;
+    return query;
+  }
 
-    this.store.dispatch(searchCompras({ query, page: 1, page_size: PAGE_SIZE_COMPRAS }));
-    this.expanded = false;
+  private buildRange(): { from_date?: string; to_date?: string } {
+    const f = this.form.value;
+    const range: { from_date?: string; to_date?: string } = {};
+    if (f.fecha_desde) range.from_date = f.fecha_desde;
+    if (f.fecha_hasta) range.to_date = f.fecha_hasta;
+    return range;
+  }
+
+  private hasQueryOrRange(query: Partial<QuerySearchCompra>, range: { from_date?: string; to_date?: string }): boolean {
+    return Object.values(query).some((v) => v !== undefined && v !== null && v !== '') || !!(range.from_date || range.to_date);
+  }
+
+  onSubmitSearch() {
+    const query = this.buildQuery();
+    const range = this.buildRange();
+    if (!this.hasQueryOrRange(query, range)) {
+      this.store.dispatch(cargarCompras({ page: 1, page_size: PAGE_SIZE_COMPRAS }));
+    } else {
+      this.store.dispatch(searchCompras({ query, page: 1, page_size: PAGE_SIZE_COMPRAS, ...range }));
+    }
+    this.filtrosOpen = false;
   }
 
   clearSearch() {
@@ -175,9 +173,12 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
       tipo_comprobante: 'Todos',
       serie: '',
       correlativo: '',
+      numero_comprobante: '',
       moneda: 'Todos',
       forma_pago: 'Todos',
       proveedor: '',
+      con_pdf: 'Todos',
+      con_xml: 'Todos',
       fecha_desde: '',
       fecha_hasta: '',
       total_min: '',
@@ -185,15 +186,16 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
     });
     this.store.dispatch(clearSearchCompras());
     this.store.dispatch(cargarCompras({ page: 1, page_size: PAGE_SIZE_COMPRAS }));
-    this.expanded = false;
+    this.filtrosOpen = false;
   }
 
   hasActiveFilters(): boolean {
     const f = this.form.value;
     const sel = (v: any) => !!v && v !== 'Todos';
     return !!(f.nombre || sel(f.tipo_comprobante) || f.serie || f.correlativo ||
-              sel(f.moneda) || sel(f.forma_pago) || f.proveedor || f.fecha_desde ||
-              f.fecha_hasta || f.total_min || f.total_max);
+              f.numero_comprobante || sel(f.moneda) || sel(f.forma_pago) ||
+              sel(f.con_pdf) || sel(f.con_xml) ||
+              f.proveedor || f.fecha_desde || f.fecha_hasta || f.total_min || f.total_max);
   }
 
   formatoCorto(fecha: string): string {
@@ -211,6 +213,25 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
     return tipo === '01' ? 'Factura' : 'Boleta';
   }
 
+  getNumeroComprobante(compra: ComprobanteCompra): string {
+    if (compra.numero_comprobante) return compra.numero_comprobante;
+    return `${compra.serie || ''}-${compra.correlativo || ''}`;
+  }
+
+  getItemNombre(item: any): string {
+    return item?.descripcion ?? item?.producto ?? 'Producto';
+  }
+
+  tienePdf(compra: ComprobanteCompra): boolean {
+    if (compra.con_pdf) return true;
+    return !!(compra.pdf_url || (compra as any).archivo_pdf);
+  }
+
+  tieneXml(compra: ComprobanteCompra): boolean {
+    if ((compra as any).con_xml) return true;
+    return !!((compra as any).xml_url || (compra as any).archivo_xml);
+  }
+
   getProveedorNombre(compra: ComprobanteCompra): string {
     if (compra.nombre_proveedor) return compra.nombre_proveedor;
     if (compra.proveedor) {
@@ -220,53 +241,11 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
     return 'Sin proveedor';
   }
 
-  cambiarViewMode(mode: string): void {
-    if (this.viewMode === mode) return;
-    this.viewMode = mode;
-    this.form.reset({
-      nombre: '',
-      tipo_comprobante: '',
-      serie: '',
-      correlativo: '',
-      moneda: '',
-      forma_pago: '',
-      proveedor: '',
-      fecha_desde: '',
-      fecha_hasta: '',
-      total_min: '',
-      total_max: '',
-    });
-    this.expanded = false;
-    this.searchActive = false;
-    this.store.dispatch(clearSearchCompras());
-
-    if (this.viewMode === 'subidos') {
-      this.store.dispatch(cargarFiles());
-    } else {
-      this.store.dispatch(cargarCompras({ page: 1, page_size: PAGE_SIZE_COMPRAS }));
-    }
-  }
-
   goToPage(index: number): void {
-    if (this.viewMode === 'subidos') {
-      this.store.dispatch(cargarFiles());
-      return;
-    }
     if (this.searchActive) {
-      const f = this.form.value;
-      const query: Partial<QuerySearchCompra> = {};
-      if (f.nombre) query.nombre = f.nombre;
-      if (f.tipo_comprobante) query.tipo_comprobante = f.tipo_comprobante;
-      if (f.serie) query.serie = f.serie;
-      if (f.correlativo) query.correlativo = f.correlativo;
-      if (f.moneda) query.moneda = f.moneda;
-      if (f.forma_pago) query.forma_pago = f.forma_pago;
-      if (f.proveedor) query.proveedor = f.proveedor;
-      if (f.fecha_desde) query.fecha_desde = f.fecha_desde;
-      if (f.fecha_hasta) query.fecha_hasta = f.fecha_hasta;
-      if (f.total_min) query.total_min = f.total_min;
-      if (f.total_max) query.total_max = f.total_max;
-      this.store.dispatch(searchCompras({ query, page: index + 1, page_size: PAGE_SIZE_COMPRAS }));
+      const query = this.buildQuery();
+      const range = this.buildRange();
+      this.store.dispatch(searchCompras({ query, page: index + 1, page_size: PAGE_SIZE_COMPRAS, ...range }));
     } else {
       this.store.dispatch(cargarCompras({ page: index + 1, page_size: PAGE_SIZE_COMPRAS }));
     }
@@ -283,9 +262,5 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
 
   mostrarItems(id: number): boolean {
     return this.itemsExpandidos.has(id);
-  }
-
-  verArchivo(url: string, tipo: 'pdf' | 'xml'): void {
-    window.open(url, '_blank');
   }
 }

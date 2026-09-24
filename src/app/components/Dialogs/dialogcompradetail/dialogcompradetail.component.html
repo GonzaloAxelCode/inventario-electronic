@@ -1,28 +1,22 @@
-<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;" class="w-full max-w-md max-h-[85vh] flex flex-col bg-white dark:bg-neutral-900 text-stone-900 dark:text-white antialiased">
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;" class="w-full max-w-full min-w-0 overflow-x-hidden flex flex-col text-stone-900 dark:text-white antialiased">
 
   <!-- Nav bar estilo iOS -->
-  <div class="flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
-    <p class="text-[13px] font-medium text-stone-400">{{ getTipoComprobante(compra.tipo_comprobante) }}</p>
-    <button type="button" (click)="close()" aria-label="Cerrar"
-      class="w-7 h-7 rounded-full bg-stone-100 dark:bg-white/10 flex items-center justify-center text-stone-500 dark:text-stone-300 active:scale-95 transition">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-      </svg>
-    </button>
+  <div class="flex items-center justify-between px-4 sm:px-5 pt-4 pb-2 shrink-0">
+    <p class="text-[13px] font-medium text-stone-400 truncate">{{ getTipoComprobante(compra.tipo_comprobante) }}</p>
   </div>
 
-  <div class="flex-1 overflow-y-auto px-5 pb-6">
+  <div class="flex-1 min-w-0 px-4 sm:px-5 pb-5 sm:pb-6">
 
     <!-- Hero: total como en Wallet / App Store -->
     <div class="text-center pt-1 pb-5">
       <div class="w-12 h-12 mx-auto rounded-full bg-stone-900 dark:bg-white flex items-center justify-center mb-3">
         <span class="text-lg font-bold text-white dark:text-black">{{ getProveedorNombre().charAt(0) }}</span>
       </div>
-      <p class="text-[15px] font-semibold tracking-tight">{{ getProveedorNombre() }}</p>
-      <p class="text-[13px] text-stone-500 dark:text-stone-400 mt-0.5">{{ compra.tipo_documento_proveedor || 'RUC' }} {{ getProveedorRuc() }}</p>
-      <p class="text-[34px] font-bold tracking-tight mt-3 tabular-nums">{{ compra.moneda === 'USD' ? '$' : 'S/' }} {{ compra.total | number:'1.2-2' }}</p>
-      <p class="text-[13px] text-stone-500 dark:text-stone-400 mt-1">{{ compra.serie }}-{{ compra.correlativo }} · {{ formatDate(compra.fecha_emision) }}</p>
-      <div class="flex items-center justify-center gap-1.5 mt-2.5 text-[13px] text-stone-500 dark:text-stone-400">
+      <p class="text-[15px] font-semibold tracking-tight break-words px-2">{{ getProveedorNombre() }}</p>
+      <p class="text-[13px] text-stone-500 dark:text-stone-400 mt-0.5 break-words px-2">{{ compra.tipo_documento_proveedor || 'RUC' }} {{ getProveedorRuc() }}</p>
+      <p class="text-[28px] sm:text-[34px] font-bold tracking-tight mt-3 tabular-nums break-words">{{ compra.moneda === 'USD' ? '$' : 'S/' }} {{ compra.total | number:'1.2-2' }}</p>
+      <p class="text-[13px] text-stone-500 dark:text-stone-400 mt-1 break-words px-2">{{ compra.serie }}-{{ compra.correlativo }} · {{ formatDate(compra.fecha_emision) }}</p>
+      <div class="flex items-center justify-center flex-wrap gap-x-1.5 gap-y-1 mt-2.5 px-2 text-[13px] text-stone-500 dark:text-stone-400">
         <span>{{ compra.forma_pago || 'Contado' }}</span>
         <span class="w-1 h-1 rounded-full bg-stone-300 dark:bg-white/20"></span>
         <span>{{ compra.moneda === 'PEN' ? 'Soles' : compra.moneda === 'USD' ? 'Dólares' : compra.moneda }}</span>
@@ -31,35 +25,35 @@
       </div>
     </div>
 
-    <div class="h-px bg-stone-100 dark:bg-white/10 -mx-5"></div>
+    <div class="h-px bg-stone-100 dark:bg-white/10 -mx-4 sm:-mx-5"></div>
 
     <!-- Datos -->
     <div class="py-1">
       <p class="text-[11px] font-semibold uppercase tracking-wide text-stone-400 mt-4 mb-1">Comprobante</p>
-      <div class="divide-y divide-stone-100 dark:divide-white/10 text-[15px]">
-        <div class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">Tipo</span>
-          <span class="font-medium">{{ getTipoComprobante(compra.tipo_comprobante) }} {{ compra.serie }}-{{ compra.correlativo }}</span>
+      <div class="divide-y divide-stone-100 dark:divide-white/10 text-[14px] sm:text-[15px]">
+        <div class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Tipo</span>
+          <span class="font-medium text-right min-w-0 break-words">{{ getTipoComprobante(compra.tipo_comprobante) }} {{ compra.serie }}-{{ compra.correlativo }}</span>
         </div>
-        <div class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">Emitida</span>
-          <span class="font-medium">{{ formatDate(compra.fecha_emision) }}</span>
+        <div class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Emitida</span>
+          <span class="font-medium text-right min-w-0">{{ formatDate(compra.fecha_emision) }}</span>
         </div>
-        <div class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">Registrada</span>
-          <span class="font-medium">{{ formatDate(compra.date_created) }}</span>
+        <div class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Registrada</span>
+          <span class="font-medium text-right min-w-0">{{ formatDate(compra.date_created) }}</span>
         </div>
-        <div *ngIf="compra.fecha_vencimiento" class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">Vence</span>
-          <span class="font-medium">{{ formatDate(compra.fecha_vencimiento) }}</span>
+        <div *ngIf="compra.fecha_vencimiento" class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Vence</span>
+          <span class="font-medium text-right min-w-0">{{ formatDate(compra.fecha_vencimiento) }}</span>
         </div>
-        <div *ngIf="compra.documento_relacionado" class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">Doc. relacionado</span>
-          <span class="font-medium text-right ml-4 truncate">{{ compra.documento_relacionado }}</span>
+        <div *ngIf="compra.documento_relacionado" class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Doc. relacionado</span>
+          <span class="font-medium text-right min-w-0 ml-2 truncate">{{ compra.documento_relacionado }}</span>
         </div>
-        <div *ngIf="compra.enlace_verificacion" class="flex justify-between items-center py-2">
-          <span class="text-stone-500 dark:text-stone-400">SUNAT</span>
-          <a [href]="compra.enlace_verificacion" target="_blank" class="font-medium text-blue-500">Verificar ›</a>
+        <div *ngIf="compra.enlace_verificacion" class="flex justify-between gap-3 items-center py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">SUNAT</span>
+          <a [href]="compra.enlace_verificacion" target="_blank" class="font-medium text-blue-500 shrink-0">Verificar ›</a>
         </div>
       </div>
     </div>
@@ -68,10 +62,10 @@
     <div *ngIf="compra.items?.length">
       <p class="text-[11px] font-semibold uppercase tracking-wide text-stone-400 mt-4 mb-1">Productos · {{ compra.items.length }}</p>
       <div class="divide-y divide-stone-100 dark:divide-white/10">
-        <div *ngFor="let item of compra.items" class="py-2.5">
-          <div class="flex justify-between gap-3 text-[15px]">
-            <span class="font-medium tracking-tight leading-snug">{{ item.producto }}</span>
-            <span class="font-semibold tabular-nums whitespace-nowrap">S/ {{ getItemSubtotal(item) | number:'1.2-2' }}</span>
+        <div *ngFor="let item of compra.items" class="py-2 sm:py-2.5">
+          <div class="flex justify-between gap-2 sm:gap-3 text-[14px] sm:text-[15px]">
+            <span class="font-medium tracking-tight leading-snug min-w-0 break-words">{{ item.descripcion || item.producto || 'Producto' }}</span>
+            <span class="font-semibold tabular-nums whitespace-nowrap shrink-0">S/ {{ getItemSubtotal(item) | number:'1.2-2' }}</span>
           </div>
           <div class="flex justify-between mt-0.5 text-[13px] text-stone-500 dark:text-stone-400">
             <span class="tabular-nums">{{ item.cantidad }} × S/ {{ item.precio_unitario | number:'1.2-2' }}</span>
@@ -84,48 +78,54 @@
     <!-- Montos -->
     <div>
       <p class="text-[11px] font-semibold uppercase tracking-wide text-stone-400 mt-4 mb-1">Montos</p>
-      <div class="divide-y divide-stone-100 dark:divide-white/10 text-[15px]">
-        <div class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">Base imponible</span>
-          <span class="tabular-nums">S/ {{ compra.gravadas | number:'1.2-2' }}</span>
+      <div class="divide-y divide-stone-100 dark:divide-white/10 text-[14px] sm:text-[15px]">
+        <div class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Base imponible</span>
+          <span class="tabular-nums text-right min-w-0">S/ {{ compra.gravadas | number:'1.2-2' }}</span>
         </div>
-        <div class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">IGV 18%</span>
-          <span class="tabular-nums">S/ {{ compra.igv | number:'1.2-2' }}</span>
+        <div class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">IGV 18%</span>
+          <span class="tabular-nums text-right min-w-0">S/ {{ compra.igv | number:'1.2-2' }}</span>
         </div>
-        <div *ngIf="compra.op_exoneradas" class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">Exoneradas</span>
-          <span class="tabular-nums">S/ {{ compra.op_exoneradas | number:'1.2-2' }}</span>
+        <div *ngIf="compra.op_exoneradas" class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Exoneradas</span>
+          <span class="tabular-nums text-right min-w-0">S/ {{ compra.op_exoneradas | number:'1.2-2' }}</span>
         </div>
-        <div *ngIf="compra.op_inafectas" class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">Inafectas</span>
-          <span class="tabular-nums">S/ {{ compra.op_inafectas | number:'1.2-2' }}</span>
+        <div *ngIf="compra.op_inafectas" class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Inafectas</span>
+          <span class="tabular-nums text-right min-w-0">S/ {{ compra.op_inafectas | number:'1.2-2' }}</span>
         </div>
-        <div *ngIf="compra.op_gratuitas" class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">Gratuitas</span>
-          <span class="tabular-nums">S/ {{ compra.op_gratuitas | number:'1.2-2' }}</span>
+        <div *ngIf="compra.op_gratuitas" class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Gratuitas</span>
+          <span class="tabular-nums text-right min-w-0">S/ {{ compra.op_gratuitas | number:'1.2-2' }}</span>
         </div>
-        <div *ngIf="compra.dctos_totales" class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">Descuentos</span>
-          <span class="tabular-nums text-red-500">−S/ {{ compra.dctos_totales | number:'1.2-2' }}</span>
+        <div *ngIf="compra.dctos_totales" class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Descuentos</span>
+          <span class="tabular-nums text-red-500 text-right min-w-0">−S/ {{ compra.dctos_totales | number:'1.2-2' }}</span>
         </div>
-        <div *ngIf="compra.icbper" class="flex justify-between py-2">
-          <span class="text-stone-500 dark:text-stone-400">ICBPER</span>
-          <span class="tabular-nums">S/ {{ compra.icbper | number:'1.2-2' }}</span>
+        <div *ngIf="compra.icbper" class="flex justify-between gap-3 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">ICBPER</span>
+          <span class="tabular-nums text-right min-w-0">S/ {{ compra.icbper | number:'1.2-2' }}</span>
         </div>
-        <div class="flex justify-between py-2.5">
-          <span class="font-semibold">Total</span>
-          <span class="font-bold tabular-nums">{{ compra.moneda === 'USD' ? '$' : 'S/' }} {{ compra.total | number:'1.2-2' }}</span>
+        <div class="flex justify-between gap-3 py-2 sm:py-2.5">
+          <span class="font-semibold shrink-0">Total</span>
+          <span class="font-bold tabular-nums text-right min-w-0 break-words">{{ compra.moneda === 'USD' ? '$' : 'S/' }} {{ compra.total | number:'1.2-2' }}</span>
         </div>
       </div>
     </div>
 
-    <p *ngIf="compra.observaciones" class="text-[13px] leading-relaxed text-stone-500 dark:text-stone-400 mt-4">{{ compra.observaciones }}</p>
+    <p *ngIf="compra.observaciones" class="text-[13px] leading-relaxed text-stone-500 dark:text-stone-400 mt-4 break-words">{{ compra.observaciones }}</p>
 
-    <div *ngIf="compra.archivo_xml || compra.archivo_pdf" class="flex justify-center gap-6 mt-5 text-[15px] font-medium text-blue-500">
-      <a *ngIf="compra.archivo_xml" [href]="compra.archivo_xml" target="_blank" class="active:opacity-60">XML</a>
-      <a *ngIf="compra.archivo_pdf" [href]="compra.archivo_pdf" target="_blank" class="active:opacity-60">PDF</a>
+    <div *ngIf="getXmlUrl() || getPdfUrl() || getImageUrl()" class="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-5 text-[15px] font-medium text-blue-500">
+      <a *ngIf="getXmlUrl()" [href]="getXmlUrl()" target="_blank" class="active:opacity-60">XML</a>
+      <a *ngIf="getPdfUrl()" [href]="getPdfUrl()" target="_blank" class="active:opacity-60">PDF</a>
+      <a *ngIf="getImageUrl()" [href]="getImageUrl()" target="_blank" class="active:opacity-60">Imagen</a>
     </div>
+
+    <button tuiButton type="button" (click)="editar()" appearance="primary-grayscale" size="m"
+      class="w-full !rounded-full font-semibold mt-5">
+      Editar compra
+    </button>
 
   </div>
 </div>
