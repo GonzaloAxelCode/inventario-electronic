@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TuiDialogContext } from '@taiga-ui/core';
 import { injectContext } from '@taiga-ui/polymorpheus';
 import { Tienda } from '@/app/models/tienda.models';
+import { CommonModule } from '@angular/common';
 import { FormaddstoreComponent } from '../../Forms/formaddstore/formaddstore.component';
 
 export interface CrearTiendaDialogData {
@@ -12,7 +13,7 @@ export interface CrearTiendaDialogData {
 @Component({
   selector: 'app-dialogcreatetienda',
   standalone: true,
-  imports: [FormaddstoreComponent],
+  imports: [CommonModule, FormaddstoreComponent],
   templateUrl: './dialogcreatetienda.component.html',
   styleUrl: './dialogcreatetienda.component.scss'
 })

@@ -224,6 +224,8 @@ export interface SuscripcionTiendaResponse {
 export interface TiendaState {
     tiendas: Tienda[];
     miTienda: Tienda | null;
+    /** true cuando /tiendas/ ya se cargó al menos una vez (evita refetch al navegar). Se reinicia con F5. */
+    tiendasLoaded: boolean;
     loadingCreateTienda: boolean,
     loadingActiveTienda: boolean,
     loadingTiendas: boolean;

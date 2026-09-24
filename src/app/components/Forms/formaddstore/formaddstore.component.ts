@@ -9,14 +9,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TuiAppearance, TuiButton, TuiDataList, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
+import { TuiInputModule, TuiInputPasswordModule, TuiSelectModule } from '@taiga-ui/legacy';
 import { TuiDataListWrapper } from '@taiga-ui/kit';
 import { map, Observable, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-formaddstore',
   standalone: true,
-  imports: [TuiLoader, CommonModule, ReactiveFormsModule, TuiTextfield, TuiInputModule, TuiSelectModule, TuiDataList, TuiDataListWrapper, TuiAppearance, TuiButton],
+  imports: [TuiLoader, CommonModule, ReactiveFormsModule, TuiTextfield, TuiInputModule, TuiInputPasswordModule, TuiSelectModule, TuiDataList, TuiDataListWrapper, TuiAppearance, TuiButton],
   templateUrl: './formaddstore.component.html',
   styleUrl: './formaddstore.component.scss'
 })
@@ -73,7 +73,7 @@ export class FormaddstoreComponent implements OnInit {
       serie: ["", Validators.required],
       sol_user: [''],
       sol_password: [''],
-      tienda_padre_select: ['', Validators.required],
+      tienda_padre_select: [''],
       propietario_username: [''],
       propietario_password: ['']
     });
@@ -122,10 +122,10 @@ export class FormaddstoreComponent implements OnInit {
         this.parentTiendaRazonSocial = null;
         this.parentTiendaRuc = null;
       }
-      // Jerarquía obligatoria solo para superusuario (es el único que ve el select);
-      // para el resto se desactiva el validador o el form quedaría inválido siempre.
+      // Jerarquía visible solo al crear sucursal (valor prefijado y bloqueado);
+      // en nueva tienda siempre es padre y el select está oculto, así que sin validador.
       const ctrl = this.tiendaForm.get('tienda_padre_select');
-      if (this.isSuperUser) {
+      if (this.isSuperUser && this.esSucursal) {
         ctrl?.setValidators([Validators.required]);
       } else {
         ctrl?.clearValidators();
@@ -137,9 +137,9 @@ export class FormaddstoreComponent implements OnInit {
     this.store.select(selectTiendaState).pipe(map(s => s.tiendas ?? [])).subscribe(tiendas => {
       this.tiendasList = tiendas;
     });
-    // Cargar lista para superusuario si está vacía
+    // Cargar lista para superusuario si aún no se cargó (usa flag, no length: la lista puede ser vacía legítima)
     this.store.select(selectTienda).pipe(map(s => s as any)).subscribe((state: any) => {
-      if (this.isSuperUser && (!state.tiendas || state.tiendas.length === 0) && !state.loadingTiendas) {
+      if (this.isSuperUser && !state.tiendasLoaded && !state.loadingTiendas) {
         this.store.dispatch(loadTiendasAction());
       }
     });

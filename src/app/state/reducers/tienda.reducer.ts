@@ -24,6 +24,7 @@ import {
 const initialState: TiendaState = {
     tiendas: [],
     miTienda: null,
+    tiendasLoaded: false,
     loadingTiendas: false,
     loadingCreateTienda: false,
     loadingActiveTienda: false,
@@ -43,7 +44,15 @@ export const tiendaReducer = createReducer(
     })),
     on(loadTiendasSuccess, (state, { tiendas }) => ({
         ...state,
-        tiendas: tiendas.filter((t) => t.ruc !== '00000000000'),
+        // Solo vigentes: excluye ruc legacy y soft-deleted (is_deleted=true),
+        // incluyendo las sucursales anidadas que trae el GET.
+        tiendas: (tiendas ?? [])
+            .filter((t) => t.ruc !== '00000000000' && !(t as any).is_deleted)
+            .map((t) => ({
+                ...t,
+                sucursales: ((t as any).sucursales ?? []).filter((s: any) => !s?.is_deleted),
+            })),
+        tiendasLoaded: true,
         loadingTiendas: false
     })),
     on(loadTiendasFail, (state, { error }) => ({

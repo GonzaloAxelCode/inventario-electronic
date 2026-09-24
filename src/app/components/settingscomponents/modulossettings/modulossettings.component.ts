@@ -17,11 +17,6 @@ export class ModulossettingsComponent {
     private userService: UserService
   ) {}
 
-  toggleGuiasRemision(): void {
-    this.featureFlags.toggleGuiasRemision();
-    this.saveModulosConfig();
-  }
-
   toggleCompras(): void {
     this.featureFlags.toggleCompras();
     this.saveModulosConfig();
@@ -34,9 +29,6 @@ export class ModulossettingsComponent {
 
   private saveModulosConfig(): void {
     const modulos: string[] = [];
-    if (this.featureFlags.guiasRemisionEnabled()) {
-      modulos.push('guias-de-remision');
-    }
     if (this.featureFlags.comprasEnabled()) {
       modulos.push('compras');
     }

@@ -1,1 +1,2 @@
+<p *ngIf="!context.data?.tiendaPadre" class="text-[12px] leading-5 text-[#86868b] dark:text-[#a1a1a6] mb-4">Se registrará como tienda principal. Sus sucursales se crean después, desde la tarjeta de la tienda.</p>
 <app-formaddstore [tiendaPadrePreset]="context.data?.tiendaPadre ?? null" (cancelled)="close()" (created)="close()"></app-formaddstore>

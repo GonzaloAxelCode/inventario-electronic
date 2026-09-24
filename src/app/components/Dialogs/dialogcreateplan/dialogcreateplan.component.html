@@ -1,0 +1,76 @@
+<tui-loader [showLoader]="creating" [overlay]="true">
+  <div class="w-full max-w-[560px]">
+    <h3 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">
+      Crear suscripción
+    </h3>
+    <p class="text-[12px] text-[#86868b] mt-1">POST /api/planes/crear/ — solo superusuario</p>
+
+    <form [formGroup]="createForm" (ngSubmit)="onSubmit()" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <tui-input formControlName="nombre_plan" class="w-full">
+        Nombre del plan*
+      </tui-input>
+      <tui-input formControlName="precio_mensual" class="w-full">
+        Precio mensual*
+      </tui-input>
+      <tui-input formControlName="precio_anual" class="w-full">
+        Precio anual
+      </tui-input>
+      <tui-input formControlName="descripcion" class="w-full sm:col-span-2">
+        Descripción
+      </tui-input>
+      <tui-input formControlName="limite_boletas" type="number" class="w-full">
+        Límite de boletas*
+      </tui-input>
+      <tui-input formControlName="limite_facturas" type="number" class="w-full">
+        Límite de facturas*
+      </tui-input>
+      <tui-input formControlName="limite_personal" type="number" class="w-full">
+        Límite de personal*
+      </tui-input>
+      <tui-input formControlName="limite_productos" type="number" class="w-full">
+        Límite de productos*
+      </tui-input>
+      <tui-select formControlName="moneda" class="w-full">
+        Moneda
+        <tui-data-list *tuiDataList>
+          <button *ngFor="let m of monedas" tuiOption [value]="m">{{ m }}</button>
+        </tui-data-list>
+      </tui-select>
+      <tui-select formControlName="periodo_facturacion" class="w-full">
+        Periodo de facturación
+        <tui-data-list *tuiDataList>
+          <button *ngFor="let p of periodos" tuiOption [value]="p">{{ p }}</button>
+        </tui-data-list>
+      </tui-select>
+      <div class="sm:col-span-2">
+        <p class="text-[12px] font-medium text-[#86868b] mb-2">Características del plan</p>
+        <div formArrayName="lista_descripcion" class="space-y-2">
+          <div *ngFor="let ctrl of caracteristicas().controls; let i = index" class="flex gap-2 items-center">
+            <tui-input [formControlName]="i" class="flex-1">
+              Característica {{ i + 1 }}
+            </tui-input>
+            <button type="button" (click)="removeCaracteristica(i)"
+              class="shrink-0 text-[12px] font-medium text-[#1d1d1f] dark:text-white rounded-full border border-black/[0.12] dark:border-white/[0.2] px-3 py-1.5">
+              Quitar
+            </button>
+          </div>
+        </div>
+        <button type="button" (click)="addCaracteristica()"
+          class="h-8 px-4 rounded-full border border-black/[0.12] dark:border-white/[0.2] text-[12px] font-medium text-[#1d1d1f] dark:text-white mt-2">
+          + Agregar característica
+        </button>
+      </div>
+      <div class="sm:col-span-2">
+        <p *ngIf="createError" class="text-[12px] text-[#ff3b30] mb-2">{{ createError }}</p>
+        <div class="flex gap-2">
+          <button type="submit" class="flex-1 h-10 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-colors disabled:opacity-40" [disabled]="creating || createForm.invalid">
+            {{ creating ? 'Creando…' : 'Crear suscripción' }}
+          </button>
+          <button type="button" (click)="cancel()" class="h-10 px-5 rounded-full border border-black/[0.12] dark:border-white/[0.2] text-[13px] font-medium text-[#1d1d1f] dark:text-white">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</tui-loader>

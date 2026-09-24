@@ -126,10 +126,9 @@ body {
 }
 
 :host-context([tuiTheme="dark"]) .nav-link-active {
-  background: #fff;
-  color: #000;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .nav-icon {
@@ -436,7 +435,10 @@ body {
   border-radius: 0.75rem;
   box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   padding: 0.25rem;
-  min-width: 200px;
+  min-width: 220px;
+  max-height: calc(100vh - 5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   z-index: 9999;
   animation: item-dropdown-enter 150ms cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: top right;
@@ -508,6 +510,14 @@ body {
   font-weight: 500;
   text-decoration: none;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button.mobile-nav-link {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 
 :host-context([tuiTheme="dark"]) .mobile-nav-link:hover {

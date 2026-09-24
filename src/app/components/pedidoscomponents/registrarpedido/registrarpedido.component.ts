@@ -26,7 +26,7 @@ import { TuiAlertService, TuiAppearance, TuiButton, TuiDropdown, TuiExpand, TuiI
 import { TuiCheckbox, TuiChip, TuiComboBox, TuiDataListWrapper, TuiFilter, TuiFilterByInputPipe, TuiInputNumber, TuiItemsWithMore, TuiRadio, TuiSegmented, TuiStepper, TuiSwitch, TuiTextarea, TuiTooltip } from '@taiga-ui/kit';
 import { TuiAppBar } from '@taiga-ui/layout';
 import { TuiComboBoxModule, TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
-import { catchError, finalize, map, Observable, of, Subject, takeUntil, timeout } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, finalize, map, Observable, of, Subject, takeUntil, timeout } from 'rxjs';
 
 @Component({
   selector: 'app-registrarpedido',
@@ -131,6 +131,20 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
 
   nextStep() {
     if (this.currentStep < 3) this.currentStep++;
+  }
+
+  /** Avanza desde el paso cliente: en 'nuevo' sin datos se continúa sin cliente. */
+  siguienteCliente(): void {
+    if (this.vistaActiva === 'nuevo' && !this.tieneDatosNuevoCliente()) {
+      this.changeModeClient('sin_cliente');
+    }
+    this.nextStep();
+  }
+
+  private tieneDatosNuevoCliente(): boolean {
+    const doc = String(this.pedidoForm.get('documento_cliente')?.value ?? '').trim();
+    const nombre = String(this.pedidoForm.get('nombre_cliente')?.value ?? '').trim();
+    return !!doc || !!nombre;
   }
 
   prevStep() {
@@ -335,6 +349,20 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
         .map((cliente: Cliente) => cliente.document + "-" + cliente.fullname);
     })
 
+    this.pedidoForm.get('documento_cliente')?.valueChanges.pipe(
+      debounceTime(600),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe((v) => {
+      const doc = String(v ?? '').trim();
+      if (/^\d{8}$/.test(doc) || /^\d{11}$/.test(doc)) {
+        this.consultarDocumentoNuevo();
+      } else {
+        this.docNuevoOk = false;
+        this.docNuevoError = null;
+      }
+    });
+
     this.pedidoForm.get('documento_cliente_existente')?.valueChanges.subscribe((docraw) => {
       if (!docraw) return;
 
@@ -414,6 +442,57 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
         });
         this.calcularTotales();
         this.cdr.markForCheck();
+      }
+    });
+  }
+
+  consultandoDocNuevo = false;
+  docNuevoError: string | null = null;
+  docNuevoOk = false;
+  contactoExpandido = false;
+
+  /** Nuevo cliente: consulta DNI (8) o RUC (11) y autorrellena el nombre. */
+  consultarDocumentoNuevo(): void {
+    const documento = String(this.pedidoForm.get('documento_cliente')?.value ?? '').trim();
+    this.pedidoForm.get('documento_cliente')?.markAsTouched();
+    if (!/^\d{8}$/.test(documento) && !/^\d{11}$/.test(documento)) {
+      this.docNuevoError = 'Ingresa un DNI (8 dígitos) o RUC (11 dígitos).';
+      return;
+    }
+    if (this.consultandoDocNuevo) return;
+    this.consultandoDocNuevo = true;
+    this.docNuevoError = null;
+    this.docNuevoOk = false;
+
+    const consultaObservable = documento.length === 8
+      ? this.consultaService.consultarDNI(documento)
+      : this.consultaService.consultarRUC(documento);
+
+    consultaObservable.pipe(
+      timeout(8000),
+      catchError(() => {
+        this.docNuevoError = 'No se pudo consultar el documento. Verifica tu conexión.';
+        return of(null);
+      }),
+      finalize(() => {
+        this.consultandoDocNuevo = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe(response => {
+      const nombre = response?.nombre_completo || response?.nombre_o_razon_social || '';
+      if (response && nombre) {
+        this.pedidoForm.patchValue({
+          nombre_cliente: nombre,
+          cliente: {
+            nombre_o_razon_social: response.nombre_o_razon_social || nombre,
+            nombre_completo: response.nombre_completo || nombre,
+            ruc: response.ruc || '',
+            numero: response.numero || documento,
+          }
+        });
+        this.docNuevoOk = true;
+      } else if (response) {
+        this.docNuevoError = 'El servicio no devolvió un nombre para este documento.';
       }
     });
   }

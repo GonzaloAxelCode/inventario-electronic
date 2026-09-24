@@ -4,11 +4,11 @@
     <div class="p-1 rounded-full bg-stone-100 dark:bg-white/10 grid grid-cols-2 gap-1 mb-4">
       <button type="button" (click)="cambiarViewMode('registrados')"
         [class]="esViewRegistrados ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">
-        Registrados
+        Compras manuales
       </button>
       <button type="button" (click)="cambiarViewMode('subidos')"
         [class]="esViewSubidos ? 'h-9 rounded-full bg-white dark:bg-stone-800 shadow-sm text-sm font-semibold text-stone-900 dark:text-white transition' : 'h-9 rounded-full text-sm font-medium text-stone-400 transition'">
-        Subidos
+        Compras PDF XML
       </button>
     </div>
 
@@ -24,13 +24,19 @@
         </div>
         <div class="flex gap-2">
           <button type="button" (click)="onSubmitSearch()"
-            class="px-5 h-11 rounded-full text-sm font-semibold bg-black dark:bg-white text-white dark:text-black active:scale-[0.98] transition shrink-0">
+            class="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold text-neutral-900 shadow-sm transition hover:bg-neutral-100 active:scale-95 dark:border-white/20 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 shrink-0">
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 110-16 8 8 0 010 16z"/>
+            </svg>
             Buscar
           </button>
           <button type="button" (click)="expanded = !expanded"
-            [class]="expanded ? 'px-4 h-11 rounded-full text-sm font-semibold bg-black dark:bg-white text-white dark:text-black transition shrink-0' : 'px-4 h-11 rounded-full text-sm font-medium bg-stone-100 dark:bg-white/10 text-stone-600 dark:text-stone-300 transition shrink-0'">
+            class="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold text-neutral-900 shadow-sm transition hover:bg-neutral-100 active:scale-95 dark:border-white/20 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 shrink-0">
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/>
+            </svg>
             Filtros
-            <span *ngIf="hasActiveFilters()" class="ml-1 w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+            <span *ngIf="hasActiveFilters()" class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
           </button>
           <button *ngIf="searchActive" type="button" (click)="clearSearch()"
             class="px-4 h-11 rounded-full text-sm font-medium text-stone-400 hover:text-red-500 transition shrink-0">
@@ -39,85 +45,78 @@
         </div>
       </div>
 
-      <!-- Filtros avanzados -->
+      <!-- Backdrop filtros (solo móvil) -->
+      <div *ngIf="expanded" class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm sm:hidden" (click)="expanded = false"></div>
+
+      <!-- Filtros avanzados: modal en móvil, inline en desktop -->
+      <div [ngClass]="expanded ? 'flex' : 'hidden sm:block'"
+        class="flex-col fixed inset-x-0 bottom-0 z-50 sm:static bg-white dark:bg-neutral-800 sm:dark:bg-transparent sm:bg-transparent rounded-t-[28px] sm:rounded-none shadow-2xl sm:shadow-none max-h-[85dvh] sm:max-h-none overflow-y-auto sm:overflow-visible">
+        <div class="sm:hidden w-10 h-1 rounded-full bg-stone-300 dark:bg-white/20 mx-auto mt-3 mb-1 shrink-0"></div>
+        <div class="sm:hidden flex items-center justify-between pl-5 pr-4 py-2 shrink-0">
+          <p class="text-[17px] font-semibold tracking-tight text-stone-900 dark:text-white">Filtros</p>
+          <button type="button" (click)="expanded = false" aria-label="Cerrar filtros"
+            class="w-7 h-7 rounded-full bg-stone-100 dark:bg-white/10 flex items-center justify-center text-stone-500 dark:text-stone-300 active:scale-95 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
       <tui-expand [expanded]="expanded">
-        <div class="bg-white dark:bg-neutral-800 rounded-3xl p-4 sm:p-5 border border-stone-200/70 dark:border-white/10 space-y-3">
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <div>
-              <label class="text-[11px] font-medium text-stone-400 mb-1 block">Tipo</label>
-              <tui-select [formControl]="form.controls.tipo_comprobante" class="w-full" tuiTextfieldSize="s"
-                [tuiTextfieldLabelOutside]="true">
-                <tui-data-list *tuiDataList>
-                  <button *ngFor="let tipo of tipoComprobantes" tuiOption [value]="tipo">
-                    {{ tipoComprobanteLabels[tipo] }}
-                  </button>
-                </tui-data-list>
-              </tui-select>
-            </div>
-            <div>
-              <label class="text-[11px] font-medium text-stone-400 mb-1 block">Serie</label>
-              <tui-textfield tuiTextfieldSize="s">
-                <input tuiTextfield type="text" [formControl]="form.controls.serie" placeholder="F001" />
-              </tui-textfield>
-            </div>
-            <div>
-              <label class="text-[11px] font-medium text-stone-400 mb-1 block">Correlativo</label>
-              <tui-textfield tuiTextfieldSize="s">
-                <input tuiTextfield type="text" [formControl]="form.controls.correlativo" placeholder="0000123" />
-              </tui-textfield>
-            </div>
-            <div>
-              <label class="text-[11px] font-medium text-stone-400 mb-1 block">Proveedor</label>
-              <tui-textfield tuiTextfieldSize="s">
-                <input tuiTextfield type="text" [formControl]="form.controls.proveedor" placeholder="Nombre" />
-              </tui-textfield>
-            </div>
-            <div>
-              <label class="text-[11px] font-medium text-stone-400 mb-1 block">Moneda</label>
-              <tui-select [formControl]="form.controls.moneda" class="w-full" tuiTextfieldSize="s"
-                [tuiTextfieldLabelOutside]="true">
-                <tui-data-list *tuiDataList>
-                  <button *ngFor="let moneda of monedas" tuiOption [value]="moneda">
-                    {{ moneda || 'Todas' }}
-                  </button>
-                </tui-data-list>
-              </tui-select>
-            </div>
-            <div>
-              <label class="text-[11px] font-medium text-stone-400 mb-1 block">Pago</label>
-              <tui-select [formControl]="form.controls.forma_pago" class="w-full" tuiTextfieldSize="s"
-                [tuiTextfieldLabelOutside]="true">
-                <tui-data-list *tuiDataList>
-                  <button *ngFor="let fp of formasPago" tuiOption [value]="fp">
-                    {{ formasPagoLabels[fp] }}
-                  </button>
-                </tui-data-list>
-              </tui-select>
-            </div>
-            <div>
-              <label class="text-[11px] font-medium text-stone-400 mb-1 block">Desde</label>
-              <tui-textfield tuiTextfieldSize="s">
-                <input tuiTextfield type="date" [formControl]="form.controls.fecha_desde" />
-              </tui-textfield>
-            </div>
-            <div>
-              <label class="text-[11px] font-medium text-stone-400 mb-1 block">Hasta</label>
-              <tui-textfield tuiTextfieldSize="s">
-                <input tuiTextfield type="date" [formControl]="form.controls.fecha_hasta" />
-              </tui-textfield>
-            </div>
-            <div>
-              <label class="text-[11px] font-medium text-stone-400 mb-1 block">Total min</label>
-              <tui-textfield tuiTextfieldSize="s">
-                <input tuiTextfield type="number" [formControl]="form.controls.total_min" placeholder="0.00" prefix="S/. " />
-              </tui-textfield>
-            </div>
-            <div>
-              <label class="text-[11px] font-medium text-stone-400 mb-1 block">Total max</label>
-              <tui-textfield tuiTextfieldSize="s">
-                <input tuiTextfield type="number" [formControl]="form.controls.total_max" placeholder="9999.99" prefix="S/. " />
-              </tui-textfield>
-            </div>
+        <div class="px-5 sm:px-0 pb-6 sm:pb-0 space-y-3">
+          <div class="grid grid-cols-1 gap-3">
+            <tui-select [formControl]="form.controls.tipo_comprobante" class="w-full" tuiTextfieldSize="m"
+              [tuiTextfieldLabelOutside]="true">
+              Tipo de comprobante
+              <tui-data-list *tuiDataList>
+                <button *ngFor="let tipo of tipoComprobantes" tuiOption [value]="tipo">
+                  {{ tipoComprobanteLabels[tipo] }}
+                </button>
+              </tui-data-list>
+            </tui-select>
+            <tui-textfield tuiTextfieldSize="m">
+              <label tuiLabel>Serie</label>
+              <input tuiTextfield type="text" [formControl]="form.controls.serie" placeholder="F001" />
+            </tui-textfield>
+            <tui-textfield tuiTextfieldSize="m">
+              <label tuiLabel>Correlativo</label>
+              <input tuiTextfield type="text" [formControl]="form.controls.correlativo" placeholder="0000123" />
+            </tui-textfield>
+            <tui-textfield tuiTextfieldSize="m">
+              <label tuiLabel>Proveedor</label>
+              <input tuiTextfield type="text" [formControl]="form.controls.proveedor" placeholder="Nombre" />
+            </tui-textfield>
+            <tui-select [formControl]="form.controls.moneda" class="w-full" tuiTextfieldSize="m"
+              [tuiTextfieldLabelOutside]="true">
+              Moneda
+              <tui-data-list *tuiDataList>
+                <button *ngFor="let moneda of monedas" tuiOption [value]="moneda">
+                  {{ moneda === 'Todos' ? 'Todas' : moneda }}
+                </button>
+              </tui-data-list>
+            </tui-select>
+            <tui-select [formControl]="form.controls.forma_pago" class="w-full" tuiTextfieldSize="m"
+              [tuiTextfieldLabelOutside]="true">
+              Forma de pago
+              <tui-data-list *tuiDataList>
+                <button *ngFor="let fp of formasPago" tuiOption [value]="fp">
+                  {{ formasPagoLabels[fp] }}
+                </button>
+              </tui-data-list>
+            </tui-select>
+            <tui-textfield tuiTextfieldSize="m">
+              <label tuiLabel>Desde</label>
+              <input tuiTextfield type="date" [formControl]="form.controls.fecha_desde" />
+            </tui-textfield>
+            <tui-textfield tuiTextfieldSize="m">
+              <label tuiLabel>Hasta</label>
+              <input tuiTextfield type="date" [formControl]="form.controls.fecha_hasta" />
+            </tui-textfield>
+            <tui-textfield tuiTextfieldSize="m">
+              <label tuiLabel>Total mín</label>
+              <input tuiTextfield type="number" [formControl]="form.controls.total_min" placeholder="0.00" prefix="S/. " />
+            </tui-textfield>
+            <tui-textfield tuiTextfieldSize="m">
+              <label tuiLabel>Total máx</label>
+              <input tuiTextfield type="number" [formControl]="form.controls.total_max" placeholder="9999.99" prefix="S/. " />
+            </tui-textfield>
           </div>
           <div class="flex justify-end gap-2 pt-3 border-t border-stone-100 dark:border-white/10">
             <button type="button" (click)="clearSearch()"
@@ -131,6 +130,7 @@
           </div>
         </div>
       </tui-expand>
+      </div>
 
       <!-- Búsqueda activa -->
       <div *ngIf="searchActive"

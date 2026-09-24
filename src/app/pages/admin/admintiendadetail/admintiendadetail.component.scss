@@ -3,3 +3,10 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Toggle de Seguridad: verde cuando la tienda está activa */
+.seguridad-switch[tuiSwitch]:checked {
+  background: #30d158 !important;
+  border-color: #30d158 !important;
+  color: #fff !important;
+}

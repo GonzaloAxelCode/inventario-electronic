@@ -6,6 +6,10 @@
           <h1 class="text-[26px] md:text-[28px] font-semibold tracking-[-0.03em] leading-none text-[#1d1d1f] dark:text-white antialiased">Suscripciones</h1>
           <p class="text-[13px] leading-5 text-[#86868b] dark:text-[#a1a1a6] mt-1.5">Planes disponibles · {{ planes.length }} {{ planes.length === 1 ? 'plan' : 'planes' }}</p>
         </div>
+        <button *ngIf="isSuperUser" (click)="startCreate()"
+          class="h-10 px-6 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-colors">
+          + Crear suscripción
+        </button>
       </div>
 
       <div *ngIf="!loading && error" class="rounded-2xl border border-[#ff3b30]/20 bg-[#ff3b30]/[0.06] p-6 text-center mb-4">

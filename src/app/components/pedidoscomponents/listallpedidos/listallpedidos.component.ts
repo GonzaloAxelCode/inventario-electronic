@@ -81,20 +81,20 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
     email_cliente: new FormControl(''),
     telefono_cliente: new FormControl(''),
     referencia_externa: new FormControl(''),
-    estado: new FormControl(''),
-    tipo_pedido: new FormControl(''),
-    canal_venta: new FormControl(''),
-    estado_pago: new FormControl(''),
-    prioridad: new FormControl(''),
-    metodo_pago: new FormControl(''),
+    estado: new FormControl('Todos'),
+    tipo_pedido: new FormControl('Todos'),
+    canal_venta: new FormControl('Todos'),
+    estado_pago: new FormControl('Todos'),
+    prioridad: new FormControl('Todos'),
+    metodo_pago: new FormControl('Todos'),
   });
 
-  readonly estados = ['PENDIENTE', 'CONFIRMADO', 'EN_PREPARACION', 'LISTO', 'ENTREGADO', 'VENCIDO', 'CANCELADO'];
-  readonly tiposPedido = ['MESA', 'DELIVERY', 'TAKEAWAY', 'MOSTRADOR'];
-  readonly canalesVenta = ['PRESENCIAL', 'WHATSAPP', 'WEB', 'TELEFONO', 'TIKTOK'];
-  readonly estadosPago = ['PENDIENTE', 'PARCIAL', 'PAGADO'];
-  readonly prioridades = ['NORMAL', 'URGENTE'];
-  readonly metodos_pago = ['Efectivo', 'Tarjeta', 'Yape', 'Plin', 'Transferencia', 'Otros'];
+  readonly estados = ['Todos', 'PENDIENTE', 'CONFIRMADO', 'EN_PREPARACION', 'LISTO', 'ENTREGADO', 'VENCIDO', 'CANCELADO'];
+  readonly tiposPedido = ['Todos', 'MESA', 'DELIVERY', 'TAKEAWAY', 'MOSTRADOR'];
+  readonly canalesVenta = ['Todos', 'PRESENCIAL', 'WHATSAPP', 'WEB', 'TELEFONO', 'TIKTOK'];
+  readonly estadosPago = ['Todos', 'PENDIENTE', 'PARCIAL', 'PAGADO'];
+  readonly prioridades = ['Todos', 'NORMAL', 'URGENTE'];
+  readonly metodos_pago = ['Todos', 'Efectivo', 'Tarjeta', 'Yape', 'Plin', 'Transferencia', 'Otros'];
 
   ngOnInit() {
     this.store.select(selectPedido)
@@ -137,12 +137,13 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
     if (formValues.email_cliente) filters.email_cliente = formValues.email_cliente;
     if (formValues.telefono_cliente) filters.telefono_cliente = formValues.telefono_cliente;
     if (formValues.referencia_externa) filters.referencia_externa = formValues.referencia_externa;
-    if (formValues.estado) filters.estado = formValues.estado;
-    if (formValues.tipo_pedido) filters.tipo_pedido = formValues.tipo_pedido;
-    if (formValues.canal_venta) filters.canal_venta = formValues.canal_venta;
-    if (formValues.estado_pago) filters.estado_pago = formValues.estado_pago;
-    if (formValues.prioridad) filters.prioridad = formValues.prioridad;
-    if (formValues.metodo_pago) filters.metodo_pago = formValues.metodo_pago;
+    // Los selects mandan string vacío cuando es 'Todos'
+    if (formValues.estado != null) filters.estado = formValues.estado === 'Todos' ? '' : formValues.estado;
+    if (formValues.tipo_pedido != null) filters.tipo_pedido = formValues.tipo_pedido === 'Todos' ? '' : formValues.tipo_pedido;
+    if (formValues.canal_venta != null) filters.canal_venta = formValues.canal_venta === 'Todos' ? '' : formValues.canal_venta;
+    if (formValues.estado_pago != null) filters.estado_pago = formValues.estado_pago === 'Todos' ? '' : formValues.estado_pago;
+    if (formValues.prioridad != null) filters.prioridad = formValues.prioridad === 'Todos' ? '' : formValues.prioridad;
+    if (formValues.metodo_pago != null) filters.metodo_pago = formValues.metodo_pago === 'Todos' ? '' : formValues.metodo_pago;
 
     return filters;
   }
@@ -229,6 +230,7 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
   onSearch() {
     const filters = this.buildFilters();
     this.store.dispatch(cargarPedidos({ page: 1, page_size: PAGE_SIZE_PEDIDOS, filters }));
+    this.expanded = false;
   }
 
   onCancelPedido(pedidoId: number) {
@@ -276,7 +278,20 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
   }
 
   clearFilters() {
-    this.form.reset();
+    this.form.reset({
+      numero_pedido: '',
+      nombre_cliente: '',
+      numero_documento_cliente: '',
+      email_cliente: '',
+      telefono_cliente: '',
+      referencia_externa: '',
+      estado: 'Todos',
+      tipo_pedido: 'Todos',
+      canal_venta: 'Todos',
+      estado_pago: 'Todos',
+      prioridad: 'Todos',
+      metodo_pago: 'Todos',
+    });
     this.range = new TuiDayRange(
       TuiDay.currentLocal().append({ month: -3 }),
       TuiDay.currentLocal()

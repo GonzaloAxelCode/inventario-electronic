@@ -44,6 +44,7 @@ import ChoosestoreComponent from '../choosestore/choosestore.component';
 import { DarkmodeComponent } from '../darkmode/darkmode.component';
 import { HeaderComponent } from "../header/header.component";
 import { PlanbadgeComponent } from '../planbadge/planbadge.component';
+import { UserMenuDropdownComponent } from '../usermenu/user-menu-dropdown.component';
 
 @Component({
   selector: 'app-sidenav',
@@ -70,7 +71,7 @@ import { PlanbadgeComponent } from '../planbadge/planbadge.component';
     TuiTextfield, TuiPulse,
     TuiTitle, DarkmodeComponent, ChoosestoreComponent, TuiDrawer, TuiButton, TuiAppearance,
     TuiAvatar, TuiDataList, TuiStatus, TuiBadge,
-    TuiPopup, TuiIcon, PlanbadgeComponent],
+    TuiPopup, TuiIcon, PlanbadgeComponent, UserMenuDropdownComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss',
 })
@@ -116,6 +117,11 @@ export class SidenavComponent implements OnInit {
 
   toggleUserMenu() {
     this.userMenuOpen = !this.userMenuOpen;
+  }
+
+  onUserMenuClosed() {
+    this.userMenuOpen = false;
+    this.onClose();
   }
 
   closeUserMenu() {

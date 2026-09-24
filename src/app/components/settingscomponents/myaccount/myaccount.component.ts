@@ -95,10 +95,6 @@ export class MyaccountComponent implements OnInit {
     return this.user.navbar_type === 'top' ? 'Superior' : 'Lateral';
   }
 
-  get guiasRemisionActive(): boolean {
-    return this.user.modulos_habilitados?.includes('guias de remision') ?? false;
-  }
-
   get comprasActive(): boolean {
     return this.user.modulos_habilitados?.includes('compras') ?? false;
   }
@@ -132,9 +128,6 @@ export class MyaccountComponent implements OnInit {
     this.user = { ...this.user, modulos_habilitados: newModulos };
 
     switch (modulo) {
-      case 'guias de remision':
-        this.featureFlags.toggleGuiasRemision();
-        break;
       case 'compras':
         this.featureFlags.toggleCompras();
         break;

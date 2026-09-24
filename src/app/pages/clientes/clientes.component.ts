@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { TuiAppearance, TuiButton, TuiTextfield } from '@taiga-ui/core';
 import { TuiTabs, TuiTab } from '@taiga-ui/kit';
 import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { Venta } from '@/app/models/venta.models';
 import { catchError, of, timeout } from 'rxjs';
 import * as dayjs from 'dayjs';
@@ -17,7 +18,7 @@ import { SorteosClientesComponent } from '@/app/components/clientescomponents/so
 @Component({
   selector: 'app-clientes',
   standalone: true,
-  imports: [CommonModule, FormsModule, TuiButton, TuiAppearance, TuiTextfield, TuiTabs, TuiTab, TuiHeader, TuiNavigation, EstadisticasClientesComponent, SorteosClientesComponent],
+  imports: [CommonModule, FormsModule, TuiButton, TuiAppearance, TuiTextfield, TuiTabs, TuiTab, TuiHeader, TuiNavigation, InfiniteScrollModule, EstadisticasClientesComponent, SorteosClientesComponent],
   templateUrl: './clientes.component.html',
   styleUrl: './clientes.component.scss'
 })
@@ -131,6 +132,10 @@ export class ClientesComponent implements OnInit {
     }
   }
 
+  onScrollList(): void {
+    this.loadMore();
+  }
+
   getInitials(name: string): string {
     if (!name) return '?';
     const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -140,6 +145,14 @@ export class ClientesComponent implements OnInit {
   getAvatarColor(id: number): string {
     const colors = ['#667eea','#f093fb','#4facfe','#43e97b','#fa709a','#a18cd1','#fccb90','#8ec5fc','#ff9a9e','#a3ffce'];
     return colors[(id || 0) % colors.length];
+  }
+  avatarAccent(key: number | string | null | undefined): { fondo: string; texto: string } {
+    const palette = ['#007AFF', '#34C759', '#FF9500', '#AF52DE', '#FF2D55', '#5AC8FA', '#5856D6', '#00C7BE'];
+    const seed = typeof key === 'number' && Number.isFinite(key)
+      ? key
+      : String(key ?? '?').length * 7 + 3;
+    const base = palette[Math.abs(seed) % palette.length];
+    return { fondo: base + '26', texto: base };
   }
   formatoCorto(fecha: string): string {
     if (!fecha) return '--';

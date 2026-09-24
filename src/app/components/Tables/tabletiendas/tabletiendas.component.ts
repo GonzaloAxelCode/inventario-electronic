@@ -5,6 +5,7 @@ import { URL_BASE, imageUrl } from '@/app/services/utils/endpoints';
 import { desactivateTiendaAction } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
+import { selectCurrenttUser } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -48,6 +49,8 @@ export class TabletiendasComponent implements OnInit {
   allColumnKeys = this.allColumns.map(c => c.key);
   displayedColumns = [...this.allColumnKeys];
   loadingDesactivateTienda: boolean = false;
+  /** Solo superusuario ve el badge "Inactiva" y puede abrir tiendas desactivadas. */
+  isSuperUser = false;
   editingId: number | any = null;
   editedTienda: Partial<Tienda> = {};
 
@@ -56,6 +59,13 @@ export class TabletiendasComponent implements OnInit {
   ngOnInit() {
 
     this.tiendasState$ = this.store.select(selectTiendaState);
+
+    this.store.select(selectCurrenttUser).pipe(
+      tap((user: any) => {
+        this.isSuperUser = !!user?.is_superuser;
+        this.cdRef.markForCheck();
+      })
+    ).subscribe();
 
     this.store.select(selectTiendaState).pipe(
       tap((tiendaState: TiendaState) => {
@@ -144,25 +154,43 @@ export class TabletiendasComponent implements OnInit {
     return this.gradients[index % this.gradients.length];
   }
 
-  /** Solo tiendas padre (sin tienda_padre o con padre fuera de la lista) */
+  /** Buscador en tiempo real de tiendas principales (nombre / razón social / RUC, o nombre de sucursal). */
+  busqueda = '';
+
+  gruposVisibles(tiendas: Tienda[]): { padre: Tienda; sucursales: Tienda[] }[] {
+    const grupos = this.getGruposJerarquia(tiendas);
+    const q = this.busqueda.trim().toLowerCase();
+    if (!q) return grupos;
+    return grupos.filter(g => {
+      const padreOk = [g.padre.nombre, (g.padre as any)?.razon_social, g.padre.ruc]
+        .some(v => String(v ?? '').toLowerCase().includes(q));
+      if (padreOk) return true;
+      return g.sucursales.some(s => String(s?.nombre ?? '').toLowerCase().includes(q));
+    });
+  }
+
+  /** Solo tiendas padre vigentes (sin tienda_padre o con padre fuera de la lista). */
   soloPadres(tiendas: Tienda[]): Tienda[] {
-    const lista = tiendas ?? [];
+    const lista = (tiendas ?? []).filter(t => !(t as any).is_deleted);
     const ids = new Set(lista.map(t => t.id));
     return lista.filter(t => t.tienda_padre == null || !ids.has(t.tienda_padre as number));
   }
 
-  /** Padres con sus sucursales: prefiere el anidado del GET, si no deriva de la lista plana */
+  /** Padres con sus sucursales vigentes: prefiere el anidado del GET, si no deriva de la lista plana */
   getGruposJerarquia(tiendas: Tienda[]): { padre: Tienda; sucursales: Tienda[] }[] {
-    const lista = tiendas ?? [];
+    const lista = (tiendas ?? []).filter(t => !(t as any).is_deleted);
     const padres = this.soloPadres(lista);
     const nestedIds = new Set<number>();
     for (const p of padres) for (const s of (p.sucursales ?? [])) nestedIds.add(s.id);
-    return padres.map(p => ({
-      padre: p,
-      sucursales: (p.sucursales?.length
+    return padres.map(p => {
+      const base: Tienda[] = p.sucursales?.length
         ? [...p.sucursales]
-        : lista.filter(t => t.id !== p.id && !nestedIds.has(t.id) && t.tienda_padre === p.id)),
-    }));
+        : lista.filter(t => t.id !== p.id && !nestedIds.has(t.id) && t.tienda_padre === p.id);
+      return {
+        padre: p,
+        sucursales: base.filter(s => !(s as any).is_deleted),
+      };
+    });
   }
 
   /** Expand de sucursales: abierto por defecto (solo se colapsa manualmente) */

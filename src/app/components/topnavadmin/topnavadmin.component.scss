@@ -37,3 +37,20 @@
 :host-context([tuiTheme="dark"]) .user-menu-dropdown button:hover {
   background: rgba(255, 255, 255, 0.08) !important;
 }
+
+/* Contenedor del dropdown de usuario — igual que en topnav de app */
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.25rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  padding: 0.25rem;
+  min-width: 220px;
+  max-height: calc(100vh - 5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  z-index: 9999;
+  transform-origin: top right;
+}

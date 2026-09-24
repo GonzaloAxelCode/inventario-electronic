@@ -6,7 +6,8 @@
         <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
             class="flex gap-2 overflow-x-auto whitespace-nowrap">
             <button tuiTab type="button">Historial de Compras</button>
-            <button tuiTab type="button">Registrar Comprobantes</button>
+            <button tuiTab type="button">Registrar una compra</button>
+            <button tuiTab type="button">Proveedores</button>
         </nav>
     </header>
 
@@ -16,6 +17,10 @@
 
     <ng-container *ngIf="activeTab === 'comprobantes'">
         <app-registrarcompra></app-registrarcompra>
+    </ng-container>
+
+    <ng-container *ngIf="activeTab === 'proveedores'">
+        <app-listallproveedores></app-listallproveedores>
     </ng-container>
 
 </main>

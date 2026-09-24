@@ -1,4 +1,4 @@
-<tui-loader [showLoader]="loading || deleteTiendaLoader" [overlay]="true">
+<tui-loader [showLoader]="loading || deleteTiendaLoader || togglingActivacion || deletingTemporal || restoringTienda" [overlay]="true">
   <div class="h-screen h-dvh bg-transparent">
     <div class="max-w-[1200px] mx-auto px-6 md:px-8 py-8">
       <!-- Back Apple -->
@@ -84,8 +84,8 @@
         <button *ngIf="isSuperUser" (click)="setTab('config')"
           class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
           [ngClass]="activeTab === 'config' ? 'bg-[#ff3b30] text-white' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
-          <span class="block text-[13px] font-medium leading-none">Configuración</span>
-          <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">Zona de peligro</span>
+          <span class="block text-[13px] font-medium leading-none">Seguridad</span>
+          <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">Activación y eliminación</span>
         </button>
         </nav>
         <!-- Plan de esta tienda -->
@@ -801,19 +801,58 @@
         <app-dialogupdattienda [tiendaInput]="tienda" [soloSunat]="true"></app-dialogupdattienda>
       </div>
 
-      <!-- TAB: Configuración — solo superusuarios (admin tienda no ve eliminar ni config) -->
+      <!-- TAB: Seguridad — solo superusuarios -->
       <div *ngIf="activeTab === 'config' && isSuperUser" class="space-y-4">
-        <div class="rounded-2xl border border-[#ff3b30]/20 bg-[#ff3b30]/[0.06] dark:bg-[#ff3b30]/[0.08] overflow-hidden">
+        <div>
+          <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Seguridad</h2>
+          <p class="text-[12px] text-[#86868b] mt-0.5">Activación, eliminación temporal y restauración de {{ tienda.nombre || 'la tienda' }}.</p>
+        </div>
+
+        <!-- Estado / toggle activación -->
+        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] overflow-hidden">
+          <div class="px-5 py-4 flex items-center justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <p class="text-[13px] font-semibold text-[#1d1d1f] dark:text-white">Tienda {{ tienda.activo ? 'activa' : 'inactiva' }}</p>
+                <span class="w-2 h-2 rounded-full shrink-0" [ngClass]="tienda.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
+              </div>
+              <p class="text-[12px] leading-5 text-[#86868b] dark:text-[#a1a1a6] mt-1">Activar/Desactivar una tienda.</p>
+            </div>
+            <input tuiSwitch type="checkbox" class="seguridad-switch shrink-0"
+              [(ngModel)]="tienda.activo"
+              (ngModelChange)="onToggleActivacion($event)" />
+          </div>
+        </div>
+
+        <!-- Eliminada: restaurar -->
+        <div *ngIf="isTiendaEliminada" class="rounded-2xl border border-[#ff9f0a]/30 bg-[#ff9f0a]/[0.06] dark:bg-[#ff9f0a]/[0.08] overflow-hidden">
+          <div class="px-5 py-4 flex gap-4">
+            <div class="w-8 h-8 rounded-full bg-[#ff9f0a]/15 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-[#ff9f0a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5 20h14a1 1 0 00.95-.68l7-14a1 1 0 00-1.9-.32L12 18 2.05 5a1 1 0 00-1.9.32l7 14A1 1 0 005 20z"/></svg>
+            </div>
+            <div class="flex-1">
+              <p class="text-[13px] font-semibold text-[#ff9f0a]">Tienda eliminada (temporal)</p>
+              <p class="text-[12px] leading-5 text-[#1d1d1f]/70 dark:text-white/70 mt-1">Puedes restaurarla: volverá a estar activa. Sus usuarios seguirán desactivados.</p>
+              <button tuiButton appearance="primary" size="s" class="mt-3 rounded-full"
+                [disabled]="restoringTienda" (click)="onRestaurarTienda()">
+                {{ restoringTienda ? 'Restaurando…' : 'Restaurar tienda' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zona de peligro: eliminación temporal -->
+        <div *ngIf="!isTiendaEliminada" class="rounded-2xl border border-[#ff3b30]/20 bg-[#ff3b30]/[0.06] dark:bg-[#ff3b30]/[0.08] overflow-hidden">
           <div class="px-5 py-4 flex gap-4">
             <div class="w-8 h-8 rounded-full bg-[#ff3b30]/15 flex items-center justify-center shrink-0">
               <svg class="w-4 h-4 text-[#ff3b30]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5 20h14a1 1 0 00.95-.68l7-14a1 1 0 00-1.9-.32L12 18 2.05 5a1 1 0 00-1.9.32l7 14A1 1 0 005 20z"/></svg>
             </div>
             <div class="flex-1">
-              <p class="text-[13px] font-semibold text-[#ff3b30]">Zona de peligro</p>
-              <p class="text-[12px] leading-5 text-[#1d1d1f]/70 dark:text-white/70 mt-1">Eliminar permanentemente borra la tienda y sus datos asociados. Esta acción no se puede deshacer.</p>
+              <p class="text-[13px] font-semibold text-[#ff3b30]">Eliminar tienda</p>
+              <p class="text-[12px] leading-5 text-[#1d1d1f]/70 dark:text-white/70 mt-1">La tienda ya no se mostrará en la lista.</p>
               <button tuiButton appearance="primary" size="s" class="mt-3 rounded-full !bg-[#ff3b30] hover:!bg-[#ff453a]"
-                [disabled]="deleteTiendaLoader" (click)="onDeleteTienda(tienda.id)">
-                Eliminar tienda permanentemente
+                [disabled]="deletingTemporal || togglingActivacion" (click)="onEliminarTemporal()">
+                {{ deletingTemporal ? 'Eliminando…' : 'Eliminar tienda' }}
               </button>
             </div>
             </div>

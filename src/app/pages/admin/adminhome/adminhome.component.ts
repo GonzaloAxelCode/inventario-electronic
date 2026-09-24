@@ -41,7 +41,7 @@ export class AdminhomeComponent implements OnInit {
 
   public readonly ownerStoreCounts$ = this.store.select(selectTiendaState).pipe(
     map(tiendaState => {
-      const tiendas = tiendaState.tiendas ?? [];
+      const tiendas = (tiendaState.tiendas ?? []).filter((t: any) => !t?.is_deleted);
       const ownerMap = new Map<number, { name: string; count: number }>();
       for (const t of tiendas) {
         const ownerId = getPropietarioId(t);

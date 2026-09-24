@@ -5,21 +5,32 @@
   <ng-container *ngIf="tiendasState$ | async as state">
   <ng-container *ngIf="(tiendas !== null ? tiendas : state.tiendas) as visibleTiendas">
   <ng-container *ngIf="visibleTiendas.length; else noTiendas">
+  <ng-container *ngIf="gruposVisibles(visibleTiendas) as grupos">
 
-    <!-- Apple inset header — sin fondo, solo tipografía -->
-     <div *ngIf="mostrarContador" class="flex items-baseline justify-between px-1 mb-3">
-       <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">
-         {{ getGruposJerarquia(visibleTiendas).length }} {{ getGruposJerarquia(visibleTiendas).length === 1 ? 'tienda' : 'tiendas' }}
-       </p>
-     </div>
+    <!-- Buscador + contador — Apple pill, responsive -->
+    <div class="flex flex-col sm:flex-row sm:items-center gap-2 px-1 mb-3">
+      <p *ngIf="mostrarContador" class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6] order-2 sm:order-1">
+        {{ grupos.length }} {{ grupos.length === 1 ? 'tienda' : 'tiendas' }}
+      </p>
+      <div class="relative w-full sm:max-w-[260px] sm:ml-auto order-1 sm:order-2">
+        <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#86868b] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"/></svg>
+        <input [(ngModel)]="busqueda" type="search" placeholder="Buscar tienda principal…"
+          class="w-full h-10 pl-10 pr-9 rounded-full bg-black/[0.04] dark:bg-white/[0.06] text-[13px] text-[#1d1d1f] dark:text-white placeholder:text-[#86868b] focus:outline-none focus:ring-2 focus:ring-[#0071e3]/40 transition-shadow" />
+        <button *ngIf="busqueda" type="button" (click)="busqueda = ''" aria-label="Limpiar búsqueda"
+          class="absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-black/[0.08] dark:bg-white/[0.12] text-[#86868b] flex items-center justify-center hover:bg-black/[0.14] dark:hover:bg-white/[0.2] transition-colors">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
 
     <!-- Una tarjeta por tienda padre con sus sucursales dentro (ancho completo si es solo una) -->
-    <div class="grid grid-cols-1 gap-4" [ngClass]="getGruposJerarquia(visibleTiendas).length > 1 ? 'sm:grid-cols-2' : ''">
-      <div *ngFor="let grupo of getGruposJerarquia(visibleTiendas)"
-        class="rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] p-5"
+    <ng-container *ngIf="grupos.length; else sinResultados">
+    <div class="grid grid-cols-1 gap-4" [ngClass]="grupos.length > 1 ? 'sm:grid-cols-2' : ''">
+      <div *ngFor="let grupo of grupos"
+        class="rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] p-5 flex flex-col"
       >
         <!-- Padre -->
-        <div class="cursor-pointer" (click)="grupo.padre.activo && showDialogDetailTienda(grupo.padre)">
+        <div class="cursor-pointer" (click)="(grupo.padre.activo || isSuperUser) && showDialogDetailTienda(grupo.padre)">
           <ng-container *ngTemplateOutlet="tarjetaTienda; context: { $implicit: grupo.padre }"></ng-container>
         </div>
         <!-- Sucursales de este padre (expandible) -->
@@ -39,7 +50,7 @@
             <div
               *ngFor="let suc of grupo.sucursales"
               class="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-colors cursor-pointer"
-              (click)="suc.activo && showDialogDetailTienda(suc)"
+              (click)="(suc.activo || isSuperUser) && showDialogDetailTienda(suc)"
             >
               <div class="w-9 h-9 rounded-xl overflow-hidden bg-white dark:bg-[#2c2c2e] shrink-0 flex items-center justify-center">
                 <img loading="lazy"
@@ -50,32 +61,40 @@
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-1.5">
                   <p class="text-[14px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white truncate">{{ suc.nombre }}</p>
-                  <span class="px-1.5 py-0.5 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b] shrink-0">Sucursal</span>
+                  <span *ngIf="isSuperUser && !suc.activo" class="px-1.5 py-0.5 rounded-full bg-[#ff3b30]/15 text-[#ff3b30] text-[10px] font-semibold shrink-0">Inactiva</span>
                 </div>
-                <p class="text-[11px] text-[#86868b] dark:text-[#a1a1a6] truncate mt-0.5">
-                  <span *ngIf="suc.subscripcion_data?.nombre_plan" class="font-medium text-[#7d7aff]">Plan {{ suc.subscripcion_data?.nombre_plan }} · </span><span *ngIf="suc.serie" class="font-mono">Serie {{ suc.serie }} · </span>{{ suc.direccion || 'Sin dirección' }}
+                <p *ngIf="suc.subscripcion_data?.nombre_plan || suc.serie" class="text-[11px] text-[#86868b] dark:text-[#a1a1a6] truncate mt-0.5">
+                  <span *ngIf="suc.subscripcion_data?.nombre_plan" class="font-medium text-[#7d7aff]">Plan {{ suc.subscripcion_data?.nombre_plan }}</span><span *ngIf="suc.subscripcion_data?.nombre_plan && suc.serie"> · </span><span *ngIf="suc.serie" class="font-mono">Serie {{ suc.serie }}</span>
                 </p>
               </div>
-              <span class="w-2 h-2 rounded-full shrink-0" [ngClass]="suc.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
               <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
             </div>
           </div>
         </div>
-        <!-- Crear sucursal de este padre -->
+        <!-- Crear sucursal de este padre — siempre abajo del card -->
+        <div class="mt-auto pt-4">
         <button
           type="button"
           (click)="crearSucursal.emit(grupo.padre)"
-          class="mt-4 w-full h-9 rounded-full border border-black/[0.12] dark:border-white/[0.2] text-[12px] font-medium text-[#1d1d1f] dark:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.06] transition-colors inline-flex items-center justify-center gap-1.5"
+          class="w-full h-9 rounded-full border border-black/[0.12] dark:border-white/[0.2] text-[12px] font-medium text-[#1d1d1f] dark:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.06] transition-colors inline-flex items-center justify-center gap-1.5"
         >
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
           </svg>
           Crear sucursal
         </button>
+        </div>
       </div>
     </div>
+    </ng-container>
+    <ng-template #sinResultados>
+      <div class="py-12 text-center bg-transparent">
+        <p class="text-[14px] font-semibold text-[#1d1d1f] dark:text-white">Sin resultados</p>
+        <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mt-1">No hay tiendas que coincidan con “{{ busqueda }}”.</p>
+      </div>
+    </ng-template>
 
     <!-- Plantilla tarjeta tienda -->
     <ng-template #tarjetaTienda let-tienda let-compacto="compacto">
@@ -90,6 +109,7 @@
           <div class="flex items-center gap-1.5">
             <p class="text-[15px] font-semibold tracking-[-0.01em] leading-5 text-[#1d1d1f] dark:text-white truncate">{{ tienda.nombre }}</p>
             <span *ngIf="!compacto" class="px-1.5 py-0.5 rounded-full bg-[#30d158]/15 text-[#30d158] text-[10px] font-semibold shrink-0">Principal</span>
+            <span *ngIf="isSuperUser && !tienda.activo" class="px-1.5 py-0.5 rounded-full bg-[#ff3b30]/15 text-[#ff3b30] text-[10px] font-semibold shrink-0">Inactiva</span>
             <span class="w-2 h-2 rounded-full shrink-0" [ngClass]="tienda.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
           </div>
           <p class="text-[12px] leading-4 text-[#86868b] dark:text-[#a1a1a6] truncate mt-0.5">
@@ -108,34 +128,10 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
         </svg>
       </div>
-      <div *ngIf="tienda.tienda_stats as stats" class="grid grid-cols-3 gap-2 mt-3 text-center">
-        <div class="rounded-xl bg-white dark:bg-black/[0.2] px-2 py-2">
-          <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ stats.total_comprobantes }}</p>
-          <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Comprob.</p>
-        </div>
-        <div class="rounded-xl bg-white dark:bg-black/[0.2] px-2 py-2">
-          <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">S/ {{ stats.total_facturado }}</p>
-          <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Facturado</p>
-        </div>
-        <div class="rounded-xl bg-white dark:bg-black/[0.2] px-2 py-2">
-          <p class="font-mono text-[14px] font-semibold text-[#1d1d1f] dark:text-white">{{ stats.num_personal }}</p>
-          <p class="text-[10px] uppercase tracking-wide text-[#86868b]">Personal</p>
-        </div>
-      </div>
-      <div *ngIf="tienda.subscripcion_data as plan" class="mt-3 rounded-xl bg-[#7d7aff]/[0.07] dark:bg-[#7d7aff]/[0.12] px-3 py-2.5">
-        <div class="flex items-center justify-between gap-2">
-          <p class="text-[12px] font-semibold text-[#1d1d1f] dark:text-white">Plan {{ plan.nombre_plan || '—' }}</p>
-          <span *ngIf="plan.periodo_facturacion" class="text-[10px] uppercase tracking-wide text-[#86868b] shrink-0">{{ plan.periodo_facturacion }}</span>
-        </div>
-        <div class="flex flex-wrap gap-1.5 mt-2">
-          <span *ngIf="plan.limite_facturas != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_facturas }} facturas</span>
-          <span *ngIf="plan.limite_boletas != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_boletas }} boletas</span>
-          <span *ngIf="plan.limite_personal != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_personal }} personal</span>
-          <span *ngIf="plan.limite_productos != null" class="px-2 py-0.5 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-[10px] font-medium text-[#86868b]">{{ plan.limite_productos }} productos</span>
-        </div>
-      </div>
+      <p *ngIf="tienda.subscripcion_data?.nombre_plan" class="mt-3 text-[12px] font-medium text-[#86868b] dark:text-[#a1a1a6]">Plan <span class="font-semibold text-[#7d7aff]">{{ tienda.subscripcion_data.nombre_plan }}</span></p>
     </ng-template>
 
+  </ng-container>
   </ng-container>
 
   <!-- No hay tiendas — Apple empty state sin fondo -->

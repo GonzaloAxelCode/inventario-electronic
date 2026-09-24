@@ -82,6 +82,12 @@ export class ListallproveedoresComponent implements OnInit {
     return value;
   }
 
+  contactoLinea(proveedor: Proveedor): string {
+    const partes = [proveedor.telefono, proveedor.email].filter((v): v is string => !!v && String(v).trim() !== '');
+    if (partes.length) return partes.join(' · ');
+    return proveedor.direccion || '';
+  }
+
   showDialogUpdate(proveedor: Partial<Proveedor>): void {
     this.dialogUpdateService.open(proveedor).subscribe();
   }

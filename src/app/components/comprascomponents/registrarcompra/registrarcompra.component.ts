@@ -4,6 +4,7 @@ import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, Reacti
 import { Store } from '@ngrx/store';
 import { TuiAlertService, TuiButton, TuiDataList, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
+import { TuiSegmented } from '@taiga-ui/kit';
 import { Actions, ofType } from '@ngrx/effects';
   import { takeUntil, Subject, switchMap, filter, distinctUntilChanged, of, timeout, finalize } from 'rxjs';
   import { catchError, map } from 'rxjs/operators';
@@ -12,6 +13,10 @@ import { AppState } from '@/app/state/app.state';
 import { CompraState } from '@/app/state/reducers/compra.reducer';
 import { selectCompra } from '@/app/state/selectors/compra.selectors';
   import { ConsultaService } from '@/app/services/consultas.service';
+import { Proveedor } from '@/app/models/proveedor.models';
+import { loadProveedores } from '@/app/state/actions/proveedor.actions';
+import { selectProveedores } from '@/app/state/selectors/proveedor.selectors';
+import { Observable } from 'rxjs';
 import { parseXmlCompra } from '@/app/utils/xml-parser';
 
 @Component({
@@ -29,6 +34,7 @@ import { parseXmlCompra } from '@/app/utils/xml-parser';
     TuiInputModule,
     TuiSelectModule,
     TuiTextfieldControllerModule,
+    TuiSegmented,
   ],
   templateUrl: './registrarcompra.component.html',
   styleUrl: './registrarcompra.component.scss'
@@ -56,6 +62,10 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
   consultandoDocumento = false;
   proveedorNoEncontrado = false;
   compraServerError: string | null = null;
+
+  origenProveedor: 'registrados' | 'consulta' = 'registrados';
+  proveedores: Proveedor[] = [];
+  proveedorRegistradoRuc = '';
 
   tipoComprobantes = ['01', '03'];
   tipoComprobanteLabels: Record<string, string> = {
@@ -105,6 +115,18 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
   }, { validators: [this.proveedorValidator] });
 
   ngOnInit() {
+     if (this.compraForm.get('tipo_comprobante')?.value === '01') {
+       this.compraForm.get('tipo_documento_proveedor')?.setValue('07', { emitEvent: false });
+       this.onTipoDocProveedorChange();
+     }
+     this.store.dispatch(loadProveedores());
+     this.store.select(selectProveedores)
+       .pipe(takeUntil(this.destroy$))
+       .subscribe((state: any) => {
+         this.proveedores = state?.proveedores ?? [];
+         this.cdr.detectChanges();
+       });
+
      this.compraForm.get('tipo_comprobante')?.valueChanges
        .pipe(takeUntil(this.destroy$))
        .subscribe(() => {
@@ -166,6 +188,34 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
       }
       return false;
     }
+
+   setOrigenProveedor(origen: 'registrados' | 'consulta'): void {
+     this.origenProveedor = origen;
+     this.proveedorNoEncontrado = false;
+     this.proveedorRegistradoRuc = '';
+     this.compraForm.patchValue({
+       tipo_documento_proveedor: '07',
+       numero_documento_proveedor: '',
+       nombre_proveedor: '',
+     });
+   }
+
+   onProveedorRegistradoChange(ruc: string): void {
+     const p = this.proveedores.find(x => x.ruc === ruc);
+     if (!p) return;
+     const doc = (p.ruc || '').trim();
+     this.proveedorNoEncontrado = false;
+     this.compraForm.patchValue({
+       tipo_documento_proveedor: '07',
+       numero_documento_proveedor: doc,
+       nombre_proveedor: p.nombre || '',
+     });
+     this.cdr.detectChanges();
+   }
+
+   get proveedorRegistradoSeleccionado(): Proveedor | null {
+     return this.proveedores.find(x => x.ruc === this.proveedorRegistradoRuc) ?? null;
+   }
 
    consultarProveedor(): void {
      const tipoDoc = this.compraForm.get('tipo_documento_proveedor')?.value;
@@ -260,12 +310,10 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
 
   onTipoComprobanteChange() {
     const tipoDocCtrl = this.compraForm.get('tipo_documento_proveedor');
-    const tipoDoc = tipoDocCtrl?.value;
-    const permitidos = this.tiposDocProveedorPermitidos[this.compraForm.get('tipo_comprobante')?.value];
 
-    if (tipoDoc && permitidos && !permitidos.includes(tipoDoc)) {
-      tipoDocCtrl?.setValue('');
-      this.compraForm.get('numero_documento_proveedor')?.setValue('');
+    // Siempre RUC (07), en boleta y factura
+    if (tipoDocCtrl?.value !== '07') {
+      tipoDocCtrl?.setValue('07');
     }
 
     this.compraForm.get('serie')?.updateValueAndValidity();
@@ -662,6 +710,9 @@ export class RegistrarcompraComponent implements OnInit, OnDestroy {
     });
     this.archivoFile = null;
     this.archivoPdf = null;
+    this.origenProveedor = 'registrados';
+    this.proveedorRegistradoRuc = '';
+    this.proveedorNoEncontrado = false;
   }
 
   ngOnDestroy() {

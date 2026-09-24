@@ -14,39 +14,6 @@
 
     <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 divide-y divide-stone-100 dark:divide-white/5 px-4 sm:px-5">
 
-      <!-- Guias de Remision -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4">
-        <div class="flex items-center gap-3 min-w-0">
-          <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
-               [class]="featureFlags.guiasRemisionEnabled() ? 'bg-amber-500/15' : 'bg-stone-100 dark:bg-white/10'">
-            <svg class="w-5 h-5" [class]="featureFlags.guiasRemisionEnabled() ? 'text-amber-500' : 'text-stone-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-          </div>
-          <div class="min-w-0">
-            <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white flex items-center gap-2 flex-wrap">
-              Guias de Remision
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400">Beta</span>
-            </p>
-            <p class="text-xs text-stone-500 dark:text-stone-400">
-              {{ featureFlags.guiasRemisionEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
-            </p>
-          </div>
-        </div>
-        <div class="flex items-center gap-1 p-1 rounded-full bg-stone-100 dark:bg-white/10 self-start sm:self-center shrink-0" role="group" aria-label="Guías de remisión">
-          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
-            [class]="!featureFlags.guiasRemisionEnabled() ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
-            (click)="featureFlags.guiasRemisionEnabled() && toggleGuiasRemision()">
-            No
-          </button>
-          <button type="button" class="px-4 h-8 rounded-full text-[13px] font-semibold transition-all"
-            [class]="featureFlags.guiasRemisionEnabled() ? 'bg-white dark:bg-neutral-700 text-stone-900 dark:text-white shadow-sm' : 'text-stone-500 dark:text-stone-400'"
-            (click)="!featureFlags.guiasRemisionEnabled() && toggleGuiasRemision()">
-            Si
-          </button>
-        </div>
-      </div>
-
       <!-- Compras -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4">
         <div class="flex items-center gap-3 min-w-0">
@@ -59,7 +26,6 @@
           <div class="min-w-0">
             <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white flex items-center gap-2 flex-wrap">
               Compras
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-600 dark:text-violet-400">Beta</span>
             </p>
             <p class="text-xs text-stone-500 dark:text-stone-400">
               {{ featureFlags.comprasEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}
@@ -92,7 +58,6 @@
           <div class="min-w-0">
             <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white flex items-center gap-2 flex-wrap">
               Ganancias
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">Beta</span>
             </p>
             <p class="text-xs text-stone-500 dark:text-stone-400">
               {{ featureFlags.gananciasEnabled() ? 'Modulo activado' : 'Modulo desactivado' }}

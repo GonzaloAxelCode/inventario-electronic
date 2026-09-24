@@ -18,9 +18,11 @@ import {
 import { TuiIcon } from '@taiga-ui/core';
 import { AppState } from '@/app/state/app.state';
 import { cargarCompras } from '@/app/state/actions/compra.actions';
+import { loadProveedores } from '@/app/state/actions/proveedor.actions';
 import { PAGE_SIZE_COMPRAS } from '@/app/services/utils/pages-sizes';
 import { ListallcomprasComponent } from '@/app/components/comprascomponents/listallcompras/listallcompras.component';
 import { RegistrarcompraComponent } from '@/app/components/comprascomponents/registrarcompra/registrarcompra.component';
+import { ListallproveedoresComponent } from '@/app/components/proveedorescomponents/listallproveedores/listallproveedores.component';
 
 @Component({
   selector: 'app-compras',
@@ -36,6 +38,7 @@ import { RegistrarcompraComponent } from '@/app/components/comprascomponents/reg
     TuiIcon,
     ListallcomprasComponent,
     RegistrarcompraComponent,
+    ListallproveedoresComponent,
   ],
   templateUrl: './compras.component.html',
   styleUrls: ['./compras.component.scss']
@@ -47,12 +50,13 @@ export class ComprasComponent implements OnInit {
   private location = inject(Location);
   private cdr = inject(ChangeDetectorRef);
 
-  validTabs = ['historial', 'comprobantes'] as const;
-  activeTab: 'historial' | 'comprobantes' = 'historial';
+  validTabs = ['historial', 'comprobantes', 'proveedores'] as const;
+  activeTab: 'historial' | 'comprobantes' | 'proveedores' = 'historial';
   activeTabIndex = 0;
 
   ngOnInit() {
     this.store.dispatch(cargarCompras({ page: 1, page_size: PAGE_SIZE_COMPRAS }));
+    this.store.dispatch(loadProveedores());
 
     this.route.fragment.subscribe((fragment) => {
       if (fragment && this.isValidTab(fragment)) {

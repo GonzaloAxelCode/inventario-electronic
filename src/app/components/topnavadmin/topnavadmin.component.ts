@@ -12,11 +12,12 @@ import { Store } from '@ngrx/store';
 import { TuiButton, TUI_DARK_MODE } from '@taiga-ui/core';
 import { map, Observable } from 'rxjs';
 import { DarkmodeComponent } from '../darkmode/darkmode.component';
+import { UserMenuDropdownComponent } from '../usermenu/user-menu-dropdown.component';
 
 @Component({
   selector: 'app-topnavadmin',
   standalone: true,
-  imports: [CommonModule, RouterModule, TuiButton, DarkmodeComponent],
+  imports: [CommonModule, RouterModule, TuiButton, DarkmodeComponent, UserMenuDropdownComponent],
   templateUrl: './topnavadmin.component.html',
   styleUrl: './topnavadmin.component.scss'
 })

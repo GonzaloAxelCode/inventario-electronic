@@ -1,7 +1,7 @@
 import { PlanSuscripcion, SuscripcionTiendaResponse, Tienda, UsoMensualTienda } from '@/app/models/tienda.models';
 import { TiendaService } from '@/app/services/tienda.service';
 import { imageUrl, URL_BASE } from '@/app/services/utils/endpoints';
-import { eliminarTiendaPermanently, eliminarTiendaPermanentlySuccess, loadTiendasAction, updateTiendaAction } from '@/app/state/actions/tienda.actions';
+import { loadTiendasAction, updateTiendaAction } from '@/app/state/actions/tienda.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
 import { selectCurrenttUser } from '@/app/state/selectors/user.selectors';
@@ -9,11 +9,10 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiAlertService, TuiAppearance, TuiButton, TuiDataList, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TUI_CONFIRM, TuiButtonLoading, TuiConfirmData, TuiTab, TuiTabs } from '@taiga-ui/kit';
+import { TUI_CONFIRM, TuiButtonLoading, TuiConfirmData, TuiSwitch, TuiTab, TuiTabs } from '@taiga-ui/kit';
 import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
 import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { TableUsersComponent } from '../../../components/Tables/tableusers/tableusers.component';
@@ -27,7 +26,7 @@ import { DialogUpdateLogosService } from '@/app/services/dialogs-services/dialog
   imports: [
     CommonModule, TuiButton, TuiAppearance, TuiLoader,
     TuiInputModule, TuiSelectModule, FormsModule, TuiTextfield, ReactiveFormsModule,
-    TuiButtonLoading, TuiTabs, TuiTab, TuiDataList, TableUsersComponent, DialogupdattiendaComponent
+    TuiButtonLoading, TuiTabs, TuiTab, TuiSwitch, TuiDataList, TableUsersComponent, DialogupdattiendaComponent
   ],
   templateUrl: './admintiendadetail.component.html',
   styleUrl: './admintiendadetail.component.scss'
@@ -53,6 +52,16 @@ export class AdmintiendadetailComponent implements OnInit {
   loadingUpdateTienda = false;
   deleteTiendaLoader = false;
   loading = true;
+
+  // Seguridad (solo superusuario): toggle activación + eliminación temporal + restaurar
+  togglingActivacion = false;
+  deletingTemporal = false;
+  restoringTienda = false;
+
+  /** true si la tienda está eliminada temporalmente (is_deleted=true). */
+  get isTiendaEliminada(): boolean {
+    return !!((this.tienda as any)?.is_deleted);
+  }
 
   // Suscripción / Plan (GET /api/tiendas/<id>/planes/)
   suscripcion: SuscripcionTiendaResponse | null = null;
@@ -105,7 +114,6 @@ export class AdmintiendadetailComponent implements OnInit {
   constructor(
     private store: Store<AppState>,
     private fb: FormBuilder,
-    private actions$: Actions,
     private cdRef: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router,
@@ -221,10 +229,12 @@ export class AdmintiendadetailComponent implements OnInit {
     const id = this.tienda?.id;
     if (!id) return;
     if (!force && this.suscripcionLoadedForTiendaId === id && this.suscripcion) return;
+    // El servicio cachea por tienda: solo hay HTTP la primera vez (hasta F5).
+    // Si viene de caché el observable resuelve síncrono y el spinner apenas parpadea.
     this.loadingSuscripcion = true;
     this.errorSuscripcion = null;
     this.cdRef.markForCheck();
-    this.tiendaService.getPlanYSuscripcion(id).subscribe({
+    this.tiendaService.getPlanYSuscripcion(id, force).subscribe({
       next: (data) => {
         this.suscripcion = data;
         this.suscripcionLoadedForTiendaId = id;
@@ -247,10 +257,25 @@ export class AdmintiendadetailComponent implements OnInit {
 
   loadPlanes(force = false): void {
     if (!force && this.planes.length > 0) return;
+    // El servicio cachea globalmente: sin HTTP desde la 2da visita (hasta F5).
+    // Si ya hay caché, no mostrar skeleton.
+    if (!force && this.tiendaService.hasPlanesCache()) {
+      this.tiendaService.listPlanes().pipe(takeUntil(this.destroy$)).subscribe({
+        next: (data) => {
+          this.planes = Array.isArray(data) ? data : [];
+          this.loadingPlanes = false;
+          if (!this.selectedPlanId && this.suscripcion?.plan_actual?.id) {
+            this.selectedPlanId = this.suscripcion.plan_actual.id;
+          }
+          this.cdRef.markForCheck();
+        },
+      });
+      return;
+    }
     this.loadingPlanes = true;
     this.errorPlanes = null;
     this.cdRef.markForCheck();
-    this.tiendaService.listPlanes().subscribe({
+    this.tiendaService.listPlanes(force).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         this.planes = Array.isArray(data) ? data : [];
         this.loadingPlanes = false;
@@ -410,13 +435,13 @@ export class AdmintiendadetailComponent implements OnInit {
     return !!((this.tienda as any)?.tienda_padre);
   }
 
-  /** Sucursales de esta tienda padre: anidadas del GET o derivadas de la lista plana. */
+  /** Sucursales vigentes de esta tienda padre: anidadas del GET o derivadas de la lista plana. */
   get sucursalesDeTienda(): Tienda[] {
-    const nested = (this.tienda as any)?.sucursales;
+    const nested = ((this.tienda as any)?.sucursales ?? []).filter((s: any) => !s?.is_deleted);
     if (nested?.length) return nested;
     const id = this.tienda?.id;
     if (id == null) return [];
-    return (this.tiendasEstado ?? []).filter(t => t?.id !== id && t?.tienda_padre === id);
+    return (this.tiendasEstado ?? []).filter(t => !(t as any)?.is_deleted && t?.id !== id && t?.tienda_padre === id);
   }
 
   goToSucursal(id: number): void {
@@ -476,14 +501,14 @@ export class AdmintiendadetailComponent implements OnInit {
         this.loading = false;
       } else if (state.loadingTiendas || state.loadingMiTienda) {
         this.loading = true;
-      } else if (state.tiendas.length === 0 && !hasDispatchedLoad) {
+      } else if (!state.tiendasLoaded && !hasDispatchedLoad) {
         hasDispatchedLoad = true;
         this.store.dispatch(loadTiendasAction());
         this.loading = true;
-      } else if (state.tiendas.length > 0 && !found) {
+      } else if (state.tiendasLoaded && !found) {
         // Tienda no encontrada tras cargar
         this.loading = false;
-      } else if (state.tiendas.length === 0 && hasDispatchedLoad) {
+      } else if (!state.tiendasLoaded && hasDispatchedLoad && !state.loadingTiendas) {
         // Ya se intentó cargar y sigue vacío
         this.loading = false;
       }
@@ -561,29 +586,108 @@ export class AdmintiendadetailComponent implements OnInit {
     }
   }
 
-  onDeleteTienda(id: number) {
+  /** Seguridad: activa/desactiva la tienda (POST|PATCH /api/tiendas/desactivate/toggle/<id>/). */
+  onToggleActivacion(nuevoValor: boolean): void {
+    const id = this.tienda?.id;
+    // [(ngModel)] ya aplicó el nuevo valor en la vista; si no se puede operar, se revierte al instante.
+    // (El switch exige NgControl: sin ngModel Taiga lo fuerza a disabled y no responde.)
+    if (!id || this.togglingActivacion || this.deletingTemporal || this.restoringTienda || this.isTiendaEliminada) {
+      this.tienda = { ...this.tienda, activo: !nuevoValor };
+      this.cdRef.markForCheck();
+      return;
+    }
+    const activate = nuevoValor;
+    const previo = !nuevoValor;
+    this.togglingActivacion = true;
+    this.cdRef.markForCheck();
+    this.tiendaService.toggleActivacionTienda(id, activate).subscribe({
+      next: (res) => {
+        this.togglingActivacion = false;
+        this.tienda = { ...this.tienda, activo: res?.activo ?? activate };
+        // Refresca el listado (las listas ocultan inactivas/eliminadas según filtro)
+        this.store.dispatch(loadTiendasAction());
+        this.alerts.open(activate ? `Tienda "${this.tienda.nombre}" activada.` : `Tienda "${this.tienda.nombre}" desactivada. Sus usuarios quedaron desactivados.`).subscribe();
+        this.cdRef.markForCheck();
+      },
+      error: (err) => {
+        this.togglingActivacion = false;
+        // Revierte el optimista si falló
+        this.tienda = { ...this.tienda, activo: previo };
+        const msg = err?.error?.error
+          || (err?.status === 400 ? 'Solicitud inválida para cambiar el estado.'
+          : err?.status === 404 ? 'Tienda no encontrada o eliminada.'
+          : 'No se pudo cambiar el estado. Inténtalo de nuevo.');
+        this.alerts.open(msg).subscribe();
+        console.error('toggleActivacionTienda error', err);
+        this.cdRef.markForCheck();
+      }
+    });
+  }
+
+  /** Seguridad: eliminación temporal con modal de confirmación (PATCH /api/tiendas/delete/temporal/<id>/). */
+  onEliminarTemporal(): void {
+    const id = this.tienda?.id;
+    if (!id || this.deletingTemporal) return;
     const data: TuiConfirmData = {
       appearance: 'negative',
-      content: '¿Estás seguro de que deseas eliminar esta tienda?',
-      yes: 'Eliminar Permanentemente',
+      content: `¿Eliminar la tienda <b>${this.tienda.nombre}</b>? Se moverá a la papelera (eliminación temporal): quedará inactiva y sus usuarios desactivados. Podrás restaurarla después.`,
+      yes: 'Eliminar tienda',
       no: 'Cancelar',
     };
-
     this.dialogs.open<boolean>(TUI_CONFIRM, {
-      label: 'Confirmación de Eliminación',
+      label: 'Eliminar tienda',
       size: 's',
       data,
     }).subscribe((confirm) => {
-      if (confirm) {
-        this.store.dispatch(eliminarTiendaPermanently({ id }));
-        this.actions$.pipe(
-          ofType(eliminarTiendaPermanentlySuccess),
-          takeUntil(this.destroy$)
-        ).subscribe(() => {
-          this.router.navigate(['/admin/store']);
-        });
-      } else {
+      if (!confirm) {
         this.alerts.open('Eliminación cancelada.').subscribe();
+        return;
+      }
+      this.deletingTemporal = true;
+      this.cdRef.markForCheck();
+      this.tiendaService.eliminarTemporalTienda(id).subscribe({
+        next: () => {
+          this.deletingTemporal = false;
+          this.alerts.open(`Tienda "${this.tienda.nombre}" eliminada (temporal).`).subscribe();
+          // La tienda ya no aparece en los listados: refresca y vuelve
+          this.store.dispatch(loadTiendasAction());
+          this.router.navigate(['/admin/store']);
+        },
+        error: (err) => {
+          this.deletingTemporal = false;
+          const msg = err?.error?.error
+            || (err?.status === 404 ? 'Tienda no encontrada o ya eliminada.'
+            : 'No se pudo eliminar la tienda. Inténtalo de nuevo.');
+          this.alerts.open(msg).subscribe();
+          console.error('eliminarTemporalTienda error', err);
+          this.cdRef.markForCheck();
+        }
+      });
+    });
+  }
+
+  /** Seguridad: restaura una tienda eliminada temporalmente (PATCH /api/tiendas/delete/restore/<id>/). */
+  onRestaurarTienda(): void {
+    const id = this.tienda?.id;
+    if (!id || this.restoringTienda) return;
+    this.restoringTienda = true;
+    this.cdRef.markForCheck();
+    this.tiendaService.restaurarTienda(id).subscribe({
+      next: (res) => {
+        this.restoringTienda = false;
+        this.tienda = { ...this.tienda, ...(res as any), is_deleted: false } as Tienda;
+        this.store.dispatch(loadTiendasAction());
+        this.alerts.open(`Tienda "${this.tienda.nombre}" restaurada y activada. Los usuarios siguen desactivados.`).subscribe();
+        this.cdRef.markForCheck();
+      },
+      error: (err) => {
+        this.restoringTienda = false;
+        const msg = err?.error?.error
+          || (err?.status === 400 ? 'La tienda no está eliminada.'
+          : 'No se pudo restaurar la tienda. Inténtalo de nuevo.');
+        this.alerts.open(msg).subscribe();
+        console.error('restaurarTienda error', err);
+        this.cdRef.markForCheck();
       }
     });
   }

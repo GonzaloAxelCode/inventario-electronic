@@ -1,10 +1,35 @@
 <div class="form-container p-1">
-  <form [formGroup]="proveedorForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="proveedorForm" (ngSubmit)="onSubmit()" class="pb-24 sm:pb-0">
 
     <!-- Datos Generales -->
     <div class="mb-5">
       <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Datos Generales</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">RUC</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="ruc" placeholder="20512345678" inputmode="numeric" maxlength="11" tuiTextfield />
+          </tui-textfield>
+          <p *ngIf="consultandoRuc" class="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mt-1.5">
+            <tui-loader size="s" [showLoader]="true"></tui-loader>
+            Consultando RUC...
+          </p>
+          <p *ngIf="proveedorForm.get('ruc')?.invalid && proveedorForm.get('ruc')?.touched" class="text-xs text-red-500 mt-1">
+            RUC inválido (11 dígitos)
+          </p>
+          <p *ngIf="rucError" class="text-xs text-red-500 mt-1">{{ rucError }}</p>
+          <p *ngIf="rucConsultadoOk" class="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
+            Razón social obtenida de SUNAT
+          </p>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Razón Social</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="razon_social" placeholder="Se autocompleta con el RUC" tuiTextfield />
+          </tui-textfield>
+        </div>
 
         <div>
           <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Nombre *</label>
@@ -13,23 +38,6 @@
           </tui-textfield>
           <p *ngIf="proveedorForm.get('nombre')?.invalid && proveedorForm.get('nombre')?.touched" class="text-xs text-red-500 mt-1">
             El nombre es obligatorio (max. 100 caracteres)
-          </p>
-        </div>
-
-        <div>
-          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Razon Social</label>
-          <tui-textfield tuiTextfieldSize="m">
-            <input formControlName="razon_social" placeholder="Razon social del proveedor" tuiTextfield />
-          </tui-textfield>
-        </div>
-
-        <div>
-          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">RUC</label>
-          <tui-textfield tuiTextfieldSize="m">
-            <input formControlName="ruc" placeholder="20512345678" tuiTextfield />
-          </tui-textfield>
-          <p *ngIf="proveedorForm.get('ruc')?.invalid && proveedorForm.get('ruc')?.touched" class="text-xs text-red-500 mt-1">
-            RUC invalido (max. 50 caracteres)
           </p>
         </div>
 
@@ -44,7 +52,7 @@
     </div>
 
     <!-- Contacto -->
-    <div class="mb-5">
+    <div class="mb-6">
       <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Contacto</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
@@ -85,32 +93,17 @@
       </div>
     </div>
 
-    <!-- Calificacion -->
-    <div class="mb-6">
-      <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Calificacion</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Calificacion (0-5)</label>
-          <tui-textfield tuiTextfieldSize="m">
-            <input formControlName="calificacion" type="number" tuiTextfield [min]="0" [max]="5" placeholder="0" />
-          </tui-textfield>
-          <p *ngIf="proveedorForm.get('calificacion')?.invalid && proveedorForm.get('calificacion')?.touched" class="text-xs text-red-500 mt-1">
-            La calificacion debe ser entre 0 y 5
-          </p>
-        </div>
-      </div>
-    </div>
-
     <!-- Botones -->
-    <div class="flex gap-3">
-      <button tuiButton type="submit" appearance="primary-grayscale" size="m"
-        [disabled]="proveedorForm.invalid || !!(loadingCreateProveedor$ | async)">
-        Crear Proveedor
+    <div class="flex flex-row gap-2.5 fixed sm:static bottom-0 inset-x-0 sm:inset-auto z-30 px-4 sm:px-0 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-0 border-t border-stone-200/70 dark:border-white/10 bg-white dark:bg-neutral-800 sm:bg-transparent sm:dark:bg-transparent">
+      <button tuiButton type="submit" appearance="flat" size="m"
+        [disabled]="proveedorForm.invalid || !!(loadingCreateProveedor$ | async)"
+        class="!rounded-full !bg-neutral-900 dark:!bg-white !text-white dark:!text-neutral-900 !border !border-transparent !shadow-sm hover:!opacity-90 disabled:!opacity-40 flex-1 !h-11 !text-sm">
+        Crear proveedor
         <tui-loader size="s" [showLoader]="!!(loadingCreateProveedor$ | async)"></tui-loader>
       </button>
-      <button tuiButton type="button" appearance="flat" size="m"
-        (click)="proveedorForm.reset({ nombre: '', ruc: '', razon_social: '', direccion: '', telefono: '', email: '', contacto: '', tipo_producto: '', calificacion: 0 })">
-        Limpiar
+      <button tuiButton type="button" appearance="flat" size="m" (click)="onCancel()"
+        class="!rounded-full !border !border-neutral-300 dark:!border-neutral-600 !bg-transparent !text-neutral-700 dark:!text-neutral-300 flex-1 !h-11 !text-sm">
+        Cancelar
       </button>
     </div>
 

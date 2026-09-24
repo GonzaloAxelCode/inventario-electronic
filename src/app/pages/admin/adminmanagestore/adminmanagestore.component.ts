@@ -13,7 +13,7 @@ import { TuiAppearance, TuiButton, TuiDialogOptions, TuiDialogService, TuiIcon, 
 import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
 import { TuiSkeleton, TuiTab, TuiTabs } from '@taiga-ui/kit';
 import { TuiHeader, TuiNavigation } from '@taiga-ui/layout';
-import { combineLatest, map, Observable } from 'rxjs';
+import { combineLatest, map, Observable, take } from 'rxjs';
 
 @Component({
   selector: 'app-adminmanagestore',
@@ -58,8 +58,13 @@ export class AdminmanagestoreComponent implements OnInit {
     this.gestionTitle$ = this.isSuperUser$.pipe(map(isSuper => isSuper ? 'Gestión de Tiendas' : 'Gestionar Mis sucursales'));
     this.gestionSubtitle$ = this.isSuperUser$.pipe(map(isSuper => isSuper ? 'Administra todas las tiendas del sistema' : 'Administra tu tienda y sucursales'));
 
-    // Cargar tiendas al inicializar
-    this.store.dispatch(loadTiendasAction());
+    // Cargar tiendas solo una vez por sesión (el store vive mientras navegas;
+    // al recargar la página con F5 el store se reinicia y vuelve a cargar).
+    this.store.select(selectTiendaState).pipe(take(1)).subscribe(state => {
+      if (!state.tiendasLoaded && !state.loadingTiendas) {
+        this.store.dispatch(loadTiendasAction());
+      }
+    });
 
     this.loadingTiendas$ = this.store.select(selectTiendaState).pipe(
       map(tiendaState => tiendaState.loadingTiendas)
@@ -70,7 +75,8 @@ export class AdminmanagestoreComponent implements OnInit {
       this.store.select(selectCurrenttUser)
     ]).pipe(
       map(([tiendaState, user]) => {
-        const tiendas = tiendaState.tiendas ?? [];
+        // Solo vigentes (is_deleted=false); el reducer ya filtra, esto cubre fallbacks.
+        const tiendas = (tiendaState.tiendas ?? []).filter((t: any) => !t?.is_deleted);
         if (!user) return tiendas;
         // Superusuario: todas las tiendas padre sin filtrar por propietario
         if (user.is_superuser) return tiendas;
@@ -94,11 +100,11 @@ export class AdminmanagestoreComponent implements OnInit {
           return false;
         });
         // Si no hay coincidencias pero tiene tienda_data, mostrar esa como sucursal única (fallback para simular padre)
-        if (filtered.length === 0 && (user as any).tienda_data) {
+        if (filtered.length === 0 && (user as any).tienda_data && !(user as any).tienda_data.is_deleted) {
           return [(user as any).tienda_data];
         }
         // Si filtrado vacío y no hay tienda_data pero hay miTienda en estado, usarla
-        if (filtered.length === 0 && tiendaState.miTienda) {
+        if (filtered.length === 0 && tiendaState.miTienda && !(tiendaState.miTienda as any).is_deleted) {
           return [tiendaState.miTienda];
         }
         return filtered.length > 0 ? filtered : filtered;
@@ -114,7 +120,7 @@ export class AdminmanagestoreComponent implements OnInit {
     const component = new PolymorpheusComponent(DialogcreatetiendaComponent);
     const options: Partial<TuiDialogOptions<any>> = {
       dismissible: true,
-      label: padre?.id != null ? `Nueva sucursal de ${padre.nombre}` : 'Nueva Tienda',
+      label: padre?.id != null ? `Nueva sucursal de ${padre.nombre}` : 'Nueva tienda principal',
       size: 'l',
       data: padre?.id != null ? { tiendaPadre: padre } : undefined,
     };

@@ -1,4 +1,4 @@
-<div tuiNavigationMain class="px-4 sm:px-8 lg:px-10 py-2 sm:py-6 bg-neutral-50 dark:bg-neutral-800 scroll-smooth Optimize-scroll" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;">
+<div tuiNavigationMain class="px-4 sm:px-6 lg:px-10 py-2 sm:py-6 bg-neutral-50 dark:bg-neutral-800 scroll-smooth overflow-x-clip" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;">
 
   <header tuiSubheader class="bg-transparent border-none p-0 mb-4">
     <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Gestión de Clientes</h2>
@@ -11,169 +11,136 @@
   </header>
 
   <ng-container *ngIf="activeTab === 'mis-clientes'">
-    <div class="flex flex-col lg:flex-row gap-4 items-start">
+    <div class="flex flex-col lg:flex-row gap-6 items-start max-w-6xl mx-auto">
 
-      <!-- LEFT -->
-      <div class="w-full lg:w-[32%] xl:w-[28%] 2xl:w-[22%] lg:shrink-0">
-        <div class="bg-white dark:bg-neutral-800 rounded-[24px] border border-stone-200/30 dark:border-neutral-700/30 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col">
-          <div class="h-px bg-stone-100 dark:bg-neutral-700/40 mx-4"></div>
+      <!-- LEFT: lista plana -->
+      <div class="w-full lg:w-[36%] xl:w-[32%] lg:shrink-0">
+        <div class="flex items-center gap-2 pb-3">
+          <div class="relative flex-1 min-w-0">
+            <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 110-16 8 8 0 010 16z"/></svg>
+            <input [(ngModel)]="search" (keyup.enter)="onSearch()" placeholder="Buscar"
+                   class="w-full h-10 pl-10 pr-4 rounded-full bg-stone-100 dark:bg-white/10 outline-none text-[15px] text-stone-900 dark:text-white placeholder-stone-400" />
+          </div>
+          <button *ngIf="search" (click)="onClearSearch()" class="text-[15px] text-stone-500 shrink-0 px-1">Limpiar</button>
+        </div>
+        <p class="pb-2 text-[13px] text-stone-500 dark:text-stone-400">{{ totalClientes }} clientes · Pág {{ page }}/{{ totalPages }}</p>
 
-          <div class="px-4 py-2.5 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] font-semibold tracking-widest uppercase text-stone-400">Lista</span>
-              <span class="text-[11px] text-stone-400">{{ clientes.length }} mostrados</span>
-            </div>
-            <div class="flex gap-2">
-              <div class="flex-1 relative">
-                <input [(ngModel)]="search" (keyup.enter)="onSearch()" placeholder="Buscar..."
-                       class="w-full h-9 pl-8 pr-3 rounded-xl bg-stone-100 dark:bg-neutral-700 border-0 focus:bg-white dark:focus:bg-neutral-600 focus:ring-1 focus:ring-stone-200 dark:focus:ring-neutral-500 outline-none text-xs transition-colors" />
-                <svg class="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 110-16 8 8 0 010 16z"/></svg>
-              </div>
-              <button *ngIf="search" (click)="onClearSearch()" class="text-xs font-medium text-stone-500 hover:text-stone-900 px-2">✕</button>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] text-stone-400">Clientes: <b>{{ totalClientes }}</b> · Pág {{ page }}/{{ totalPages }}</span>
+        <div *ngIf="loading && clientes.length===0" class="divide-y divide-stone-100 dark:divide-white/10">
+          <div *ngFor="let i of [1,2,3,4,5]" class="flex items-center gap-3 py-3">
+            <div class="w-11 h-11 rounded-full bg-stone-100 dark:bg-white/10 animate-pulse shrink-0"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-3.5 w-2/3 rounded-full bg-stone-100 dark:bg-white/10 animate-pulse"></div>
+              <div class="h-3 w-1/3 rounded-full bg-stone-100 dark:bg-white/10 animate-pulse"></div>
             </div>
           </div>
+        </div>
 
-          <div *ngIf="loading && clientes.length===0" class="px-3 pb-3 space-y-2">
-            <div *ngFor="let i of [1,2,3,4,5]" class="h-[72px] rounded-2xl bg-stone-100 dark:bg-neutral-700 animate-pulse"></div>
-          </div>
+        <div *ngIf="!loading && clientes.length===0" class="py-10 text-center">
+          <p class="text-[15px] font-semibold tracking-tight text-stone-900 dark:text-white">Sin clientes</p>
+          <p class="text-[13px] text-stone-500 dark:text-stone-400 mt-1">Prueba otra búsqueda</p>
+        </div>
 
-          <div *ngIf="!loading && clientes.length===0" class="px-4 py-10 text-center">
-            <p class="text-sm font-medium text-stone-500">Sin clientes</p>
-            <p class="text-xs text-stone-400">Prueba otra búsqueda</p>
+        <div *ngIf="clientes.length>0" class="divide-y divide-stone-100 dark:divide-white/10 overflow-y-auto overflow-x-clip max-h-[52vh] lg:max-h-[58vh]"
+             infiniteScroll [scrollWindow]="false" [infiniteScrollDistance]="2" [infiniteScrollThrottle]="300" (scrolled)="onScrollList()">
+          <button *ngFor="let c of clientes; trackBy: trackByCliente" (click)="onSelectMobile(c)"
+                  class="w-full text-left flex items-center gap-3 py-2.5 transition-colors"
+                  [class]="selected?.cliente?.cliente_id===c.cliente.cliente_id ? 'bg-white dark:bg-white/10 shadow-sm -mx-2 px-2 rounded-2xl' : ''">
+            <div class="w-11 h-11 rounded-full flex items-center justify-center font-semibold text-[15px] shrink-0"
+                 [style.background]="avatarAccent(c.cliente.cliente_id).fondo" [style.color]="avatarAccent(c.cliente.cliente_id).texto">
+              {{ getInitials(c.cliente.fullname) }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[15px] font-medium tracking-tight truncate text-stone-900 dark:text-white">{{ c.cliente.fullname || c.cliente.nombre_cliente }}</p>
+              <p class="text-[13px] text-stone-500 dark:text-stone-400 truncate mt-0.5">
+                <span *ngIf="hasVentas(c); else noVentasLeft">{{ c.cliente.document || c.cliente.numero_documento }} · {{ c.resumen.total_ventas }} compras · S/ {{ c.resumen.total_monto | number:'1.2-2' }}</span>
+                <ng-template #noVentasLeft>{{ c.cliente.document || c.cliente.numero_documento }} · Sin compras</ng-template>
+              </p>
+            </div>
+            <svg class="w-4 h-4 text-stone-300 dark:text-white/20 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+          <div *ngIf="loading" class="flex justify-center py-4">
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-stone-400"></div>
           </div>
-
-          <div *ngIf="clientes.length>0" class="overflow-y-auto max-h-[52vh] lg:max-h-[58vh] px-2 pb-2 space-y-2">
-            <button *ngFor="let c of clientes; trackBy: trackByCliente" (click)="onSelectMobile(c)"
-                    class="w-full text-left p-3 rounded-2xl border flex items-center gap-3 transition-all"
-                    [class]="selected?.cliente?.cliente_id===c.cliente.cliente_id ? 'bg-stone-900 dark:bg-white border-stone-900 dark:border-white shadow-md scale-[1.01]' : 'bg-stone-50/70 dark:bg-neutral-700/20 border-stone-200/40 dark:border-white/5 hover:bg-white dark:hover:bg-neutral-700 hover:shadow-sm'">
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0"
-                   [style.background]="getAvatarColor(c.cliente.cliente_id || 1)"
-                   [class]="selected?.cliente?.cliente_id===c.cliente.cliente_id ? '!bg-white !text-stone-900' : ''">
-                {{ getInitials(c.cliente.fullname) }}
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-[13px] font-semibold leading-tight truncate" [class]="selected?.cliente?.cliente_id===c.cliente.cliente_id ? 'text-white dark:text-stone-900' : 'text-stone-900 dark:text-white'">{{ c.cliente.fullname || c.cliente.nombre_cliente }}</p>
-                <p class="text-[11px] truncate" [class]="selected?.cliente?.cliente_id===c.cliente.cliente_id ? 'text-white/60 dark:text-stone-500' : 'text-stone-500'">
-                  <span *ngIf="hasVentas(c); else noVentasLeft">{{ c.cliente.document || c.cliente.numero_documento }} · {{ c.resumen.total_ventas }} compras</span>
-                  <ng-template #noVentasLeft>{{ c.cliente.document || c.cliente.numero_documento }} · ninguna venta hecha</ng-template>
-                </p>
-                <p class="text-[11px] font-medium truncate" [class]="selected?.cliente?.cliente_id===c.cliente.cliente_id ? 'text-white/80 dark:text-stone-700' : hasVentas(c) ? 'text-emerald-600' : 'text-stone-400'">
-                  <span *ngIf="hasVentas(c); else sinMonto">S/ {{ c.resumen.total_monto | number:'1.2-2' }}</span>
-                  <ng-template #sinMonto>—</ng-template>
-                </p>
-              </div>
-              <span class="hidden lg:flex w-7 h-7 rounded-full items-center justify-center shrink-0" [class]="selected?.cliente?.cliente_id===c.cliente.cliente_id ? 'bg-white/20 text-white dark:bg-stone-900/10 dark:text-stone-900' : hasVentas(c) ? 'bg-stone-900 dark:bg-white text-white dark:text-stone-900' : 'bg-stone-200 dark:bg-neutral-600 text-stone-400'">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-              </span>
-            </button>
-          </div>
-
-          <div class="h-px bg-stone-100 dark:bg-neutral-700/40 mx-4 mt-1"></div>
-          <div class="p-3 flex gap-2 items-center">
-            <button tuiButton appearance="flat" size="s" (click)="loadMore()" [disabled]="page>=totalPages || loading" class="flex-1 !rounded-xl text-xs">Cargar más</button>
-            <span class="text-[11px] text-stone-400">{{ clientes.length }}/{{ totalClientes }}</span>
-          </div>
+          <p *ngIf="!loading && page>=totalPages && clientes.length>0" class="text-center text-[13px] text-stone-400 py-3">{{ clientes.length }}/{{ totalClientes }}</p>
         </div>
       </div>
 
-      <!-- RIGHT (solo desktop) -->
-      <div class="hidden lg:flex flex-1 min-w-0">
-        <div class="bg-white dark:bg-neutral-800 rounded-[24px] border border-stone-200/30 dark:border-neutral-700/30 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col min-h-[480px] w-full">
-          <div *ngIf="!selected" class="flex-1 flex flex-col items-center justify-center py-16 px-6 text-center">
-            <div class="w-16 h-16 rounded-2xl bg-stone-100 dark:bg-neutral-700 flex items-center justify-center mb-3">
-              <svg class="w-8 h-8 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0z"/></svg>
+      <!-- RIGHT (solo desktop): detalle plano -->
+      <div class="hidden lg:block flex-1 min-w-0">
+        <div *ngIf="!selected" class="py-16 px-6 text-center">
+          <p class="text-[15px] font-semibold tracking-tight text-stone-900 dark:text-white">Selecciona un cliente</p>
+          <p class="text-[13px] text-stone-500 dark:text-stone-400 mt-1">Verás su resumen y todas sus ventas</p>
+        </div>
+
+        <ng-container *ngIf="selected">
+          <div class="text-center pt-2 pb-5">
+            <div class="w-[72px] h-[72px] mx-auto rounded-full flex items-center justify-center font-semibold text-[22px] ring-4 ring-stone-100 dark:ring-white/10"
+                 [style.background]="avatarAccent(selected.cliente.cliente_id).fondo" [style.color]="avatarAccent(selected.cliente.cliente_id).texto">
+              {{ getInitials(selected.cliente.fullname) }}
             </div>
-            <p class="text-sm font-semibold text-stone-900 dark:text-white">Selecciona un cliente</p>
-            <p class="text-xs text-stone-500 mt-1">Verás su resumen y todas sus ventas</p>
+            <h3 class="text-[22px] font-bold tracking-tight text-stone-900 dark:text-white mt-3 truncate">{{ selected.cliente.fullname }}</h3>
+            <p class="text-[13px] text-stone-500 dark:text-stone-400 mt-1">{{ selected.cliente.tipo_documento==='6' ? 'RUC' : 'DNI' }} {{ selected.cliente.numero_documento }}</p>
+            <p class="text-[13px] text-stone-500 dark:text-stone-400 truncate mt-0.5"><span *ngIf="selected.cliente.email">{{ selected.cliente.email }}</span><span *ngIf="selected.cliente.email && selected.cliente.phone"> · </span><span *ngIf="selected.cliente.phone">{{ selected.cliente.phone }}</span><span *ngIf="!selected.cliente.email && !selected.cliente.phone">Sin contacto</span></p>
+            <p class="text-[15px] font-semibold tabular-nums mt-2" [class]="hasVentas(selected) ? 'text-stone-900 dark:text-white' : 'text-stone-400'">
+              {{ hasVentas(selected) ? ('S/ ' + (selected.resumen.total_monto | number:'1.2-2')) : 'Sin compras' }}
+            </p>
+            <p *ngIf="hasVentas(selected)" class="text-[13px] text-stone-500 dark:text-stone-400">{{ selected.resumen.total_ventas }} compras en total</p>
           </div>
 
-          <ng-container *ngIf="selected">
-            <div class="p-5">
-              <div class="flex items-start gap-4">
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0" [style.background]="getAvatarColor(selected.cliente.cliente_id || 1)">
-                  {{ getInitials(selected.cliente.fullname) }}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h3 class="text-base font-bold tracking-tight text-stone-900 dark:text-white truncate">{{ selected.cliente.fullname }}</h3>
-                  <p class="text-xs text-stone-500 dark:text-stone-400">{{ selected.cliente.tipo_documento==='6' ? 'RUC' : 'DNI' }} {{ selected.cliente.numero_documento }} · {{ selected.cliente.document }}</p>
-                  <div class="flex flex-wrap gap-1.5 mt-2">
-                    <span *ngIf="selected.cliente.email" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs">{{ selected.cliente.email }}</span>
-                    <span *ngIf="selected.cliente.phone" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-100 dark:bg-neutral-700 text-stone-700 dark:text-stone-300 text-xs">{{ selected.cliente.phone }}</span>
-                    <span *ngIf="!selected.cliente.email && !selected.cliente.phone" class="text-xs text-stone-400">Sin contacto</span>
-                  </div>
-                </div>
-                <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border"
-                      [class]="hasVentas(selected) ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200/50' : 'bg-stone-100 dark:bg-neutral-700 text-stone-500 border-stone-200/40'">
-                  <span class="w-1.5 h-1.5 rounded-full" [class]="hasVentas(selected) ? 'bg-emerald-500' : 'bg-stone-400'"></span> {{ hasVentas(selected) ? (selected.resumen.total_ventas + ' ventas') : 'ninguna venta hecha' }}
+          <div class="h-px bg-stone-100 dark:bg-white/10"></div>
+
+          <div>
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-stone-400 mt-4 mb-1">Información</p>
+            <div class="divide-y divide-stone-100 dark:divide-white/10 text-[15px]">
+              <div class="flex justify-between items-center gap-4 py-2.5">
+                <span class="text-stone-500 dark:text-stone-400 shrink-0">Documento</span>
+                <span class="font-medium text-right">{{ selected.cliente.tipo_documento==='6' ? 'RUC' : 'DNI' }} {{ selected.cliente.numero_documento || '—' }}</span>
+              </div>
+              <div class="flex justify-between items-center gap-4 py-2.5">
+                <span class="text-stone-500 dark:text-stone-400 shrink-0">Contacto</span>
+                <span class="font-medium text-right truncate min-w-0"><span *ngIf="selected.cliente.phone">{{ selected.cliente.phone }}</span><span *ngIf="!selected.cliente.phone">—</span></span>
+              </div>
+              <div class="flex justify-between items-center gap-4 py-2.5">
+                <span class="text-stone-500 dark:text-stone-400 shrink-0">Correo</span>
+                <span class="font-medium text-right truncate min-w-0"><span *ngIf="selected.cliente.email">{{ selected.cliente.email }}</span><span *ngIf="!selected.cliente.email">—</span></span>
+              </div>
+              <div class="flex justify-between py-2.5">
+                <span class="text-stone-500 dark:text-stone-400 shrink-0">Primera compra</span>
+                <span class="font-medium">{{ hasVentas(selected) ? formatoCorto(selected.resumen.primera_compra) : '—' }}</span>
+              </div>
+              <div class="flex justify-between py-2.5">
+                <span class="text-stone-500 dark:text-stone-400 shrink-0">Última compra</span>
+                <span class="font-medium">{{ hasVentas(selected) ? formatoCorto(selected.resumen.ultima_compra) : '—' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-stone-400 mt-4 mb-1">Ventas · {{ hasVentas(selected) ? selected.historial_ventas.length : 0 }}</p>
+            <div *ngIf="!hasVentas(selected) || selected.historial_ventas.length===0" class="py-8 text-center">
+              <p class="text-[15px] font-medium text-stone-500 dark:text-stone-400">Sin ventas registradas</p>
+              <p class="text-[13px] text-stone-400 mt-1">Este cliente aún no registra compras</p>
+            </div>
+            <div *ngIf="selected.historial_ventas.length>0" class="divide-y divide-stone-100 dark:divide-white/10 max-h-[52vh] overflow-y-auto">
+              <button *ngFor="let v of selected.historial_ventas; trackBy: trackByVenta" (click)="openVenta(v)"
+                      class="w-full text-left flex items-center gap-3 py-3 active:opacity-60 transition">
+                <span class="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                      [style.background]="avatarAccent(v.id).fondo" [style.color]="avatarAccent(v.id).texto">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 </span>
-              </div>
-
-              <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
-                <div class="p-3 rounded-2xl bg-stone-50 dark:bg-neutral-700/20">
-                  <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Total ventas</p>
-                  <p class="text-lg font-bold" [class]="hasVentas(selected) ? 'text-stone-900 dark:text-white' : 'text-stone-400'">{{ hasVentas(selected) ? selected.resumen.total_ventas : '—' }}</p>
+                <div class="flex-1 min-w-0">
+                  <p class="text-[15px] font-medium tracking-tight truncate text-stone-900 dark:text-white">{{ v.comprobante?.serie }}-{{ v.comprobante?.correlativo }} <span class="font-normal text-stone-400">· {{ v.tipo_comprobante }}</span></p>
+                  <p class="text-[13px] text-stone-500 dark:text-stone-400 truncate mt-0.5">{{ formatoCorto(v.fecha_hora) }} · {{ formatoHora(v.fecha_hora) }} · {{ v.metodo_pago }}<span *ngIf="v.estado==='ANULADA'" class="text-red-500"> · Anulada</span></p>
                 </div>
-                <div class="p-3 rounded-2xl" [class]="hasVentas(selected) ? 'bg-emerald-50/70 dark:bg-emerald-900/10' : 'bg-stone-50 dark:bg-neutral-700/20 opacity-70'">
-                  <p class="text-[10px] font-semibold tracking-widest uppercase" [class]="hasVentas(selected) ? 'text-emerald-600' : 'text-stone-400'">Monto total</p>
-                  <p class="text-lg font-bold" [class]="hasVentas(selected) ? 'text-emerald-700 dark:text-emerald-400' : 'text-stone-400'">{{ hasVentas(selected) ? ('S/ ' + (selected.resumen.total_monto | number:'1.2-2')) : '—' }}</p>
-                </div>
-                <div class="p-3 rounded-2xl bg-stone-50 dark:bg-neutral-700/20" [class.opacity-60]="!hasVentas(selected)">
-                  <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Primera compra</p>
-                  <p class="text-xs font-semibold text-stone-900 dark:text-white mt-1">{{ hasVentas(selected) ? formatoCorto(selected.resumen.primera_compra) : '—' }}</p>
-                </div>
-                <div class="p-3 rounded-2xl bg-stone-50 dark:bg-neutral-700/20" [class.opacity-60]="!hasVentas(selected)">
-                  <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Última compra</p>
-                  <p class="text-xs font-semibold text-stone-900 dark:text-white mt-1">{{ hasVentas(selected) ? formatoCorto(selected.resumen.ultima_compra) : '—' }}</p>
-                </div>
-              </div>
+                <span class="text-right shrink-0">
+                  <span class="block font-semibold tabular-nums text-[15px] text-stone-900 dark:text-white">S/ {{ v.total | number:'1.2-2' }}</span>
+                  <span class="block text-[12px] text-stone-400 tabular-nums">{{ getProductos(v).length }} prod</span>
+                </span>
+                <svg class="w-4 h-4 text-stone-300 dark:text-white/20 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </button>
             </div>
-
-            <div class="h-px bg-stone-100 dark:bg-neutral-700/40 mx-5"></div>
-
-            <div class="px-5 py-3 flex items-center justify-between">
-              <h4 class="text-sm font-semibold text-stone-900 dark:text-white">Historial <span class="font-normal text-stone-400">· {{ hasVentas(selected) ? (selected.historial_ventas.length + ' registros') : '0 registros' }}</span></h4>
-              <span class="text-xs px-2.5 py-1 rounded-full font-bold" [class]="hasVentas(selected) ? 'bg-stone-900 dark:bg-white text-white dark:text-stone-900' : 'bg-stone-100 dark:bg-neutral-700 text-stone-400'">{{ hasVentas(selected) ? ('S/ ' + (selected.resumen.total_monto | number:'1.2-2')) : '—' }}</span>
-            </div>
-
-            <div *ngIf="!hasVentas(selected) || selected.historial_ventas.length===0" class="px-5 pb-10 pt-4 text-center flex flex-col items-center gap-2">
-              <div class="w-12 h-12 rounded-2xl bg-stone-100 dark:bg-neutral-700 flex items-center justify-center">
-                <svg class="w-6 h-6 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6M9 16h6M12 8v8m-7 4h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              </div>
-              <p class="text-sm font-semibold text-stone-700 dark:text-stone-300">ninguna venta hecha</p>
-              <p class="text-xs text-stone-400">Este cliente aún no registra compras</p>
-            </div>
-
-            <div *ngIf="selected.historial_ventas.length>0" class="px-3 pb-3 space-y-3 max-h-[52vh] overflow-y-auto">
-              <div *ngFor="let v of selected.historial_ventas; trackBy: trackByVenta" (click)="openVenta(v)"
-                   class="group p-4 rounded-[20px] bg-stone-50 dark:bg-neutral-700/20 border border-stone-200/30 dark:border-white/5 hover:bg-white dark:hover:bg-neutral-700 hover:shadow-md hover:scale-[1.005] transition-all cursor-pointer">
-                <div class="flex items-start justify-between gap-3 mb-2">
-                  <div class="flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-xl bg-stone-900 dark:bg-white flex items-center justify-center text-white dark:text-stone-900 text-[10px] font-bold">#{{ v.id }}</span>
-                    <div>
-                      <p class="text-sm font-semibold text-stone-900 dark:text-white leading-none">{{ v.comprobante?.serie }}-{{ v.comprobante?.correlativo }} <span class="text-xs font-normal text-stone-400">· {{ v.tipo_comprobante }}</span></p>
-                      <p class="text-[11px] text-stone-500">{{ formatoCorto(v.fecha_hora) }} · {{ formatoHora(v.fecha_hora) }} · {{ v.metodo_pago }}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-1.5">
-                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold border" [class]="v.estado==='ANULADA' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200/60'">{{ v.estado }}</span>
-                    <span class="hidden sm:inline-flex px-2 py-1 rounded-full text-[10px] font-medium bg-stone-900 dark:bg-white text-white dark:text-stone-900">{{ v.comprobante?.estado_sunat }}</span>
-                  </div>
-                </div>
-                <div class="flex flex-wrap gap-1.5 mb-3">
-                  <span *ngFor="let p of getProductos(v).slice(0,3)" class="inline-flex px-2.5 py-1 rounded-full bg-white dark:bg-neutral-600 border border-stone-200/40 text-xs font-medium text-stone-700 dark:text-stone-200">{{ p.producto_nombre }}</span>
-                  <span *ngIf="getProductos(v).length>3" class="inline-flex px-2 py-1 rounded-full bg-stone-900 dark:bg-white text-white dark:text-stone-900 text-xs font-semibold">+{{ getProductos(v).length-3 }}</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-xs text-stone-500">{{ getProductos(v).length }} prod · {{ v.comprobante?.moneda || 'PEN' }}</span>
-                  <span class="text-base font-bold text-stone-900 dark:text-white">S/ {{ v.total | number:'1.2-2' }}</span>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-        </div>
+          </div>
+        </ng-container>
       </div>
     </div>
   </ng-container>
@@ -181,65 +148,64 @@
   <!-- MODAL MÓVIL -->
   <div *ngIf="showMobileModal && selected" class="fixed inset-0 z-50 lg:hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeMobileModal()"></div>
-    <div class="absolute inset-x-0 bottom-0 bg-white dark:bg-neutral-800 rounded-t-[28px] max-h-[90vh] overflow-y-auto animate-slide-up">
-      <div class="sticky top-0 bg-white dark:bg-neutral-800 px-5 pt-5 pb-3 border-b border-stone-100 dark:border-neutral-700/40 z-10">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-bold text-stone-900 dark:text-white">Detalle del Cliente</h3>
-          <button (click)="closeMobileModal()" class="w-8 h-8 rounded-full bg-stone-100 dark:bg-neutral-700 flex items-center justify-center hover:bg-stone-200 dark:hover:bg-neutral-600 transition-colors">
-            <svg class="w-5 h-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
+    <div class="absolute inset-x-0 bottom-0 sm:mx-auto sm:max-w-lg bg-white dark:bg-neutral-800 rounded-t-[28px] max-h-[90vh] sm:max-h-[85vh] overflow-y-auto animate-slide-up px-5 pt-3 pb-6">
+      <div class="w-10 h-1 rounded-full bg-stone-300 dark:bg-white/20 mx-auto mb-4"></div>
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center font-semibold text-lg shrink-0"
+             [style.background]="avatarAccent(selected.cliente.cliente_id).fondo" [style.color]="avatarAccent(selected.cliente.cliente_id).texto">
+          {{ getInitials(selected.cliente.fullname) }}
         </div>
-        <div class="flex items-start gap-4">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0" [style.background]="getAvatarColor(selected.cliente.cliente_id || 1)">
-            {{ getInitials(selected.cliente.fullname) }}
-          </div>
-          <div class="flex-1 min-w-0">
-            <h3 class="text-base font-bold tracking-tight text-stone-900 dark:text-white truncate">{{ selected.cliente.fullname }}</h3>
-            <p class="text-xs text-stone-500 dark:text-stone-400">{{ selected.cliente.tipo_documento==='6' ? 'RUC' : 'DNI' }} {{ selected.cliente.numero_documento }}</p>
-            <div class="flex flex-wrap gap-1.5 mt-2">
-              <span *ngIf="selected.cliente.email" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs">{{ selected.cliente.email }}</span>
-              <span *ngIf="selected.cliente.phone" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-100 dark:bg-neutral-700 text-stone-700 dark:text-stone-300 text-xs">{{ selected.cliente.phone }}</span>
-            </div>
-          </div>
+        <button (click)="closeMobileModal()" aria-label="Cerrar"
+          class="w-7 h-7 rounded-full bg-stone-100 dark:bg-white/10 flex items-center justify-center text-stone-500 dark:text-stone-300 active:scale-95 transition shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="text-center pb-4">
+        <h3 class="text-[17px] font-semibold tracking-tight text-stone-900 dark:text-white truncate">{{ selected.cliente.fullname }}</h3>
+        <p class="text-[13px] text-stone-500 dark:text-stone-400 mt-0.5">{{ selected.cliente.tipo_documento==='6' ? 'RUC' : 'DNI' }} {{ selected.cliente.numero_documento }}</p>
+        <p class="text-[13px] text-stone-500 dark:text-stone-400 truncate mt-0.5"><span *ngIf="selected.cliente.email">{{ selected.cliente.email }}</span><span *ngIf="selected.cliente.email && selected.cliente.phone"> · </span><span *ngIf="selected.cliente.phone">{{ selected.cliente.phone }}</span><span *ngIf="!selected.cliente.email && !selected.cliente.phone">Sin contacto</span></p>
+        <p class="text-[15px] font-semibold tabular-nums mt-1.5" [class]="hasVentas(selected) ? 'text-stone-900 dark:text-white' : 'text-stone-400'">
+          {{ hasVentas(selected) ? ('S/ ' + (selected.resumen.total_monto | number:'1.2-2')) : 'Sin compras' }}
+        </p>
+        <p *ngIf="hasVentas(selected)" class="text-[13px] text-stone-500 dark:text-stone-400">{{ selected.resumen.total_ventas }} compras en total</p>
+      </div>
+      <div class="h-px bg-stone-100 dark:bg-white/10"></div>
+      <p class="text-[11px] font-semibold uppercase tracking-wide text-stone-400 mt-4 mb-1">Información</p>
+      <div class="divide-y divide-stone-100 dark:divide-white/10 text-[15px]">
+        <div class="flex justify-between gap-4 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Teléfono</span>
+          <span class="font-medium text-right truncate min-w-0">{{ selected.cliente.phone || '—' }}</span>
         </div>
-        <div class="grid grid-cols-2 gap-3 mt-4">
-          <div class="p-3 rounded-2xl bg-stone-50 dark:bg-neutral-700/20">
-            <p class="text-[10px] font-semibold tracking-widest uppercase text-stone-400">Ventas</p>
-            <p class="text-lg font-bold" [class]="hasVentas(selected) ? 'text-stone-900 dark:text-white' : 'text-stone-400'">{{ hasVentas(selected) ? selected.resumen.total_ventas : '—' }}</p>
-          </div>
-          <div class="p-3 rounded-2xl" [class]="hasVentas(selected) ? 'bg-emerald-50/70 dark:bg-emerald-900/10' : 'bg-stone-50 dark:bg-neutral-700/20'">
-            <p class="text-[10px] font-semibold tracking-widest uppercase" [class]="hasVentas(selected) ? 'text-emerald-600' : 'text-stone-400'">Total</p>
-            <p class="text-lg font-bold" [class]="hasVentas(selected) ? 'text-emerald-700 dark:text-emerald-400' : 'text-stone-400'">{{ hasVentas(selected) ? ('S/ ' + (selected.resumen.total_monto | number:'1.2-2')) : '—' }}</p>
-          </div>
+        <div class="flex justify-between gap-4 py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Correo</span>
+          <span class="font-medium text-right truncate min-w-0">{{ selected.cliente.email || '—' }}</span>
+        </div>
+        <div class="flex justify-between py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Primera compra</span>
+          <span class="font-medium">{{ hasVentas(selected) ? formatoCorto(selected.resumen.primera_compra) : '—' }}</span>
+        </div>
+        <div class="flex justify-between py-2">
+          <span class="text-stone-500 dark:text-stone-400 shrink-0">Última compra</span>
+          <span class="font-medium">{{ hasVentas(selected) ? formatoCorto(selected.resumen.ultima_compra) : '—' }}</span>
         </div>
       </div>
-      <div class="px-5 py-4">
-        <h4 class="text-sm font-semibold text-stone-900 dark:text-white mb-3">Historial de Ventas <span class="font-normal text-stone-400">({{ hasVentas(selected) ? selected.historial_ventas.length : 0 }})</span></h4>
-        <div *ngIf="!hasVentas(selected) || selected.historial_ventas.length===0" class="py-10 text-center">
-          <div class="w-12 h-12 rounded-2xl bg-stone-100 dark:bg-neutral-700 flex items-center justify-center mx-auto mb-3">
-            <svg class="w-6 h-6 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6M9 16h6M12 8v8m-7 4h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          </div>
-          <p class="text-sm font-semibold text-stone-700 dark:text-stone-300">Sin ventas registradas</p>
-        </div>
-        <div *ngIf="selected.historial_ventas.length>0" class="space-y-3 pb-4">
-          <div *ngFor="let v of selected.historial_ventas; trackBy: trackByVenta" (click)="openVenta(v)"
-               class="p-4 rounded-2xl bg-stone-50 dark:bg-neutral-700/20 border border-stone-200/30 dark:border-white/5 active:scale-[0.98] transition-all cursor-pointer">
-            <div class="flex items-start justify-between gap-3 mb-2">
-              <div class="flex items-center gap-2">
-                <span class="w-8 h-8 rounded-xl bg-stone-900 dark:bg-white flex items-center justify-center text-white dark:text-stone-900 text-[10px] font-bold">#{{ v.id }}</span>
-                <div>
-                  <p class="text-sm font-semibold text-stone-900 dark:text-white leading-none">{{ v.comprobante?.serie }}-{{ v.comprobante?.correlativo }}</p>
-                  <p class="text-[11px] text-stone-500">{{ formatoCorto(v.fecha_hora) }} · {{ v.metodo_pago }}</p>
-                </div>
-              </div>
-              <span class="text-base font-bold text-stone-900 dark:text-white">S/ {{ v.total | number:'1.2-2' }}</span>
-            </div>
-            <div class="flex flex-wrap gap-1.5">
-              <span *ngFor="let p of getProductos(v).slice(0,2)" class="inline-flex px-2 py-0.5 rounded-full bg-white dark:bg-neutral-600 border border-stone-200/40 text-[10px] font-medium text-stone-700 dark:text-stone-200">{{ p.producto_nombre }}</span>
-              <span *ngIf="getProductos(v).length>2" class="inline-flex px-2 py-0.5 rounded-full bg-stone-900 dark:bg-white text-white dark:text-stone-900 text-[10px] font-semibold">+{{ getProductos(v).length-2 }}</span>
-            </div>
-          </div>
-        </div>
+      <p class="text-[11px] font-semibold uppercase tracking-wide text-stone-400 mt-4 mb-1">Ventas · {{ hasVentas(selected) ? selected.historial_ventas.length : 0 }}</p>
+      <div *ngIf="!hasVentas(selected) || selected.historial_ventas.length===0" class="py-8 text-center">
+        <p class="text-[15px] font-medium text-stone-500 dark:text-stone-400">Sin ventas registradas</p>
+      </div>
+      <div *ngIf="selected.historial_ventas.length>0" class="divide-y divide-stone-100 dark:divide-white/10 pb-2">
+        <button *ngFor="let v of selected.historial_ventas; trackBy: trackByVenta" (click)="openVenta(v)"
+             class="w-full text-left flex items-center gap-3 py-2.5 active:opacity-60 transition">
+          <span class="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                [style.background]="avatarAccent(v.id).fondo" [style.color]="avatarAccent(v.id).texto">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </span>
+          <span class="flex-1 min-w-0">
+            <span class="block text-[15px] font-medium tracking-tight truncate text-stone-900 dark:text-white">{{ v.comprobante?.serie }}-{{ v.comprobante?.correlativo }} <span class="font-normal text-stone-400">· {{ v.tipo_comprobante }}</span></span>
+            <span class="block text-[13px] text-stone-500 dark:text-stone-400 truncate mt-0.5">{{ formatoCorto(v.fecha_hora) }} · {{ formatoHora(v.fecha_hora) }} · {{ v.metodo_pago }} · {{ getProductos(v).length }} prod<span *ngIf="v.estado==='ANULADA'" class="text-red-500"> · Anulada</span></span>
+          </span>
+          <span class="font-semibold tabular-nums text-[15px] text-stone-900 dark:text-white whitespace-nowrap shrink-0">S/ {{ v.total | number:'1.2-2' }}</span>
+        </button>
       </div>
     </div>
   </div>

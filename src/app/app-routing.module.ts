@@ -99,7 +99,8 @@ const routes: Routes = [
 					},
 					{
 						path: 'modulos',
-						loadComponent: () => import('./components/settingscomponents/modulossettings/modulossettings.component').then(m => m.ModulossettingsComponent)
+						redirectTo: 'cuenta',
+						pathMatch: 'full'
 					},
 				]
 			},

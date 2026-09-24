@@ -35,41 +35,6 @@
     </button>
   </div>
 
-  <!-- ============ STEP INDICATOR ============ -->
-  <div *ngIf="pasoActual >= 2" class="px-2 sm:px-4 py-3 border-b border-stone-200/70 dark:border-white/10 overflow-x-auto">
-    <nav class="flex items-center gap-1.5 whitespace-nowrap min-w-max mx-auto w-fit max-w-full">
-      <ng-container *ngIf="metodoSeleccionado === 'formulario'; else archivoStepsHeader">
-        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
-          [class]="pasoActual >= 1 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Tipo</span>
-        <span class="text-stone-300 text-xs">›</span>
-        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
-          [class]="pasoActual >= 2 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Método</span>
-        <span class="text-stone-300 text-xs">›</span>
-        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
-          [class]="pasoActual >= 3 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Datos</span>
-        <span class="text-stone-300 text-xs">›</span>
-        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
-          [class]="pasoActual >= 4 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Productos</span>
-        <span class="text-stone-300 text-xs">›</span>
-        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
-          [class]="pasoActual >= 5 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Confirmar</span>
-      </ng-container>
-      <ng-template #archivoStepsHeader>
-        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
-          [class]="pasoActual >= 1 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Tipo</span>
-        <span class="text-stone-300 text-xs">›</span>
-        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
-          [class]="pasoActual >= 2 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Método</span>
-        <span class="text-stone-300 text-xs">›</span>
-        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
-          [class]="pasoActual >= 3 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Archivos</span>
-        <span class="text-stone-300 text-xs">›</span>
-        <span class="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-colors"
-          [class]="pasoActual >= 4 ? 'bg-black dark:bg-white text-white dark:text-black' : 'text-stone-400'">Confirmar</span>
-      </ng-template>
-    </nav>
-  </div>
-
   <!-- ============ PASO 2: MÉTODO ============ -->
   <div *ngIf="pasoActual === 2" class="flex flex-col items-center px-4 py-8 sm:py-12 gap-6">
     <div class="text-center">
@@ -161,13 +126,7 @@
               <input formControlName="documento_relacionado" placeholder="OC-2026-001" tuiTextfield />
             </tui-textfield>
           </div>
-          <div class="col-span-2">
-            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Enlace verificación</label>
-            <tui-textfield tuiTextfieldSize="m">
-              <input formControlName="enlace_verificacion" placeholder="https://..." tuiTextfield (blur)="f['enlace_verificacion'].markAsTouched()" />
-            </tui-textfield>
-            <p *ngIf="getEnlaceVerificacionError()" class="text-[11px] text-red-500 mt-1">{{ getEnlaceVerificacionError() }}</p>
-          </div>
+
         </div>
         <p class="text-[10px] text-stone-400">{{ f['tipo_comprobante'].value === '01' ? 'El proveedor debe tener RUC' : 'El proveedor puede tener DNI o RUC' }}</p>
       </section>
@@ -178,20 +137,40 @@
           <p class="text-xs font-semibold text-stone-900 dark:text-white">Proveedor</p>
           <span class="text-[10px] text-stone-400">Opcional</span>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Tipo documento</label>
-            <tui-select formControlName="tipo_documento_proveedor" class="w-full" tuiTextfieldSize="m" [tuiTextfieldLabelOutside]="true">
-              <tui-data-list *tuiDataList>
-                <button *ngFor="let td of tiposDocProveedor" tuiOption [value]="td"
-                  [disabled]="!tiposDocProveedorPermitidos[f['tipo_comprobante'].value]?.includes(td)">
-                  {{ tiposDocProveedorLabels[td] }}
-                </button>
-              </tui-data-list>
-            </tui-select>
+
+        <tui-segmented class="w-full mb-3">
+          <button (click)="setOrigenProveedor('registrados')" type="button" class="flex-1 !text-xs">Mis proveedores</button>
+          <button (click)="setOrigenProveedor('consulta')" type="button" class="flex-1 !text-xs">Por RUC</button>
+        </tui-segmented>
+
+        <!-- Mis proveedores registrados -->
+        <div *ngIf="origenProveedor === 'registrados'">
+          <tui-select [(ngModel)]="proveedorRegistradoRuc" [ngModelOptions]="{standalone: true}"
+            (ngModelChange)="onProveedorRegistradoChange($event)" class="w-full" tuiTextfieldSize="m" [tuiTextfieldLabelOutside]="true">
+            Seleccionar proveedor
+            <tui-data-list *tuiDataList>
+              <button *ngFor="let p of proveedores" tuiOption [value]="p.ruc">
+                {{ p.nombre }} · {{ p.ruc }}
+              </button>
+            </tui-data-list>
+          </tui-select>
+          <div *ngIf="proveedorRegistradoSeleccionado" class="flex items-center gap-3 mt-3">
+            <div class="w-11 h-11 rounded-full bg-stone-900 dark:bg-white text-white dark:text-black flex items-center justify-center font-semibold text-[15px] shrink-0">
+              {{ (proveedorRegistradoSeleccionado.nombre || '?').charAt(0).toUpperCase() }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[15px] font-semibold tracking-tight text-stone-900 dark:text-white truncate">{{ proveedorRegistradoSeleccionado.nombre }}</p>
+              <p class="text-[13px] text-stone-500 dark:text-stone-400">RUC {{ proveedorRegistradoSeleccionado.ruc }}</p>
+            </div>
           </div>
+          <p *ngIf="!proveedores.length" class="text-xs text-stone-500 dark:text-stone-400 mt-2">Aún no tienes proveedores registrados.</p>
+        </div>
+
+        <!-- Consulta por documento (automática) -->
+        <div *ngIf="origenProveedor === 'consulta'">
+        <div class="grid grid-cols-1 gap-3">
           <div>
-            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Nro. documento</label>
+            <label class="text-[11px] font-medium text-stone-400 mb-1 block">RUC del proveedor</label>
             <tui-textfield tuiTextfieldSize="m">
               <input formControlName="numero_documento_proveedor"
                 [placeholder]="f['tipo_documento_proveedor'].value ? longitudesDocProveedor[f['tipo_documento_proveedor'].value]?.label : 'Seleccione tipo'"
@@ -202,12 +181,18 @@
             <p *ngIf="(compraError$ | async)?.numero_documento_proveedor?.[0]" class="text-[11px] text-red-500 mt-1">{{ (compraError$ | async)?.numero_documento_proveedor?.[0] }}</p>
             <p *ngIf="proveedorNoEncontrado" class="text-[11px] text-amber-600 dark:text-amber-400 mt-1">Sin información para este documento.</p>
           </div>
-          <div class="col-span-1 sm:col-span-2">
-            <label class="text-[11px] font-medium text-stone-400 mb-1 block">Nombre / Razón social</label>
-            <tui-textfield tuiTextfieldSize="m" class="opacity-80">
-              <input formControlName="nombre_proveedor" placeholder="Se completa automáticamente" tuiTextfield readonly />
-            </tui-textfield>
+          <div class="col-span-1 sm:col-span-2" *ngIf="f['nombre_proveedor'].value">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-full bg-stone-900 dark:bg-white text-white dark:text-black flex items-center justify-center font-semibold text-[15px] shrink-0">
+                {{ (f['nombre_proveedor'].value || '?').charAt(0).toUpperCase() }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[15px] font-semibold tracking-tight text-stone-900 dark:text-white truncate">{{ f['nombre_proveedor'].value }}</p>
+                <p class="text-[13px] text-stone-500 dark:text-stone-400">RUC {{ f['numero_documento_proveedor'].value }}</p>
+              </div>
+            </div>
           </div>
+        </div>
         </div>
         <p *ngIf="getProveedorGroupError()" class="text-[11px] text-amber-600 dark:text-amber-400 mt-2">{{ getProveedorGroupError() }}</p>
       </section>

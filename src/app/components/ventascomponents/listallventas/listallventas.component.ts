@@ -216,9 +216,9 @@ export class ListallventasComponent {
   protected readonly form = new FormGroup({
 
     nombre_cliente: new FormControl(""),
-    metodo_pago: new FormControl(""),
-    tipo_comprobante: new FormControl(""),
-    tipo_venta: new FormControl(""),
+    metodo_pago: new FormControl("Todos"),
+    tipo_comprobante: new FormControl("Todos"),
+    tipo_venta: new FormControl("Todos"),
     numero_comprobante: new FormControl(""),
     serie: new FormControl(""),
     numero_documento_cliente: new FormControl(""),

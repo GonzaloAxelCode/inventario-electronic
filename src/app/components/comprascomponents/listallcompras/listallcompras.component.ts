@@ -11,7 +11,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { Store } from '@ngrx/store';
 import { TuiBadge, TuiPagination } from '@taiga-ui/kit';
 import { TuiBlockStatus } from '@taiga-ui/layout';
-import { TuiButton, TuiDataList, TuiExpand, TuiLoader, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiExpand, TuiLabel, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { Subject, takeUntil } from 'rxjs';
 import * as dayjs from 'dayjs';
@@ -36,6 +36,7 @@ dayjs.locale('es');
     TuiLoader,
     TuiButton,
     TuiExpand,
+    TuiLabel,
     TuiTextfield,
     TuiDataList,
     TuiSelectModule,
@@ -62,27 +63,27 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
   expanded = false;
   private itemsExpandidos = new Set<number>();
 
-  tipoComprobantes = ['', '01', '03'];
+  tipoComprobantes = ['Todos', '01', '03'];
   tipoComprobanteLabels: Record<string, string> = {
-    '': 'Todos',
+    'Todos': 'Todos',
     '01': 'Factura',
     '03': 'Boleta'
   };
-  monedas = ['', 'PEN', 'USD'];
-  formasPago = ['', 'CONTADO', 'CREDITO'];
+  monedas = ['Todos', 'PEN', 'USD'];
+  formasPago = ['Todos', 'CONTADO', 'CREDITO'];
   formasPagoLabels: Record<string, string> = {
-    '': 'Todas',
+    'Todos': 'Todas',
     'CONTADO': 'Contado',
     'CREDITO': 'Credito'
   };
 
   form = new FormGroup({
     nombre: new FormControl(''),
-    tipo_comprobante: new FormControl(''),
+    tipo_comprobante: new FormControl('Todos'),
     serie: new FormControl(''),
     correlativo: new FormControl(''),
-    moneda: new FormControl(''),
-    forma_pago: new FormControl(''),
+    moneda: new FormControl('Todos'),
+    forma_pago: new FormControl('Todos'),
     proveedor: new FormControl(''),
     fecha_desde: new FormControl(''),
     fecha_hasta: new FormControl(''),
@@ -152,11 +153,12 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
     const query: Partial<QuerySearchCompra> = {};
 
     if (f.nombre) query.nombre = f.nombre;
-    if (f.tipo_comprobante) query.tipo_comprobante = f.tipo_comprobante;
+    // Los selects mandan string vacío cuando es 'Todos'
+    query.tipo_comprobante = !f.tipo_comprobante || f.tipo_comprobante === 'Todos' ? '' : f.tipo_comprobante;
     if (f.serie) query.serie = f.serie;
     if (f.correlativo) query.correlativo = f.correlativo;
-    if (f.moneda) query.moneda = f.moneda;
-    if (f.forma_pago) query.forma_pago = f.forma_pago;
+    query.moneda = !f.moneda || f.moneda === 'Todos' ? '' : f.moneda;
+    query.forma_pago = !f.forma_pago || f.forma_pago === 'Todos' ? '' : f.forma_pago;
     if (f.proveedor) query.proveedor = f.proveedor;
     if (f.fecha_desde) query.fecha_desde = f.fecha_desde;
     if (f.fecha_hasta) query.fecha_hasta = f.fecha_hasta;
@@ -164,16 +166,17 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
     if (f.total_max) query.total_max = f.total_max;
 
     this.store.dispatch(searchCompras({ query, page: 1, page_size: PAGE_SIZE_COMPRAS }));
+    this.expanded = false;
   }
 
   clearSearch() {
     this.form.reset({
       nombre: '',
-      tipo_comprobante: '',
+      tipo_comprobante: 'Todos',
       serie: '',
       correlativo: '',
-      moneda: '',
-      forma_pago: '',
+      moneda: 'Todos',
+      forma_pago: 'Todos',
       proveedor: '',
       fecha_desde: '',
       fecha_hasta: '',
@@ -187,8 +190,9 @@ export class ListallcomprasComponent implements OnInit, OnDestroy {
 
   hasActiveFilters(): boolean {
     const f = this.form.value;
-    return !!(f.nombre || f.tipo_comprobante || f.serie || f.correlativo ||
-              f.moneda || f.forma_pago || f.proveedor || f.fecha_desde ||
+    const sel = (v: any) => !!v && v !== 'Todos';
+    return !!(f.nombre || sel(f.tipo_comprobante) || f.serie || f.correlativo ||
+              sel(f.moneda) || sel(f.forma_pago) || f.proveedor || f.fecha_desde ||
               f.fecha_hasta || f.total_min || f.total_max);
   }
 
