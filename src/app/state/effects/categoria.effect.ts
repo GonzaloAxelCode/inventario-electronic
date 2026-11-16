@@ -5,6 +5,7 @@ import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { CategoriaService } from '@/app/services/categoria.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
+import { serverErrorMsg } from '@/app/services/utils/server-error';
 import {
     createCategoriaAction, createCategoriaFail, createCategoriaSuccess,
     deleteCategoriaAction, deleteCategoriaFail, deleteCategoriaSuccess,
@@ -28,8 +29,8 @@ export class CategoriaEffects {
     loadCategoriasEffect = createEffect(() =>
         this.actions$.pipe(
             ofType(loadCategorias),
-            exhaustMap(() =>
-                this.categoriaService.fetchCategorias().pipe(
+            exhaustMap((action) =>
+                this.categoriaService.fetchCategorias(action.tipo, action.tienda).pipe(
                     map(categorias => {
 
                         return loadCategoriasSuccess({ categorias });
@@ -58,7 +59,7 @@ export class CategoriaEffects {
                     catchError(error => {
                         this.alertService
 
-                            .showError(`Error al crear la categoría.<br> ${error.error?.slug?.[0] || ''}`)
+                            .showError(serverErrorMsg(error, 'Error al crear la categoría.'))
 
                             .subscribe();
                         return of(createCategoriaFail({ error }));
@@ -82,7 +83,7 @@ export class CategoriaEffects {
                     }),
                     catchError(error => {
                         this.alertService
-                            .showError('Categoría actualizada con error. Revisa la tabla de categorías.')
+                            .showError(serverErrorMsg(error, 'Categoría actualizada con error. Revisa la tabla de categorías.'))
                             .subscribe();
                         return of(updateCategoriaFail({ error }));
                     })
@@ -105,7 +106,7 @@ export class CategoriaEffects {
                     }),
                     catchError(error => {
                         this.alertService
-                            .showError('Error al eliminar. Revisa la tabla de categorías.')
+                            .showError(serverErrorMsg(error, 'Error al eliminar. Revisa la tabla de categorías.'))
                             .subscribe();
                         return of(deleteCategoriaFail({ error }));
                     })

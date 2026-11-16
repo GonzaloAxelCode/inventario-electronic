@@ -1,12 +1,12 @@
 <main tuiNavigationMain class="!px-0 py-2 sm:!px-6 sm:py-6">
     <header tuiSubheader class="p-0 mb-4">
-        <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Gestión de Pedidos</h2>
-        <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Crea y gestiona pedidos de clientes</p>
+        <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Gestión de Pendientes</h2>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Crea y gestiona pendientes de clientes</p>
 
         <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
             class="flex gap-2 overflow-x-auto whitespace-nowrap">
-            <button tuiTab type="button">Historial de Pedidos</button>
-            <button tuiTab type="button">Crear Pedido</button>
+            <button tuiTab type="button">Historial de Pendientes</button>
+            <button tuiTab type="button" *ngIf="tiene((user$ | async), 'can_manage_pedido')">Crear Pendiente</button>
         </nav>
     </header>
 
@@ -14,7 +14,7 @@
         <app-listallpedidos></app-listallpedidos>
     </ng-container>
 
-    <ng-container *ngIf="activeTab === 'crear'">
+    <ng-container *ngIf="activeTab === 'crear' && tiene((user$ | async), 'can_manage_pedido')">
         <app-registrarpedido (pedidoCreado)="onPedidoCreado()"></app-registrarpedido>
     </ng-container>
 

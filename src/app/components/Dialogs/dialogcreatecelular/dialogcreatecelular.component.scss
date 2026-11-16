@@ -1,0 +1,28 @@
+.apple-sheet { display: flex; flex-direction: column; gap: 12px; color: var(--tui-text-primary); }
+.apple-title { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; color: var(--tui-text-primary); }
+.apple-close { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: var(--tui-text-secondary); background: transparent; border: 0; }
+.apple-segment { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; padding: 3px; border-radius: 9999px; background: var(--tui-background-neutral-1); }
+.apple-segment button { font-size: 13px; font-weight: 600; padding: 7px 0; border-radius: 9999px; color: var(--tui-text-secondary); background: transparent; transition: all .2s; }
+.apple-segment button.on { background: var(--tui-background-base); color: var(--tui-text-primary); box-shadow: 0 1px 4px rgba(0,0,0,.14); }
+.apple-group { border: 0; }
+.apple-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--tui-border-normal); font-size: 14px; }
+.apple-row.last { border-bottom: 0; }
+.apple-row span { color: var(--tui-text-secondary); flex-shrink: 0; }
+.apple-row b { font-weight: 600; color: var(--tui-text-primary); text-align: right; }
+.apple-row input, .apple-row select { background: transparent; border: 0; outline: 0; font-size: 14px; text-align: right; min-width: 0; flex: 1; color: var(--tui-text-primary); }
+.apple-select { flex: 1; min-width: 0; max-width: 160px; font-size: 13px; }
+.apple-select [tuiWrapper] { min-height: 30px !important; }
+.apple-switch { width: 46px; height: 28px; border-radius: 9999px; background: var(--tui-background-neutral-2, #e5e5ea); position: relative; transition: .2s; flex-shrink: 0; }
+.apple-switch span { position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 9999px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.2); transition: .2s; }
+.apple-switch.on { background: #34c759; }
+.apple-switch.on span { left: 20px; }
+.apple-link { color: var(--tui-text-primary); font-weight: 600; cursor: pointer; }
+.apple-upload { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 16px; border-radius: 16px; border: 1.5px dashed var(--tui-border-normal); cursor: pointer; text-align: center; }
+.apple-upload-title { font-size: 15px; font-weight: 600; color: var(--tui-text-primary); }
+.apple-upload-sub { font-size: 12px; color: var(--tui-text-secondary); }
+.apple-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px 0; }
+.apple-photo-item { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: var(--tui-background-neutral-1); }
+.apple-photo-item img { width: 100%; height: 100%; object-fit: cover; }
+.apple-photo-item button { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 9999px; background: rgba(0,0,0,.55); color: #fff; font-size: 14px; line-height: 1; }
+.apple-btn-primary { flex: 1; background: var(--tui-text-primary); color: var(--tui-background-base); font-weight: 600; font-size: 15px; border-radius: 9999px; padding: 11px; }
+.apple-btn-secondary { padding: 11px 18px; border-radius: 9999px; font-size: 15px; font-weight: 600; color: var(--tui-text-primary); background: var(--tui-background-neutral-1); border: 0; }

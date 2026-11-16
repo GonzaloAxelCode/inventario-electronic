@@ -19,24 +19,24 @@ export const selectLoadingDistribucionStock = createSelector(
     (state: InventarioState) => state.loadingDistribucionStock
 );
 
-export const selectValorizacion = createSelector(
+export const selectTopProductosCompra = createSelector(
     selectInventarioState,
-    (state: InventarioState) => state.valorizacion
+    (state: InventarioState) => state.topProductosCompra
 );
 
-export const selectLoadingValorizacion = createSelector(
+export const selectLoadingTopProductosCompra = createSelector(
     selectInventarioState,
-    (state: InventarioState) => state.loadingValorizacion
+    (state: InventarioState) => state.loadingTopProductosCompra
 );
 
-export const selectTopCategoriasCompra = createSelector(
+export const selectValorCategoria = createSelector(
     selectInventarioState,
-    (state: InventarioState) => state.topCategoriasCompra
+    (state: InventarioState) => state.valorCategoria
 );
 
-export const selectLoadingTopCategoriasCompra = createSelector(
+export const selectLoadingValorCategoria = createSelector(
     selectInventarioState,
-    (state: InventarioState) => state.loadingTopCategoriasCompra
+    (state: InventarioState) => state.loadingValorCategoria
 );
 
 

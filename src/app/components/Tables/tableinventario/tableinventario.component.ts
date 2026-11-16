@@ -7,7 +7,7 @@ import { DialogEditInventarioDetailService } from '@/app/services/dialogs-servic
 import { QuerySearchInventario } from '@/app/services/inventario.service';
 import { URL_BASE } from '@/app/services/utils/endpoints';
 import { loadCategorias } from '@/app/state/actions/categoria.actions';
-import { clearSearchInventarios, createInventario, eliminarInventarioAction, searchInventarios } from '@/app/state/actions/inventario.actions';
+import { clearSearchInventarios, createInventario, eliminarInventarioAction, loadInventarios, searchInventarios } from '@/app/state/actions/inventario.actions';
 import { AppState } from '@/app/state/app.state';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { InventarioState } from '@/app/state/reducers/inventario.reducer';
@@ -139,6 +139,8 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
   tiendaUser!: number
   isTheSearchWasDone: boolean = false
   selectedCategoriaId: number | null = null
+  /** Evita pedir la carga más de una vez por instancia (el effect usa caché primero). */
+  private cargaInventarioSolicitada = false;
   activeTabIndex = 0
   compareCategorias = (a: Categoria, b: Categoria) => a && b && a.id === b.id;
 
@@ -224,6 +226,19 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
     this.currentIndex = 0;
     this.inventariosSearchToShow = [];
     this.loadInitialBatch();
+  }
+
+  /** Reintenta la carga cuando el vacío puede deberse a un fallo de red/backend. */
+  reintentarCarga(): void {
+    this.cargaInventarioSolicitada = true;
+    this.isTheSearchWasDone = false;
+    this.selectedCategoriaId = null;
+    this.categoriaBusqueda = '';
+    this.categoriaDropdownAbierto = false;
+    this.currentIndex = 0;
+    this.inventariosSearchToShow = [];
+    this.store.dispatch(clearSearchInventarios());
+    this.store.dispatch(loadInventarios());
   }
 
   onCategoriaTabChange(categoriaId: number | null) {
@@ -324,12 +339,18 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.store.dispatch(loadCategorias());
+    this.store.dispatch(loadCategorias({}));
 
     // Suscribirse al estado del inventario
     this.store.select(selectInventario)
       .pipe(takeUntil(this.destroy$))
       .subscribe((state) => {
+        // El modal de selección (y otros hosts) puede montarse sin datos en el store:
+        // asegurar la carga una vez por instancia (el effect usa caché primero).
+        if (!this.cargaInventarioSolicitada && (state.inventarios || []).length === 0 && !state.loadingProductosInventario) {
+          this.cargaInventarioSolicitada = true;
+          this.store.dispatch(loadInventarios());
+        }
         // Guardar las listas completas
         this.allInventarios = state.inventarios || [];
         this.allInventariosSearch = state.inventarios_search || [];
@@ -421,12 +442,23 @@ export class TableinventarioComponent implements OnInit, OnDestroy {
   onSetImageProduct(inventario: Inventario) {
     const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
 
-    const imagenFinal = inventario?.imagen_producto
-      ? URL_BASE + inventario.imagen_producto
-      : placeholder;
+    const imagenFinal = this.imgProducto(inventario) || placeholder;
 
     this.titles = [inventario.producto_nombre || "Producto Sin Nombre"];
     this.content = [imagenFinal];
+  }
+
+  /** URL de imagen normalizada: respeta absolutas, reconstruye /media/ contra el backend actual. */
+  imgProducto(inv: any): string | null {
+    const raw = inv?.imagen_producto;
+    if (!raw) return null;
+    const s = String(raw).trim();
+    if (!s) return null;
+    if (s.startsWith('data:')) return s;
+    const mediaIdx = s.indexOf('/media/');
+    if (mediaIdx >= 0) return URL_BASE + s.slice(mediaIdx);
+    if (s.startsWith('http')) return s;
+    return URL_BASE + (s.startsWith('/') ? s : '/' + s);
   }
 
   mostrarAdvertencia(name: any) {

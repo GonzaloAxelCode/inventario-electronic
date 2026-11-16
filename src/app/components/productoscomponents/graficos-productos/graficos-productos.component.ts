@@ -1,24 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { TuiPieChart, TuiLegendItem } from '@taiga-ui/addon-charts';
-import { TuiHovered } from '@taiga-ui/cdk';
-import { TuiSkeleton } from '@taiga-ui/kit';
 import { AppState } from '@/app/state/app.state';
 import { loadPorcentajeCategoria } from '@/app/state/actions/categoria.actions';
 import { selectPorcentajeCategoria, selectLoadingPorcentaje } from '@/app/state/selectors/categoria.selectors';
-import { loadDistribucionStock, loadValorizacion, loadTopCategoriasCompra } from '@/app/state/actions/inventario.actions';
-import { selectDistribucionStock, selectLoadingDistribucionStock, selectValorizacion, selectLoadingValorizacion, selectTopCategoriasCompra, selectLoadingTopCategoriasCompra } from '@/app/state/selectors/inventario.selectors';
+import { loadTopProductosCompra, loadValorCategoria } from '@/app/state/actions/inventario.actions';
+import { selectTopProductosCompra, selectLoadingTopProductosCompra, selectValorCategoria, selectLoadingValorCategoria } from '@/app/state/selectors/inventario.selectors';
 
 @Component({
   selector: 'app-graficos-productos',
   standalone: true,
   imports: [
     CommonModule,
-    TuiPieChart,
-    TuiLegendItem,
-    TuiHovered,
-    TuiSkeleton,
   ],
   templateUrl: './graficos-productos.component.html',
   styleUrl: './graficos-productos.component.scss'
@@ -33,32 +26,20 @@ export class GraficosProductosComponent implements OnInit {
   pieActiveIndex = NaN;
   loadingCategoria = true;
 
-  // ====== 2. Top Categorias en Inventario por costo de Compra ======
-  inventarioData: { nombre: string; unidades: number; costoTotal: number }[] = [];
-  inventarioMax = 0;
-  loadingTopCompra = true;
+  // ====== 2. Top 10 accesorios por costo de compra (tabla) ======
+  topProductos: { producto: string; sku: string; categoria: string; cantidad: number; costoCompra: number; costoVenta: number }[] = [];
+  loadingTopProductos = true;
+  tipoTop: 'compra' | 'venta' = 'compra';
 
-  // ====== 3. Estado del Stock (Dona) ======
-  stockStatusValue: number[] = [];
-  stockStatusLabels = ['Normal', 'Bajo', 'Crítico', 'Sin Stock'];
-  stockStatusActiveIndex = NaN;
-  loadingStock = true;
-
-  // ====== 4. Productos por Rango de Precio ======
-  precioRangos: { rango: string; cantidad: number; color: string }[] = [];
-  precioMax = 0;
-  loadingPrecioRango = true;
-
-  // ====== 5. Valorización del Inventario por Categoría ======
-  valorizacion: { nombre: string; valorTotal: number; productos: number }[] = [];
-  valorizacionMax = 0;
-  loadingValorizacion = true;
+  // ====== 3. Valor total en soles por categoría (tabla) ======
+  valorCategoria: { categoria: string; cantidadProductos: number; totalUnidades: number; valorTotal: number }[] = [];
+  loadingValorCategoria = true;
+  tipoValor: 'compra' | 'venta' = 'compra';
 
   ngOnInit(): void {
     this.store.dispatch(loadPorcentajeCategoria());
-    this.store.dispatch(loadDistribucionStock());
-    this.store.dispatch(loadValorizacion());
-    this.store.dispatch(loadTopCategoriasCompra());
+    this.recargarTop();
+    this.recargarValor();
 
     this.store.select(selectPorcentajeCategoria).subscribe(porcentajes => {
       this.pieLabels = porcentajes.map(p => p.categoria);
@@ -71,48 +52,35 @@ export class GraficosProductosComponent implements OnInit {
       this.cdr.markForCheck();
     });
 
-    this.store.select(selectDistribucionStock).subscribe(distribucion => {
-      this.stockStatusValue = [
-        distribucion.normal,
-        distribucion.bajo,
-        distribucion.critico,
-        distribucion.sin_stock
-      ];
-      this.cdr.markForCheck();
-    });
-
-    this.store.select(selectLoadingDistribucionStock).subscribe(loading => {
-      this.loadingStock = loading;
-      this.cdr.markForCheck();
-    });
-
-    this.store.select(selectValorizacion).subscribe(valorizacion => {
-      this.valorizacion = valorizacion.map(v => ({
-        nombre: v.categoria,
-        valorTotal: v.total_compra,
-        productos: v.cantidad_productos
+    this.store.select(selectTopProductosCompra).subscribe(productos => {
+      this.topProductos = (productos ?? []).map(p => ({
+        producto: p.producto,
+        sku: p.sku,
+        categoria: p.categoria,
+        cantidad: p.cantidad,
+        costoCompra: p.costo_compra,
+        costoVenta: p.costo_venta
       }));
-      this.valorizacionMax = Math.max(...this.valorizacion.map(v => v.valorTotal), 1);
       this.cdr.markForCheck();
     });
 
-    this.store.select(selectLoadingValorizacion).subscribe(loading => {
-      this.loadingValorizacion = loading;
+    this.store.select(selectLoadingTopProductosCompra).subscribe(loading => {
+      this.loadingTopProductos = loading;
       this.cdr.markForCheck();
     });
 
-    this.store.select(selectTopCategoriasCompra).subscribe(topCategorias => {
-      this.inventarioData = topCategorias.map(c => ({
-        nombre: c.categoria,
-        unidades: c.total_unidades,
-        costoTotal: c.total_gastado
+    this.store.select(selectValorCategoria).subscribe(valores => {
+      this.valorCategoria = (valores ?? []).map(v => ({
+        categoria: v.categoria,
+        cantidadProductos: v.cantidad_productos,
+        totalUnidades: v.total_unidades,
+        valorTotal: v.valor_total
       }));
-      this.inventarioMax = Math.max(...this.inventarioData.map(d => d.costoTotal), 1);
       this.cdr.markForCheck();
     });
 
-    this.store.select(selectLoadingTopCategoriasCompra).subscribe(loading => {
-      this.loadingTopCompra = loading;
+    this.store.select(selectLoadingValorCategoria).subscribe(loading => {
+      this.loadingValorCategoria = loading;
       this.cdr.markForCheck();
     });
   }
@@ -126,11 +94,31 @@ export class GraficosProductosComponent implements OnInit {
     this.pieActiveIndex = hovered ? index : NaN;
   }
 
-  isStockStatusActive(index: number): boolean {
-    return this.stockStatusActiveIndex === index;
+  recargarTop(): void {
+    this.store.dispatch(loadTopProductosCompra({ tipo: this.tipoTop }));
   }
 
-  onStockStatusHover(index: number, hovered: boolean): void {
-    this.stockStatusActiveIndex = hovered ? index : NaN;
+  recargarValor(): void {
+    this.store.dispatch(loadValorCategoria({ tipo: this.tipoValor }));
+  }
+
+  onTipoTopChange(event: Event): void {
+    const v = (event.target as HTMLSelectElement).value as 'compra' | 'venta';
+    if (v !== this.tipoTop) {
+      this.tipoTop = v;
+      this.recargarTop();
+    }
+  }
+
+  onTipoValorChange(event: Event): void {
+    const v = (event.target as HTMLSelectElement).value as 'compra' | 'venta';
+    if (v !== this.tipoValor) {
+      this.tipoValor = v;
+      this.recargarValor();
+    }
+  }
+
+  costoMostrado(item: { costoCompra: number; costoVenta: number }): number {
+    return this.tipoTop === 'venta' ? (item.costoVenta ?? 0) : (item.costoCompra ?? 0);
   }
 }

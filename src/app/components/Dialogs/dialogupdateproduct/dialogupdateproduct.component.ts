@@ -15,7 +15,6 @@ import { selectCategoriaState } from '@/app/state/selectors/categoria.selectors'
 import { selectProductoState } from '@/app/state/selectors/producto.selectors';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { Actions, ofType } from '@ngrx/effects';
-import { BarcodeComponent } from '@/app/components/barcode/barcode.component';
 import { TuiDataListWrapper, TuiTabs } from '@taiga-ui/kit';
 import { TuiComboBoxModule, TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { TuiInputNumber } from '@taiga-ui/kit';
@@ -37,7 +36,7 @@ import { Subject, takeUntil } from 'rxjs';
     TuiTextfield, TuiNumberFormat,
     FormsModule, TuiComboBoxModule,
     TuiSelectModule, TuiTabs, TuiTextfieldControllerModule, TuiExpand, TuiGroup, TuiHintUnstyledComponent,
-    TuiInputNumber, BarcodeComponent
+    TuiInputNumber
   ],
   providers: [],
   templateUrl: './dialogupdateproduct.component.html',
@@ -110,9 +109,7 @@ export class DialogupdateproductComponent implements OnInit {
     return this.fb.group(group);
   }
   ngOnInit() {
-    this.originalImage = this.producto?.imagen
-      ? URL_BASE + this.producto.imagen
-      : null;
+    this.originalImage = this.resolverImagen(this.producto?.imagen);
     this.previewImage = this.originalImage
       ?? "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
     this.store.select(selectProductoState).subscribe((state: ProductoState) => {
@@ -274,6 +271,18 @@ export class DialogupdateproductComponent implements OnInit {
     const categoria = this.categorias.find((c) => c.id === id);
     return categoria ? categoria.nombre : '';
   };
+
+  /** URL de imagen normalizada: evita duplicar el host si ya viene absoluta. */
+  private resolverImagen(raw: any): string | null {
+    if (!raw) return null;
+    const s = String(raw).trim();
+    if (!s) return null;
+    if (s.startsWith('data:')) return s;
+    if (s.startsWith('http')) return s;
+    const mediaIdx = s.indexOf('/media/');
+    if (mediaIdx >= 0) return URL_BASE + s.slice(mediaIdx);
+    return URL_BASE + (s.startsWith('/') ? s : '/' + s);
+  }
   validateNumberInput(event: KeyboardEvent): void {
     const charCode = event.which ? event.which : event.keyCode;
     const charStr = String.fromCharCode(charCode);

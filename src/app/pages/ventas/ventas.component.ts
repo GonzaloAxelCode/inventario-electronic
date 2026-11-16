@@ -14,7 +14,6 @@ import {
   TuiTabs,
 } from '@taiga-ui/kit';
 
-import { CanceledsalesComponent } from '@/app/components/ventascomponents/canceledsales/canceledsales.component';
 import { ListallventasComponent } from '@/app/components/ventascomponents/listallventas/listallventas.component';
 import { MostsalesproductsComponent } from '@/app/components/ventascomponents/mostsalesproducts/mostsalesproducts.component';
 import { TodaysaleComponent } from '@/app/components/ventascomponents/todaysale/todaysale.component';
@@ -37,7 +36,6 @@ import { TuiIcon } from '@taiga-ui/core';
 
     TodaysalestableComponent,
     TodaysaleComponent,
-    CanceledsalesComponent,
     MostsalesproductsComponent,
   ],
   templateUrl: './ventas.component.html',
@@ -48,20 +46,20 @@ export class VentasComponent implements OnInit {
   private readonly location = inject(Location);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  validTabs = ['historial', 'ventas-hoy', 'ultima-venta', 'anuladas-hoy', 'top-productos-hoy'] as const;
+  validTabs = ['historial', 'ventas-hoy', 'ultima-venta', 'top-productos-hoy'] as const;
 
   activeTab:
     | 'historial'
     | 'ventas-hoy'
     | 'ultima-venta'
-    | 'anuladas-hoy'
     | 'top-productos-hoy'
     = 'historial';
 
   ngOnInit() {
     this.route.fragment.subscribe((fragment) => {
-      if (fragment && this.isValidTab(fragment)) {
-        this.activeTab = fragment as typeof this.activeTab;
+      const mapped = fragment === 'anuladas-hoy' ? 'historial' : fragment;
+      if (mapped && this.isValidTab(mapped)) {
+        this.activeTab = mapped as typeof this.activeTab;
         this.cdr.markForCheck();
       }
     });

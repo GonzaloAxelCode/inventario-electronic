@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { map } from 'rxjs';
+import { AppState } from '@/app/state/app.state';
+import { selectCurrenttUser } from '@/app/state/selectors/user.selectors';
 import { TuiDay, TuiMonth } from '@taiga-ui/cdk/date-time';
 import {
   TuiError,
@@ -34,6 +38,9 @@ import {
 })
 export class GananciasComponent implements OnInit {
   private gananciaService = inject(GananciaService);
+  private readonly store = inject(Store<AppState>);
+
+  perms$ = this.store.select(selectCurrenttUser).pipe(map((u) => u?.permissions));
 
   readonly meses = [
     'Enero',

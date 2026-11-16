@@ -1,0 +1,143 @@
+<ng-container *ngIf="(perms$ | async)?.can_export_data; else sinPermiso">
+<div class="flex flex-col gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-1">
+      <p class="text-sm font-bold text-neutral-900 dark:text-white">🧾 Ventas del mes</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Detalle del mes elegido</p>
+      <button type="button" (click)="openModal('ventas')"
+        class="px-3 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors">Exportar</button>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-1">
+      <p class="text-sm font-bold text-neutral-900 dark:text-white">📊 Ventas del año</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Totales enero–diciembre</p>
+      <button type="button" (click)="openModal('mensual')"
+        class="px-3 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors">Exportar</button>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-1">
+      <p class="text-sm font-bold text-neutral-900 dark:text-white">💰 Ganancias del mes</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Por venta o por producto</p>
+      <button type="button" (click)="openModal('ganancias')"
+        class="px-3 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors">Exportar</button>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-1">
+      <p class="text-sm font-bold text-neutral-900 dark:text-white">🏆 Top productos</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Más vendidos con Tipo</p>
+      <button type="button" (click)="openModal('top-productos')"
+        class="px-3 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors">Exportar</button>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-1">
+      <p class="text-sm font-bold text-neutral-900 dark:text-white">🗂️ Top categorías</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Categorías con más ingresos</p>
+      <button type="button" (click)="openModal('top-categorias')"
+        class="px-3 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors">Exportar</button>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-1">
+      <p class="text-sm font-bold text-neutral-900 dark:text-white">💳 Métodos de pago</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Ventas por método del mes</p>
+      <button type="button" (click)="openModal('metodos-pago')"
+        class="px-3 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors">Exportar</button>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-1">
+      <p class="text-sm font-bold text-neutral-900 dark:text-white">👥 Clientes del mes</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Compras y Nuevo/Recurrente</p>
+      <button type="button" (click)="openModal('clientes')"
+        class="px-3 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors">Exportar</button>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-1">
+      <p class="text-sm font-bold text-neutral-900 dark:text-white">❌ Anuladas del mes</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Ventas anuladas del mes</p>
+      <button type="button" (click)="openModal('anuladas')"
+        class="px-3 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors">Exportar</button>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col gap-1">
+      <p class="text-sm font-bold text-neutral-900 dark:text-white">⚠️ Stock bajo</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">En mínimo o menos, con faltante</p>
+      <button type="button" (click)="openModal('stock-bajo')"
+        class="px-3 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors">Exportar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: elegir mes y año -->
+<div *ngIf="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/50" (click)="closeModal()"></div>
+  <div class="relative w-full max-w-sm p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-xl flex flex-col gap-4">
+    <div>
+      <p class="text-sm font-bold text-neutral-900 dark:text-white">{{ titulo }}</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ descripcion }}</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3" *ngIf="necesitaMes || necesitaYear">
+      <label class="flex flex-col gap-1" *ngIf="necesitaMes">
+        <span class="text-xs font-bold text-neutral-600 dark:text-neutral-300">Mes</span>
+        <select [(ngModel)]="month"
+          class="text-xs px-2 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white">
+          <option *ngFor="let m of meses; let i = index" [ngValue]="i + 1">{{ m }}</option>
+        </select>
+      </label>
+      <label class="flex flex-col gap-1" *ngIf="necesitaYear">
+        <span class="text-xs font-bold text-neutral-600 dark:text-neutral-300">Año</span>
+        <select [(ngModel)]="year"
+          class="text-xs px-2 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white">
+          <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+        </select>
+      </label>
+    </div>
+
+    <label class="flex flex-col gap-1" *ngIf="tipo === 'ganancias'">
+      <span class="text-xs font-bold text-neutral-600 dark:text-neutral-300">Detalle</span>
+      <select [(ngModel)]="detalleGanancias"
+        class="text-xs px-2 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white">
+        <option value="venta">Por venta</option>
+        <option value="producto">Por producto</option>
+      </select>
+    </label>
+
+    <div class="grid grid-cols-2 gap-3" *ngIf="necesitaTipo || necesitaMetodo">
+      <label class="flex flex-col gap-1" *ngIf="necesitaTipo">
+        <span class="text-xs font-bold text-neutral-600 dark:text-neutral-300">Tipo</span>
+        <select [(ngModel)]="filtroTipo"
+          class="text-xs px-2 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white">
+          <option value="todos">Todos</option>
+          <option value="accesorio">Solo accesorios</option>
+          <option value="celular">Solo celulares</option>
+        </select>
+      </label>
+      <label class="flex flex-col gap-1" *ngIf="necesitaMetodo">
+        <span class="text-xs font-bold text-neutral-600 dark:text-neutral-300">Método de pago</span>
+        <select [(ngModel)]="filtroMetodo"
+          class="text-xs px-2 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white">
+          <option *ngFor="let mp of metodosPago" [value]="mp">{{ mp === 'todos' ? 'Todos' : mp }}</option>
+        </select>
+      </label>
+    </div>
+
+    <label class="flex flex-col gap-1" *ngIf="necesitaGrupo">
+      <span class="text-xs font-bold text-neutral-600 dark:text-neutral-300">Grupo</span>
+      <select [(ngModel)]="filtroGrupo"
+        class="text-xs px-2 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white">
+        <option value="todos">Todos</option>
+        <option value="accesorios">Solo accesorios</option>
+        <option value="repuestos">Solo repuestos</option>
+      </select>
+    </label>
+
+    <p class="text-[11px] text-neutral-400" *ngIf="!necesitaYear">El stock es el actual, no depende del periodo.</p>
+
+    <div class="flex gap-2 justify-end">
+      <button type="button" (click)="closeModal()" [disabled]="downloading"
+        class="px-4 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-600 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-300 transition-colors disabled:opacity-50">Cancelar</button>
+      <button type="button" (click)="descargar()" [disabled]="downloading"
+        class="px-4 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-800 hover:bg-neutral-900 hover:text-white text-neutral-900 dark:border-neutral-300 dark:hover:bg-white dark:hover:text-neutral-900 dark:text-white transition-colors disabled:opacity-50">
+        {{ downloading ? 'Generando…' : '⬇ Descargar CSV' }}
+      </button>
+    </div>
+  </div>
+</div>
+</ng-container>
+<ng-template #sinPermiso>
+  <div class="p-6 text-center rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800">
+    <p class="text-sm font-bold text-neutral-900 dark:text-white">Sin permiso</p>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">No tienes permiso para exportar datos. Pide a tu administrador que te habilite «Exportar datos a CSV».</p>
+  </div>
+</ng-template>

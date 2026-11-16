@@ -1,6 +1,6 @@
 <!-- Main Layout -->
 <div class="relative flex flex-col h-screen w-full">
-  <header class="topnav-header bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
+  <header class="topnav-header bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700" [class.topnav-hidden]="headerHidden">
     <!-- Nav top solo para móviles: logo + hamburguesa, nada más -->
     <div class="mobile-topnav">
       <a routerLink="/app" class="logo-link">
@@ -9,61 +9,28 @@
           class="logo-img" alt="Logo">
       </a>
       <div class="mobile-menu-container relative">
-        <button (click)="toggleMobileMenu(); $event.stopPropagation()" class="mobile-menu-button">
+        <button (click)="toggleMobileMenu(); $event.stopPropagation()" class="mobile-menu-button" aria-label="Abrir menú">
           <svg class="w-6 h-6 text-neutral-600 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
         </button>
 
-        <div *ngIf="mobileMenuOpen" class="mobile-dropdown bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
-          <div class="mobile-dropdown-header">
-            <div class="dropdown-avatar">{{ user.first_name?.charAt(0) || 'U' }}{{ user.last_name?.charAt(0) || '' }}</div>
-            <div>
-              <p class="dropdown-name text-neutral-900 dark:text-white">{{ user.first_name }}</p>
-              <p class="dropdown-email text-neutral-500 dark:text-neutral-400">{{ user.username }}</p>
-            </div>
-          </div>
-          <div class="mx-1 mt-1 rounded-2xl bg-gradient-to-br from-[#6366f1] via-[#7c6cf6] to-[#8b5cf6] p-3.5 text-white shadow-sm">
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-[10px] font-bold uppercase tracking-widest text-white/70">Mi plan</span>
-              <span class="inline-flex rounded-full bg-white px-1 py-0.5">
-                <app-planbadge mode="pill" [tiendaId]="tienda?.id"></app-planbadge>
-              </span>
-            </div>
-            <button (click)="navigateTo('/app/settings/suscripcion')"
-              class="mt-2.5 w-full h-9 rounded-full bg-white/20 hover:bg-white/30 text-[13px] font-semibold transition active:scale-[0.98]">
-              Ver suscripción
-            </button>
-          </div>
-          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
+        <div *ngIf="mobileMenuOpen" class="mobile-dropdown bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-white/15">
           <nav class="mobile-nav-links">
             <ng-container *ngFor="let item of allNavItems">
-              <a *ngIf="(!item.superuserOnly || user.is_superuser) && (!item.featureFlag || (item.featureFlag === 'tiktok' && featureFlags.tiktokEnabled()))"
-                [routerLink]="item.route"
-                (click)="closeMobileMenu()"
-                [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
-                routerLinkActive="nav-link-active"
-                class="mobile-nav-link text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
+              <button *ngIf="(!item.superuserOnly || user.is_superuser) && (!item.featureFlag || (item.featureFlag === 'tiktok' && featureFlags.tiktokEnabled()))"
+                type="button"
+                (click)="navigateTo(item.route)"
+                class="mobile-nav-link w-full text-left text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-white/10">
                 <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" [attr.d]="item.icon"/>
                 </svg>
                 {{ item.label }}
-              </a>
+              </button>
             </ng-container>
           </nav>
-          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
-          <button (click)="navigateTo('/app/settings/cuenta')" class="mobile-nav-link text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
-            Configuración
-          </button>
-          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
-          <button (click)="toggleTheme($event)" class="dropdown-item text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700">
-            <app-darkmode></app-darkmode><span>Tema</span>
-          </button>
-          <div class="dropdown-divider bg-neutral-200 dark:bg-neutral-700"></div>
-          <button (click)="logout2()" class="dropdown-item text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">
-            <svg class="dropdown-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-            Cerrar Sesión
-          </button>
+          <div class="dropdown-divider bg-neutral-200 dark:bg-white/15"></div>
+          <app-user-menu-dropdown [user]="user" [tienda]="tienda" [mobileMode]="true" (closed)="closeMobileMenu()"></app-user-menu-dropdown>
         </div>
       </div>
     </div>
@@ -83,15 +50,18 @@
         <ng-container *ngFor="let item of visibleItems">
           <div class="nav-item-dropdown-container">
             <button
-              (click)="toggleItemDropdown($event, item)"
+              (click)="navigateTo(item.route)"
+              (mouseenter)="abrirDropdown($event, item)"
               class="nav-link text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white">
               <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" [attr.d]="item.icon"/>
               </svg>
               <span>{{ item.label }}</span>
-              <svg class="chevron-down" [class.open]="activeDropdownItem?.label === item.label" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-              </svg>
+              <span (click)="toggleItemDropdown($event, item); $event.stopPropagation()" class="inline-flex items-center">
+                <svg class="chevron-down" [class.open]="activeDropdownItem?.label === item.label" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </span>
             </button>
           </div>
         </ng-container>
@@ -116,7 +86,8 @@
           class="overflow-dropdown bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
           <ng-container *ngFor="let item of hiddenItems">
             <button
-              (click)="toggleItemDropdown($event, item); closeOverflowMenu()"
+              (click)="navigateTo(item.route)"
+              (mouseenter)="abrirDropdown($event, item)"
               class="overflow-item text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white">
               <svg class="overflow-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" [attr.d]="item.icon"/>
@@ -159,9 +130,16 @@
   </div>
   </header>
 
-  <div class="flex-1 relative overflow-auto">
+  <div class="flex-1 relative overflow-auto" #scrollContainer>
     <router-outlet></router-outlet>
   </div>
+</div>
+
+<!-- Bloqueo total al anular venta: pantalla gris + carga, sin clics ni cierre -->
+<div *ngIf="bloquearAnular" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-3 bg-neutral-500/70 dark:bg-black/70">
+  <tui-loader size="l" class="!text-white"></tui-loader>
+  <p class="text-sm font-semibold text-white">Anulando venta...</p>
+  <p class="text-xs text-white/80">No cierres ni toques nada hasta terminar</p>
 </div>
 
 <!-- UNICO dropdown universal para todos los links -->

@@ -2,9 +2,8 @@
   <div class="max-w-6xl mx-auto pt-4 rounded-lg">
     <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-      <!-- Categoría + Nombre en una columna y al costado la imagen -->
-      <div class="lg:col-span-3 col-span-1 flex flex-col gap-4 sm:flex-row sm:items-start">
-        <div class="flex min-w-0 flex-1 flex-col gap-4">
+      <!-- Categoría + Nombre + Imagen debajo del nombre -->
+      <div class="lg:col-span-3 col-span-1 flex flex-col gap-4">
           <!-- Categoría -->
           <div class="flex flex-col">
             <tui-select formControlName="categoria" class="w-full" [stringify]="getCategoriaNombre">
@@ -25,8 +24,8 @@
 
           <!-- Nombre -->
           <div class="flex min-w-0 flex-1 flex-col justify-start">
-            <tui-input formControlName="nombre" class="w-full" placeholder="Ingrese el nombre del producto">
-              Nombre del Producto
+            <tui-input formControlName="nombre" class="w-full" placeholder="Ingrese el nombre del accesorio">
+              Nombre del Accesorio
             </tui-input>
             <p *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched" class="text-red-500 text-sm mt-1">
               Este campo es obligatorio
@@ -35,10 +34,9 @@
               {{ (productoError$ | async)?.nombre?.[0] }}
             </p>
           </div>
-        </div>
 
-        <!-- Imagen -->
-        <div class="shrink-0">
+        <!-- Imagen debajo del nombre -->
+        <div class="w-full">
           <div class="flex flex-col">
             <!-- Input oculto -->
             <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
@@ -47,7 +45,7 @@
             <input #cameraInput type="file" (change)="onFileSelected($event)" accept="image/*" capture="environment" class="hidden" />
 
             <!-- Preview de imagen con hover para eliminar -->
-            <div *ngIf="previewImage" class="relative w-full h-72 sm:w-60 sm:h-60 group cursor-pointer" (click)="removeImage()">
+            <div *ngIf="previewImage" class="relative w-full h-72 group cursor-pointer" (click)="removeImage()">
               <img [src]="previewImage" class="w-full h-full object-contain rounded-lg shadow-md" />
 
               <!-- Overlay con X en hover -->
@@ -59,7 +57,7 @@
 
             <!-- Área clickeable cuando no hay imagen -->
             <div *ngIf="!previewImage" (click)="fileInput.click()"
-              class="w-full h-72 sm:w-60 sm:h-60 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-all duration-200">
+              class="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-all duration-200">
               <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
               </svg>
@@ -148,19 +146,19 @@
       </div>
 
       <!-- Mensaje de permisos -->
-      <div *ngIf="!(userPermissions$ | async)?.can_create_product" class="lg:col-span-3">
-        <span class="text-yellow-400">* Permisos insuficientes para crear un producto</span>
+      <div *ngIf="!(userPermissions$ | async)?.can_create_inventory" class="lg:col-span-3">
+        <span class="text-yellow-400">* Permisos insuficientes para crear un accesorio</span>
       </div>
 
       <!-- Botones: cancelar + agregar -->
-      <div *ngIf="(userPermissions$ | async)?.can_create_product" class="lg:col-span-3 flex flex-col-reverse sm:flex-row gap-2">
+      <div *ngIf="(userPermissions$ | async)?.can_create_inventory" class="lg:col-span-3 flex flex-col-reverse sm:flex-row gap-2">
         <button type="button" (click)="onCloseDialog()"
           class="flex-1 rounded-full border border-black/10 dark:border-white/15 bg-transparent px-6 py-2 text-sm font-semibold text-neutral-700 dark:text-neutral-200 transition hover:bg-neutral-100 dark:hover:bg-white/10 active:scale-[0.98]">
           Cancelar
         </button>
         <button tuiButton type="submit" iconStart="@tui.plus" appearance="textfield"
           [disabled]="productoForm.invalid || !!(loadingCreateProduct$ | async)" class="flex-[2] px-6 py-2 transition !rounded-full dark:!bg-white dark:!text-neutral-900">
-          Agregar Producto
+          Agregar Accesorio
           <tui-loader [showLoader]="!!(loadingCreateProduct$ | async)"></tui-loader>
         </button>
       </div>

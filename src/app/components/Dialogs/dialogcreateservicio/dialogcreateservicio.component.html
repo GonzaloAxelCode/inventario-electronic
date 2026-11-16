@@ -1,0 +1,48 @@
+<div>
+  <div class="max-w-6xl mx-auto pt-4 rounded-lg">
+    <div class="grid grid-cols-1 gap-4">
+
+      <tui-select [(ngModel)]="form.tipo" class="w-full">
+        Tipo de servicio
+        <tui-data-list *tuiDataList>
+          <button *ngFor="let t of tipos" tuiOption [value]="t">{{ t }}</button>
+        </tui-data-list>
+      </tui-select>
+
+      <tui-input [(ngModel)]="form.nombre" class="w-full" placeholder="Cambio de pantalla iPhone 11">
+        Nombre del servicio
+      </tui-input>
+
+      <tui-textarea [(ngModel)]="form.descripcion" class="w-full" placeholder="Qué incluye el servicio">
+        Descripción
+      </tui-textarea>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <tui-input [(ngModel)]="form.precio" inputmode="decimal" class="w-full" placeholder="0.00">
+          Mano de obra (S/)
+        </tui-input>
+        <tui-input [(ngModel)]="form.duracion" class="w-full" placeholder="1 hora">
+          Tiempo estimado
+        </tui-input>
+        <tui-select [(ngModel)]="form.garantia" class="w-full">
+          Garantía
+          <tui-data-list *tuiDataList>
+            <button *ngFor="let g of garantias" tuiOption [value]="g">{{ g }}</button>
+          </tui-data-list>
+        </tui-select>
+      </div>
+
+      <div class="flex flex-col-reverse sm:flex-row gap-2">
+        <button type="button" (click)="cerrar()"
+          class="flex-1 rounded-full border border-black/10 dark:border-white/15 bg-transparent px-6 py-2 text-sm font-semibold text-neutral-700 dark:text-neutral-200 transition hover:bg-neutral-100 dark:hover:bg-white/10 active:scale-[0.98]">
+          Cancelar
+        </button>
+        <button tuiButton type="button" (click)="guardar()" appearance="textfield"
+          class="flex-[2] px-6 py-2 transition !rounded-full dark:!bg-white dark:!text-neutral-900">
+          {{ isEdit ? 'Guardar cambios' : 'Agregar servicio' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

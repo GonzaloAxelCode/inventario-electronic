@@ -1,4 +1,5 @@
 import { User } from '@/app/models/user.models';
+import { PERMISSION_GROUPS } from '@/app/models/permissions.catalog';
 import { updateUserAction, updateUserPermissionsAction } from '@/app/state/actions/user.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
@@ -28,41 +29,13 @@ export class DialogedituserpersmissionsComponent implements OnInit {
   loadingAdminToggle = false;
 
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
-    this.permissionsForm = this.fb.group({
-
-      // 🛒 Ventas
-      can_make_sale: [this.user.permissions?.can_make_sale ?? false],
-      can_cancel_sale: [this.user.permissions?.can_cancel_sale ?? false],
-
-
-      // 📦 Inventario
-      can_create_inventory: [this.user.permissions?.can_create_inventory ?? false],
-      can_modify_inventory: [this.user.permissions?.can_modify_inventory ?? false],
-
-      can_delete_inventory: [this.user.permissions?.can_delete_inventory ?? false],
-
-
-      // 🧴 Productos
-      can_create_product: [this.user.permissions?.can_create_product ?? false],
-      can_update_product: [this.user.permissions?.can_update_product ?? false],
-      can_delete_product: [this.user.permissions?.can_delete_product ?? false],
-
-
-      // 🏷️ Categorías
-      can_create_category: [this.user.permissions?.can_create_category ?? false],
-      can_modify_category: [this.user.permissions?.can_modify_category ?? false],
-      can_delete_category: [this.user.permissions?.can_delete_category ?? false],
-
-
-      // 🚚 Proveedores
-      can_create_proveedor: [this.user.permissions?.can_create_proveedor ?? false],
-      can_update_proveedor: [this.user.permissions?.can_update_proveedor ?? false],
-      can_delete_proveedor: [this.user.permissions?.can_delete_proveedor ?? false],
-
-
-    });
-
-
+    const controls: Record<string, any> = {};
+    for (const group of PERMISSION_GROUPS) {
+      for (const item of group.items) {
+        controls[item.key] = [(this.user.permissions as any)?.[item.key] ?? false];
+      }
+    }
+    this.permissionsForm = this.fb.group(controls);
   }
 
   ngOnInit() {
@@ -80,47 +53,10 @@ export class DialogedituserpersmissionsComponent implements OnInit {
 
     //aca escuchar el reducer si fue eliminado exitosamente para cerrar el dialog escucha el action 
   }
-  permissionSections = [
-    {
-      title: 'Ventas',
-      items: [
-        { name: 'can_make_sale', label: 'Puede hacer una venta' },
-        { name: 'can_cancel_sale', label: 'Puede cancelar una venta' },
-      ],
-    },
-    {
-      title: 'Inventario',
-      items: [
-        { name: 'can_create_inventory', label: 'Puede crear inventario' },
-        { name: 'can_modify_inventory', label: 'Puede modificar inventario' },
-        { name: 'can_delete_inventory', label: 'Puede eliminar inventario' },
-      ],
-    },
-    {
-      title: 'Productos',
-      items: [
-        { name: 'can_create_product', label: 'Puede crear productos' },
-        { name: 'can_update_product', label: 'Puede modificar productos' },
-        { name: 'can_delete_product', label: 'Puede eliminar productos' },
-      ],
-    },
-    {
-      title: 'Categorías',
-      items: [
-        { name: 'can_create_category', label: 'Puede crear categorías' },
-        { name: 'can_modify_category', label: 'Puede modificar categorías' },
-        { name: 'can_delete_category', label: 'Puede eliminar categorías' },
-      ],
-    },
-    {
-      title: 'Proveedores',
-      items: [
-        { name: 'can_create_proveedor', label: 'Puede crear proveedores' },
-        { name: 'can_update_proveedor', label: 'Puede modificar proveedores' },
-        { name: 'can_delete_proveedor', label: 'Puede eliminar proveedores' },
-      ],
-    },
-  ];
+  permissionSections = PERMISSION_GROUPS.map((g) => ({
+    title: g.titulo,
+    items: g.items.map((i) => ({ name: i.key, label: i.label })),
+  }));
 
 
   onPermissionChange(permissionKey: string, event: Event): void {

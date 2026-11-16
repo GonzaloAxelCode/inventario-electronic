@@ -1,5 +1,5 @@
 <div *ngIf="user.permissions" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;" class="w-full">
-  <div class="max-w-3xl space-y-4 sm:space-y-5">
+  <div class="max-w-5xl space-y-4 sm:space-y-5">
 
     <!-- Header -->
     <div class="px-1">
@@ -7,144 +7,23 @@
       <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">Accesos y permisos asignados a tu cuenta</p>
     </div>
 
-    <!-- Card unica -->
-    <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 divide-y divide-stone-100 dark:divide-white/5 overflow-hidden">
+    <!-- Grupos en 2 columnas en escritorio/tablet -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-      <!-- Seccion: Ventas -->
-      <section class="p-4 sm:p-5">
-        <h3 class="text-[11px] font-medium text-stone-400 uppercase tracking-widest mb-3">Ventas</h3>
+      <!-- Secciones generadas desde el catálogo -->
+      <section *ngFor="let group of groups" class="p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10">
+        <h3 class="text-[11px] font-medium text-stone-400 uppercase tracking-widest mb-3">{{ group.titulo }}</h3>
         <div class="space-y-3.5">
-          <label class="flex items-center justify-between gap-3 cursor-pointer">
-            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">Realizar ventas</span>
+          <div *ngFor="let perm of group.items" class="flex items-center justify-between gap-3">
+            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">{{ perm.label }}</span>
             <span class="relative inline-flex items-center w-12 h-7 rounded-full transition-colors duration-300 flex-shrink-0"
-              [class]="user.permissions.can_make_sale ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
+              [class]="tiene(perm.key) ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
               <span class="absolute left-0.5 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
-                [class]="user.permissions.can_make_sale ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
-                {{ user.permissions.can_make_sale ? '✓' : '✕' }}
+                [class]="tiene(perm.key) ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
+                {{ tiene(perm.key) ? '✓' : '✕' }}
               </span>
             </span>
-          </label>
-          <label class="flex items-center justify-between gap-3 cursor-pointer">
-            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">Cancelar ventas</span>
-            <span class="relative inline-flex items-center w-12 h-7 rounded-full transition-colors duration-300 flex-shrink-0"
-              [class]="user.permissions.can_cancel_sale ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
-              <span class="absolute left-0.5 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
-                [class]="user.permissions.can_cancel_sale ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
-                {{ user.permissions.can_cancel_sale ? '✓' : '✕' }}
-              </span>
-            </span>
-          </label>
-        </div>
-      </section>
-
-      <!-- Seccion: Inventario -->
-      <section class="p-4 sm:p-5">
-        <h3 class="text-[11px] font-medium text-stone-400 uppercase tracking-widest mb-3">Inventario</h3>
-        <div class="space-y-3.5">
-          <label class="flex items-center justify-between gap-3 cursor-pointer">
-            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">Crear inventario</span>
-            <span class="relative inline-flex items-center w-12 h-7 rounded-full transition-colors duration-300 flex-shrink-0"
-              [class]="user.permissions.can_create_inventory ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
-              <span class="absolute left-0.5 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
-                [class]="user.permissions.can_create_inventory ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
-                {{ user.permissions.can_create_inventory ? '✓' : '✕' }}
-              </span>
-            </span>
-          </label>
-          <label class="flex items-center justify-between gap-3 cursor-pointer">
-            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">Modificar inventario</span>
-            <span class="relative inline-flex items-center w-12 h-7 rounded-full transition-colors duration-300 flex-shrink-0"
-              [class]="user.permissions.can_modify_inventory ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
-              <span class="absolute left-0.5 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
-                [class]="user.permissions.can_modify_inventory ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
-                {{ user.permissions.can_modify_inventory ? '✓' : '✕' }}
-              </span>
-            </span>
-          </label>
-          <label class="flex items-center justify-between gap-3 cursor-pointer">
-            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">Eliminar inventario</span>
-            <span class="relative inline-flex items-center w-12 h-7 rounded-full transition-colors duration-300 flex-shrink-0"
-              [class]="user.permissions.can_delete_inventory ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
-              <span class="absolute left-0.5 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
-                [class]="user.permissions.can_delete_inventory ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
-                {{ user.permissions.can_delete_inventory ? '✓' : '✕' }}
-              </span>
-            </span>
-          </label>
-        </div>
-      </section>
-
-      <!-- Seccion: Productos -->
-      <section class="p-4 sm:p-5">
-        <h3 class="text-[11px] font-medium text-stone-400 uppercase tracking-widest mb-3">Productos</h3>
-        <div class="space-y-3.5">
-          <label class="flex items-center justify-between gap-3 cursor-pointer">
-            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">Crear productos</span>
-            <span class="relative inline-flex items-center w-12 h-7 rounded-full transition-colors duration-300 flex-shrink-0"
-              [class]="user.permissions.can_create_product ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
-              <span class="absolute left-0.5 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
-                [class]="user.permissions.can_create_product ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
-                {{ user.permissions.can_create_product ? '✓' : '✕' }}
-              </span>
-            </span>
-          </label>
-          <label class="flex items-center justify-between gap-3 cursor-pointer">
-            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">Actualizar productos</span>
-            <span class="relative inline-flex items-center w-12 h-7 rounded-full transition-colors duration-300 flex-shrink-0"
-              [class]="user.permissions.can_update_product ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
-              <span class="absolute left-0.5 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
-                [class]="user.permissions.can_update_product ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
-                {{ user.permissions.can_update_product ? '✓' : '✕' }}
-              </span>
-            </span>
-          </label>
-          <label class="flex items-center justify-between gap-3 cursor-pointer">
-            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">Eliminar productos</span>
-            <span class="relative inline-flex items-center w-12 h-7 rounded-full transition-colors duration-300 flex-shrink-0"
-              [class]="user.permissions.can_delete_product ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
-              <span class="absolute left-0.5 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
-                [class]="user.permissions.can_delete_product ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
-                {{ user.permissions.can_delete_product ? '✓' : '✕' }}
-              </span>
-            </span>
-          </label>
-        </div>
-      </section>
-
-      <!-- Seccion: Categorias -->
-      <section class="p-4 sm:p-5">
-        <h3 class="text-[11px] font-medium text-stone-400 uppercase tracking-widest mb-3">Categorias</h3>
-        <div class="space-y-3.5">
-          <label class="flex items-center justify-between gap-3 cursor-pointer">
-            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">Crear categorias</span>
-            <span class="relative inline-flex items-center w-12 h-7 rounded-full transition-colors duration-300 flex-shrink-0"
-              [class]="user.permissions.can_create_category ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
-              <span class="absolute left-0.5 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
-                [class]="user.permissions.can_create_category ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
-                {{ user.permissions.can_create_category ? '✓' : '✕' }}
-              </span>
-            </span>
-          </label>
-          <label class="flex items-center justify-between gap-3 cursor-pointer">
-            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">Modificar categorias</span>
-            <span class="relative inline-flex items-center w-12 h-7 rounded-full transition-colors duration-300 flex-shrink-0"
-              [class]="user.permissions.can_modify_category ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
-              <span class="absolute left-0.5 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
-                [class]="user.permissions.can_modify_category ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
-                {{ user.permissions.can_modify_category ? '✓' : '✕' }}
-              </span>
-            </span>
-          </label>
-          <label class="flex items-center justify-between gap-3 cursor-pointer">
-            <span class="text-sm font-medium text-stone-700 dark:text-stone-300">Eliminar categorias</span>
-            <span class="relative inline-flex items-center w-12 h-7 rounded-full transition-colors duration-300 flex-shrink-0"
-              [class]="user.permissions.can_delete_category ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-white/10'">
-              <span class="absolute left-0.5 flex items-center justify-center w-6 h-6 rounded-full bg-white shadow transition-transform duration-300 text-[10px] font-bold"
-                [class]="user.permissions.can_delete_category ? 'translate-x-5 text-emerald-500' : 'translate-x-0 text-stone-400'">
-                {{ user.permissions.can_delete_category ? '✓' : '✕' }}
-              </span>
-            </span>
-          </label>
+          </div>
         </div>
       </section>
 

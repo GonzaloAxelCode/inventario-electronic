@@ -1,0 +1,126 @@
+<ng-container *ngIf="(perms$ | async)?.can_make_backup; else sinPermiso">
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;" class="w-full max-w-3xl space-y-4 sm:space-y-5">
+
+  <!-- Tablas completas -->
+  <section>
+    <div class="px-1 mb-3">
+      <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white">Tablas completas</h2>
+      <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">Descarga el CSV completo de cada tabla de inventario.</p>
+    </div>
+
+    <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 divide-y divide-stone-100 dark:divide-white/5 px-4 sm:px-5">
+      <div class="flex items-center justify-between gap-3 py-4">
+        <div class="min-w-0">
+          <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white">📦 Accesorios</p>
+          <p class="text-xs text-stone-500 dark:text-stone-400">Toda la tabla con stock y valorizado</p>
+        </div>
+        <button type="button" (click)="descargarTabla('accesorios')" [disabled]="loading['tabla-accesorios']"
+          class="shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors disabled:opacity-50">
+          {{ loading['tabla-accesorios'] ? 'Generando…' : '⬇ CSV' }}
+        </button>
+      </div>
+      <div class="flex items-center justify-between gap-3 py-4">
+        <div class="min-w-0">
+          <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white">📱 Celulares</p>
+          <p class="text-xs text-stone-500 dark:text-stone-400">Toda la tabla con IMEI, costo y precio</p>
+        </div>
+        <button type="button" (click)="descargarTabla('celulares')" [disabled]="loading['tabla-celulares']"
+          class="shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors disabled:opacity-50">
+          {{ loading['tabla-celulares'] ? 'Generando…' : '⬇ CSV' }}
+        </button>
+      </div>
+      <div class="flex items-center justify-between gap-3 py-4">
+        <div class="min-w-0">
+          <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white">🔧 Repuestos</p>
+          <p class="text-xs text-stone-500 dark:text-stone-400">Toda la tabla de taller valorizada</p>
+        </div>
+        <button type="button" (click)="descargarTabla('repuestos')" [disabled]="loading['tabla-repuestos']"
+          class="shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors disabled:opacity-50">
+          {{ loading['tabla-repuestos'] ? 'Generando…' : '⬇ CSV' }}
+        </button>
+      </div>
+      <div class="flex items-center justify-between gap-3 py-4">
+        <div class="min-w-0">
+          <p class="text-sm font-semibold tracking-tight text-stone-900 dark:text-white">👥 Clientes</p>
+          <p class="text-xs text-stone-500 dark:text-stone-400">Toda la tabla con datos y ubicación</p>
+        </div>
+        <button type="button" (click)="descargarTabla('clientes')" [disabled]="loading['tabla-clientes']"
+          class="shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-300 hover:bg-neutral-100 text-neutral-800 dark:border-neutral-600 dark:hover:bg-white/10 dark:text-neutral-100 transition-colors disabled:opacity-50">
+          {{ loading['tabla-clientes'] ? 'Generando…' : '⬇ CSV' }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comprobantes SUNAT -->
+  <section>
+    <div class="px-1 mb-3">
+      <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white">Comprobantes de ventas</h2>
+      <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">Respaldo mensual en .zip: archivos XML ordenados por tipo + índice CSV con las urls de pdf, ticket y cdr. No descarga PDFs.</p>
+    </div>
+
+    <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 px-4 sm:px-5 py-4 flex flex-col gap-3">
+      <div class="grid grid-cols-2 gap-3">
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-bold text-stone-600 dark:text-stone-300">Mes</span>
+          <select [(ngModel)]="month"
+            class="text-xs px-2 py-2 rounded-lg border border-stone-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-stone-900 dark:text-white">
+            <option *ngFor="let m of meses; let i = index" [ngValue]="i + 1">{{ m }}</option>
+          </select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-bold text-stone-600 dark:text-stone-300">Año</span>
+          <select [(ngModel)]="year"
+            class="text-xs px-2 py-2 rounded-lg border border-stone-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-stone-900 dark:text-white">
+            <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+          </select>
+        </label>
+      </div>
+      <button type="button" (click)="descargarComprobantes()" [disabled]="loading['comprobantes']"
+        class="px-4 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-800 hover:bg-neutral-900 hover:text-white text-neutral-900 dark:border-neutral-300 dark:hover:bg-white dark:hover:text-neutral-900 dark:text-white transition-colors disabled:opacity-50">
+        {{ loading['comprobantes'] ? 'Generando ZIP…' : '⬇ Descargar respaldo de ventas (.zip)' }}
+      </button>
+      <p class="text-[11px] text-stone-400">Guárdalo fuera del sistema: si algo pasa, tendrás tus XML para SUNAT.</p>
+    </div>
+  </section>
+
+  <!-- Comprobantes de compras -->
+  <section>
+    <div class="px-1 mb-3">
+      <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white">Comprobantes de compras</h2>
+      <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">Respaldo mensual en .zip: XML del proveedor + constancia SUNAT + índice CSV con las urls de pdf y demás. No descarga PDFs.</p>
+    </div>
+
+    <div class="bg-white dark:bg-neutral-800 rounded-3xl border border-stone-200/70 dark:border-white/10 px-4 sm:px-5 py-4 flex flex-col gap-3">
+      <div class="grid grid-cols-2 gap-3">
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-bold text-stone-600 dark:text-stone-300">Mes</span>
+          <select [(ngModel)]="monthCompras"
+            class="text-xs px-2 py-2 rounded-lg border border-stone-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-stone-900 dark:text-white">
+            <option *ngFor="let m of meses; let i = index" [ngValue]="i + 1">{{ m }}</option>
+          </select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-bold text-stone-600 dark:text-stone-300">Año</span>
+          <select [(ngModel)]="yearCompras"
+            class="text-xs px-2 py-2 rounded-lg border border-stone-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-stone-900 dark:text-white">
+            <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+          </select>
+        </label>
+      </div>
+      <button type="button" (click)="descargarCompras()" [disabled]="loading['compras']"
+        class="px-4 py-2 rounded-xl text-xs font-bold bg-transparent border border-neutral-800 hover:bg-neutral-900 hover:text-white text-neutral-900 dark:border-neutral-300 dark:hover:bg-white dark:hover:text-neutral-900 dark:text-white transition-colors disabled:opacity-50">
+        {{ loading['compras'] ? 'Generando ZIP…' : '⬇ Descargar respaldo de compras (.zip)' }}
+      </button>
+      <p class="text-[11px] text-stone-400">Respaldo de tus facturas/boletas de compra para SUNAT.</p>
+    </div>
+  </section>
+
+</div>
+</ng-container>
+<ng-template #sinPermiso>
+  <div class="p-6 text-center rounded-3xl border border-stone-200/70 dark:border-white/10 bg-white dark:bg-neutral-800 w-full max-w-3xl">
+    <p class="text-sm font-bold text-stone-900 dark:text-white">Sin permiso</p>
+    <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">No tienes permiso para realizar backups. Pide a tu administrador que te habilite «Realizar backups».</p>
+  </div>
+</ng-template>

@@ -25,63 +25,99 @@
 
     <!-- Una tarjeta por tienda padre con sus sucursales dentro (ancho completo si es solo una) -->
     <ng-container *ngIf="grupos.length; else sinResultados">
-    <div class="grid grid-cols-1 gap-4" [ngClass]="grupos.length > 1 ? 'sm:grid-cols-2' : ''">
+    <div class="grid grid-cols-1 gap-4 lg:gap-5 sm:grid-cols-2 xl:grid-cols-3">
       <div *ngFor="let grupo of grupos"
-        class="rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] p-5 flex flex-col"
+        class="rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex flex-col overflow-hidden"
       >
-        <!-- Padre -->
-        <div class="cursor-pointer" (click)="(grupo.padre.activo || isSuperUser) && showDialogDetailTienda(grupo.padre)">
-          <ng-container *ngTemplateOutlet="tarjetaTienda; context: { $implicit: grupo.padre }"></ng-container>
+        <!-- Cabecera -->
+        <div class="flex items-center gap-3 px-5 pt-5 cursor-pointer"
+          (click)="(grupo.padre.activo || isSuperUser) && showDialogDetailTienda(grupo.padre)">
+          <div class="w-11 h-11 rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-700 shrink-0 flex items-center justify-center">
+            <img loading="lazy"
+              [src]="grupo.padre?.logo_img ? imageUrl(grupo.padre.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
+              [alt]="grupo.padre.nombre"
+              class="w-full h-full object-cover" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[15px] font-semibold text-neutral-900 dark:text-white truncate">{{ grupo.padre.nombre }}</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400 truncate mt-0.5">
+              <span *ngIf="grupo.padre.ruc">RUC {{ grupo.padre.ruc }} · </span>{{ grupo.padre.direccion || 'Sin dirección' }}
+            </p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
+              <span class="w-1.5 h-1.5 rounded-full" [ngClass]="grupo.padre.activo ? 'bg-green-500' : 'bg-neutral-400'"></span>
+              {{ grupo.padre.activo ? 'Activa' : 'Inactiva' }}
+            </span>
+            <svg class="w-4 h-4 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
         </div>
-        <!-- Sucursales de este padre (expandible) -->
-        <div *ngIf="grupo.sucursales.length" class="mt-4">
+        <!-- Datos -->
+        <div class="mx-5 mt-4 border-t border-neutral-100 dark:border-neutral-700 divide-y divide-neutral-100 dark:divide-neutral-700 text-[13px]">
+          <div class="flex items-center justify-between py-2.5">
+            <span class="text-neutral-500 dark:text-neutral-400">Plan</span>
+            <span class="font-medium text-neutral-900 dark:text-white">{{ grupo.padre.subscripcion_data?.nombre_plan || '—' }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2.5">
+            <span class="text-neutral-500 dark:text-neutral-400">Serie</span>
+            <span class="font-medium font-mono text-neutral-900 dark:text-white">{{ grupo.padre.serie || '—' }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2.5">
+            <span class="text-neutral-500 dark:text-neutral-400">Miembros</span>
+            <span class="font-medium text-neutral-900 dark:text-white">{{ grupo.padre.users_tienda?.length || 0 }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2.5">
+            <span class="text-neutral-500 dark:text-neutral-400">Sucursales</span>
+            <span class="font-medium text-neutral-900 dark:text-white">{{ grupo.sucursales.length }}</span>
+          </div>
+        </div>
+        <!-- Sucursales de este padre -->
+        <div *ngIf="grupo.sucursales.length" class="px-5 mt-1">
           <button
             type="button"
             (click)="toggleSucursales(grupo.padre.id)"
             [attr.aria-expanded]="sucursalesAbiertas(grupo.padre.id)"
-            class="w-full flex items-center gap-1.5 px-1 mb-1 text-[11px] font-medium tracking-widest uppercase text-[#86868b] hover:text-[#1d1d1f] dark:hover:text-white transition-colors"
+            class="w-full flex items-center justify-between py-2 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
           >
-            <svg class="w-3 h-3 shrink-0 transition-transform duration-200" [ngClass]="{ 'rotate-90': sucursalesAbiertas(grupo.padre.id) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+            <span>Sucursales ({{ grupo.sucursales.length }})</span>
+            <svg class="w-3.5 h-3.5 transition-transform duration-200" [ngClass]="{ 'rotate-90': sucursalesAbiertas(grupo.padre.id) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
-            <span>Sucursales · {{ grupo.sucursales.length }}</span>
           </button>
-          <div *ngIf="sucursalesAbiertas(grupo.padre.id)" class="md:ml-4 space-y-1">
+          <div *ngIf="sucursalesAbiertas(grupo.padre.id)" class="border-t border-neutral-100 dark:border-neutral-700 divide-y divide-neutral-100 dark:divide-neutral-700">
             <div
               *ngFor="let suc of grupo.sucursales"
-              class="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-colors cursor-pointer"
+              class="flex items-center gap-3 py-2.5 cursor-pointer"
               (click)="(suc.activo || isSuperUser) && showDialogDetailTienda(suc)"
             >
-              <div class="w-9 h-9 rounded-xl overflow-hidden bg-white dark:bg-[#2c2c2e] shrink-0 flex items-center justify-center">
+              <div class="w-8 h-8 rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-700 shrink-0 flex items-center justify-center">
                 <img loading="lazy"
                   [src]="suc?.logo_img ? imageUrl(suc.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
                   [alt]="suc.nombre"
                   class="w-full h-full object-cover" />
               </div>
               <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-1.5">
-                  <p class="text-[14px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white truncate">{{ suc.nombre }}</p>
-                  <span *ngIf="isSuperUser && !suc.activo" class="px-1.5 py-0.5 rounded-full bg-[#ff3b30]/15 text-[#ff3b30] text-[10px] font-semibold shrink-0">Inactiva</span>
-                </div>
-                <p *ngIf="suc.subscripcion_data?.nombre_plan || suc.serie" class="text-[11px] text-[#86868b] dark:text-[#a1a1a6] truncate mt-0.5">
-                  <span *ngIf="suc.subscripcion_data?.nombre_plan" class="font-medium text-[#7d7aff]">Plan {{ suc.subscripcion_data?.nombre_plan }}</span><span *ngIf="suc.subscripcion_data?.nombre_plan && suc.serie"> · </span><span *ngIf="suc.serie" class="font-mono">Serie {{ suc.serie }}</span>
-                </p>
+                <p class="text-[13px] font-medium text-neutral-900 dark:text-white truncate">{{ suc.nombre }}</p>
+                <p *ngIf="suc.serie" class="text-[11px] text-neutral-400 dark:text-neutral-500 truncate font-mono">Serie {{ suc.serie }}</p>
               </div>
-              <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span *ngIf="!suc.activo" class="text-[11px] text-neutral-400 dark:text-neutral-500 shrink-0">Inactiva</span>
+              <svg class="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
             </div>
           </div>
         </div>
-        <!-- Crear sucursal de este padre — siempre abajo del card -->
-        <div class="mt-auto pt-4">
+        <!-- Crear sucursal de este padre -->
+        <div class="mt-auto px-5 pb-5 pt-2">
         <button
           type="button"
           (click)="crearSucursal.emit(grupo.padre)"
-          class="w-full h-9 rounded-full border border-black/[0.12] dark:border-white/[0.2] text-[12px] font-medium text-[#1d1d1f] dark:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.06] transition-colors inline-flex items-center justify-center gap-1.5"
+          class="w-full h-9 rounded-xl text-[13px] font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors inline-flex items-center justify-center gap-1.5"
         >
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
           </svg>
           Crear sucursal
         </button>
@@ -94,41 +130,6 @@
         <p class="text-[14px] font-semibold text-[#1d1d1f] dark:text-white">Sin resultados</p>
         <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mt-1">No hay tiendas que coincidan con “{{ busqueda }}”.</p>
       </div>
-    </ng-template>
-
-    <!-- Plantilla tarjeta tienda -->
-    <ng-template #tarjetaTienda let-tienda let-compacto="compacto">
-      <div class="flex items-start gap-3">
-        <div class="w-12 h-12 rounded-2xl overflow-hidden bg-white dark:bg-[#2c2c2e] shrink-0 flex items-center justify-center">
-          <img loading="lazy"
-            [src]="tienda?.logo_img ? imageUrl(tienda.logo_img) : 'https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png'"
-            [alt]="tienda.nombre"
-            class="w-full h-full object-cover" />
-        </div>
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-1.5">
-            <p class="text-[15px] font-semibold tracking-[-0.01em] leading-5 text-[#1d1d1f] dark:text-white truncate">{{ tienda.nombre }}</p>
-            <span *ngIf="!compacto" class="px-1.5 py-0.5 rounded-full bg-[#30d158]/15 text-[#30d158] text-[10px] font-semibold shrink-0">Principal</span>
-            <span *ngIf="isSuperUser && !tienda.activo" class="px-1.5 py-0.5 rounded-full bg-[#ff3b30]/15 text-[#ff3b30] text-[10px] font-semibold shrink-0">Inactiva</span>
-            <span class="w-2 h-2 rounded-full shrink-0" [ngClass]="tienda.activo ? 'bg-[#30d158]' : 'bg-[#86868b]'"></span>
-          </div>
-          <p class="text-[12px] leading-4 text-[#86868b] dark:text-[#a1a1a6] truncate mt-0.5">
-            <span *ngIf="compacto" class="px-1.5 py-0.5 rounded-full bg-black/[0.06] dark:bg-white/[0.08] text-[10px] font-medium">Sucursal</span>
-            <span *ngIf="tienda.ruc">RUC {{ tienda.ruc }} · </span>{{ tienda.direccion || 'Sin dirección' }}
-          </p>
-        </div>
-      </div>
-      <div class="flex items-center justify-between mt-4">
-        <div class="flex items-center gap-2 text-[11px] text-[#86868b]">
-          <span *ngIf="tienda.serie" class="font-mono">Serie {{ tienda.serie }}</span>
-          <span *ngIf="tienda.serie && tienda.users_tienda?.length">·</span>
-          <span *ngIf="tienda.users_tienda?.length">{{ tienda.users_tienda.length }} {{ tienda.users_tienda.length === 1 ? 'miembro' : 'miembros' }}</span>
-        </div>
-        <svg class="w-3.5 h-3.5 text-[#c7c7cc] dark:text-[#48484a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-      </div>
-      <p *ngIf="tienda.subscripcion_data?.nombre_plan" class="mt-3 text-[12px] font-medium text-[#86868b] dark:text-[#a1a1a6]">Plan <span class="font-semibold text-[#7d7aff]">{{ tienda.subscripcion_data.nombre_plan }}</span></p>
     </ng-template>
 
   </ng-container>

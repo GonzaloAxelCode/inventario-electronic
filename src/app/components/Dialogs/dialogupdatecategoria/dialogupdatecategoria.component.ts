@@ -52,6 +52,7 @@ export class DialogupdatecategoriaComponent {
     this.categoryForm = this.fb.group({
       nombre: [this.categoria.nombre, Validators.required],
       descripcion: [this.categoria.descripcion, Validators.required],
+      tipo: [this.categoria.tipo ?? 'ACCESORIO', Validators.required],
       slug: [''],
       caracteristicas_template: this.fb.array(
         (this.categoria.caracteristicas_template || []).map(c => this.fb.control(c, Validators.required))

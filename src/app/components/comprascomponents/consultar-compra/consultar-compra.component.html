@@ -1,0 +1,148 @@
+<div class="grid gap-8 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start">
+  <div>
+    <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6] px-1">
+      Datos del comprobante
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="validar()" class="mt-3 space-y-4">
+      <div class="flex items-center gap-2 px-1">
+        <span class="text-[13px] text-[#86868b] dark:text-[#a1a1a6]">Tipo</span>
+        <span class="text-[13px] font-semibold text-[#1d1d1f] dark:text-white">Factura electrónica</span>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">RUC del proveedor</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="rucProveedor" inputmode="numeric" maxlength="11" placeholder="11 dígitos" tuiTextfield />
+        </tui-textfield>
+        <p *ngIf="consultandoRuc" class="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mt-1.5">
+          <tui-loader size="s" [showLoader]="true"></tui-loader>
+          Buscando proveedor...
+        </p>
+        <p *ngIf="!consultandoRuc && proveedorNombre" class="text-xs font-medium text-neutral-700 dark:text-neutral-300 mt-1.5 truncate">
+          {{ proveedorNombre }}
+        </p>
+        <p *ngIf="!consultandoRuc && proveedorNoEncontrado" class="text-xs text-[#ff3b30] mt-1.5">
+          No se encontró el proveedor con ese RUC
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Serie</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="serie" placeholder="F001" class="uppercase" tuiTextfield />
+          </tui-textfield>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Correlativo</label>
+          <tui-textfield tuiTextfieldSize="m">
+            <input formControlName="correlativo" inputmode="numeric" placeholder="123" tuiTextfield />
+          </tui-textfield>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Monto total del comprobante (S/)</label>
+        <tui-textfield tuiTextfieldSize="m">
+          <input formControlName="total" inputmode="decimal" placeholder="0.00" tuiTextfield />
+        </tui-textfield>
+      </div>
+
+      <div class="flex gap-2 pt-1">
+        <button type="submit" [disabled]="!puedeValidar"
+          class="flex-1 inline-flex items-center justify-center gap-2 h-9 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-opacity disabled:opacity-40">
+          Validar en SUNAT
+          <tui-loader *ngIf="validando" size="s" [showLoader]="true"></tui-loader>
+        </button>
+        <button type="button" (click)="limpiar()"
+          class="inline-flex items-center justify-center h-9 px-4 rounded-full text-[13px] font-medium text-[#1d1d1f] dark:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors">
+          Limpiar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div>
+    <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6] px-1">
+      Resultado
+    </p>
+
+    <div class="mt-3">
+      <div *ngIf="errorMsg" class="flex items-start gap-3 px-1 py-3">
+        <span class="w-2 h-2 rounded-full bg-[#ff3b30] mt-1.5 shrink-0"></span>
+        <p class="text-[13px] font-medium text-[#ff3b30]">{{ errorMsg }}</p>
+      </div>
+
+      <div *ngIf="!resultado && !errorMsg" class="px-1 py-3">
+        <p class="text-[13px] text-[#86868b] dark:text-[#a1a1a6]">Completa los datos y valida el comprobante. El resultado aparecerá aquí.</p>
+      </div>
+
+      <div *ngIf="resultado">
+        <div class="flex items-center gap-3 px-1 py-1">
+          <span class="w-2 h-2 rounded-full shrink-0" [class.bg-[#30d158]]="esValido" [class.bg-[#ff3b30]]="!esValido"></span>
+          <div class="min-w-0">
+            <p class="text-[15px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white">
+              {{ esValido ? 'Comprobante válido' : 'Comprobante no válido' }}
+            </p>
+            <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6]">
+              {{ resultado.tipo_doc }} {{ resultado.serie }}-{{ resultado.correlativo }} · RUC {{ resultado.ruc_proveedor }}
+            </p>
+            <p *ngIf="resultado.solicitante_ruc" class="text-[12px] text-[#86868b] dark:text-[#a1a1a6]">
+              Consultado como RUC {{ resultado.solicitante_ruc }} (SOL de tu tienda)
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-2 divide-y divide-black/[0.06] dark:divide-white/[0.08]">
+          <div class="flex justify-between gap-4 px-1 py-2.5">
+            <span class="text-[13px] text-[#86868b] dark:text-[#a1a1a6]">Estado SUNAT</span>
+            <span class="text-[13px] font-medium text-[#1d1d1f] dark:text-white text-right">{{ resultado.codigo }} — {{ resultado.mensaje }}</span>
+          </div>
+          <div *ngIf="resultado.detalle" class="flex justify-between gap-4 px-1 py-2.5">
+            <span class="text-[13px] text-[#86868b] dark:text-[#a1a1a6]">Detalle SUNAT</span>
+            <span class="text-[13px] font-medium text-[#1d1d1f] dark:text-white text-right break-all">{{ resultado.detalle }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="esValido && !guardadoXmlUrl" class="mt-4">
+          <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6] px-1 mb-2">
+            Adjuntar comprobante
+          </p>
+          <div class="flex flex-col gap-2 mb-3">
+            <div class="flex items-center gap-2 px-1">
+              <button type="button" (click)="xmlPicker.click()"
+                class="inline-flex items-center h-8 px-4 rounded-full text-[13px] font-medium text-[#1d1d1f] dark:text-white border border-black/10 dark:border-white/15 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors">
+                {{ xmlFile ? 'Cambiar XML *' : 'Elegir XML del proveedor *' }}
+              </button>
+              <span *ngIf="xmlFile" class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] truncate">{{ xmlFile.name }}</span>
+              <button *ngIf="xmlFile" type="button" (click)="quitarArchivo('xml')" class="text-[12px] font-medium text-[#ff3b30]">Quitar</button>
+            </div>
+            <div class="flex items-center gap-2 px-1">
+              <button type="button" (click)="pdfPicker.click()"
+                class="inline-flex items-center h-8 px-4 rounded-full text-[13px] font-medium text-[#1d1d1f] dark:text-white border border-black/10 dark:border-white/15 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors">
+                {{ pdfFile ? 'Cambiar PDF' : 'Elegir PDF (opcional)' }}
+              </button>
+              <span *ngIf="pdfFile" class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] truncate">{{ pdfFile.name }}</span>
+              <button *ngIf="pdfFile" type="button" (click)="quitarArchivo('pdf')" class="text-[12px] font-medium text-[#ff3b30]">Quitar</button>
+            </div>
+          </div>
+          <input #xmlPicker type="file" accept="text/xml,.xml" class="hidden" (change)="onFileSelected($event, 'xml')" />
+          <input #pdfPicker type="file" accept="application/pdf,.pdf" class="hidden" (change)="onFileSelected($event, 'pdf')" />
+          <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] px-1">* El XML es obligatorio (SUNAT lo exige).</p>
+          <button *ngIf="tiene((user$ | async), 'can_create_compra')" type="button" [disabled]="guardando" (click)="guardar()"
+            class="w-full inline-flex items-center justify-center gap-2 h-9 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-opacity disabled:opacity-40 mt-1">
+            Guardar en mis compras
+            <tui-loader *ngIf="guardando" size="s" [showLoader]="true"></tui-loader>
+          </button>
+        </div>
+        <div *ngIf="guardadoXmlUrl" class="mt-4 flex items-center gap-2 px-1">
+          <span class="w-2 h-2 rounded-full bg-[#30d158] shrink-0"></span>
+          <p class="text-[13px] text-[#86868b] dark:text-[#a1a1a6]">
+            Guardado. <a [href]="guardadoXmlUrl" target="_blank" rel="noopener" class="font-medium text-[#1d1d1f] dark:text-white underline underline-offset-2">Ver XML</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

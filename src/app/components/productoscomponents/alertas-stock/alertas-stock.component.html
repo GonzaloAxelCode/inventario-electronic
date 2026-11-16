@@ -1,180 +1,451 @@
-<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-4 sm:gap-6">
 
-  <!-- Tarjetas resumen -->
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+  <!-- Inventario por grupo -->
+  <div>
+    <h4 class="text-base sm:text-lg font-bold text-neutral-900 dark:text-white mb-3 sm:mb-4 px-1">Inventario por grupo</h4>
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 items-stretch">
 
-    <!-- Total bajo stock -->
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm">
-      <div class="flex items-center gap-4">
-        <div class="w-14 h-14 rounded-2xl bg-orange-500/10 flex items-center justify-center">
-          <svg class="w-7 h-7 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
+      <!-- Card Accesorios: total + Agotados y Bajo Stock en la misma card -->
+      <div class="w-full min-w-0 p-4 sm:p-5 xl:p-6 bg-white dark:bg-neutral-800 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm flex flex-col sm:col-span-1">
+        <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-violet-500/10 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82zM7 7h.01" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="text-2xl sm:text-3xl xl:text-4xl font-extrabold text-violet-600 dark:text-violet-400 truncate">{{ grupoAccesorios.unidades ?? grupoAccesorios.total }}</p>
+            <p class="text-base font-semibold text-neutral-900 dark:text-white truncate">Accesorios</p>
+            <p class="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">Fundas, micas, cargadores</p>
+            <p class="text-[11px] font-medium text-neutral-600 dark:text-neutral-300 mt-0.5 truncate">{{ grupoAccesorios.total }} items · S/ {{ (grupoAccesorios.valorizacion ?? 0) | number:'1.2-2' }}</p>
+          </div>
         </div>
-        <div>
-          <p class="text-4xl font-extrabold text-orange-600 dark:text-orange-400">{{ totalBajoStock }}</p>
-          <p class="text-sm font-semibold text-neutral-900 dark:text-white">Total bajo stock</p>
-          <p class="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5">Productos por reabastecer</p>
+        <div class="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700 grid gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-sm text-neutral-700 dark:text-neutral-200">Agotados <span class="text-xs text-neutral-500">· {{ grupoPctAgotados(grupoAccesorios) }}%</span></span>
+            <span class="text-lg font-extrabold text-neutral-700 dark:text-neutral-200">{{ grupoAccesorios.agotados }}</span>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-sm text-neutral-700 dark:text-neutral-200">Bajo Stock <span class="text-xs text-neutral-500">· {{ grupoPctBajo(grupoAccesorios) }}%</span></span>
+            <span class="text-lg font-extrabold text-orange-600 dark:text-orange-400">{{ grupoAccesorios.bajo_stock }}</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Crítico -->
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm">
-      <div class="flex items-center gap-4">
-        <div class="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center">
-          <svg class="w-7 h-7 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
+      <!-- Card Teléfonos: total + Agotados y Bajo Stock en la misma card -->
+      <div class="w-full min-w-0 p-4 sm:p-5 xl:p-6 bg-white dark:bg-neutral-800 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm flex flex-col sm:col-span-1">
+        <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="text-2xl sm:text-3xl xl:text-4xl font-extrabold text-blue-600 dark:text-blue-400 truncate">{{ grupoTelefonos.total }}</p>
+            <p class="text-base font-semibold text-neutral-900 dark:text-white truncate">Teléfonos</p>
+            <p class="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">Sellados, nuevos y seminuevos</p>
+            <p class="text-[11px] font-medium text-neutral-600 dark:text-neutral-300 mt-0.5 truncate">S/ {{ (grupoTelefonos.valorizacion ?? 0) | number:'1.2-2' }} costo · S/ {{ (grupoTelefonos.venta_potencial ?? 0) | number:'1.2-2' }} venta</p>
+          </div>
         </div>
-        <div>
-          <p class="text-4xl font-extrabold text-red-600 dark:text-red-400">{{ critico }}</p>
-          <p class="text-sm font-semibold text-neutral-900 dark:text-white">Crítico</p>
-          <p class="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5">0 - 3 unidades</p>
+        <div class="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700 grid gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-sm text-neutral-700 dark:text-neutral-200">No disponibles <span class="text-xs text-neutral-500">· {{ grupoPctNoDisp(grupoTelefonos) }}%</span></span>
+            <span class="text-lg font-extrabold text-orange-600 dark:text-orange-400">{{ grupoTelefonos.no_disponibles ?? 0 }}</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Advertencia -->
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm">
-      <div class="flex items-center gap-4">
-        <div class="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center">
-          <svg class="w-7 h-7 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+      <!-- Card Repuestos: total + Agotados y Bajo Stock en la misma card -->
+      <div class="w-full min-w-0 p-4 sm:p-5 xl:p-6 bg-white dark:bg-neutral-800 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm flex flex-col sm:col-span-2 xl:col-span-1">
+        <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.47m5.054 1.91L12.16 8.2m0 0l-.664-.333a2.5 2.5 0 01-1.402-2.24V4.75M12.16 8.2l.664.333c.495.248.89.643 1.132 1.122" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="text-2xl sm:text-3xl xl:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400 truncate">{{ grupoRepuestos.unidades ?? grupoRepuestos.total }}</p>
+            <p class="text-base font-semibold text-neutral-900 dark:text-white truncate">Repuestos</p>
+            <p class="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">Pantallas, baterías, taller</p>
+            <p class="text-[11px] font-medium text-neutral-600 dark:text-neutral-300 mt-0.5 truncate">{{ grupoRepuestos.total }} items · S/ {{ (grupoRepuestos.valorizacion ?? 0) | number:'1.2-2' }}</p>
+          </div>
         </div>
-        <div>
-          <p class="text-4xl font-extrabold text-amber-600 dark:text-amber-400">{{ advertencia }}</p>
-          <p class="text-sm font-semibold text-neutral-900 dark:text-white">Advertencia</p>
-          <p class="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5">4 - 10 unidades</p>
+        <div class="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700 grid gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-sm text-neutral-700 dark:text-neutral-200">Agotados <span class="text-xs text-neutral-500">· {{ grupoPctAgotados(grupoRepuestos) }}%</span></span>
+            <span class="text-lg font-extrabold text-neutral-700 dark:text-neutral-200">{{ grupoRepuestos.agotados }}</span>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-sm text-neutral-700 dark:text-neutral-200">Bajo Stock <span class="text-xs text-neutral-500">· {{ grupoPctBajo(grupoRepuestos) }}%</span></span>
+            <span class="text-lg font-extrabold text-orange-600 dark:text-orange-400">{{ grupoRepuestos.bajo_stock }}</span>
+          </div>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 
-  <!-- Gráficos -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-    <!-- Ring Chart: Distribución por estado -->
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Productos al Límite</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cuántos están casi sin nada vs cuántos aún resisten</p>
-
-      <div class="chart-wrapper" *ngIf="totalBajoStock > 0; else emptyRing">
-        <tui-ring-chart
-          [value]="ringValue"
-          [(activeItemIndex)]="ringActiveIndex">
-          <div class="text-center">
-            <p class="text-2xl font-extrabold text-neutral-900 dark:text-white">{{ totalBajoStock }}</p>
-            <p class="text-[10px] text-neutral-500">Alertas</p>
-          </div>
-        </tui-ring-chart>
-
-        <div class="chart-legend">
-          <tui-legend-item
-            *ngFor="let label of ringLabels; let index = index"
-            size="s"
-            class="legend-item"
-            [active]="isRingActive(index)"
-            [color]="index === 0 ? '#EF4444' : '#F59E0B'"
-            [text]="label"
-            (tuiHoveredChange)="onRingHover(index, $event)">
-            <span>{{ ringValue[index] }}</span>
-          </tui-legend-item>
-        </div>
+  <!-- Accesorios: tabla con scroll (todas las categorías ordenadas por stock) -->
+  <div class="min-w-0 p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+    <div class="flex items-start justify-between gap-2 mb-4 px-1">
+      <div class="min-w-0">
+        <h4 class="text-base sm:text-lg font-bold text-neutral-900 dark:text-white">Accesorios por categoría</h4>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Todas las categorías ordenadas por stock disponible</p>
       </div>
-      <ng-template #emptyRing>
-        <div class="flex items-center justify-center h-32 text-neutral-400 text-sm">
-          No hay productos con bajo stock
-        </div>
-      </ng-template>
+      <div class="flex items-center gap-2 shrink-0">
+        <span class="text-xs font-semibold px-2 py-1 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400 whitespace-nowrap">{{ pieAccLabels.length }} categorías</span>
+        <button type="button" (click)="toggleAccOrden()" title="Alternar orden"
+          class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-neutral-100 text-neutral-700 hover:bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-600 transition-colors">
+          <span>{{ accOrdenAsc ? '↑ Menor' : '↓ Mayor' }}</span>
+        </button>
+      </div>
     </div>
 
-    <!-- Pie Chart: Distribución por categoría -->
-    <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-      <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">¿Qué categorías necesitan reabastecerse?</h4>
-      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Cantidad de productos con bajo stock en cada categoría</p>
+    <!-- Buscador local en tiempo real -->
+    <div class="px-1 mb-3" *ngIf="pieAccLabels.length > 0">
+      <div class="relative">
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-300 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10 18a8 8 0 110-16 8 8 0 010 16z" />
+        </svg>
+        <input type="text" placeholder="Buscar categoría..." [value]="filtroAcc"
+          (input)="filtroAcc = $any($event.target).value"
+          class="w-full pl-9 pr-8 py-2 text-sm rounded-xl border border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500" />
+        <button *ngIf="filtroAcc" type="button" (click)="filtroAcc = ''" title="Limpiar"
+          class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-neutral-200 text-neutral-600 hover:bg-neutral-300 dark:bg-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-500 text-xs flex items-center justify-center">✕</button>
+      </div>
+    </div>
 
-      <div class="chart-wrapper" *ngIf="pieLabels.length > 0; else emptyPie">
+    <div *ngIf="accTablaOrdenada.length > 0; else emptyPieAcc">
+      <div class="overflow-y-auto overflow-x-auto rounded-xl border border-neutral-100 dark:border-neutral-700" style="max-height: 320px">
+        <table tuiTable size="s" class="w-full min-w-[480px]">
+          <thead class="sticky top-0 z-10 bg-white dark:bg-neutral-800 shadow-sm">
+            <tr>
+              <th tuiTh class="w-12 text-center text-neutral-700 dark:text-neutral-300">N°</th>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300">Categoría</th>
+              <th tuiTh class="text-center text-neutral-700 dark:text-neutral-300">
+                <button type="button" (click)="toggleAccOrden()" class="inline-flex items-center gap-1 hover:text-violet-600 dark:hover:text-violet-400 font-bold">
+                  Stock <span>{{ accOrdenAsc ? '↑' : '↓' }}</span>
+                </button>
+              </th>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300">Estado</th>
+            </tr>
+          </thead>
+          <tbody tuiTbody>
+            <tr *ngFor="let row of accTablaOrdenada; let i = index">
+              <td tuiTd class="text-center text-xs text-neutral-400">{{ i + 1 }}</td>
+              <td tuiTd class="text-neutral-900 dark:text-neutral-100 font-medium max-w-[220px] truncate" [title]="row.label">{{ row.label }}</td>
+              <td tuiTd class="text-center">
+                <span class="inline-flex items-center justify-center min-w-10 h-8 px-2 rounded-lg text-sm font-extrabold" [ngClass]="getColorClass(row.valor)">{{ row.valor }}</span>
+              </td>
+              <td tuiTd>
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
+                  [ngClass]="row.valor === 0
+                    ? 'bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200'
+                    : (row.valor >= 1 && row.valor <= 3)
+                      ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                      : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'">
+                  <span class="w-1.5 h-1.5 rounded-full shrink-0"
+                    [ngClass]="row.valor === 0 ? 'bg-neutral-500' : (row.valor >= 1 && row.valor <= 3) ? 'bg-red-500' : 'bg-green-500'"></span>
+                  {{ getEstadoLabel(row.valor) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-2 px-1 text-[11px] text-neutral-500 dark:text-neutral-400">Ordenado por stock de {{ accOrdenAsc ? 'menor a mayor' : 'mayor a menor' }} · clic en Stock para alternar · scroll para ver todas</p>
+    </div>
+    <ng-template #emptyPieAcc>
+      <div class="flex items-center justify-center h-32 text-neutral-400 text-sm text-center px-4">
+        {{ filtroAcc ? 'Sin resultados para "' + filtroAcc + '"' : 'Sin accesorios registrados' }}
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Pies Teléfonos y Repuestos (como estaban) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+
+    <!-- Teléfonos por marca -->
+    <div class="min-w-0 p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-base sm:text-lg font-bold text-neutral-900 dark:text-white mb-4 px-1">Teléfonos por marca</h4>
+
+      <div class="chart-wrapper" *ngIf="pieTelLabels.length > 0; else emptyPieTel">
         <tui-pie-chart
-          [value]="pieValue"
-          [(activeItemIndex)]="pieActiveIndex">
+          [value]="pieTelValues"
+          [(activeItemIndex)]="pieTelActiveIndex">
         </tui-pie-chart>
 
         <div class="chart-legend">
           <tui-legend-item
-            *ngFor="let label of pieLabels; let index = index"
+            *ngFor="let label of pieTelLabels; let index = index"
             size="s"
             class="legend-item"
-            [active]="isPieActive(index)"
+            [active]="isPieTelActive(index)"
             [color]="'var(--tui-chart-categorical-0' + index + ')'"
             [text]="label"
-            (tuiHoveredChange)="onPieHover(index, $event)">
-            <span>{{ pieValue[index] }}</span>
+            (tuiHoveredChange)="onPieTelHover(index, $event)">
+            <span>{{ pieTelValues[index] }}</span>
           </tui-legend-item>
         </div>
       </div>
-      <ng-template #emptyPie>
-        <div class="flex items-center justify-center h-32 text-neutral-400 text-sm">
-          No hay datos por categoría
+      <ng-template #emptyPieTel>
+        <div class="flex items-center justify-center h-32 text-neutral-400 text-sm text-center px-4">
+          Sin teléfonos registrados
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Repuestos por tipo -->
+    <div class="min-w-0 p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <h4 class="text-base sm:text-lg font-bold text-neutral-900 dark:text-white mb-4 px-1">Repuestos por tipo</h4>
+
+      <div class="chart-wrapper" *ngIf="pieRepLabels.length > 0; else emptyPieRep">
+        <tui-pie-chart
+          [value]="pieRepValues"
+          [(activeItemIndex)]="pieRepActiveIndex">
+        </tui-pie-chart>
+
+        <div class="chart-legend">
+          <tui-legend-item
+            *ngFor="let label of pieRepLabels; let index = index"
+            size="s"
+            class="legend-item"
+            [active]="isPieRepActive(index)"
+            [color]="'var(--tui-chart-categorical-0' + index + ')'"
+            [text]="label"
+            (tuiHoveredChange)="onPieRepHover(index, $event)">
+            <span>{{ pieRepValues[index] }}</span>
+          </tui-legend-item>
+        </div>
+      </div>
+      <ng-template #emptyPieRep>
+        <div class="flex items-center justify-center h-32 text-neutral-400 text-sm text-center px-4">
+          Sin repuestos registrados
         </div>
       </ng-template>
     </div>
 
   </div>
 
-  <!-- Tabla de productos con bajo stock -->
-  <div class="p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
-    <h4 class="text-sm font-bold text-neutral-900 dark:text-white mb-1">Detalle de Productos</h4>
-    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">Lista completa de productos con stock bajo</p>
+  <!-- Tabla de accesorios con bajo stock -->
+  <div class="min-w-0 p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+    <h4 class="text-base sm:text-lg font-bold text-neutral-900 dark:text-white mb-4 px-1">Top 10 Inventario de Accesorios · por menor stock</h4>
 
-    <div class="overflow-x-auto" *ngIf="lowStockProducts.length > 0; else emptyTable">
-      <table tuiTable size="s" class="w-full">
-        <thead>
-          <tr>
-            <th tuiTh class="text-neutral-700 dark:text-neutral-300">Producto</th>
-            <th tuiTh class="text-neutral-700 dark:text-neutral-300">Categoría</th>
-            <th tuiTh class="text-neutral-700 dark:text-neutral-300 text-center">Stock Actual</th>
-            <th tuiTh class="text-neutral-700 dark:text-neutral-300 text-center">Stock Mínimo</th>
-            <th tuiTh class="text-neutral-700 dark:text-neutral-300">Estado</th>
-          </tr>
-        </thead>
-        <tbody tuiTbody>
-          <tr *ngFor="let item of lowStockProducts">
-            <td tuiTd class="text-neutral-900 dark:text-neutral-100 font-medium">
-              {{ item.item.nombre }}
-            </td>
-            <td tuiTd class="text-neutral-500 dark:text-neutral-400 text-xs">
-              {{ item.inventario.categoria_nombre || '-' }}
-            </td>
-            <td tuiTd class="text-center">
-              <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl text-lg font-extrabold"
-                [ngClass]="getColorClass(item.inventario.cantidad)">
-                {{ item.inventario.cantidad }}
-              </span>
-            </td>
-            <td tuiTd class="text-center text-neutral-500 dark:text-neutral-400">
-              {{ item.inventario.stock_minimo }}
-            </td>
-            <td tuiTd>
-              <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold"
-                [ngClass]="item.inventario.cantidad <= 3
-                  ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                  : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'">
-                <span class="w-1.5 h-1.5 rounded-full"
-                  [ngClass]="item.inventario.cantidad <= 3 ? 'bg-red-500' : 'bg-yellow-500'">
+    <div class="-mx-4 sm:mx-0 overflow-x-auto" *ngIf="accesoriosTop10.length > 0; else emptyTable">
+      <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+        <table tuiTable size="s" class="w-full min-w-[560px]">
+          <thead>
+            <tr>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300">Accesorio</th>
+              <th tuiTh class="hidden md:table-cell text-neutral-700 dark:text-neutral-300">Categoría</th>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300 text-center">Stock Actual</th>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300">Estado</th>
+            </tr>
+          </thead>
+          <tbody tuiTbody>
+            <tr *ngFor="let item of accesoriosTop10">
+              <td tuiTd class="text-neutral-900 dark:text-neutral-100 font-medium max-w-[220px] sm:max-w-none">
+                <div class="flex items-center gap-2 min-w-0">
+                  <img *ngIf="imagenAccesorio(item)" [src]="imagenAccesorio(item)" alt="" loading="lazy"
+                    class="w-9 h-9 rounded-lg object-cover shrink-0 bg-neutral-100 dark:bg-neutral-700" />
+                  <div *ngIf="!imagenAccesorio(item)"
+                    class="w-9 h-9 rounded-lg shrink-0 bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center text-neutral-400 text-sm">◍</div>
+                  <span class="truncate">{{ item.item.nombre }}</span>
+                </div>
+              </td>
+              <td tuiTd class="hidden md:table-cell text-neutral-500 dark:text-neutral-400 text-xs">
+                {{ item.inventario.categoria_nombre || '-' }}
+              </td>
+              <td tuiTd class="text-center">
+                <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl text-lg font-extrabold"
+                  [ngClass]="getColorClass(item.inventario.cantidad)">
+                  {{ item.inventario.cantidad }}
                 </span>
-                {{ item.inventario.cantidad <= 3 ? 'Crítico' : 'Advertencia' }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+              <td tuiTd>
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
+                  [ngClass]="item.inventario.cantidad === 0
+                    ? 'bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200'
+                    : (item.inventario.cantidad >= 1 && item.inventario.cantidad <= 3)
+                      ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                      : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'">
+                  <span class="w-1.5 h-1.5 rounded-full shrink-0"
+                    [ngClass]="item.inventario.cantidad === 0
+                      ? 'bg-neutral-500'
+                      : (item.inventario.cantidad >= 1 && item.inventario.cantidad <= 3)
+                        ? 'bg-red-500'
+                        : 'bg-green-500'">
+                  </span>
+                  {{ getEstadoLabel(item.inventario.cantidad) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <ng-template #emptyTable>
-      <div class="flex items-center justify-center h-32 text-neutral-400 text-sm">
-        No hay productos con bajo stock. Todo está bien.
+      <div class="flex items-center justify-center h-32 text-neutral-400 text-sm px-4 text-center">
+        No hay accesorios con bajo stock. Todo está bien.
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Celulares por marca + Repuestos por menor stock: lado a lado en escritorio -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 items-start">
+
+  <!-- Tabla de celulares por marca: cuántos tengo y cuántos disponibles -->
+  <div class="min-w-0 p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+    <h4 class="text-base sm:text-lg font-bold text-neutral-900 dark:text-white mb-1 px-1">Top 10 Celulares por marca</h4>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4 px-1">Cuántos tienes y cuántos están disponibles por marca</p>
+
+    <div class="-mx-4 sm:mx-0 overflow-x-auto" *ngIf="celularesPorMarca.length > 0; else emptyCel">
+      <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+        <table tuiTable size="s" class="w-full min-w-[420px]">
+          <thead>
+            <tr>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300 w-10">#</th>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300">Marca</th>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300 text-center">Tengo / Disponibles</th>
+            </tr>
+          </thead>
+          <tbody tuiTbody>
+            <tr *ngFor="let item of celularesPorMarca; let i = index">
+              <td tuiTd class="text-neutral-400 dark:text-neutral-500 text-xs font-bold">{{ i + 1 }}</td>
+              <td tuiTd class="text-neutral-900 dark:text-neutral-100 font-medium">{{ item.marca }}</td>
+              <td tuiTd class="text-center">
+                <span class="text-base font-bold text-neutral-900 dark:text-white whitespace-nowrap">{{ item.total }} / {{ item.disponibles }} disponibles</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <ng-template #emptyCel>
+      <div class="flex items-center justify-center h-32 text-neutral-400 text-sm px-4 text-center">
+        Sin celulares registrados.
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Tabla de repuestos top 10 (menor a mayor stock) -->
+  <div class="min-w-0 p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+    <h4 class="text-base sm:text-lg font-bold text-neutral-900 dark:text-white mb-4 px-1">Top 10 Repuestos · por menor stock</h4>
+
+    <div class="-mx-4 sm:mx-0 overflow-x-auto" *ngIf="repuestosTop.length > 0; else emptyRep">
+      <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+        <table tuiTable size="s" class="w-full min-w-[560px]">
+          <thead>
+            <tr>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300">Repuesto</th>
+              <th tuiTh class="hidden md:table-cell text-neutral-700 dark:text-neutral-300">Tipo</th>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300 text-center">Stock Actual</th>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300">Estado</th>
+            </tr>
+          </thead>
+          <tbody tuiTbody>
+            <tr *ngFor="let item of repuestosTop">
+              <td tuiTd class="text-neutral-900 dark:text-neutral-100 font-medium max-w-[160px] sm:max-w-none">
+                <div class="flex items-center gap-2 min-w-0">
+                  <img *ngIf="imagenRepuesto(item)" [src]="imagenRepuesto(item)" alt="" loading="lazy"
+                    class="w-9 h-9 rounded-lg object-cover shrink-0 bg-neutral-100 dark:bg-neutral-700" />
+                  <div *ngIf="!imagenRepuesto(item)"
+                    class="w-9 h-9 rounded-lg shrink-0 bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center text-neutral-400 text-sm">◍</div>
+                  <span class="truncate">{{ item.nombre }}</span>
+                </div>
+              </td>
+              <td tuiTd class="hidden md:table-cell text-neutral-500 dark:text-neutral-400 text-xs">
+                {{ item.categoria || '-' }}
+              </td>
+              <td tuiTd class="text-center">
+                <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl text-lg font-extrabold"
+                  [ngClass]="getColorClass(item.cantidad)">
+                  {{ item.cantidad }}
+                </span>
+              </td>
+              <td tuiTd>
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
+                  [ngClass]="item.cantidad === 0
+                    ? 'bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200'
+                    : (item.cantidad >= 1 && item.cantidad <= 3)
+                      ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                      : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'">
+                  <span class="w-1.5 h-1.5 rounded-full shrink-0"
+                    [ngClass]="item.cantidad === 0
+                      ? 'bg-neutral-500'
+                      : (item.cantidad >= 1 && item.cantidad <= 3)
+                        ? 'bg-red-500'
+                        : 'bg-green-500'">
+                  </span>
+                  {{ getEstadoLabel(item.cantidad) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <ng-template #emptyRep>
+      <div class="flex items-center justify-center h-32 text-neutral-400 text-sm px-4 text-center">
+        Sin repuestos registrados.
+      </div>
+    </ng-template>
+  </div>
+
+  </div>
+
+  <!-- Top 10 modelos de celulares más caros por costo (compra / venta) -->
+  <div class="min-w-0 p-4 sm:p-5 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+    <div class="flex items-start justify-between gap-2 mb-1 px-1">
+      <h4 class="text-base sm:text-lg font-bold text-neutral-900 dark:text-white">Top 10 Modelos de celulares · por {{ tipoCelularCosto === 'venta' ? 'costo de venta' : 'costo de compra' }}</h4>
+      <select [value]="tipoCelularCosto" (change)="onTipoCelularCostoChange($event)" title="Tipo de costo"
+        class="shrink-0 text-xs font-semibold rounded-lg border border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-700 dark:text-neutral-100 px-2 py-1 focus:outline-none focus:ring-2 focus:ring-violet-500/50">
+        <option value="compra">Costo compra</option>
+        <option value="venta">Costo venta</option>
+      </select>
+    </div>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4 px-1">Los más caros {{ tipoCelularCosto === 'venta' ? 'para vender' : 'que compraste' }} · ordenados de mayor a menor costo</p>
+
+    <div class="-mx-4 sm:mx-0 overflow-x-auto" *ngIf="celularesTopCosto.length > 0; else emptyTopCosto">
+      <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+        <table tuiTable size="s" class="w-full min-w-[640px]">
+          <thead>
+            <tr>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300 w-10 text-center">N°</th>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300">Modelo</th>
+              <th tuiTh class="hidden md:table-cell text-neutral-700 dark:text-neutral-300">Marca</th>
+              <th tuiTh class="text-neutral-700 dark:text-neutral-300 text-right">{{ tipoCelularCosto === 'venta' ? 'Costo venta' : 'Costo compra' }}</th>
+            </tr>
+          </thead>
+          <tbody tuiTbody>
+            <tr *ngFor="let item of celularesTopCosto; let i = index">
+              <td tuiTd class="text-center text-xs text-neutral-400 font-bold">{{ i + 1 }}</td>
+              <td tuiTd class="text-neutral-900 dark:text-neutral-100 font-medium max-w-[220px] sm:max-w-none">
+                <div class="flex items-center gap-2 min-w-0">
+                  <img *ngIf="imagenCelular(item)" [src]="imagenCelular(item)" alt="" loading="lazy"
+                    class="w-9 h-9 rounded-lg object-cover shrink-0 bg-neutral-100 dark:bg-neutral-700" />
+                  <div *ngIf="!imagenCelular(item)"
+                    class="w-9 h-9 rounded-lg shrink-0 bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center text-neutral-400 text-sm">◍</div>
+                  <div class="min-w-0">
+                    <div class="truncate">{{ item.modelo }}</div>
+                    <div class="text-[11px] text-neutral-500 dark:text-neutral-400 truncate md:hidden">{{ item.marca }}</div>
+                  </div>
+                </div>
+              </td>
+              <td tuiTd class="hidden md:table-cell text-neutral-500 dark:text-neutral-400 text-xs">
+                {{ item.marca }}
+              </td>
+              <td tuiTd class="text-right">
+                <span class="text-sm font-extrabold text-amber-600 dark:text-amber-400 whitespace-nowrap">S/ {{ costoCelularMostrado(item) | number:'1.2-2' }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <ng-template #emptyTopCosto>
+      <div class="flex items-center justify-center h-32 text-neutral-400 text-sm px-4 text-center">
+        Sin celulares registrados.
       </div>
     </ng-template>
   </div>

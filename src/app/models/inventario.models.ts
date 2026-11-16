@@ -22,7 +22,11 @@ export interface Inventario {
     responsable_nombre: string
     categoria_nombre: string
     categoria_id: number
+    categoria_tipo?: string | null
     producto_sku: string,
+    producto_marca?: string | null
+    producto_modelo?: string | null
+    repuesto_tipo?: string | null
     imagen_producto: string
 }
 
@@ -53,24 +57,74 @@ export interface PorRangoPreciosResponse {
     por_precio_venta: RangoPrecio[];
 }
 
-export interface ValorizacionCategoria {
+export interface TopProductoCompra {
+    inventario_id: number;
+    producto: string;
+    sku: string;
+    categoria: string;
+    cantidad: number;
+    costo_compra: number;
+    costo_venta: number;
+}
+
+export interface TopProductosCompraResponse {
+    top_productos_compra: TopProductoCompra[];
+    tipo?: string;
+}
+
+export interface ValorCategoria {
     categoria: string;
     cantidad_productos: number;
-    total_compra: number;
-    total_venta: number;
-}
-
-export interface ValorizacionInventarioResponse {
-    valorizacion: ValorizacionCategoria[];
-}
-
-export interface TopCategoriaCompra {
-    categoria: string;
     total_unidades: number;
-    total_gastado: number;
+    valor_total: number;
 }
 
-export interface TopCategoriasCompraResponse {
-    top_categorias_compra: TopCategoriaCompra[];
+export interface ValorPorCategoriaResponse {
+    valor_por_categoria: ValorCategoria[];
+    tipo?: string;
+}
+
+export interface GrupoResumen {
+    total: number;
+    agotados: number;
+    bajo_stock: number;
+    critico: number;
+    alerta_total: number;
+    normal: number;
+    /** Solo teléfonos: celulares no disponibles. */
+    no_disponibles?: number;
+    /** Unidades físicas totales y valorización a costo. */
+    unidades?: number;
+    valorizacion?: number;
+    /** Solo teléfonos: precio de venta potencial de los disponibles. */
+    venta_potencial?: number;
+}
+
+export interface ResumenTiendaResponse {
+    totales: {
+        accesorios: number;
+        telefonos: number;
+        repuestos: number;
+        otros: number;
+        total_items: number;
+    };
+    stock: {
+        agotados: number;
+        bajo_stock: number;
+        critico: number;
+        alerta_total?: number;
+        umbral_bajo_min?: number;
+        umbral_bajo_max?: number;
+        // Compat con versión anterior (≤10 / ≤3)
+        umbral_bajo?: number;
+        umbral_critico?: number;
+    };
+    grupos?: {
+        accesorios: GrupoResumen;
+        telefonos: GrupoResumen;
+        repuestos: GrupoResumen;
+    };
+    telefonos_por_marca?: Array<{ marca: string; total: number }>;
+    repuestos_por_tipo?: Array<{ tipo: string; total: number }>;
 }
 

@@ -139,21 +139,6 @@ export class TabletiendasComponent implements OnInit {
     return borders[index % borders.length];
   }
 
-  private gradients = [
-    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-    'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-    'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)',
-    'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
-  ];
-
-  getGradient(index: number): string {
-    return this.gradients[index % this.gradients.length];
-  }
-
   /** Buscador en tiempo real de tiendas principales (nombre / razón social / RUC, o nombre de sucursal). */
   busqueda = '';
 

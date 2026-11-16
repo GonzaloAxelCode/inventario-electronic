@@ -3,8 +3,9 @@ import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '@/app/state/app.state';
-import { cargarReporteMensual, cargarMetodosPagoRango, cargarTopProductosMes, cargarTopCategoriasMes } from '@/app/state/actions/venta.actions';
-import { selectReporteMensual, selectLoadingReporteMensual, selectMetodosPagoRango, selectLoadingMetodosPagoRango, selectTopProductosMes, selectLoadingTopProductosMes, selectTopCategoriasMes, selectLoadingTopCategoriasMes } from '@/app/state/selectors/venta.selectors';
+import { cargarReporteMensual, cargarTopProductosMes, cargarTopCategoriasMes } from '@/app/state/actions/venta.actions';
+import { selectReporteMensual, selectLoadingReporteMensual, selectTopProductosMes, selectLoadingTopProductosMes, selectTopCategoriasMes, selectLoadingTopCategoriasMes } from '@/app/state/selectors/venta.selectors';
+import { URL_BASE } from '@/app/services/utils/endpoints';
 import { Subject, takeUntil } from 'rxjs';
 
 const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -24,19 +25,10 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
   monthNames = MONTH_NAMES;
   currentYear = new Date().getFullYear();
   yearNumbers = [this.currentYear, this.currentYear - 1, this.currentYear - 2];
-  dayNumbers = Array.from({ length: 31 }, (_, i) => i + 1);
 
   // Selectores por sección
   selectedMonth = MONTH_NAMES[new Date().getMonth()];
   selectedYear = this.currentYear;
-
-  // Secciones de RANGO: Métodos de pago
-  rangeStartDay = 1;
-  rangeStartMonth = MONTH_NAMES[new Date().getMonth()];
-  rangeStartYear = this.currentYear;
-  rangeEndDay = new Date().getDate();
-  rangeEndMonth = MONTH_NAMES[new Date().getMonth()];
-  rangeEndYear = this.currentYear;
 
   // Reporte mensual desde API
   resumenVentas = {
@@ -53,15 +45,11 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
   totalComprasMes = 0;
 
   // Top productos por mes
-  topProductosMes: { nombre: string; cantidad: number; ingresos: number }[] = [];
+  topProductosMes: { nombre: string; cantidad: number; ingresos: number; imagen: string | null }[] = [];
   loadingTopProductosMes = false;
 
-  // Métodos de pago por rango
-  metodosPagoRango: { nombre: string; cantidad: number; monto: number; porcentaje: number }[] = [];
-  loadingMetodosPagoRango = false;
-
   // Categorías más vendidas por mes
-  categoriasMes: { nombre: string; cantidad: number; ingresos: number }[] = [];
+  categoriasMes: { nombre: string; cantidad: number; ingresos: number; imagen: string | null; imagenes: string[] }[] = [];
   loadingTopCategoriasMes = false;
 
   ngOnInit(): void {
@@ -85,25 +73,6 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(loading => this.loadingReporteMensual = loading);
 
-    // Suscribirse a métodos de pago por rango
-    this.store.select(selectMetodosPagoRango)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(data => {
-        if (data && data.metodos_pago.length > 0) {
-          this.metodosPagoRango = data.metodos_pago.map(m => ({
-            nombre: m.metodo_pago,
-            cantidad: m.num_ventas,
-            monto: m.total_soles,
-            porcentaje: m.porcentaje
-          }));
-        }
-      });
-
-    // Suscribirse al loading de métodos de pago
-    this.store.select(selectLoadingMetodosPagoRango)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(loading => this.loadingMetodosPagoRango = loading);
-
     // Suscribirse a top productos del mes
     this.store.select(selectTopProductosMes)
       .pipe(takeUntil(this.destroy$))
@@ -112,7 +81,8 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
           this.topProductosMes = data.productos.map(p => ({
             nombre: p.nombre,
             cantidad: p.total_unidades,
-            ingresos: p.total_ingresos
+            ingresos: p.total_ingresos,
+            imagen: this.resolverImagen((p as any).imagen),
           }));
         }
       });
@@ -130,7 +100,9 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
           this.categoriasMes = data.categorias.map(c => ({
             nombre: c.nombre,
             cantidad: c.total_unidades,
-            ingresos: c.total_ingresos
+            ingresos: c.total_ingresos,
+            imagen: this.resolverImagen((c as any).imagen),
+            imagenes: (((c as any).imagenes ?? []) as any[]).map(u => this.resolverImagen(u)).filter((u): u is string => !!u).slice(0, 4),
           }));
         }
       });
@@ -142,9 +114,6 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
 
     // Cargar reporte del mes actual
     this.loadReporteMensual();
-
-    // Cargar métodos de pago por rango
-    this.loadMetodosPagoRango();
 
     // Cargar top productos del mes
     this.loadTopProductosMes();
@@ -164,18 +133,21 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
     this.store.dispatch(cargarReporteMensual({ month: monthIndex, year: this.selectedYear }));
   }
 
-  loadMetodosPagoRango(): void {
-    const startMonthIndex = this.monthNames.indexOf(this.rangeStartMonth) + 1;
-    const endMonthIndex = this.monthNames.indexOf(this.rangeEndMonth) + 1;
-    const fromDate: [number, number, number] = [this.rangeStartDay, startMonthIndex, this.rangeStartYear];
-    const toDate: [number, number, number] = [this.rangeEndDay, endMonthIndex, this.rangeEndYear];
-    this.store.dispatch(cargarMetodosPagoRango({ fromDate, toDate }));
-  }
-
   loadTopProductosMes(): void {
     let monthIndex = this.monthNames.indexOf(this.selectedMonth);
     if (monthIndex < 0) monthIndex = new Date().getMonth();
     this.store.dispatch(cargarTopProductosMes({ month: monthIndex, year: this.selectedYear }));
+  }
+
+  resolverImagen(raw: string | null | undefined): string | null {
+    if (!raw) return null;
+    const s = String(raw).trim();
+    if (!s) return null;
+    if (s.startsWith('data:')) return s;
+    const mediaIdx = s.indexOf('/media/');
+    if (mediaIdx >= 0) return URL_BASE + s.slice(mediaIdx);
+    if (s.startsWith('http')) return s;
+    return URL_BASE + (s.startsWith('/') ? s : '/' + s);
   }
 
   loadTopCategoriasMes(): void {
@@ -194,10 +166,6 @@ export class DashboardGeneralStatsComponent implements OnInit, OnDestroy {
     this.loadReporteMensual();
     this.loadTopProductosMes();
     this.loadTopCategoriasMes();
-  }
-
-  onRangeChange(): void {
-    this.loadMetodosPagoRango();
   }
 
   getEmpleadoBarHeight(ventas: number): number {

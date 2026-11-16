@@ -47,6 +47,7 @@ export class DialogcreatecategoriaComponent implements OnInit, OnDestroy {
     this.categoryForm = this.fb.group({
       nombre: ['', Validators.required],
       descripcion: ['', Validators.required],
+      tipo: ['ACCESORIO', Validators.required],
       slug: [''],
       caracteristicas_template: this.fb.array([]),
     });
@@ -68,9 +69,12 @@ export class DialogcreatecategoriaComponent implements OnInit, OnDestroy {
     if (this.categoryForm.valid) {
        const newCategory = this.categoryForm.getRawValue();
       const { caracteristicas_template, ...categoriaData } = newCategory;
+      // Tienda destino cuando el admin gestiona otra tienda (viene en data del diálogo)
+      const tiendaId = (this.context.data as any)?.tiendaId;
       this.store.dispatch(createCategoriaAction({
         categoria: {
           ...categoriaData,
+          ...(tiendaId !== undefined && tiendaId !== null && tiendaId !== '' ? { tienda: tiendaId } : {}),
           caracteristicas_template,
           slug: urlSlug(categoriaData.nombre),
         }

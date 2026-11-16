@@ -10,6 +10,21 @@
 .chart-wrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+
+  tui-ring-chart,
+  tui-pie-chart {
+    max-width: 100%;
+    flex-shrink: 1;
+  }
+
+  @media screen and (max-width: 1024px) {
+    gap: 0.75rem;
+  }
 
   @media screen and (max-width: 640px) {
     flex-direction: column;
@@ -22,6 +37,17 @@
   flex-direction: column;
   justify-content: center;
   gap: 0.375rem;
+  min-width: 0;
+  flex: 1 1 160px;
+
+  @media screen and (max-width: 1024px) {
+    margin-left: 0;
+    flex-basis: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
 
   @media screen and (max-width: 640px) {
     margin: 1.25rem 0 0;

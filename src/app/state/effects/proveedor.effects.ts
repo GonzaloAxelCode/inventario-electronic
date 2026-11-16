@@ -5,6 +5,7 @@ import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { ProveedorService } from '@/app/services/proveedor.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
+import { serverErrorMsg } from '@/app/services/utils/server-error';
 import {
     createProveedorAction,
     createProveedorFail,
@@ -53,7 +54,7 @@ export class ProveedorEffects {
                         return createProveedorSuccess({ proveedor: createdProveedor });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al crear el proveedor', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al crear el proveedor'), 'Error').subscribe();
                         return of(createProveedorFail({ error }));
                     })
                 )
@@ -71,7 +72,7 @@ export class ProveedorEffects {
                         return updateProveedorSuccess({ proveedor: updatedProveedor });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al actualizar el proveedor', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al actualizar el proveedor'), 'Error').subscribe();
                         return of(updateProveedorFail({ error }));
                     })
                 )
@@ -89,7 +90,7 @@ export class ProveedorEffects {
                         return toggleProveedorSuccess({ response });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al cambiar el estado del proveedor', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al cambiar el estado del proveedor'), 'Error').subscribe();
                         return of(toggleProveedorFail({ error }));
                     })
                 )

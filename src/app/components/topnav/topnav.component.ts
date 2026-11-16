@@ -7,6 +7,7 @@ import { LogoutService } from '@/app/services/logout.service';
 import { AppState } from '@/app/state/app.state';
 import { UserState } from '@/app/state/reducers/user.reducer';
 import { selectAuth } from '@/app/state/selectors/auth.selectors';
+import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { selectUsersState } from '@/app/state/selectors/user.selectors';
 import { AsyncPipe, CommonModule, NgIf, NgFor } from '@angular/common';
 import {
@@ -19,12 +20,13 @@ import {
   ElementRef,
   ViewChild,
   ChangeDetectorRef,
+  NgZone,
   effect,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLinkActive, RouterModule } from '@angular/router';
 import { select, Store } from '@ngrx/store';
-import { TuiButton, TuiIcon, TUI_DARK_MODE } from '@taiga-ui/core';
+import { TuiButton, TuiIcon, TuiLoader, TUI_DARK_MODE } from '@taiga-ui/core';
 import { TuiBadge } from '@taiga-ui/kit';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
 import { DarkmodeComponent } from '../darkmode/darkmode.component';
@@ -61,6 +63,7 @@ export interface NavItem {
     NgFor,
     TuiButton,
     TuiIcon,
+    TuiLoader,
     TuiBadge,
     AsyncPipe,
     DarkmodeComponent,
@@ -73,6 +76,47 @@ export interface NavItem {
 })
 export class TopnavComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('navContainer') navContainerRef!: ElementRef<HTMLElement>;
+  @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLElement>;
+
+  /** Header principal: se oculta desvanecido al bajar y reaparece al subir. */
+  headerHidden = false;
+  private lastScrollY = 0;
+  private scrollRaf = 0;
+  private pendingY: number | null = null;
+  private readonly ngZone = inject(NgZone);
+
+  /** Procesa el scroll fuera de Angular y con rAF para no lagear. */
+  private onContentScroll = () => {
+    const el = this.scrollContainerRef?.nativeElement;
+    if (!el) return;
+    this.pendingY = el.scrollTop;
+    if (this.scrollRaf) return;
+    this.scrollRaf = requestAnimationFrame(() => {
+      this.scrollRaf = 0;
+      if (this.pendingY == null) return;
+      const y = this.pendingY;
+      this.pendingY = null;
+      const dy = y - this.lastScrollY;
+      this.lastScrollY = y;
+      let hide: boolean | null = null;
+      if (y <= 8) {
+        if (this.headerHidden) hide = false;
+      } else if (Math.abs(dy) >= 8) {
+        hide = dy > 0; // bajar = ocultar, subir = mostrar
+      }
+      if (hide != null && hide !== this.headerHidden) {
+        this.ngZone.run(() => {
+          this.headerHidden = hide;
+          if (hide) {
+            this.mobileMenuOpen = false;
+            this.userMenuOpen = false;
+            this.overflowMenuOpen = false;
+            this.activeDropdownItem = null;
+          }
+        });
+      }
+    });
+  };
 
   isAuthenticated$: Observable<any>;
   userState$!: Observable<UserState>;
@@ -81,6 +125,14 @@ export class TopnavComponent implements OnInit, AfterViewInit, OnDestroy {
   userMenuOpen = false;
   mobileMenuOpen = false;
   overflowMenuOpen = false;
+  /** Bloqueo total de pantalla mientras se anula una venta. */
+  bloquearAnular = false;
+  private escapeBlocker = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && this.bloquearAnular) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
   loadingAuthenticated$: Observable<any>;
   authState$ = this.store.pipe(select(selectAuth));
   URL_BASE = URL_BASE;
@@ -108,21 +160,20 @@ export class TopnavComponent implements OnInit, AfterViewInit, OnDestroy {
       accent: '#007AFF',
       subItems: [
         { route: '/app#general', label: 'General', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z', description: 'Vista general del negocio' },
-        { route: '/app#resumen', label: 'Resumen del Día', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', description: 'Ventas y métricas de hoy' },
-        { route: '/app#inventario', label: 'Inventario y Alertas', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', description: 'Stock bajo y alertas' },
-        { route: '/app#comparaciones', label: 'Comparaciones', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', description: 'Rendimiento y tendencias' },
+        { route: '/app#ventas', label: 'Ventas', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', description: 'Ventas por rango y top' },
+        { route: '/app#inventario', label: 'Inventario', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', description: 'Stock bajo y gráficos' },
+        { route: '/app#reportes', label: 'Exportar Datos', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', description: 'Excel de inventario, ventas y ganancias' },
       ],
     },
     {
-      route: '/app/productos',
-      label: 'Productos',
+      route: '/app/inventario',
+      label: 'Inventario',
       icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
       accent: '#FF9500',
       subItems: [
-        { route: '/app/productos#productos', label: 'Productos', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', description: 'Catálogo completo' },
-        { route: '/app/productos#categorias', label: 'Categorías', icon: 'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z', description: 'Organizar por categoría' },
-        { route: '/app/productos#graficos', label: 'Gráficos', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', description: 'Visualización de datos' },
-        { route: '/app/productos#barras', label: 'Imprimir Cód. Barras', icon: 'M3 5h2v14H3V5zm4 0h1v14H7V5zm3 0h1v14h-1V5zm3 0h2v14h-2V5zm4 0h2v14h-2V5z', description: 'Imprimir etiquetas térmicas' },
+        { route: '/app/inventario#accesorios', label: 'Accesorios', icon: 'M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82zM7 7h.01', description: 'Fundas, micas, cargadores' },
+        { route: '/app/inventario#celulares', label: 'Celulares', icon: 'M7 2h10a1 1 0 011 1v18a1 1 0 01-1 1H7a1 1 0 01-1-1V3a1 1 0 011-1zm5 15h.01', description: 'Venta con IMEI' },
+        { route: '/app/inventario#repuestos', label: 'Repuestos', icon: 'M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.47m5.054 1.91L12.16 8.2m0 0l-.664-.333a2.5 2.5 0 01-1.402-2.24V4.75M12.16 8.2l.664.333c.495.248.89.643 1.132 1.122', description: 'Taller y repuestos' },
       ],
     },
     {
@@ -134,7 +185,6 @@ export class TopnavComponent implements OnInit, AfterViewInit, OnDestroy {
       subItems: [
         { route: '/app/ventas#historial', label: 'Historial de Ventas', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', description: 'Todas las ventas realizadas' },
         { route: '/app/ventas#ventas-hoy', label: 'Ventas Hoy', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', description: 'Detalle de ventas del día' },
-        { route: '/app/ventas#anuladas-hoy', label: 'Ventas Anuladas Hoy', icon: 'M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636', description: 'Ventas canceladas del día' },
       ],
     },
     {
@@ -164,19 +214,18 @@ export class TopnavComponent implements OnInit, AfterViewInit, OnDestroy {
       accent: '#5856D6',
       icon: 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z',
       subItems: [
-        { route: '/app/compras#historial', label: 'Historial de Compras', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', description: 'Todas las compras registradas' },
-        { route: '/app/compras#comprobantes', label: 'Registrar Comprobantes', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', description: 'Crear comprobante de compra' },
-        { route: '/app/compras#proveedores', label: 'Proveedores', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', description: 'Todos los proveedores' },
+        { route: '/app/compras#mis-compras', label: 'Mis Compras', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', description: 'Compras validadas y guardadas' },
+        { route: '/app/compras#consultar', label: 'Consultar Comprobante', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', description: 'Validar en SUNAT y guardar' },
       ],
     },
     {
       route: '/app/pedidos',
-      label: 'Pedidos',
+      label: 'Pendientes',
       accent: '#FF9F0A',
       icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
       subItems: [
-        { route: '/app/pedidos#historial', label: 'Historial de Pedidos', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', description: 'Todos los pedidos realizados' },
-        { route: '/app/pedidos#crear', label: 'Crear Pedido', icon: 'M12 6v6m0 0v6m0-6h6m-6 0H6', description: 'Registrar nuevo pedido' },
+        { route: '/app/pedidos#historial', label: 'Historial de Pendientes', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', description: 'Todos los pendientes registrados' },
+        { route: '/app/pedidos#crear', label: 'Crear Pendiente', icon: 'M12 6v6m0 0v6m0-6h6m-6 0H6', description: 'Registrar nuevo pendiente' },
       ],
     },
     {
@@ -230,6 +279,11 @@ export class TopnavComponent implements OnInit, AfterViewInit, OnDestroy {
       this.tienda = userState.user.tienda_data ?? ({} as Tienda);
       this.calculateVisibleItems();
     });
+    this.store.select(selectVenta).pipe(takeUntil(this.destroy$)).subscribe(ventaState => {
+      this.bloquearAnular = !!ventaState?.loadingNotaCredito;
+      this.cdr.markForCheck();
+    });
+    document.addEventListener('keydown', this.escapeBlocker, true);
   }
 
   ngAfterViewInit() {
@@ -241,12 +295,19 @@ export class TopnavComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resizeObserver.observe(this.navContainerRef.nativeElement);
     }
     this.calculateVisibleItems();
+    // Fuera de la zona de Angular: el scroll no dispara detección de cambios.
+    this.ngZone.runOutsideAngular(() => {
+      this.scrollContainerRef?.nativeElement?.addEventListener('scroll', this.onContentScroll, { passive: true });
+    });
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
     this.resizeObserver?.disconnect();
+    this.scrollContainerRef?.nativeElement?.removeEventListener('scroll', this.onContentScroll);
+    document.removeEventListener('keydown', this.escapeBlocker, true);
+    if (this.scrollRaf) cancelAnimationFrame(this.scrollRaf);
     clearTimeout(this.leaveTimeout);
   }
 
@@ -296,21 +357,25 @@ export class TopnavComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.activeDropdownItem?.label === item.label) {
       this.activeDropdownItem = null;
     } else {
-      const target = event.currentTarget as HTMLElement;
-      const rect = target.getBoundingClientRect();
-      const dropdownWidth = 280;
-      const dropdownHeight = item.subItems ? item.subItems.length * 56 + 60 : 200;
-      let x = rect.left;
-      let y = rect.bottom + 4;
-      if (x + dropdownWidth > window.innerWidth) {
-        x = window.innerWidth - dropdownWidth - 16;
-      }
-      if (y + dropdownHeight > window.innerHeight) {
-        y = rect.top - dropdownHeight - 4;
-      }
-      this.dropdownPosition = { x, y };
-      this.activeDropdownItem = item;
+      this.abrirDropdown(event, item);
     }
+  }
+
+  abrirDropdown(event: MouseEvent, item: NavItem) {
+    const target = event.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    const dropdownWidth = 280;
+    const dropdownHeight = item.subItems ? item.subItems.length * 56 + 60 : 200;
+    let x = rect.left;
+    let y = rect.bottom + 4;
+    if (x + dropdownWidth > window.innerWidth) {
+      x = window.innerWidth - dropdownWidth - 16;
+    }
+    if (y + dropdownHeight > window.innerHeight) {
+      y = rect.top - dropdownHeight - 4;
+    }
+    this.dropdownPosition = { x, y };
+    this.activeDropdownItem = item;
   }
 
   onDropdownEnter() {
@@ -330,6 +395,9 @@ export class TopnavComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userMenuOpen = false;
     this.mobileMenuOpen = false;
     this.overflowMenuOpen = false;
+    this.headerHidden = false;
+    if (this.scrollContainerRef?.nativeElement) this.scrollContainerRef.nativeElement.scrollTop = 0;
+    this.lastScrollY = 0;
   }
 
   toggleOverflowMenu() {

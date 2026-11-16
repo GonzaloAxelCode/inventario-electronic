@@ -19,7 +19,10 @@ export enum CategoriaActionTypes {
     LOAD_PORCENTAJE_CATEGORIA_FAIL = '[Categoria] Load Porcentaje Categoria Fail',
 }
 
-export const loadCategorias = createAction(CategoriaActionTypes.LOAD_CATEGORIAS);
+export const loadCategorias = createAction(
+    CategoriaActionTypes.LOAD_CATEGORIAS,
+    props<{ tipo?: 'REPUESTO' | 'ACCESORIO' | 'TODO'; tienda?: number | string }>()
+);
 export const loadCategoriasSuccess = createAction(
     CategoriaActionTypes.LOAD_CATEGORIAS_SUCCESS,
     props<{ categorias: Categoria[] }>()

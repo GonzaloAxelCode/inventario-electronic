@@ -1,4 +1,5 @@
 <main class="p-4 sm:p-6">
+<ng-container *ngIf="(perms$ | async)?.view_ganancia; else sinPermiso">
 
   <header class="p-0 mb-4">
     <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Ganancias</h2>
@@ -218,4 +219,11 @@
 
   </div>
 
+</ng-container>
+<ng-template #sinPermiso>
+  <div class="p-6 text-center rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 mt-4">
+    <p class="text-sm font-bold text-neutral-900 dark:text-white">Sin permiso</p>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">No tienes permiso para ver ganancias. Pide a tu administrador que te habilite «Ver ganancias».</p>
+  </div>
+</ng-template>
 </main>

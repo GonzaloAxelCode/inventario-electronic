@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { catchError, exhaustMap, map, of, switchMap, tap } from 'rxjs';
 
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
+import { serverErrorMsg } from '@/app/services/utils/server-error';
 import { UserService } from '@/app/services/user.service';
 import { TiendaService } from '@/app/services/tienda.service';
 import { getLoginUserDataFromLocalStorage } from '@/app/services/utils/localstorage-functions';
@@ -98,7 +99,7 @@ export class UserEffects {
                         );
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al crear el usuario', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al crear el usuario'), 'Error').subscribe();
                         return of(createUserFail({ error }));
                     })
                 )
@@ -120,7 +121,7 @@ export class UserEffects {
                         return updateUserSuccess({ user: res.user });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al actualizar el usuario', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al actualizar el usuario'), 'Error').subscribe();
                         return of(updateUserFail({ error }));
                     })
                 )
@@ -137,7 +138,7 @@ export class UserEffects {
                         return updateUserPermissionsSuccess({ id, permiso, valor });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al actualizar los permisos', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al actualizar los permisos'), 'Error').subscribe();
                         return of(updateUserPermissionsFail({ error }));
                     })
                 )
@@ -156,7 +157,7 @@ export class UserEffects {
                         return desactivateUserSuccess({ id, is_active });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al actualizar el usuario', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al actualizar el usuario'), 'Error').subscribe();
                         return of(desactivateUserFail({ error }));
                     })
                 )
@@ -175,7 +176,7 @@ export class UserEffects {
                         return deleteUserSuccess({ id });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al eliminar el usuario', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al eliminar el usuario'), 'Error').subscribe();
                         return of(deleteUserFail({ error }));
                     })
                 )

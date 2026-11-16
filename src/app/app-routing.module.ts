@@ -33,8 +33,13 @@ const routes: Routes = [
 				loadComponent: () => import('./pages/hacerventa/hacerventa.component').then(m => m.HacerventaComponent)
 			},
 			{
-				path: 'productos',
+				path: 'inventario',
 				loadComponent: () => import('./pages/productos/productos.component').then(m => m.ProductosComponent)
+			},
+			{
+				path: 'productos',
+				redirectTo: 'inventario',
+				pathMatch: 'full'
 			},
 			{
 				path: 'perfil',
@@ -55,10 +60,6 @@ const routes: Routes = [
 			{
 				path: 'pedidos',
 				loadComponent: () => import('./pages/pedidos/pedidos.component').then(m => m.PedidosComponent)
-			},
-			{
-				path: 'proveedores',
-				loadComponent: () => import('./pages/proveedores/proveedores.component').then(m => m.ProveedoresComponent)
 			},
 			{
 				path: 'ganancias',
@@ -96,6 +97,10 @@ const routes: Routes = [
 					{
 						path: 'mi-tienda',
 						loadComponent: () => import('./components/settingscomponents/mitiendasettings/mitiendasettings.component').then(m => m.MitiendasettingsComponent)
+					},
+					{
+						path: 'backups',
+						loadComponent: () => import('./components/settingscomponents/backupsettings/backupsettings.component').then(m => m.BackupsettingsComponent)
 					},
 					{
 						path: 'modulos',

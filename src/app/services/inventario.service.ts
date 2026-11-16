@@ -1,4 +1,4 @@
-import { DistribucionStockResponse, Inventario, PorRangoPreciosResponse, TopCategoriasCompraResponse, ValorizacionInventarioResponse } from '@/app/models/inventario.models';
+import { DistribucionStockResponse, Inventario, PorRangoPreciosResponse, ResumenTiendaResponse, TopProductosCompraResponse, ValorPorCategoriaResponse } from '@/app/models/inventario.models';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -165,8 +165,9 @@ export class InventarioService {
         );
     }
 
-    fetchValorizacionInventario(): Observable<ValorizacionInventarioResponse> {
-        return this.http.get<ValorizacionInventarioResponse>(`${this.siteURL}/inventarios/valorizacion/`).pipe(
+    fetchTopProductosCompra(tipo: 'compra' | 'venta' = 'compra'): Observable<TopProductosCompraResponse> {
+        const params = new HttpParams().set('tipo', tipo);
+        return this.http.get<TopProductosCompraResponse>(`${this.siteURL}/inventarios/top-productos-compra/`, { params }).pipe(
             catchError((error) => {
                 console.error(error);
                 return throwError(() => error);
@@ -174,8 +175,18 @@ export class InventarioService {
         );
     }
 
-    fetchTopCategoriasCompra(): Observable<TopCategoriasCompraResponse> {
-        return this.http.get<TopCategoriasCompraResponse>(`${this.siteURL}/inventarios/top-categorias-compra/`).pipe(
+    fetchValorPorCategoria(tipo: 'compra' | 'venta' = 'compra'): Observable<ValorPorCategoriaResponse> {
+        const params = new HttpParams().set('tipo', tipo);
+        return this.http.get<ValorPorCategoriaResponse>(`${this.siteURL}/inventarios/valor-por-categoria/`, { params }).pipe(
+            catchError((error) => {
+                console.error(error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    fetchResumenTienda(): Observable<ResumenTiendaResponse> {
+        return this.http.get<ResumenTiendaResponse>(`${this.siteURL}/inventarios/resumen-tienda/`).pipe(
             catchError((error) => {
                 console.error(error);
                 return throwError(() => error);

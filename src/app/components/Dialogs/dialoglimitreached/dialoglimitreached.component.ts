@@ -4,7 +4,7 @@ import { TuiButton, TuiDialogContext } from '@taiga-ui/core';
 import { injectContext } from '@taiga-ui/polymorpheus';
 
 export interface LimiteAlcanzadoData {
-  tipo: 'Boleta' | 'Factura' | 'Producto' | 'Personal';
+  tipo: 'Boleta' | 'Factura' | 'Producto' | 'Accesorio' | 'Personal';
   usados: number;
   limite: number;
   diasRestantes: number | null;
@@ -30,6 +30,7 @@ export class DialoglimitreachedComponent {
       case 'Boleta': return 'boleta';
       case 'Factura': return 'factura';
       case 'Producto': return 'productos';
+      case 'Accesorio': return 'accesorios';
       case 'Personal': return 'personal';
     }
   }
@@ -39,6 +40,7 @@ export class DialoglimitreachedComponent {
       case 'Boleta': return 'boletas del mes';
       case 'Factura': return 'facturas del mes';
       case 'Producto': return 'productos';
+      case 'Accesorio': return 'accesorios';
       case 'Personal': return 'personal';
     }
   }
@@ -50,6 +52,7 @@ export class DialoglimitreachedComponent {
   get accionLabel(): string {
     switch (this.data.tipo) {
       case 'Producto': return 'seguir creando productos';
+      case 'Accesorio': return 'seguir creando accesorios';
       case 'Personal': return 'seguir agregando personal';
       default: return 'seguir emitiendo';
     }

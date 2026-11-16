@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { catchError, exhaustMap, map, of, switchMap } from 'rxjs';
 
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
+import { serverErrorMsg } from '@/app/services/utils/server-error';
 import { GuiaRemisionService } from '@/app/services/guia-remision.service';
 import {
     cargarGuias,
@@ -124,7 +125,7 @@ export class GuiaRemisionEffects {
                         return anularGuiaExito({ guia: response });
                     }),
                     catchError((error) => {
-                        this.alertService.showError('Error al anular la guía de remisión', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al anular la guía de remisión'), 'Error').subscribe();
                         return of(anularGuiaError({ error }));
                     })
                 )

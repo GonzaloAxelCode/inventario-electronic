@@ -1,4 +1,4 @@
-import { DistribucionStock, Inventario, InventarioCreate, RangoPrecio, TopCategoriaCompra, ValorizacionCategoria } from '@/app/models/inventario.models';
+import { DistribucionStock, Inventario, InventarioCreate, RangoPrecio, TopProductoCompra, ValorCategoria } from '@/app/models/inventario.models';
 import { QuerySearchInventario } from '@/app/services/inventario.service';
 import { createAction, props } from '@ngrx/store';
 import { InventarioLowStock } from '../reducers/inventario.reducer';
@@ -45,13 +45,13 @@ export enum InventarioActionTypes {
     LOAD_POR_RANGO_PRECIOS_SUCCESS = '[Inventario] Load Por Rango Precios Success',
     LOAD_POR_RANGO_PRECIOS_FAIL = '[Inventario] Load Por Rango Precios Fail',
 
-    LOAD_VALORIZACION = '[Inventario] Load Valorizacion',
-    LOAD_VALORIZACION_SUCCESS = '[Inventario] Load Valorizacion Success',
-    LOAD_VALORIZACION_FAIL = '[Inventario] Load Valorizacion Fail',
+    LOAD_TOP_PRODUCTOS_COMPRA = '[Inventario] Load Top Productos Compra',
+    LOAD_TOP_PRODUCTOS_COMPRA_SUCCESS = '[Inventario] Load Top Productos Compra Success',
+    LOAD_TOP_PRODUCTOS_COMPRA_FAIL = '[Inventario] Load Top Productos Compra Fail',
 
-    LOAD_TOP_CATEGORIAS_COMPRA = '[Inventario] Load Top Categorias Compra',
-    LOAD_TOP_CATEGORIAS_COMPRA_SUCCESS = '[Inventario] Load Top Categorias Compra Success',
-    LOAD_TOP_CATEGORIAS_COMPRA_FAIL = '[Inventario] Load Top Categorias Compra Fail',
+    LOAD_VALOR_CATEGORIA = '[Inventario] Load Valor Categoria',
+    LOAD_VALOR_CATEGORIA_SUCCESS = '[Inventario] Load Valor Categoria Success',
+    LOAD_VALOR_CATEGORIA_FAIL = '[Inventario] Load Valor Categoria Fail',
 
 
 }
@@ -201,26 +201,28 @@ export const loadDistribucionStockFail = createAction(
     props<{ error: any }>()
 );
 
-export const loadValorizacion = createAction(
-    InventarioActionTypes.LOAD_VALORIZACION
+export const loadTopProductosCompra = createAction(
+    InventarioActionTypes.LOAD_TOP_PRODUCTOS_COMPRA,
+    props<{ tipo?: 'compra' | 'venta' }>()
 );
-export const loadValorizacionSuccess = createAction(
-    InventarioActionTypes.LOAD_VALORIZACION_SUCCESS,
-    props<{ valorizacion: ValorizacionCategoria[] }>()
+export const loadTopProductosCompraSuccess = createAction(
+    InventarioActionTypes.LOAD_TOP_PRODUCTOS_COMPRA_SUCCESS,
+    props<{ topProductos: TopProductoCompra[] }>()
 );
-export const loadValorizacionFail = createAction(
-    InventarioActionTypes.LOAD_VALORIZACION_FAIL,
+export const loadTopProductosCompraFail = createAction(
+    InventarioActionTypes.LOAD_TOP_PRODUCTOS_COMPRA_FAIL,
     props<{ error: any }>()
 );
 
-export const loadTopCategoriasCompra = createAction(
-    InventarioActionTypes.LOAD_TOP_CATEGORIAS_COMPRA
+export const loadValorCategoria = createAction(
+    InventarioActionTypes.LOAD_VALOR_CATEGORIA,
+    props<{ tipo?: 'compra' | 'venta' }>()
 );
-export const loadTopCategoriasCompraSuccess = createAction(
-    InventarioActionTypes.LOAD_TOP_CATEGORIAS_COMPRA_SUCCESS,
-    props<{ topCategorias: TopCategoriaCompra[] }>()
+export const loadValorCategoriaSuccess = createAction(
+    InventarioActionTypes.LOAD_VALOR_CATEGORIA_SUCCESS,
+    props<{ valorCategoria: ValorCategoria[] }>()
 );
-export const loadTopCategoriasCompraFail = createAction(
-    InventarioActionTypes.LOAD_TOP_CATEGORIAS_COMPRA_FAIL,
+export const loadValorCategoriaFail = createAction(
+    InventarioActionTypes.LOAD_VALOR_CATEGORIA_FAIL,
     props<{ error: any }>()
 );

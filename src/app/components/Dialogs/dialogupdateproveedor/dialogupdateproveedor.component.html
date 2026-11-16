@@ -23,14 +23,7 @@
         </tui-input>
       </div>
     </div>
-<div *ngIf="!(userPermissions$ | async)?.can_update_proveedor" class="w-full col-span-2">
-      
-       <span class="text-yellow-400">* Permisos insuficientes para editar un proveedor </span>
-
-    </div>
-
-
-    <div *ngIf="(userPermissions$ | async)?.can_update_proveedor" class="my-3 flex flex-col-reverse sm:flex-row gap-2">
+    <div class="my-3 flex flex-col-reverse sm:flex-row gap-2">
       <button type="button" (click)="onCloseDialog()"
         class="flex-1 rounded-full border border-black/10 dark:border-white/15 bg-transparent px-6 py-2 text-sm font-semibold text-neutral-700 dark:text-neutral-200 transition hover:bg-neutral-100 dark:hover:bg-white/10 active:scale-[0.98]">
         Cancelar

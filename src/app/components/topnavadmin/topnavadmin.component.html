@@ -1,6 +1,6 @@
 <!-- Admin TopNav — Apple sin fondos, como navtop de app -->
 <div class="relative flex flex-col h-screen w-full overflow-hidden">
-  <header class="topnav-header bg-white/80 dark:bg-[#1c1c1e]/80 backdrop-blur border-b border-black/[0.08] dark:border-white/[0.08] sticky top-0 z-40">
+  <header class="topnav-header bg-white/85 dark:bg-neutral-900/85 backdrop-blur border-b border-black/[0.08] dark:border-white/15 sticky top-0 z-40">
     <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-[64px] flex items-center justify-between gap-4">
       <!-- Logo — App LOGOS 2000x2000 + slogan -->
       <a routerLink="/admin" class="flex flex-col items-start gap-0.5 shrink-0">
@@ -41,8 +41,8 @@
             </div>
             <svg class="w-3 h-3 text-[#86868b]" [class.rotate-180]="userMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
-          <div *ngIf="userMenuOpen" class="user-dropdown bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
-            <app-user-menu-dropdown [user]="user" [tienda]="tienda" (closed)="userMenuOpen = false"></app-user-menu-dropdown>
+          <div *ngIf="userMenuOpen" class="user-dropdown bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-white/15">
+            <app-user-menu-dropdown [user]="user" [tienda]="tienda" [adminMode]="true" (closed)="userMenuOpen = false"></app-user-menu-dropdown>
           </div>
         </div>
 
@@ -54,26 +54,14 @@
           <button (click)="toggleMobileMenu(); $event.stopPropagation()" class="w-8 h-8 rounded-full bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center">
             <svg class="w-5 h-5 text-[#1d1d1f] dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
-          <div *ngIf="mobileMenuOpen" class="absolute right-0 mt-2 w-64 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#1c1c1e] shadow-xl overflow-hidden z-50">
-            <div class="p-4 flex gap-3 border-b border-black/[0.06] dark:border-white/[0.06]">
-              <div class="w-9 h-9 rounded-full bg-black/[0.06] flex items-center justify-center text-[12px] font-semibold">{{ user?.first_name?.charAt(0) || 'U' }}</div>
-              <div>
-                <p class="text-[13px] font-semibold">{{ user?.first_name }} {{ user?.last_name }}</p>
-                <p class="text-[11px] text-[#86868b]">{{ user?.username }}</p>
-              </div>
-            </div>
-            <nav class="p-2 space-y-1">
-              <a routerLink="/admin" (click)="closeMobileMenu()" class="block px-3 py-2.5 rounded-xl text-[13px] font-medium hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">Inicio</a>
-              <a routerLink="/admin/store" (click)="closeMobileMenu()" class="block px-3 py-2.5 rounded-xl text-[13px] font-medium hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">{{ isSuperUser ? 'Tiendas' : 'Mis sucursales' }}</a>
-              <a *ngIf="isSuperUser" routerLink="/admin/planes" (click)="closeMobileMenu()" class="block px-3 py-2.5 rounded-xl text-[13px] font-medium hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">Suscripciones</a>
+          <div *ngIf="mobileMenuOpen" class="mobile-dropdown-animated absolute right-0 mt-2 w-72 rounded-2xl border border-black/[0.08] dark:border-white/15 bg-white dark:bg-neutral-800 shadow-2xl overflow-hidden z-50 p-2">
+            <nav class="p-1 space-y-1">
+              <a routerLink="/admin" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="nav-link-active" (click)="closeMobileMenu()" class="mobile-nav-link block px-3 py-2 rounded-xl text-[13px] font-medium text-neutral-800 dark:text-neutral-100 hover:bg-black/[0.04] dark:hover:bg-white/10">Inicio</a>
+              <a routerLink="/admin/store" routerLinkActive="nav-link-active" (click)="closeMobileMenu()" class="mobile-nav-link block px-3 py-2 rounded-xl text-[13px] font-medium text-neutral-800 dark:text-neutral-100 hover:bg-black/[0.04] dark:hover:bg-white/10">{{ isSuperUser ? 'Tiendas' : 'Mis sucursales' }}</a>
+              <a *ngIf="isSuperUser" routerLink="/admin/planes" routerLinkActive="nav-link-active" (click)="closeMobileMenu()" class="mobile-nav-link block px-3 py-2 rounded-xl text-[13px] font-medium text-neutral-800 dark:text-neutral-100 hover:bg-black/[0.04] dark:hover:bg-white/10">Suscripciones</a>
             </nav>
-            <div class="h-px dropdown-divider bg-black/[0.06] dark:bg-white/[0.06]"></div>
-            <button (click)="toggleTheme($event)" class="w-full flex items-center gap-2 px-4 py-2.5 text-[13px] text-[#1d1d1f] dark:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06]">
-              <app-darkmode></app-darkmode>
-              <span>Tema</span>
-            </button>
-            <div class="h-px dropdown-divider bg-black/[0.06] dark:bg-white/[0.06]"></div>
-            <button (click)="logout2()" class="w-full text-left px-4 py-3 text-[13px] text-[#ff3b30]">Cerrar Sesión</button>
+            <div class="h-px dropdown-divider bg-black/[0.06] dark:bg-white/15 my-1"></div>
+            <app-user-menu-dropdown [user]="user" [tienda]="tienda" [adminMode]="true" (closed)="closeMobileMenu()"></app-user-menu-dropdown>
           </div>
         </div>
       </div>

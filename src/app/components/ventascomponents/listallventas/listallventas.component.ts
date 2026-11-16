@@ -83,6 +83,26 @@ export class ListallventasComponent {
   }
 
   private __productosCache = new WeakMap<any, any[]>();
+  metodoKey(venta: any): string {
+    return String((venta as any)?.metodo_pago || '').trim().toUpperCase();
+  }
+  esYape(venta: any): boolean {
+    return this.metodoKey(venta) === 'YAPE';
+  }
+  esEfectivo(venta: any): boolean {
+    return this.metodoKey(venta) === 'EFECTIVO' || !this.metodoKey(venta);
+  }
+  productoImagen(prod: any): string | null {
+    const raw = prod?.imagen || prod?.img_url || prod?.producto_imagen || null;
+    if (!raw) return null;
+    const s = String(raw).trim();
+    if (!s) return null;
+    if (s.startsWith('data:')) return s;
+    const mediaIdx = s.indexOf('/media/');
+    if (mediaIdx >= 0) return URL_BASE + s.slice(mediaIdx);
+    if (s.startsWith('http')) return s;
+    return URL_BASE + (s.startsWith('/') ? s : '/' + s);
+  }
   getProductos(venta: any): any[] {
     if (!venta) return [];
     if (this.__productosCache.has(venta)) return this.__productosCache.get(venta)!;
@@ -215,13 +235,12 @@ export class ListallventasComponent {
 
   protected readonly form = new FormGroup({
 
-    nombre_cliente: new FormControl(""),
+    buscar_cliente: new FormControl(""),
     metodo_pago: new FormControl("Todos"),
     tipo_comprobante: new FormControl("Todos"),
     tipo_venta: new FormControl("Todos"),
     numero_comprobante: new FormControl(""),
     serie: new FormControl(""),
-    numero_documento_cliente: new FormControl(""),
     tipo_documento_cliente: new FormControl(""),
     estado_sunat: new FormControl(""),
   });
@@ -240,7 +259,16 @@ export class ListallventasComponent {
 
 
   clearSearch() {
-    this.form.reset();
+    this.form.reset({
+      buscar_cliente: '',
+      metodo_pago: 'Todos',
+      tipo_comprobante: 'Todos',
+      tipo_venta: 'Todos',
+      numero_comprobante: '',
+      serie: '',
+      tipo_documento_cliente: '',
+      estado_sunat: '',
+    });
     this.store.dispatch(clearVentaSearch());
 
     const initialRange = this.range;
@@ -261,8 +289,7 @@ export class ListallventasComponent {
       metodo_pago: val(this.form.value.metodo_pago),
       tipo_comprobante: val(this.form.value.tipo_comprobante),
       tipo_venta: val(this.form.value.tipo_venta),
-      nombre_cliente: val(this.form.value.nombre_cliente),
-      numero_documento_cliente: val(this.form.value.numero_documento_cliente),
+      buscar_cliente: val(this.form.value.buscar_cliente),
       numero_comprobante: val(this.form.value.numero_comprobante),
       estado_sunat: val(this.form.value.estado_sunat),
     };
@@ -303,8 +330,7 @@ export class ListallventasComponent {
           metodo_pago: val(this.form.value.metodo_pago),
           tipo_comprobante: val(this.form.value.tipo_comprobante),
           tipo_venta: val(this.form.value.tipo_venta),
-          nombre_cliente: val(this.form.value.nombre_cliente),
-          numero_documento_cliente: val(this.form.value.numero_documento_cliente),
+          buscar_cliente: val(this.form.value.buscar_cliente),
           numero_comprobante: val(this.form.value.numero_comprobante),
           estado_sunat: val(this.form.value.estado_sunat),
         };

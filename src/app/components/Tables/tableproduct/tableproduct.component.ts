@@ -11,10 +11,11 @@ import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton, TuiDialog, TuiDialogService, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiChip, TuiConfirmService, TuiDataListWrapper, TuiPagination, TuiPreview, TuiPreviewDialogDirective, TuiPreviewTitle, TuiRadio } from '@taiga-ui/kit';
-import { map, Observable, take } from 'rxjs';
+import { debounceTime, map, Observable, take } from 'rxjs';
 
 import { Categoria } from '@/app/models/categoria.models';
 import { DialogCreateInventarioService } from '@/app/services/dialogs-services/dialog-create-inventario.service';
+import { DialogSelectCategoriaService } from '@/app/services/dialogs-services/dialog-select-categoria.service';
 import { DialogCreateProductService } from '@/app/services/dialogs-services/dialog-create-product.service';
 import { DialogLimiteAlcanzadoService } from '@/app/services/dialogs-services/dialog-limite-alcanzado.service';
 import { TiendaService } from '@/app/services/tienda.service';
@@ -68,7 +69,7 @@ export class TableproductComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChildren('barcodeImg') barcodeImgs!: QueryList<ElementRef<HTMLImageElement>>;
 
-  protected titles = ["Producto Sin Imagen"]
+  protected titles = ["Accesorio Sin Imagen"]
   protected content = ['https://st2.depositphotos.com/1561359/12101/v/950/depositphotos_121012076-stock-illustration-blank-photo-icon.jpg']
   productosState$?: Observable<ProductoState>;
   userPermissions$ = this.store.select(selectPermissions);
@@ -179,12 +180,23 @@ export class TableproductComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const placeholder = "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png";
 
-    const imagenFinal = producto?.imagen
-      ? URL_BASE + producto.imagen
-      : placeholder;
+    const imagenFinal = this.imgProducto(producto) || placeholder;
 
-    this.titles = [producto.nombre || "Producto Sin Nombre"];
+    this.titles = [producto.nombre || "Accesorio Sin Nombre"];
     this.content = [imagenFinal];
+  }
+
+  /** URL de imagen normalizada: respeta absolutas, reconstruye /media/ contra el backend actual. */
+  imgProducto(prod: any): string | null {
+    const raw = prod?.imagen;
+    if (!raw) return null;
+    const s = String(raw).trim();
+    if (!s) return null;
+    if (s.startsWith('data:')) return s;
+    const mediaIdx = s.indexOf('/media/');
+    if (mediaIdx >= 0) return URL_BASE + s.slice(mediaIdx);
+    if (s.startsWith('http')) return s;
+    return URL_BASE + (s.startsWith('/') ? s : '/' + s);
   }
   getColorClass(cantidad: number): string {
     if (cantidad >= 0 && cantidad <= 3) {
@@ -208,6 +220,8 @@ export class TableproductComponent implements OnInit, AfterViewInit, OnDestroy {
     this.store.select(selectProductoState).subscribe((state) => {
       this.productos = state.productos
     })
+    // Búsqueda en vivo: un solo input filtra nombre y código
+    this.form.valueChanges.pipe(debounceTime(400)).subscribe(() => this.onSubmitSearch());
     // Límites del plan: si se alcanzó el de productos, crear abre el modal de límite
     this.store.select(selectUsersState).subscribe((userState) => {
       const user: any = userState.user;
@@ -250,12 +264,44 @@ export class TableproductComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filteredData = []
   }
 
+  /** Filtro externo (chips del padre): escribe en el mismo form para no duplicar búsquedas. */
+  filtrarPorCategoria(categoria: any): void {
+    this.form.get('categoria')?.setValue(categoria ?? null);
+  }
+
+  /** Modal Taiga con buscador para el filtro de categoría (muchas predefinidas). */
+  categoriaModalOpen = false;
+
+  categoriaNombreSeleccionada(): string {
+    const sel = this.form.value?.categoria;
+    return sel?.nombre || 'Categoría: Todas';
+  }
+
+  private readonly dialogSelectCategoria = inject(DialogSelectCategoriaService);
+
+  abrirModalCategorias(): void {
+    this.store.select(selectCategoria).pipe(take(1)).subscribe((state: CategoriaState) => {
+      const lista = state?.categorias ?? [];
+      this.dialogSelectCategoria.open(lista, this.form.value?.categoria?.id ?? null).subscribe((res) => {
+        if (res === undefined) return;
+        this.form.get('categoria')?.setValue(res ?? null);
+      });
+    });
+  }
+
   onSubmitSearch() {
 
+    const texto = (this.form.value.nombre || "").trim();
+    // Input único: busca por nombre o SKU a la vez (el backend lo resuelve con `q`)
     const searchQuery: Partial<QuerySearchProduct> = {
-      nombre: (this.form.value.nombre || "").trim(),
+      nombre: '',
+      q: texto,
       categoria: this.form.value?.categoria?.id || 0,
-      sku: (this.form.value.sku || "").trim(),
+      sku: '',
+    }
+    if (!texto && !this.form.value?.categoria) {
+      this.clearSearch();
+      return;
     }
     this.store.dispatch(searchProductosAction({ query: searchQuery, page_size: PAGE_SIZE_PRODUCTS, page: 1 }))
 
@@ -263,7 +309,7 @@ export class TableproductComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected onDeleteProducto(id: any): void {
     const data: TuiConfirmData = {
-      content: '¿Estás seguro de que deseas eliminar este producto?',
+      content: '¿Estás seguro de que deseas eliminar este accesorio?',
       yes: 'Eliminar',
       no: 'Cancelar',
     };
@@ -311,7 +357,7 @@ export class TableproductComponent implements OnInit, AfterViewInit, OnDestroy {
   protected showDialogCreateProduct(): void {
     if (this.limiteProductosAlcanzado()) {
       this.dialogLimiteAlcanzado.open({
-        tipo: 'Producto',
+        tipo: 'Accesorio',
         usados: this.usoProductos,
         limite: Number(this.planLimiteProductos),
         diasRestantes: null,
@@ -344,9 +390,10 @@ export class TableproductComponent implements OnInit, AfterViewInit, OnDestroy {
         }))
       } else {
         const searchQuery: Partial<QuerySearchProduct> = {
-          nombre: (this.form.value.nombre || "").trim(),
+          nombre: '',
+          q: (this.form.value.nombre || "").trim(),
           categoria: this.form.value?.categoria?.id || 0,
-          sku: (this.form.value.sku || "").trim(),
+          sku: '',
         };
         this.store.dispatch(searchProductosAction({ query: searchQuery, page: index + 1, page_size: PAGE_SIZE_PRODUCTS }));
       }

@@ -1,13 +1,15 @@
 import { Categoria } from '@/app/models/categoria.models';
 import { DialogCreateCategoriaService } from '@/app/services/dialogs-services/dialog-create-categoria.service';
 import { DialogUpdateCategoriaService } from '@/app/services/dialogs-services/dialog-updatecategoria.service';
-import { deleteCategoriaAction } from '@/app/state/actions/categoria.actions';
+import { CategoriaService } from '@/app/services/categoria.service';
+import { deleteCategoriaAction, loadCategorias } from '@/app/state/actions/categoria.actions';
 import { AppState } from '@/app/state/app.state';
 import { CategoriaState } from '@/app/state/reducers/categoria.reducer';
 import { selectCategoria } from '@/app/state/selectors/categoria.selectors';
+import { selectCurrenttUser } from '@/app/state/selectors/user.selectors';
 import { selectPermissions } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
@@ -15,7 +17,8 @@ import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAlertService, TuiAppearance, TuiButton, TuiLoader } from '@taiga-ui/core';
 import { TUI_CONFIRM, TuiBadge, TuiChip, TuiConfirmData, TuiRadio, TuiSkeleton } from '@taiga-ui/kit';
 import { TuiBlockStatus } from '@taiga-ui/layout';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
+import { serverErrorMsg } from '@/app/services/utils/server-error';
 @Component({
   selector: 'app-tablecategories',
   standalone: true,
@@ -29,7 +32,11 @@ import { Observable } from 'rxjs';
   templateUrl: './tablecategories.component.html',
   styleUrl: './tablecategories.component.scss'
 })
-export class TablecategoriesComponent implements OnInit {
+export class TablecategoriesComponent implements OnInit, OnChanges {
+  /** Tienda a mostrar (admin viendo otro store). Sin valor: la del usuario. */
+  @Input() tiendaId?: number | string;
+  /** Solo el superusuario ve "Agregar/Vaciar predefinidas". */
+  isSuperUser$ = this.store.select(selectCurrenttUser).pipe(map((u: any) => !!u?.is_superuser));
   selectCategorias$?: Observable<CategoriaState>
   userPermissions$ = this.store.select(selectPermissions);
   allColumns = [
@@ -42,6 +49,7 @@ export class TablecategoriesComponent implements OnInit {
   displayedColumns = [...this.allColumnKeys];
 
   searchTerm = '';
+  filtroTipo: '' | 'REPUESTO' | 'ACCESORIO' = '';
 
   private readonly catPalette = [
     '#007AFF', '#34C759', '#FF9500', '#FF3B30', '#AF52DE',
@@ -70,13 +78,28 @@ export class TablecategoriesComponent implements OnInit {
 
   ngOnInit() {
     this.selectCategorias$ = this.store.select(selectCategoria);
+    this.recargar();
+  }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['tiendaId'] && !changes['tiendaId'].firstChange) this.recargar();
+  }
+
+  /** Recarga respetando la tienda vista (todas: REPUESTO + ACCESORIO). */
+  private recargar() {
+    if (this.tiendaId !== undefined && this.tiendaId !== null && this.tiendaId !== '') {
+      this.store.dispatch(loadCategorias({ tipo: 'TODO', tienda: this.tiendaId }));
+    } else {
+      this.store.dispatch(loadCategorias({ tipo: 'TODO' }));
+    }
   }
 
   filtrarCategorias(categorias: Categoria[]): Categoria[] {
-    if (!this.searchTerm.trim()) return categorias;
+    let list = categorias;
+    if (this.filtroTipo) list = list.filter(c => (c.tipo || '').toUpperCase() === this.filtroTipo);
+    if (!this.searchTerm.trim()) return list;
     const term = this.searchTerm.toLowerCase();
-    return categorias.filter(c =>
+    return list.filter(c =>
       c.nombre?.toLowerCase().includes(term)
     );
   }
@@ -111,14 +134,66 @@ export class TablecategoriesComponent implements OnInit {
   }
   private readonly dialogService = inject(DialogUpdateCategoriaService);
   protected showDialogUpdate(categoria: Categoria): void {
+    if (categoria.update_enable === false) return;
     this.dialogService.open(categoria).subscribe((result: any) => {
-
+      if (result) this.recargar();
     });
   }
   private readonly dialogCreateCategoriaService = inject(DialogCreateCategoriaService);
   protected showDialogCreateCategoria(): void {
-    this.dialogCreateCategoriaService.open().subscribe((result: any) => {
-
+    this.dialogCreateCategoriaService.open(this.tiendaId ?? undefined).subscribe((result: any) => {
+      if (result) this.recargar();
     });
+  }
+
+  private readonly categoriaService = inject(CategoriaService);
+  seedLoading = false;
+
+  /** Carga las 60 predefinidas (idempotente: omite las que ya existen). */
+  protected cargarPredefinidas(): void {
+    if (this.seedLoading) return;
+    this.seedLoading = true;
+    this.categoriaService.seedAccesorios(this.tiendaId ?? undefined).subscribe({
+      next: (res) => {
+        this.seedLoading = false;
+        this.alerts.open(`Listo: ${res.creadas ?? 0} creadas, ${res.omitidas ?? 0} ya existían.`).subscribe();
+        this.recargar();
+      },
+      error: (err) => {
+        this.seedLoading = false;
+        this.alerts.open(serverErrorMsg(err, 'No se pudieron cargar las predefinidas.')).subscribe();
+      },
+    });
+  }
+
+  /** Vacía solo las predefinidas (borrado permanente). */
+  protected vaciarPredefinidas(): void {
+    const data: TuiConfirmData = {
+      content: 'Se eliminarán permanentemente las categorías predefinidas del sistema. Las tuyas no se tocan. ¿Continuar?',
+      yes: 'Vaciar',
+      no: 'Cancelar',
+    };
+
+    this.dialogs
+      .open<boolean>(TUI_CONFIRM, {
+        label: 'Vaciar predefinidas',
+        size: 's',
+        data,
+      })
+      .subscribe((confirm) => {
+        if (!confirm || this.seedLoading) return;
+        this.seedLoading = true;
+        this.categoriaService.deleteSeedAccesorios(this.tiendaId ?? undefined).subscribe({
+          next: (res) => {
+            this.seedLoading = false;
+            this.alerts.open(`Listo: ${res.eliminadas ?? 0} predefinidas eliminadas.`).subscribe();
+            this.recargar();
+          },
+          error: (err) => {
+            this.seedLoading = false;
+            this.alerts.open(serverErrorMsg(err, 'No se pudieron vaciar las predefinidas.')).subscribe();
+          },
+        });
+      });
   }
 }

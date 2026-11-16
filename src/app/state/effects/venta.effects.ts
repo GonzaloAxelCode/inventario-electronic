@@ -7,6 +7,7 @@ import { catchError, exhaustMap, map, mergeMap, of } from 'rxjs';
 
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
+import { serverErrorMsg } from '@/app/services/utils/server-error';
 import { VentaService } from '@/app/services/venta.service';
 import { forceSyncClientes } from '../actions/cliente.actions';
 import { forceSyncInventarios } from '../actions/inventario.actions';
@@ -117,7 +118,7 @@ export class VentaEffects {
                     }),
                     catchError(error => {
                         // Si ocurre un error, se maneja con la acción de error
-                        this.alertService.showError('Error al obtener el resumen de ventas', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al obtener el resumen de ventas'), 'Error').subscribe();
                         return of(cargarResumenVentasByDateError({ error }));
                     })
                 )
@@ -216,8 +217,12 @@ export class VentaEffects {
                     }),
 
                     catchError(error => {
+                        const body = error?.error;
+                        const detalle = typeof body === 'string'
+                            ? body
+                            : (body?.detalle || body?.error || body?.message || 'Error al crear la venta');
                         this.alertService
-                            .showError('Error al crear la venta', 'Error')
+                            .showError(detalle, 'Error al crear la venta')
                             .subscribe();
 
                         return of(crearVentaError({ error }));
@@ -237,7 +242,7 @@ export class VentaEffects {
                         return cancelarVentaExito({ ventaId });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al cancelar la venta', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al cancelar la venta'), 'Error').subscribe();
                         return of(cancelarVentaError({ error }));
                     })
                 )
@@ -290,6 +295,7 @@ export class VentaEffects {
                             this.dialogServiceVentaDetail
                                 .open({
                                     ...venta,
+                                    estado: 'ANULADA',
                                     comprobante_nota_credito: response.comprobante_nota_credito
                                 })
                                 .subscribe();
@@ -306,7 +312,7 @@ export class VentaEffects {
 
                         catchError(error => {
                             this.alertService
-                                .showError('No se pudo anular la venta', 'Error')
+                                .showError(serverErrorMsg(error, 'No se pudo anular la venta'), 'Error')
                                 .subscribe();
 
                             return of(anularVentaError({ error }));
@@ -328,7 +334,7 @@ export class VentaEffects {
                         return generarComprobanteVentaExito({ venta });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al generar el comprobante', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al generar el comprobante'), 'Error').subscribe();
                         return of(generarComprobanteVentaError({ error }));
                     })
                 )

@@ -154,6 +154,15 @@ export class TableUsersComponent implements OnInit {
     return !!user && !!(user as any).is_deleted;
   }
 
+  /** Etiqueta de rol por fila: Admin Tienda (propietario) o Empleado. */
+  rolDe(user: User): 'Admin Tienda' | 'Empleado' | null {
+    const u: any = user as any;
+    if (!u) return null;
+    if (u.rol === 'admin_tienda' || u.es_propietario === true) return 'Admin Tienda';
+    if (u.rol === 'empleado' || u.es_empleado === true) return 'Empleado';
+    return null;
+  }
+
   get filteredUsers(): User[] {
     if (!this.users) return [];
     if (!this.currentUser) return this.users;

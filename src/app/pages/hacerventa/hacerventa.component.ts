@@ -6,6 +6,7 @@ import { SelectclienteforsaleComponent } from "@/app/components/selectclientefor
 import { Cliente } from "@/app/models/cliente.models";
 import { Inventario } from '@/app/models/inventario.models';
 import { ConsultaService } from '@/app/services/consultas.service';
+import { CelularService } from '@/app/services/celular.service';
 import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { DialogLimiteAlcanzadoService } from '@/app/services/dialogs-services/dialog-limite-alcanzado.service';
 import { DialogVentaDetailService } from '@/app/services/dialogs-services/dialog-venta-detail.service';
@@ -14,6 +15,7 @@ import { normalizeSku } from "@/app/services/search-services/producto-search.ser
 import { URL_BASE } from "@/app/services/utils/endpoints";
 import { PAGE_SIZE_PEDIDOS } from '@/app/services/utils/pages-sizes';
 import { loadClientes } from "@/app/state/actions/cliente.actions";
+import { loadInventarios } from "@/app/state/actions/inventario.actions";
 import { crearVenta, crearVentaExito, crearVentaError } from "@/app/state/actions/venta.actions";
 import { cargarPedidos, eliminarPedido } from "@/app/state/actions/pedido.actions";
 import { actualizarPedido, pagarPedido } from "@/app/state/actions/pedido.actions";
@@ -161,6 +163,9 @@ export class HacerventaComponent implements OnInit, OnDestroy {
           productoId: prod.producto || prod.inventarioId,
           producto_nombre: prod.producto_nombre || 'Producto',
           producto_sku: prod.producto_sku || '',
+          es_celular: !!prod.es_celular,
+          celular_id: prod.celular_id ?? null,
+          imei1: prod.imei ?? prod.imei1 ?? null,
           imagen_producto: this.onSetImageProduct(prod.imagen || prod.imagen_producto),
           nombre_categoria: prod.nombre_categoria || '',
           cantidad: prod.cantidad,
@@ -322,11 +327,8 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
 
     if (!productoEncontrado) {
-      // Producto no encontrado
-      this.alerts.open('Producto no encontrado', {
-        label: `No se encontró un producto con el código: ${barcode} o esta desactivado.`,
-        appearance: "warning"
-      }).subscribe();
+      // No es accesorio: probar como IMEI de celular disponible
+      this.buscarCelularPorImei(barcode);
       return;
     }
 
@@ -343,6 +345,11 @@ export class HacerventaComponent implements OnInit, OnDestroy {
       );
 
       if (productoControl) {
+        // Los celulares se venden por unidad: no se incrementa cantidad
+        if (productoControl.get('es_celular')?.value) {
+          this.alerts.open('Mensaje informacion', { label: 'Este celular ya esta agregado (venta por IMEI único)', appearance: "warning" }).subscribe();
+          return;
+        }
         const cantidadActual = parseInt(productoControl.get('cantidad_final')?.value || '0');
         const costo_venta = parseInt(productoControl.get('costo_venta')?.value || '0');
         const stockDisponible = productoEncontrado.cantidad;
@@ -411,7 +418,68 @@ export class HacerventaComponent implements OnInit, OnDestroy {
     this.calcularTotales();
     this.cdr.markForCheck();
   }
-  constructor(private fb: FormBuilder, private consultaService: ConsultaService, private cdr: ChangeDetectorRef, private actions$: Actions) {
+
+  /** Escaneo de IMEI: agrega el celular disponible como item de venta única. */
+  buscarCelularPorImei(barcode: string) {
+    const imei = (barcode || '').trim();
+    this.celularService.list({ search: imei, disponible: 'true', page: 1, page_size: 5 }).subscribe({
+      next: (res: any) => {
+        const c = (res.results || []).find((x: any) => String(x.imei1).trim() === imei || String(x.imei2 || '').trim() === imei);
+        if (!c) {
+          this.alerts.open('Producto no encontrado', {
+            label: `No se encontró un producto con el código: ${imei} o esta desactivado.`,
+            appearance: "warning"
+          }).subscribe();
+          return;
+        }
+        const productosArray = this.ventaForm.get('productos') as FormArray;
+        if (productosArray.controls.some(control => control.get('inventarioId')?.value === `celular-${c.id}`)) {
+          this.alerts.open('Mensaje informacion', { label: 'Este celular ya esta agregado (venta por IMEI único)', appearance: "warning" }).subscribe();
+          return;
+        }
+        if (!(Number(c.precio_venta) > 0)) {
+          this.alerts.open('Celular sin precio', {
+            label: `El celular ${c.marca} ${c.modelo} no tiene precio de venta configurado.`,
+            appearance: "error"
+          }).subscribe();
+          return;
+        }
+        const nuevoCelular = this.fb.group({
+          inventarioId: [`celular-${c.id}`],
+          cantidad_final: ["1", [Validators.required]],
+          producto_nombre: [`${c.marca} ${c.modelo} · ${c.memoria} · IMEI ${c.imei1}`,],
+          nombre_categoria: ['Celulares'],
+          costo_venta: [c.precio_venta,],
+          productoId: [`celular-${c.id}`,],
+          stock_actual: [1],
+          producto_sku: [c.imei1],
+          imagen_producto: [c.imagen1 ? URL_BASE + c.imagen1 : "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png"],
+          descuento: [0],
+          costo_original: [c.precio_venta],
+          es_celular: [true],
+          celular_id: [c.id],
+          imei1: [c.imei1],
+        });
+        productosArray.push(nuevoCelular);
+        nuevoCelular.get('descuento')!.valueChanges.subscribe((desc: any) => {
+          this.actualizarCostoTotal(nuevoCelular, desc);
+        });
+        this.calcularTotales();
+        this.alerts.open('Celular agregado', {
+          label: `${c.marca} ${c.modelo} · IMEI ${c.imei1} agregado correctamente`,
+          appearance: "success"
+        }).subscribe();
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.alerts.open('Producto no encontrado', {
+          label: `No se encontró un producto con el código: ${imei}.`,
+          appearance: "warning"
+        }).subscribe();
+      }
+    });
+  }
+  constructor(private fb: FormBuilder, private consultaService: ConsultaService, private celularService: CelularService, private cdr: ChangeDetectorRef, private actions$: Actions) {
     const now = new Date();
     this.today = now.toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit' });
     this.currentTime = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -469,6 +537,7 @@ export class HacerventaComponent implements OnInit, OnDestroy {
   documents: string[] = []
   ngOnInit() {
     this.store.dispatch(loadClientes());
+    this.store.dispatch(loadInventarios());
 
     this.route.fragment.subscribe((fragment) => {
       if (fragment && this.isValidTab(fragment)) {
@@ -612,6 +681,9 @@ export class HacerventaComponent implements OnInit, OnDestroy {
           imagen_producto: [result.imagen_producto ? URL_BASE + result.imagen_producto : "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png"],
           descuento: [0],
           costo_original: [result.costo_venta],
+          es_celular: [!!result.es_celular],
+          celular_id: [result.celular_id ?? result.celularId ?? null],
+          imei1: [result.imei1 ?? null],
         });
 
 
@@ -819,6 +891,9 @@ export class HacerventaComponent implements OnInit, OnDestroy {
         stock_actual: [prod.stock_actual],
         descuento: [prod.descuento || 0],
         costo_original: [prod.costo_original],
+        es_celular: [!!prod.es_celular],
+        celular_id: [prod.celular_id ?? null],
+        imei1: [prod.imei ?? prod.imei1 ?? null],
       });
 
       this.productosFormArray.push(nuevoProducto);
@@ -1098,11 +1173,22 @@ export class HacerventaComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(crearVenta({ venta: preparedData }));
 
+    // Si la venta incluye un celular (equipo único por IMEI), vaciar el carrito al confirmarse.
+    const incluyeCelular = this.productosFormArray.controls.some(c =>
+      !!(c.get('es_celular')?.value || c.get('celular_id')?.value
+        || String(c.get('inventarioId')?.value || '').startsWith('celular-'))
+    );
+
     this.actions$.pipe(
       ofType(crearVentaExito),
       take(1),
       takeUntil(this.destroy$)
     ).subscribe(() => {
+      if (incluyeCelular) {
+        while (this.productosFormArray.length) {
+          this.productosFormArray.removeAt(0);
+        }
+      }
       this.borrarCliente();
       this.calcularTotales();
     });

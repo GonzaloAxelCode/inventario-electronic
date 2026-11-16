@@ -92,13 +92,16 @@
                                             <!-- Cantidad -->
                                             <div>
                                                 <label class="text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1.5 block">Cantidad</label>
-                                                <tui-select formControlName="cantidad_final" class="w-full" tuiTextfieldSize="m">
+                                                <tui-select *ngIf="!item.get('es_celular')?.value" formControlName="cantidad_final" class="w-full" tuiTextfieldSize="m">
                                                     <tui-data-list *tuiDataList>
                                                         <button *ngFor="let cantidad of arrayCantidades" tuiOption type="button" [value]="cantidad" class="text-sm">
                                                             {{ cantidad }}
                                                         </button>
                                                     </tui-data-list>
                                                 </tui-select>
+                                                <p *ngIf="item.get('es_celular')?.value" class="text-sm font-semibold text-neutral-900 dark:text-white h-10 flex items-center">
+                                                    1 unidad <span class="ml-1.5 text-[11px] font-normal text-neutral-400">(IMEI único)</span>
+                                                </p>
                                             </div>
 
                                             <!-- Descuento -->

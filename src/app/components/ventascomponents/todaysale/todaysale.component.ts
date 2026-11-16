@@ -1,11 +1,13 @@
 
 
 import { ComprobanteElectronico, Venta } from '@/app/models/venta.models';
+import { tienePermiso } from '@/app/models/permissions.catalog';
 import { URL_BASE } from '@/app/services/utils/endpoints';
 import { anularVenta, generarComprobanteVenta, generarComprobanteVentaExito } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
+import { selectCurrenttUser } from '@/app/state/selectors/user.selectors';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -52,6 +54,8 @@ export class TodaysaleComponent {
   }
   loadingAnularVenta: boolean = false
   loadingGenerarComprobante: boolean = false
+  user$ = this.store.select(selectCurrenttUser);
+  tiene = tienePermiso;
   public productos_json = (()=>{ try{ const r=(this.venta as any)?.productos_json; return typeof r==='string'? JSON.parse(r ?? '[]') : (r || []);}catch{return []}})();
 
   get productosDetalle(): any[] {

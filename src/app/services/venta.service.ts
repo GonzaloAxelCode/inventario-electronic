@@ -1,15 +1,20 @@
 import { CreateVenta, Venta } from '@/app/models/venta.models';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ProductsSales } from '../state/reducers/venta.reducer';
 import { URL_BASE } from './utils/endpoints';
+import { REQUEST_TIMEOUT_MS } from './utils/http-timeout';
+
+/** SUNAT puede demorar: estas operaciones esperan hasta 90s antes de cancelarse. */
+const contextoSunat = () => ({ context: new HttpContext().set(REQUEST_TIMEOUT_MS, 90000) });
 
 export interface QuerySearchVenta {
     metodo_pago: string;
     tipo_comprobante: string;
     tipo_venta: string;
+    buscar_cliente: string;
     nombre_cliente: string;
     numero_documento_cliente: string;
     numero_comprobante: string;
@@ -56,6 +61,20 @@ export interface MetodosPagoRangoResponse {
     }[];
 }
 
+export interface TopVentaItem {
+    nombre: string;
+    cantidad_total_vendida: number;
+    unidades_vendidas?: number;
+    total_vendido?: number;
+    monto_total_vendido?: number;
+    imagen?: string | null;
+    tipo?: string;
+    producto_id?: number | null;
+    celular_id?: number | null;
+    imei?: string | null;
+    imei2?: string | null;
+}
+
 export interface TopProductosMesResponse {
     month: number;
     year: number;
@@ -64,6 +83,7 @@ export interface TopProductosMesResponse {
         producto_id: number;
         nombre: string;
         sku: string;
+        imagen?: string | null;
         total_unidades: number;
         total_ingresos: number;
     }[];
@@ -77,6 +97,8 @@ export interface TopCategoriasMesResponse {
         categoria_id: number;
         nombre: string;
         codigo: string;
+        imagen?: string | null;
+        imagenes?: string[];
         total_unidades: number;
         total_ingresos: number;
     }[];
@@ -180,6 +202,7 @@ export class VentaService {
                 metodo_pago: query.metodo_pago || "",
                 tipo_comprobante: query.tipo_comprobante || "",
                 tipo_venta: query.tipo_venta || "",
+                buscar_cliente: (query as any).buscar_cliente || query.nombre_cliente || query.numero_documento_cliente || "",
                 nombre_cliente: query.nombre_cliente || "",
                 numero_documento_cliente: query.numero_documento_cliente || "",
                 numero_comprobante: query.numero_comprobante || "",
@@ -195,7 +218,7 @@ export class VentaService {
         );
     }
     createVenta(venta: CreateVenta): Observable<Venta> {
-        return this.http.post<Venta>(`${this.siteURL}/sales/create/`, venta).pipe(
+        return this.http.post<Venta>(`${this.siteURL}/sales/create/`, venta, contextoSunat()).pipe(
             catchError(error => {
                 console.error('Error al crear la venta', error);
                 return throwError(error);
@@ -203,7 +226,7 @@ export class VentaService {
         );
     }
     createVentaPendiente(venta: CreateVenta): Observable<Venta> {
-        return this.http.post<Venta>(`${this.siteURL}/sales/create/pendiente/`, venta).pipe(
+        return this.http.post<Venta>(`${this.siteURL}/sales/create/pendiente/`, venta, contextoSunat()).pipe(
             catchError(error => {
                 console.error('Error al crear la venta', error);
                 return throwError(error);
@@ -211,7 +234,7 @@ export class VentaService {
         );
     }
     createVentaAnonima(venta: CreateVenta): Observable<Venta> {
-        return this.http.post<Venta>(`${this.siteURL}/sales/create/anonima/`, venta).pipe(
+        return this.http.post<Venta>(`${this.siteURL}/sales/create/anonima/`, venta, contextoSunat()).pipe(
             catchError(error => {
                 console.error('Error al crear la venta', error);
                 return throwError(error);
@@ -251,7 +274,8 @@ export class VentaService {
 
         return this.http.post<any>(
             `${this.siteURL}/nota-credito/registrar/`,
-            body
+            body,
+            contextoSunat()
         ).pipe(
             catchError(error => {
                 console.error('Error al anular la venta', error);
@@ -267,7 +291,8 @@ export class VentaService {
 
         return this.http.post<any>(
             `${this.siteURL}/ventas/generar-comprobante/`,
-            body
+            body,
+            contextoSunat()
         ).pipe(
             catchError(error => {
                 console.error('Error al generar el comprobante', error);
@@ -323,8 +348,8 @@ export class VentaService {
         );
     }
 
-    getTopProductsMonth(month: string): Observable<{ year: number; month: number; results: { nombre: string; cantidad_total_vendida: number; unidades_vendidas?: number; total_vendido?: number; monto_total_vendido?: number }[] }> {
-        return this.http.post<{ year: number; month: number; results: { nombre: string; cantidad_total_vendida: number; unidades_vendidas?: number; total_vendido?: number; monto_total_vendido?: number }[] }>(
+    getTopProductsMonth(month: string): Observable<{ year: number; month: number; results: TopVentaItem[]; accesorios?: TopVentaItem[]; celulares?: TopVentaItem[] }> {
+        return this.http.post<{ year: number; month: number; results: TopVentaItem[]; accesorios?: TopVentaItem[]; celulares?: TopVentaItem[] }>(
             `${this.siteURL}/sales/top-products-month/`,
             { month }
         ).pipe(

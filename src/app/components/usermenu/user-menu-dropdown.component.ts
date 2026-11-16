@@ -22,6 +22,10 @@ import { PlanbadgeComponent } from '../planbadge/planbadge.component';
 export class UserMenuDropdownComponent {
   @Input() user!: User;
   @Input() tienda!: Tienda;
+  /** En admin se ocultan "Mis Permisos" y "Temas y UI". */
+  @Input() adminMode = false;
+  /** En el menú hamburguesa del teléfono: solo usuario + plan + tema (sin links ni cerrar sesión). */
+  @Input() mobileMode = false;
   @Output() closed = new EventEmitter<void>();
 
   private router = inject(Router);

@@ -5,6 +5,7 @@ import { catchError, exhaustMap, map, mergeMap, of } from 'rxjs';
 import { ProductoService } from '@/app/services/producto.service';
 import { ProductoSearchService } from '@/app/services/search-services/producto-search.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
+import { serverErrorMsg } from '@/app/services/utils/server-error';
 import { forceSyncInventarios } from '../actions/inventario.actions';
 import {
     createProductoAction, createProductoFail, createProductoSuccess,
@@ -65,7 +66,7 @@ export class ProductoEffects {
                     mergeMap((res: any) => {
 
                         this.alertService
-                            .showSuccess('Producto creado exitosamente. Actualiza la tabla de productos.')
+                            .showSuccess('Accesorio creado exitosamente. Actualiza la tabla de accesorios.')
                             .subscribe();
                         return [
                             createProductoSuccess({ producto: res.producto }),
@@ -75,7 +76,7 @@ export class ProductoEffects {
                     catchError(error => {
 
                         this.alertService
-                            .showError('Error al crear el producto.')
+                            .showError(serverErrorMsg(error, 'Error al crear el accesorio.'))
                             .subscribe();
                         return of(createProductoFail({ error }));
                     })
@@ -92,7 +93,7 @@ export class ProductoEffects {
                     mergeMap((res: any) => {
 
                         this.alertService
-                            .showSuccess('Producto actualizado exitosamente. Actualiza la tabla de productos.')
+                            .showSuccess('Accesorio actualizado exitosamente. Actualiza la tabla de accesorios.')
                             .subscribe();
                         return [
                             updateProductoSuccess({ producto: res.producto }),
@@ -101,7 +102,7 @@ export class ProductoEffects {
                     }),
                     catchError(error => {
                         this.alertService
-                            .showError('Error al actualizar el producto')
+                            .showError(serverErrorMsg(error, 'Error al actualizar el accesorio'))
                             .subscribe();
 
                         return of(updateProductoFail({ error }));
@@ -131,7 +132,7 @@ export class ProductoEffects {
                     catchError(error => {
 
                         this.alertService
-                            .showError('Error al buscar los productos.')
+                            .showError(serverErrorMsg(error, 'Error al buscar los accesorios.'))
                             .subscribe();
                         return of(searchProductoFail({ error }));
                     })
@@ -151,14 +152,14 @@ export class ProductoEffects {
                     map(() => {
 
                         this.alertService
-                            .showSuccess('Producto desactivado.')
+                            .showSuccess('Accesorio desactivado.')
                             .subscribe();
                         return deleteProductoSuccess({ id });
                     }),
                     catchError(error => {
 
                         this.alertService
-                            .showError('Error al desactivar el producto.')
+                            .showError(serverErrorMsg(error, 'Error al desactivar el accesorio.'))
                             .subscribe();
                         return of(deleteProductoFail({ error }));
                     })

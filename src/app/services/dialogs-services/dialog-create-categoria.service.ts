@@ -10,12 +10,13 @@ import { Observable } from 'rxjs';
 export class DialogCreateCategoriaService {
     private readonly dialogService = inject(TuiDialogService);
 
-    open(): Observable<boolean> {
+    open(tiendaId?: number | string): Observable<boolean> {
         const component = new PolymorpheusComponent(DialogcreatecategoriaComponent);
         const options: Partial<TuiDialogOptions<any>> = {
             dismissible: true,
             size: "l",
             label: "Crear Nueva Categoria",
+            data: tiendaId !== undefined && tiendaId !== null && tiendaId !== '' ? { tiendaId } : undefined,
         };
 
         return this.dialogService.open(component, options);

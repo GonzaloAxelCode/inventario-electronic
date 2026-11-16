@@ -27,6 +27,22 @@
       </p>
     </div>
 
+    <!-- Tipo: accesorio o repuesto -->
+    <div class="flex flex-col col-span-2">
+      <label class="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tipo</label>
+      <select formControlName="tipo"
+        class="w-full px-3 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:focus:ring-blue-400/30 transition-all text-sm">
+        <option value="ACCESORIO">Accesorio</option>
+        <option value="REPUESTO">Repuesto</option>
+      </select>
+      <p *ngIf="categoryForm.get('tipo')?.invalid && categoryForm.get('tipo')?.touched" class="text-red-500 text-sm mt-1">
+        El tipo es obligatorio
+      </p>
+      <p *ngIf="(categoriaError$ | async)?.tipo?.[0]" class="text-red-500 text-sm mt-1">
+        {{ (categoriaError$ | async)?.tipo?.[0] }}
+      </p>
+    </div>
+
     <!-- Características -->
     <div class="flex flex-col col-span-2 gap-2">
       <h3 class="text-sm font-medium text-neutral-700 dark:text-neutral-300">Características</h3>
@@ -67,14 +83,8 @@
       </button>
     </div>
 
-<div *ngIf="!(userPermissions$ | async)?.can_create_category" class="w-full col-span-2">
-
-       <span class="text-yellow-400">* Permisos insuficientes para crear una categoria </span>
-
-    </div>
-
     <!-- Botón de envío -->
-    <div  *ngIf="(userPermissions$ | async)?.can_create_category" class="col-span-2 w-full">
+    <div class="col-span-2 w-full">
       <button tuiButton iconStart="@tui.plus" appearance="textfield" type="submit" [disabled]="categoryForm.invalid || !!(loadingCreateCategoria$ | async)" class="px-6 py-2  text-white  transition">
         Guardar Categoría
         <tui-loader [showLoader]="!!(loadingCreateCategoria$ | async)"></tui-loader>

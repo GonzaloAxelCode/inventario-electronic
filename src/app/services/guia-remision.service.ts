@@ -1,9 +1,10 @@
 import { CreateGuiaPayload, GuiaRemisionRemitente, GuiaSearchPayload, GuiaSearchResponse } from '@/app/models/guia-remision.models';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, timeout } from 'rxjs/operators';
 import { URL_BASE } from './utils/endpoints';
+import { REQUEST_TIMEOUT_MS } from './utils/http-timeout';
 
 @Injectable({
     providedIn: 'root',
@@ -96,12 +97,12 @@ export class GuiaRemisionService {
         );
     }
 
-    /** Crear guía. Con "enviar": true la manda a SUNAT de una vez. */
+    /** Crear guía. Con "enviar": true la manda a SUNAT de una vez (hasta 90s). */
     crearGuia(guia: CreateGuiaPayload | any): Observable<any> {
         // La tienda/usuario los resuelve el backend desde el token: nunca se envían.
         const { tienda, tienda_id, tiendaId, usuario, usuarioId, usuario_id, ...payload } = guia ?? {};
-        return this.http.post<any>(`${this.siteURL}/crear/`, payload).pipe(
-            timeout(60000),
+        const context = new HttpContext().set(REQUEST_TIMEOUT_MS, 90000);
+        return this.http.post<any>(`${this.siteURL}/crear/`, payload, { context }).pipe(
             catchError((error) => {
                 console.error('Error al crear guía de remisión', error);
                 return throwError(() => error);
@@ -109,10 +110,10 @@ export class GuiaRemisionService {
         );
     }
 
-    /** Enviar un borrador existente a SUNAT. */
+    /** Enviar un borrador existente a SUNAT (hasta 90s). */
     enviarGuia(id: number): Observable<any> {
-        return this.http.post<any>(`${this.siteURL}/${id}/enviar/`, {}).pipe(
-            timeout(60000),
+        const context = new HttpContext().set(REQUEST_TIMEOUT_MS, 90000);
+        return this.http.post<any>(`${this.siteURL}/${id}/enviar/`, {}, { context }).pipe(
             catchError((error) => {
                 console.error('Error al enviar guía de remisión a SUNAT', error);
                 return throwError(() => error);

@@ -1,10 +1,70 @@
 <div class="flex flex-col h-full min-h-[60vh]">
-  <!-- Título -->
-  <div class="px-4 sm:px-6 pt-4 pb-1 shrink-0">
+  <!-- Título + tabs modernos -->
+  <div class="px-4 sm:px-6 pt-4 pb-2 shrink-0">
     <h2 class="text-base sm:text-lg font-bold text-neutral-900 dark:text-white leading-tight">Seleccionar productos</h2>
-    <p class="text-[11px] sm:text-xs text-neutral-500 dark:text-neutral-400 leading-tight">Busca y agrega productos al pedido</p>
+    <p class="text-[11px] sm:text-xs text-neutral-500 dark:text-neutral-400 leading-tight mb-3">Busca y agrega productos a la venta</p>
+    <div class="inline-flex items-center rounded-full bg-neutral-200/70 dark:bg-neutral-800 p-1" role="tablist" aria-label="Tipo de producto">
+      <button type="button" role="tab" [attr.aria-selected]="tab === 'accesorios'" (click)="setTab('accesorios')"
+        class="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all"
+        [ngClass]="tab === 'accesorios' ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm' : 'text-neutral-500 dark:text-neutral-400'">
+        <tui-icon icon="@tui.headphones" class="text-sm"></tui-icon>
+        Accesorios
+      </button>
+      <button type="button" role="tab" [attr.aria-selected]="tab === 'celulares'" (click)="setTab('celulares')"
+        class="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all"
+        [ngClass]="tab === 'celulares' ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm' : 'text-neutral-500 dark:text-neutral-400'">
+        <tui-icon icon="@tui.smartphone" class="text-sm"></tui-icon>
+        Celulares
+      </button>
+    </div>
   </div>
-  <div class="flex-1 min-h-0">
+  <div class="flex-1 min-h-0" *ngIf="tab === 'accesorios'">
     <app-tableinventario mode="select_product_sale_mode" [cerrarDialogo]="closeAndSelectProduct"></app-tableinventario>
+  </div>
+  <!-- Celulares: venta por IMEI, solo disponibles -->
+  <div class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 pb-4" *ngIf="tab === 'celulares'">
+    <div class="flex flex-col gap-3">
+      <tui-textfield iconStart="@tui.search" tuiTextfieldSize="m" class="w-full">
+        <input size="m" [(ngModel)]="celularesSearch" (ngModelChange)="onCelularSearchChange()"
+          placeholder="Buscar por marca, modelo o IMEI" tuiTextfield />
+      </tui-textfield>
+
+      <p *ngIf="celularesLoading" class="text-[13px] text-neutral-500 py-8 text-center">Cargando celulares...</p>
+
+      <div *ngIf="!celularesLoading && celulares.length > 0" class="flex flex-col gap-2">
+        <div *ngFor="let c of celulares"
+          class="flex items-center gap-3 rounded-2xl border border-neutral-200/80 dark:border-white/10 bg-white dark:bg-neutral-800 p-3">
+          <div class="size-14 shrink-0 overflow-hidden rounded-xl bg-blue-500/10 flex items-center justify-center">
+            <img *ngIf="celularFoto(c)" [src]="celularFoto(c)" [alt]="c.marca + ' ' + c.modelo"
+              class="size-full object-cover" loading="lazy" />
+            <tui-icon *ngIf="!celularFoto(c)" icon="@tui.smartphone" class="text-2xl text-blue-500/50"></tui-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="truncate text-[14px] font-semibold text-neutral-900 dark:text-white">{{ c.marca }} {{ c.modelo }} · {{ c.memoria }}</p>
+            <p class="truncate font-mono text-[11px] text-neutral-500 dark:text-neutral-400">IMEI {{ c.imei1 }}</p>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-[14px] font-bold tabular-nums text-neutral-900 dark:text-white">S/ {{ c.precio_venta }}</span>
+              <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Disponible
+              </span>
+            </div>
+          </div>
+          <button type="button" (click)="seleccionarCelular(c)" [disabled]="!puedeElegirCelular(c)"
+            class="shrink-0 rounded-full px-4 py-2 text-[12px] font-semibold bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 active:scale-95 transition disabled:opacity-40">
+            Agregar
+          </button>
+        </div>
+      </div>
+
+      <p *ngIf="!celularesLoading && celulares.length === 0"
+        class="text-[13px] text-neutral-500 dark:text-neutral-400 py-8 text-center">
+        Sin celulares disponibles.
+      </p>
+
+      <div *ngIf="!celularesLoading && celularesTotalPages > 1" class="pt-1 flex justify-center">
+        <tui-pagination [index]="celularesPage - 1" [length]="celularesTotalPages"
+          (indexChange)="goToCelularPage($event)" class="overflow-x-auto" />
+      </div>
+    </div>
   </div>
 </div>

@@ -15,11 +15,21 @@ export class ProductoSearchService {
         const resultado = productos.filter((item: Producto) => {
             const texto = `${item.nombre} ${item.descripcion || ''}`.toLowerCase();
 
-            if (query.nombre && !texto.includes(query.nombre.toLowerCase())) return false;
+            // Input único: coincide por nombre/descripción o por SKU
+            const q = (query.q || '').trim().toLowerCase();
+            if (q) {
+                const palabras = q.split(/\s+/);
+                const hay = palabras.every((p) =>
+                    texto.includes(p) || (item.sku || '').toLowerCase().includes(p)
+                );
+                if (!hay) return false;
+            } else {
+                if (query.nombre && !texto.includes(query.nombre.toLowerCase())) return false;
+                if (query.sku && !normalizeSku(item.sku).includes(normalizeSku(query.sku))) return false;
+            }
             if (query.categoria && item.categoria !== query.categoria) {
                 return false;
             }
-            if (query.sku && !normalizeSku(item.sku).includes(normalizeSku(query.sku))) return false;
 
 
 

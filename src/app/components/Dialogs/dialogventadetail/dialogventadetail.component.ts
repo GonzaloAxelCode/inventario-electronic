@@ -1,10 +1,10 @@
 import { ComprobanteElectronico, Venta } from '@/app/models/venta.models';
-
+import { tienePermiso } from '@/app/models/permissions.catalog';
 import { URL_BASE } from '@/app/services/utils/endpoints';
 import { anularVenta, anularVentaExito, generarComprobanteVenta, generarComprobanteVentaExito } from '@/app/state/actions/venta.actions';
 import { AppState } from '@/app/state/app.state';
 import { VentaState } from '@/app/state/reducers/venta.reducer';
-import { selectUsersState } from '@/app/state/selectors/user.selectors';
+import { selectCurrenttUser, selectUsersState } from '@/app/state/selectors/user.selectors';
 import { selectVenta } from '@/app/state/selectors/venta.selectors';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule, NgForOf } from '@angular/common';
@@ -18,7 +18,7 @@ import { TuiBlockStatus, TuiSearch } from '@taiga-ui/layout';
 import { TuiInputModule, TuiInputRangeModule, TuiSelectModule, TuiTextareaModule, TuiTextfieldControllerModule } from "@taiga-ui/legacy";
 import { injectContext } from '@taiga-ui/polymorpheus';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Actions, ofType } from '@ngrx/effects';
@@ -179,8 +179,15 @@ export class DialogventadetailComponent implements OnInit {
   }
   loadingAnularVenta: boolean = false
   loadingGenerarComprobante: boolean = false
+  /** Mientras se anula, el diálogo de Taiga no se puede cerrar (backdrop/Escape/X). */
+  private readonly permitirCerrar$ = new BehaviorSubject<boolean>(true);
+  user$ = this.store.select(selectCurrenttUser);
+  tiene = tienePermiso;
   public productos_json = (() => { try { const r = (this.venta as any)?.productos_json; return typeof r === 'string' ? JSON.parse(r ?? '[]') : (r || []); } catch { return []; } })();
   ngOnInit(): void {
+    // Bloqueo dinámico del cierre (Taiga acepta Observable en dismissible/closeable)
+    (this.context as any).dismissible = this.permitirCerrar$;
+    (this.context as any).closeable = this.permitirCerrar$;
     // Si la venta ya está anulada, mostrar primero el tab Anulado
     if ((this.venta as any)?.comprobante_nota_credito) {
       this.selectedState = 'anulado';
@@ -188,6 +195,7 @@ export class DialogventadetailComponent implements OnInit {
 
     this.store.select(selectVenta).subscribe((state: VentaState) => {
       this.loadingAnularVenta = state.loadingNotaCredito;
+      this.permitirCerrar$.next(!state.loadingNotaCredito);
       this.loadingGenerarComprobante = state.loadingGenerarComprobante
     });
 
@@ -425,6 +433,7 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
   }
 
   cancelarAnular() {
+    if (this.loadingAnularVenta) return;
     this.showConfirmAnular = false;
   }
 
@@ -446,6 +455,34 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
     const s = this.comprobante?.serie ?? '';
     const c = this.comprobante?.correlativo ?? '';
     return s && c ? `${s}-${c}` : (s || c || this.comprobante?.numero || '');
+  }
+
+  /** Nota de crédito (si la venta fue anulada). */
+  get notaCredito(): any {
+    return (this.venta as any)?.comprobante_nota_credito ?? null;
+  }
+
+  /** ¿Vista del tab anulado? */
+  get esVistaAnulado(): boolean {
+    return this.selectedState === 'anulado' && !!this.notaCredito;
+  }
+
+  /** Documento activo para compartir: NC en tab anulado, comprobante original si no. */
+  get docCompartir(): any {
+    return this.esVistaAnulado ? this.notaCredito : this.comprobante;
+  }
+
+  get docCompartirNumero(): string {
+    const d = this.docCompartir;
+    const s = d?.serie ?? '';
+    const c = d?.correlativo ?? '';
+    return s && c ? `${s}-${c}` : (s || c || d?.numero || '');
+  }
+
+  get docCompartirLink(): string {
+    const d = this.docCompartir;
+    const raw = d?.ticket_url || d?.pdf_url;
+    return this.stripDomain(raw) || '';
   }
 
   get clienteNombre(): string {
@@ -491,10 +528,12 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
     const dir = this.tiendaDireccion || '';
     const tel = this.tiendaTelefono || '';
     const ruc = this.tiendaRuc || '';
-    const num = this.comprobanteNumero;
-    const link = this.comprobanteLink;
-    const total = this.comprobanteTotal;
+    const num = this.docCompartirNumero;
+    const link = this.docCompartirLink;
+    const total = this.esVistaAnulado ? (this.notaCredito?.total ?? this.comprobanteTotal) : this.comprobanteTotal;
     const cliente = this.clienteNombre;
+    const esNC = this.esVistaAnulado;
+    const docLabel = esNC ? 'nota de crédito' : 'comprobante electrónico';
 
     const pie = [tel ? `📞 ${tel}` : '', dir ? `📍 ${dir}` : '', ruc ? `RUC: ${ruc}` : '']
       .filter(Boolean)
@@ -502,12 +541,12 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
 
     switch (id) {
       case 'agradecimiento':
-        return `Hola ${cliente}! Gracias por preferir ${t}.\nTu comprobante electrónico ${num}:\n${link}\n\nCualquier consulta, estaremos encantados de atenderte.\n${pie ? pie + '\n' : ''}¡Vuelve pronto!`;
+        return `Hola ${cliente}! Gracias por preferir ${t}.\nTu ${docLabel} ${num}:\n${link}\n\nCualquier consulta, estaremos encantados de atenderte.\n${pie ? pie + '\n' : ''}¡Vuelve pronto!`;
       case 'confirmacion':
-        return `Estimado(a) ${cliente},\nConfirmamos tu compra en ${t}.\nComprobante: ${num}\nTotal: S/ ${total}\n\nPuedes ver tu documento aquí:\n${link}\n\n${pie ? pie + '\n' : ''}¡Gracias por tu preferencia!`;
+        return `Estimado(a) ${cliente},\nConfirmamos tu compra en ${t}.\n${esNC ? 'Nota de crédito' : 'Comprobante'}: ${num}\nTotal: S/ ${total}\n\nPuedes ver tu documento aquí:\n${link}\n\n${pie ? pie + '\n' : ''}¡Gracias por tu preferencia!`;
       case 'comprobante':
       default:
-        return `Hola ${cliente}! Te saluda ${t}.\nTe envío tu comprobante electrónico ${num}:\n${link}\n\nGracias por tu compra. ¡Te esperamos de nuevo pronto!\n${pie ? pie : ''}`;
+        return `Hola ${cliente}! Te saluda ${t}.\nTe envío tu ${docLabel} ${num}:\n${link}\n\nGracias por tu compra. ¡Te esperamos de nuevo pronto!\n${pie ? pie : ''}`;
     }
   }
 
@@ -516,10 +555,13 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
     const dir = this.tiendaDireccion || '';
     const tel = this.tiendaTelefono || '';
     const ruc = this.tiendaRuc || '';
-    const num = this.comprobanteNumero;
-    const link = this.comprobanteLink;
-    const total = this.comprobanteTotal;
+    const num = this.docCompartirNumero;
+    const link = this.docCompartirLink;
+    const total = this.esVistaAnulado ? (this.notaCredito?.total ?? this.comprobanteTotal) : this.comprobanteTotal;
     const cliente = this.clienteNombre;
+    const esNC = this.esVistaAnulado;
+    const docLabel = esNC ? 'nota de crédito' : 'comprobante electrónico';
+    const docTitulo = esNC ? 'Nota de crédito' : 'Comprobante';
 
     const datosTienda = [
       t,
@@ -530,14 +572,14 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
 
     switch (id) {
       case 'agradecimiento':
-        return `Hola ${cliente},\n\nGracias por preferir ${t}. Te enviamos tu comprobante electrónico ${num}:\n${link}\n\nCualquier consulta contáctanos.\n\nSaludos,\n${datosTienda}`;
+        return `Hola ${cliente},\n\nGracias por preferir ${t}. Te enviamos tu ${docLabel} ${num}:\n${link}\n\nCualquier consulta contáctanos.\n\nSaludos,\n${datosTienda}`;
       case 'confirmacion':
-        return `Estimado(a) ${cliente},\n\nTe confirmamos tu compra en ${t}.\nComprobante: ${num}\nTotal: S/ ${total}\n\nPuedes descargar tu documento en el siguiente enlace:\n${link}\n\nGracias por tu preferencia.\n\nSaludos,\n${datosTienda}`;
+        return `Estimado(a) ${cliente},\n\nTe confirmamos tu compra en ${t}.\n${docTitulo}: ${num}\nTotal: S/ ${total}\n\nPuedes descargar tu documento en el siguiente enlace:\n${link}\n\nGracias por tu preferencia.\n\nSaludos,\n${datosTienda}`;
       case 'promocion':
-        return `Estimado(a) ${cliente},\n\nGracias por tu reciente compra en ${t}. Queremos invitarte a conocer nuestras novedades y promociones.\n\nTu comprobante ${num} lo puedes ver aquí:\n${link}\n\nPara más información contáctanos.\n\nSaludos,\n${datosTienda}`;
+        return `Estimado(a) ${cliente},\n\nGracias por tu reciente compra en ${t}. Queremos invitarte a conocer nuestras novedades y promociones.\n\nTu ${esNC ? 'nota de crédito' : 'comprobante'} ${num} lo puedes ver aquí:\n${link}\n\nPara más información contáctanos.\n\nSaludos,\n${datosTienda}`;
       case 'comprobante':
       default:
-        return `Hola ${cliente},\n\nTe enviamos tu comprobante electrónico ${num} de ${t}:\n${link}\n\nGracias por tu compra. ¡Te esperamos de nuevo pronto!\n\nSaludos,\n${datosTienda}`;
+        return `Hola ${cliente},\n\nTe enviamos tu ${docLabel} ${num} de ${t}:\n${link}\n\nGracias por tu compra. ¡Te esperamos de nuevo pronto!\n\nSaludos,\n${datosTienda}`;
     }
   }
 
@@ -572,7 +614,7 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
 
   abrirEmail() {
     this.emailDestino = this.venta.email_cliente || this.venta.correo_cliente || this.clienteEmail || '';
-    this.emailAsunto = `Comprobante ${this.comprobanteNumero} - ${this.tiendaNombre || 'Mi Tienda'}`;
+    this.emailAsunto = `${this.esVistaAnulado ? 'Nota de crédito' : 'Comprobante'} ${this.docCompartirNumero} - ${this.tiendaNombre || 'Mi Tienda'}`;
     this.emailMensaje = this.generarMensajeEmail('comprobante');
     this.emailPlantillaActiva = 'comprobante';
     this.showEmail = true;
@@ -599,6 +641,8 @@ ${pdfUrl}   - Gracias por tu compra. ¡Esperamos verte de nuevo pronto!`;
       ofType(anularVentaExito),
       takeUntil(this.destroy$)
     ).subscribe(({ ventad }: any) => {
+      // Oculta ya el botón de anular sin esperar recarga
+      (this.venta as any).estado = 'ANULADA';
       this.context.completeWith(true)
     });
 

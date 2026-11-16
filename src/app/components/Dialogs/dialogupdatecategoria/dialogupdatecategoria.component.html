@@ -28,6 +28,22 @@
       </p>
     </div>
 
+    <!-- Tipo: accesorio o repuesto -->
+    <div class="flex flex-col col-span-2">
+      <label class="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tipo</label>
+      <select formControlName="tipo"
+        class="w-full px-3 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:focus:ring-blue-400/30 transition-all text-sm">
+        <option value="ACCESORIO">Accesorio</option>
+        <option value="REPUESTO">Repuesto</option>
+      </select>
+      <p *ngIf="categoryForm.get('tipo')?.invalid && categoryForm.get('tipo')?.touched" class="text-red-500 text-sm mt-1">
+        El tipo es obligatorio
+      </p>
+      <p *ngIf="(categoriaError$ | async)?.tipo?.[0]" class="text-red-500 text-sm mt-1">
+        {{ (categoriaError$ | async)?.tipo?.[0] }}
+      </p>
+    </div>
+
     <!-- Características -->
     <div class="flex flex-col col-span-2 gap-2">
       <h3 class="text-sm font-medium text-neutral-700 dark:text-neutral-300">Características</h3>
@@ -68,18 +84,14 @@
       </button>
     </div>
 
-    <div *ngIf="!(userPermissions$ | async)?.can_modify_category" class="w-full col-span-2">
-      <span class="text-yellow-400">* Permisos insuficientes para editar una categoria </span>
-    </div>
-
     <!-- Botones: cancelar + actualizar -->
-    <div *ngIf="(userPermissions$ | async)?.can_modify_category" class="col-span-2 flex flex-col-reverse sm:flex-row w-full gap-2">
+    <div class="col-span-2 flex flex-col-reverse sm:flex-row w-full gap-2">
       <button type="button" (click)="onCloseDialog()"
         class="flex-1 rounded-full border border-black/10 dark:border-white/15 bg-transparent px-6 py-2 text-sm font-semibold text-neutral-700 dark:text-neutral-200 transition hover:bg-neutral-100 dark:hover:bg-white/10 active:scale-[0.98]">
         Cancelar
       </button>
       <button type="submit"
-        [disabled]="categoryForm.invalid || !(userPermissions$ | async)?.can_modify_category"
+        [disabled]="categoryForm.invalid"
         class="flex-[2] rounded-full bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 px-6 py-2 text-sm font-bold transition hover:opacity-90 active:scale-[0.98] disabled:opacity-40 flex items-center justify-center gap-2">
         Actualizar <tui-loader [showLoader]="!!(loadingUpdateCategoria$ | async)?.loadingUpdateCategoria"></tui-loader>
       </button>

@@ -7,6 +7,7 @@ import { DialogService } from '@/app/services/dialogs-services/dialog.service';
 import { normalizeSku } from "@/app/services/search-services/producto-search.service";
 import { URL_BASE } from "@/app/services/utils/endpoints";
 import { loadClientes } from "@/app/state/actions/cliente.actions";
+import { loadInventarios } from "@/app/state/actions/inventario.actions";
 import { crearPedido, crearPedidoExito } from "@/app/state/actions/pedido.actions";
 import { AppState } from '@/app/state/app.state';
 import { selectClienteState } from "@/app/state/selectors/cliente.selectors";
@@ -336,6 +337,7 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.changeModeClient('sin_cliente');
     this.store.dispatch(loadClientes());
+    this.store.dispatch(loadInventarios());
 
     this.store.select(selectInventario).subscribe((state) => {
       this.inventarios = state.inventarios
@@ -433,6 +435,9 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
           imagen_producto: [result.imagen_producto ? URL_BASE + result.imagen_producto : "https://sublimac.com/wp-content/uploads/2017/11/default-placeholder.png"],
           descuento: [0],
           costo_original: [result.costo_venta],
+          es_celular: [!!result.es_celular],
+          celular_id: [result.celular_id ?? result.celularId ?? null],
+          imei1: [result.imei1 ?? null],
         });
 
 
@@ -624,6 +629,9 @@ export class RegistrarpedidoComponent implements OnInit, OnDestroy {
         inventarioId: p.inventarioId,
         cantidad_final: parseInt(p.cantidad_final),
         descuento: p.descuento || 0,
+        es_celular: !!p.es_celular,
+        celular_id: p.celular_id ?? null,
+        imei1: p.imei1 ?? null,
       })),
     };
 

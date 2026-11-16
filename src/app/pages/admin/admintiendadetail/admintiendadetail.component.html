@@ -57,6 +57,18 @@
           <span class="block text-[13px] font-medium leading-none">Personal</span>
           <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">{{ tienda.users_tienda?.length || 0 }} miembros</span>
         </button>
+        <button (click)="setTab('categorias')"
+          class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
+          [ngClass]="activeTab === 'categorias' ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
+          <span class="block text-[13px] font-medium leading-none">Categorías</span>
+          <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">De esta tienda</span>
+        </button>
+        <button (click)="setTab('proveedores')"
+          class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
+          [ngClass]="activeTab === 'proveedores' ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
+          <span class="block text-[13px] font-medium leading-none">Proveedores</span>
+          <span class="hidden md:block text-[11px] font-normal opacity-60 mt-1">De esta tienda</span>
+        </button>
         <button *ngIf="!esSucursal" (click)="setTab('sucursales')"
           class="shrink-0 md:w-full text-left px-4 py-2.5 rounded-xl transition-colors"
           [ngClass]="activeTab === 'sucursales' ? 'bg-[#1d1d1f] dark:bg-white text-white dark:text-black' : 'text-[#1d1d1f]/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] hover:text-[#1d1d1f] dark:hover:text-white'">
@@ -194,6 +206,28 @@
           </div>
         </div>
         <app-tableusers [idtienda]="tienda.id"></app-tableusers>
+      </div>
+
+      <!-- TAB: Categorías de esta tienda -->
+      <div *ngIf="activeTab === 'categorias'">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Categorías</h2>
+            <p class="text-[12px] text-[#86868b] mt-0.5">Categorías de {{ tienda.nombre || 'esta tienda' }}</p>
+          </div>
+        </div>
+        <app-tablecategories [tiendaId]="tienda?.id"></app-tablecategories>
+      </div>
+
+      <!-- TAB: Proveedores de esta tienda -->
+      <div *ngIf="activeTab === 'proveedores'">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#1d1d1f] dark:text-white">Proveedores</h2>
+            <p class="text-[12px] text-[#86868b] mt-0.5">Proveedores de {{ tienda.nombre || 'esta tienda' }}</p>
+          </div>
+        </div>
+        <app-listallproveedores></app-listallproveedores>
       </div>
 
       <!-- TAB: Sucursales de esta tienda padre -->

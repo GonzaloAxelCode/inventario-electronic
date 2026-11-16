@@ -5,6 +5,7 @@ import { catchError, exhaustMap, map, of } from 'rxjs';
 
 import { TiendaService } from '@/app/services/tienda.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
+import { serverErrorMsg } from '@/app/services/utils/server-error';
 import { createTiendaAction, createTiendaFail, createTiendaSuccess, desactivateTiendaAction, desactivateTiendaFail, desactivateTiendaSuccess, eliminarTiendaPermanently, eliminarTiendaPermanentlyFail, eliminarTiendaPermanentlySuccess, loadMiTiendaAction, loadMiTiendaFail, loadMiTiendaSuccess, loadTiendasAction, loadTiendasFail, loadTiendasSuccess, updateTiendaAction, updateTiendaFail, updateTiendaSuccess } from '../actions/tienda.actions';
 
 @Injectable()
@@ -60,7 +61,7 @@ export class TiendaEffects {
                         return createTiendaSuccess({ tienda: createdTienda });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al crear la tienda', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al crear la tienda'), 'Error').subscribe();
                         console.error(error)
                         return of(createTiendaFail({ error }));
                     })
@@ -78,7 +79,7 @@ export class TiendaEffects {
                         return updateTiendaSuccess({ tienda: createdTienda });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al actualizar la tienda', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al actualizar la tienda'), 'Error').subscribe();
                         console.error(error)
                         return of(updateTiendaFail({ error }));
                     })
@@ -102,7 +103,7 @@ export class TiendaEffects {
                     }),
                     catchError(error => {
 
-                        this.alertService.showError('Error al cambiar el estado de la tienda', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al cambiar el estado de la tienda'), 'Error').subscribe();
 
                         return of(desactivateTiendaFail({ error }));
                     })
@@ -120,7 +121,7 @@ export class TiendaEffects {
                         return eliminarTiendaPermanentlySuccess({ id });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al eliminar la tienda', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al eliminar la tienda'), 'Error').subscribe();
                         return of(eliminarTiendaPermanentlyFail({ error }));
                     })
                 )

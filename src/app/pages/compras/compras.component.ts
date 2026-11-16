@@ -1,7 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Store } from '@ngrx/store';
 
 import {
   TuiHeader,
@@ -16,13 +15,8 @@ import {
 } from '@taiga-ui/kit';
 
 import { TuiIcon } from '@taiga-ui/core';
-import { AppState } from '@/app/state/app.state';
-import { cargarCompras } from '@/app/state/actions/compra.actions';
-import { loadProveedores } from '@/app/state/actions/proveedor.actions';
-import { PAGE_SIZE_COMPRAS } from '@/app/services/utils/pages-sizes';
-import { ListallcomprasComponent } from '@/app/components/comprascomponents/listallcompras/listallcompras.component';
-import { RegistrarcompraComponent } from '@/app/components/comprascomponents/registrarcompra/registrarcompra.component';
-import { ListallproveedoresComponent } from '@/app/components/proveedorescomponents/listallproveedores/listallproveedores.component';
+import { ConsultarCompraComponent } from '@/app/components/comprascomponents/consultar-compra/consultar-compra.component';
+import { MisComprasComponent } from '@/app/components/comprascomponents/mis-compras/mis-compras.component';
 
 @Component({
   selector: 'app-compras',
@@ -36,32 +30,32 @@ import { ListallproveedoresComponent } from '@/app/components/proveedorescompone
     TuiTab,
     TuiFade,
     TuiIcon,
-    ListallcomprasComponent,
-    RegistrarcompraComponent,
-    ListallproveedoresComponent,
+    ConsultarCompraComponent,
+    MisComprasComponent,
   ],
   templateUrl: './compras.component.html',
   styleUrls: ['./compras.component.scss']
 })
 export class ComprasComponent implements OnInit {
 
-  private store = inject(Store<AppState>);
   private route = inject(ActivatedRoute);
   private location = inject(Location);
   private cdr = inject(ChangeDetectorRef);
 
-  validTabs = ['historial', 'comprobantes', 'proveedores'] as const;
-  activeTab: 'historial' | 'comprobantes' | 'proveedores' = 'historial';
+  validTabs = ['consultar', 'mis-compras'] as const;
+  activeTab: 'consultar' | 'mis-compras' = 'consultar';
   activeTabIndex = 0;
 
   ngOnInit() {
-    this.store.dispatch(cargarCompras({ page: 1, page_size: PAGE_SIZE_COMPRAS }));
-    this.store.dispatch(loadProveedores());
-
     this.route.fragment.subscribe((fragment) => {
-      if (fragment && this.isValidTab(fragment)) {
-        this.activeTab = fragment as typeof this.activeTab;
-        this.activeTabIndex = this.validTabs.indexOf(fragment as any);
+      // Aliases legacy: historial/proveedores -> mis-compras, comprobantes -> consultar
+      const mapped =
+        fragment === 'historial' || fragment === 'proveedores' ? 'mis-compras'
+        : fragment === 'comprobantes' ? 'consultar'
+        : fragment;
+      if (mapped && this.isValidTab(mapped)) {
+        this.activeTab = mapped as typeof this.activeTab;
+        this.activeTabIndex = this.validTabs.indexOf(mapped as any);
         this.cdr.markForCheck();
       }
     });

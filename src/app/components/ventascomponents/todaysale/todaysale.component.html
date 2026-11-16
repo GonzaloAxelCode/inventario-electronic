@@ -62,8 +62,8 @@
         <span class="text-xs font-semibold text-purple-700 dark:text-purple-400">Ticket</span>
       </a>
 
-      <!-- Anular -->
-      <button *ngIf="venta.estado !== 'ANULADA'" (click)="anularVenta(venta.id,venta.numero_documento_cliente)"
+      <!-- Anular (permiso: Cancelar ventas) -->
+      <button *ngIf="venta.estado !== 'ANULADA' && tiene((user$ | async), 'can_cancel_sale')" (click)="anularVenta(venta.id,venta.numero_documento_cliente)"
         [disabled]="loadingAnularVenta" class="flex flex-col items-center justify-center gap-1 sm:gap-2 shrink-0
              px-3 sm:px-4 py-2 sm:py-3
              bg-red-100 hover:bg-red-200
@@ -81,74 +81,6 @@
     </div>
   </div>
 
-  <div class="p-3" *ngIf="selectedState === 'anulado' && venta.comprobante?.estado_sunat === 'ACEPTADO'">
-
-    <div class="flex flex-row sm:flex-col gap-2 mb-4 overflow-x-auto sm:overflow-visible -mx-3 px-3 sm:mx-0 sm:px-0">
-
-      <!-- PDF -->
-      <a [href]="stripDomain(venta.comprobante_nota_credito.pdf_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2
-         px-3 sm:px-4 py-2 sm:py-3
-         bg-yellow-100 hover:bg-yellow-200
-         dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50
-         rounded-lg transition-colors">
-        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-700 dark:text-yellow-400" fill="none" stroke="currentColor"
-          viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-        </svg>
-        <span class="text-xs font-semibold text-yellow-800 dark:text-yellow-400">
-          PDF(AN)
-        </span>
-      </a>
-      <!-- XML -->
-      <a [href]="stripDomain(venta.comprobante_nota_credito.xml_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2
-             px-3 sm:px-4 py-2 sm:py-3
-             bg-blue-100 hover:bg-blue-200
-             dark:bg-blue-900/30 dark:hover:bg-blue-900/50
-             rounded-lg transition-colors">
-        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-700 dark:text-blue-400" fill="none" stroke="currentColor"
-          viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-        </svg>
-        <span class="text-xs font-semibold text-blue-700 dark:text-blue-400">XML(AN)</span>
-      </a>
-
-      <!-- CDR -->
-      <a [href]="stripDomain(venta.comprobante_nota_credito.cdr_url)" target="_blank" class="flex flex-col items-center justify-center gap-1 sm:gap-2
-             px-3 sm:px-4 py-2 sm:py-3
-             bg-green-100 hover:bg-green-200
-             dark:bg-green-900/30 dark:hover:bg-green-900/50
-             rounded-lg transition-colors">
-        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-700 dark:text-green-400" fill="none" stroke="currentColor"
-          viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-        </svg>
-        <span class="text-xs font-semibold text-green-700 dark:text-green-400">CDR(AN)</span>
-      </a>
-
-
-
-
-      <!-- Anular -->
-      <button *ngIf="venta.estado !== 'ANULADA'" (click)="anularVenta(venta.id,venta.numero_documento_cliente)"
-        [disabled]="loadingAnularVenta" class="flex flex-col items-center justify-center gap-1 sm:gap-2 shrink-0
-             px-3 sm:px-4 py-2 sm:py-3
-             bg-red-100 hover:bg-red-200
-             dark:bg-red-900/30 dark:hover:bg-red-900/50
-             rounded-lg transition-colors">
-        <tui-loader *ngIf="loadingAnularVenta" size="s" class="text-white"></tui-loader>
-        <svg *ngIf="!loadingAnularVenta" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-        </svg>
-
-        <span class="text-xs font-semibold text-red-700 dark:text-red-400">Cancelar</span>
-      </button>
-
-    </div>
-  </div>
   <div class="flex flex-col flex-1 min-w-0">
  <div class="flex flex-col gap-6 ">
 
@@ -219,6 +151,23 @@
                   </p>
 
                 </div>
+              </div>
+
+              <!-- Links de la nota de crédito (solo texto, sin iconos) -->
+              <div *ngIf="selectedState === 'anulado' && venta.comprobante_nota_credito"
+                class="flex flex-wrap items-center gap-x-4 gap-y-1 py-1 text-sm">
+                <span class="text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Documentos:</span>
+                <a [href]="stripDomain(venta.comprobante_nota_credito.pdf_url)" target="_blank"
+                  class="font-medium text-blue-600 underline underline-offset-2 hover:text-blue-800 dark:text-blue-400">PDF</a>
+                <a [href]="stripDomain(venta.comprobante_nota_credito.xml_url)" target="_blank"
+                  class="font-medium text-blue-600 underline underline-offset-2 hover:text-blue-800 dark:text-blue-400">XML</a>
+                <a [href]="stripDomain(venta.comprobante_nota_credito.cdr_url)" target="_blank"
+                  class="font-medium text-blue-600 underline underline-offset-2 hover:text-blue-800 dark:text-blue-400">CDR</a>
+                <button *ngIf="venta.estado !== 'ANULADA' && tiene((user$ | async), 'can_cancel_sale')"
+                  type="button" (click)="anularVenta(venta.id, venta.numero_documento_cliente)" [disabled]="loadingAnularVenta"
+                  class="font-medium text-red-600 underline underline-offset-2 hover:text-red-800 disabled:opacity-50 dark:text-red-400">
+                  {{ loadingAnularVenta ? 'Anulando...' : 'Anular' }}
+                </button>
               </div>
 
               <!-- Barra de información del cliente -->

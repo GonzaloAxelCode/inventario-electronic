@@ -6,7 +6,6 @@
         <nav tuiTabs class="flex gap-2 overflow-x-auto whitespace-nowrap">
             <button tuiTab type="button" (click)="setTab('historial')" [class.active-link]="activeTab === 'historial'">Historial</button>
             <button tuiTab type="button" (click)="setTab('ventas-hoy')" [class.active-link]="activeTab === 'ventas-hoy'">Ventas Hoy</button>
-            <button tuiTab type="button" (click)="setTab('anuladas-hoy')" [class.active-link]="activeTab === 'anuladas-hoy'">Anuladas</button>
         </nav>
     </header>
 
@@ -20,13 +19,6 @@
         <div class="pb-12">
             <h2 class="text-lg font-bold text-neutral-900 dark:text-white mb-4">Ventas de Hoy</h2>
             <app-todaysalestable></app-todaysalestable>
-        </div>
-    </ng-container>
-
-    <ng-container *ngIf="activeTab === 'anuladas-hoy'">
-        <div class="pb-12">
-            <h2 class="text-lg font-bold text-neutral-900 dark:text-white mb-4">Ventas Anuladas Hoy</h2>
-            <app-canceledsales></app-canceledsales>
         </div>
     </ng-container>
 

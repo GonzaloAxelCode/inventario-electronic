@@ -28,9 +28,11 @@
               {{ user.username }}
             </p>
             <p *ngIf="user.first_name || user.last_name" class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] truncate">{{ user.first_name }} {{ user.last_name }}</p>
-            <div *ngIf="isUserDeleted(user) || user.is_superuser" class="flex items-center gap-2 mt-1">
+            <div *ngIf="isUserDeleted(user) || user.is_superuser || rolDe(user)" class="flex items-center gap-1.5 mt-1">
               <span *ngIf="isUserDeleted(user)" class="text-[11px] font-medium text-[#ff3b30]">Eliminado</span>
               <span *ngIf="user.is_superuser" class="text-[10px] px-1.5 py-0.5 rounded-full bg-black text-white dark:bg-white dark:text-black font-semibold tracking-wide">SUPERUSER</span>
+              <span *ngIf="!user.is_superuser && rolDe(user) === 'Admin Tienda'" class="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold tracking-wide">Admin Tienda</span>
+              <span *ngIf="!user.is_superuser && rolDe(user) === 'Empleado'" class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold tracking-wide">Empleado</span>
             </div>
           </div>
 

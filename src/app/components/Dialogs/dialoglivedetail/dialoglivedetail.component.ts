@@ -253,7 +253,7 @@ export class DialoglivedetailComponent implements OnInit, OnDestroy {
 
   // ==================== INIT ====================
   ngOnInit() {
-    this.store.dispatch(loadCategorias());
+    this.store.dispatch(loadCategorias({}));
     this.inventariosState$ = this.store.select(selectInventario);
     this.selectCategorias$ = this.store.select(selectCategoria);
 

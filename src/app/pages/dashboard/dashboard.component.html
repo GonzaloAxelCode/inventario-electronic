@@ -3,45 +3,73 @@
     <header tuiSubheader class="p-0 mb-4">
         <h2 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Estadísticas de la tienda</h2>
         <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Resumen de ventas, inventario y rendimiento</p>
-
-        <nav tuiTabs [(activeItemIndex)]="activeTabIndex" (activeItemIndexChange)="onTabChange($event)"
-            class="flex gap-2 overflow-x-auto whitespace-nowrap">
-            <button tuiTab type="button">Resumen Mensual</button>
-            <button tuiTab type="button">Resumen del Día</button>
-            <button tuiTab type="button">Inventario y Alertas</button>
-            <button tuiTab type="button">Comparaciones y Rendimiento</button>
-        </nav>
     </header>
 
-    <!-- TAB: RESUMEN MENSUAL -->
-    <ng-container *ngIf="activeTab === 'general'">
-        <div class="flex flex-col gap-6">
-            <app-dashboard-sales-cards></app-dashboard-sales-cards>
-            <app-graficos-inicio [activeTab]="activeTab"></app-graficos-inicio>
-            <div class="ventas-por-rango-container">
-                <p class="text-2xl font-bold text-slate-700 dark:text-gray-300 mb-4">Ventas por rango de fecha</p>
-                <app-chartsalesbetweentwodates></app-chartsalesbetweentwodates>
+    <div class="flex flex-col md:flex-row gap-4">
+        <!-- Sidenav estadísticas -->
+        <aside class="w-full md:w-60 shrink-0">
+            <div class="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
+                <ng-container *ngFor="let item of statSections">
+                <button *ngIf="puedeVer(item.id)" type="button" (click)="onSectionChangeById(item.id)"
+                    class="flex items-center gap-3 text-left rounded-xl border px-3 py-2.5 min-w-[190px] md:min-w-0 transition-colors"
+                    [ngClass]="activeTab === item.id ? 'bg-neutral-200/70 border-neutral-300 dark:bg-white/10 dark:border-white/25' : 'bg-transparent border-transparent hover:bg-neutral-100 dark:hover:bg-white/5'">
+                    <span class="flex size-9 items-center justify-center rounded-lg bg-neutral-200/80 text-neutral-700 dark:bg-white/10 dark:text-neutral-100">
+                        <tui-icon [icon]="item.icon" class="text-base"></tui-icon>
+                    </span>
+                    <span class="flex flex-col">
+                        <span class="text-sm font-bold leading-tight text-neutral-900 dark:text-white">{{ item.label }}</span>
+                        <span class="text-[11px] leading-tight text-neutral-500 dark:text-neutral-300">{{ item.desc }}</span>
+                    </span>
+                </button>
+                </ng-container>
             </div>
-            <app-dashboard-general-stats></app-dashboard-general-stats>
-        </div>
-    </ng-container>
+        </aside>
 
-    <!-- TAB: RESUMEN DEL DÍA -->
-    <ng-container *ngIf="activeTab === 'resumen'">
-        <div class="flex flex-col gap-6">
-            <p class="text-2xl font-bold text-slate-700 dark:text-gray-300">Resumen del Día</p>
-            <app-dashboard-daily-summary></app-dashboard-daily-summary>
-        </div>
-    </ng-container>
+        <section class="flex-1 min-w-0">
+            <!-- GENERAL -->
+            <ng-container *ngIf="activeTab === 'general' && puedeVer('general')">
+                <div class="flex flex-col gap-6">
+                    <app-dashboard-sales-cards></app-dashboard-sales-cards>
+                    <app-dashboard-general-stats></app-dashboard-general-stats>
+                </div>
+            </ng-container>
 
-    <!-- TAB: INVENTARIO Y ALERTAS -->
-    <ng-container *ngIf="activeTab === 'inventario'">
-        <app-alertas-stock></app-alertas-stock>
-    </ng-container>
+            <!-- VENTAS -->
+            <ng-container *ngIf="activeTab === 'ventas' && puedeVer('ventas')">
+                <div class="flex flex-col gap-6">
+                    <div class="ventas-por-rango-container">
+                        <p class="text-2xl font-bold text-slate-700 dark:text-gray-300 mb-4">Ventas por rango de fecha</p>
+                        <app-chartsalesbetweentwodates></app-chartsalesbetweentwodates>
+                    </div>
+                    <app-graficos-inicio activeTab="general"></app-graficos-inicio>
+                </div>
+            </ng-container>
 
-    <!-- TAB: COMPARACIONES Y RENDIMIENTO -->
-    <ng-container *ngIf="activeTab === 'comparacion'">
-        <app-graficos-inicio [activeTab]="activeTab"></app-graficos-inicio>
-    </ng-container>
+            <!-- INVENTARIO (incluye gráficos movidos de productos) -->
+            <ng-container *ngIf="activeTab === 'inventario' && puedeVer('inventario')">
+                <div class="flex flex-col gap-6">
+                    <app-alertas-stock></app-alertas-stock>
+                    <app-graficos-productos></app-graficos-productos>
+                </div>
+            </ng-container>
+
+            <!-- REPORTES -->
+            <ng-container *ngIf="activeTab === 'reportes' && puedeVer('reportes')">
+                <div class="flex flex-col gap-6">
+                    <app-annual-best-cards></app-annual-best-cards>
+                    <app-report-export-cards></app-report-export-cards>
+                    <app-graficos-inicio activeTab="comparacion"></app-graficos-inicio>
+                </div>
+            </ng-container>
+
+            <!-- Sin ningún permiso de estadísticas -->
+            <ng-container *ngIf="!puedeVer('general') && !puedeVer('ventas') && !puedeVer('inventario') && !puedeVer('reportes')">
+                <div class="p-6 text-center rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800">
+                    <p class="text-sm font-bold text-neutral-900 dark:text-white">Sin permiso</p>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">No tienes permiso para ver las estadísticas. Pide a tu administrador que te habilite el acceso.</p>
+                </div>
+            </ng-container>
+        </section>
+    </div>
 
 </main>

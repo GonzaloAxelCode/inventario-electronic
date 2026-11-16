@@ -3,7 +3,7 @@
   <!-- Encabezado -->
   <div class="px-1">
     <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 dark:text-white">Mi cuenta</h2>
-    <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">Información de tu perfil y estado de la cuenta.</p>
+    <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">Información de tu perfil.</p>
   </div>
 
   <!-- Perfil -->
@@ -22,10 +22,6 @@
         <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400 truncate">&#64;{{ user.username }}</p>
         <div class="flex flex-wrap items-center gap-1.5 mt-2">
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-stone-100 dark:bg-white/10 text-stone-600 dark:text-stone-300">{{ roleLabel }}</span>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
-            [class]="user.is_active ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/10 text-red-500'">
-            {{ user.is_active ? 'Activo' : 'Inactivo' }}
-          </span>
         </div>
       </div>
     </div>
@@ -51,22 +47,8 @@
         <dd class="font-semibold tracking-tight text-stone-900 dark:text-white text-right truncate min-w-0">{{ roleLabel }}</dd>
       </div>
       <div class="flex items-center justify-between gap-4 py-3">
-        <dt class="text-[11px] font-medium text-stone-400 shrink-0">Empleado</dt>
-        <dd class="font-semibold tracking-tight text-stone-900 dark:text-white text-right">{{ user.es_empleado ? 'Si' : 'No' }}</dd>
-      </div>
-      <div class="flex items-center justify-between gap-4 py-3">
-        <dt class="text-[11px] font-medium text-stone-400 shrink-0">Estado</dt>
-        <dd class="font-semibold text-right" [class]="user.is_active ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'">
-          {{ user.is_active ? 'Activo' : 'Inactivo' }}
-        </dd>
-      </div>
-      <div class="flex items-center justify-between gap-4 py-3">
         <dt class="text-[11px] font-medium text-stone-400 shrink-0">Miembro desde</dt>
         <dd class="font-semibold tracking-tight text-stone-900 dark:text-white text-right">{{ user.date_joined | date:'dd/MM/yyyy' }}</dd>
-      </div>
-      <div class="flex items-center justify-between gap-4 py-3">
-        <dt class="text-[11px] font-medium text-stone-400 shrink-0">Permisos activos</dt>
-        <dd class="font-semibold tracking-tight text-stone-900 dark:text-white text-right">{{ activePermissionsCount }}</dd>
       </div>
     </dl>
   </section>

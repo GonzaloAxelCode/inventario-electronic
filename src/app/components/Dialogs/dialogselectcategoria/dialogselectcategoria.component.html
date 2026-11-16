@@ -1,0 +1,22 @@
+<div class="flex flex-col gap-3">
+  <tui-textfield iconStart="@tui.search">
+    <input [(ngModel)]="search" placeholder="Buscar categoría..." tuiTextfield />
+  </tui-textfield>
+  <div class="max-h-[50vh] overflow-y-auto">
+    <button type="button" tuiButton appearance="flat" size="m" class="w-full !justify-between"
+      (click)="elegir(null)">
+      <span>Todas</span>
+      <span *ngIf="!seleccionadaId">✓</span>
+    </button>
+    <button *ngFor="let c of filtradas()" type="button" tuiButton appearance="flat" size="m"
+      class="w-full !justify-between" (click)="elegir(c)">
+      <span class="min-w-0 text-left">
+        <span class="block truncate">{{ c.nombre }}</span>
+        <span *ngIf="c.descripcion" class="block truncate text-xs opacity-60">{{ c.descripcion }}</span>
+      </span>
+      <span *ngIf="seleccionadaId === c.id" class="shrink-0">✓</span>
+    </button>
+    <p *ngIf="filtradas().length === 0" class="py-6 text-center text-sm opacity-60">Sin resultados.</p>
+  </div>
+  <button type="button" tuiButton appearance="secondary" size="m" (click)="cerrar()">Cerrar</button>
+</div>

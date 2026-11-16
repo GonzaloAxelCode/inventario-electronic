@@ -90,7 +90,6 @@
                                 Actualizar
                             </button>
                             <button type="button" (click)="onActiveToggle(proveedor)"
-                                [disabled]="!(userPermissions$ | async)?.can_delete_proveedor"
                                 class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition active:scale-95 disabled:opacity-40 sm:flex-none"
                                 [ngClass]="proveedor.activo ? 'bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:text-red-400' : 'bg-neutral-500/10 text-neutral-600 hover:bg-neutral-500/20 dark:text-neutral-300'">
                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,7 +136,6 @@
                             Actualizar
                         </button>
                         <button type="button" (click)="onActiveToggle(proveedor)"
-                            [disabled]="!(userPermissions$ | async)?.can_delete_proveedor"
                             class="inline-flex w-full items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition active:scale-95 disabled:opacity-40"
                             [ngClass]="proveedor.activo ? 'bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:text-red-400' : 'bg-neutral-500/10 text-neutral-600 hover:bg-neutral-500/20 dark:text-neutral-300'">
                             {{ proveedor.activo ? 'Desactivar' : 'Activar' }}

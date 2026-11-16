@@ -21,7 +21,7 @@
 }
 
 :host-context([tuiTheme="dark"]) .user-avatar {
-  background: #000 !important;
+  background: #3a3a3c !important;
   color: #fff !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
@@ -46,11 +46,63 @@
   margin-top: 0.25rem;
   border-radius: 0.75rem;
   box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  padding: 0.25rem;
+  padding: 0.5rem;
   min-width: 220px;
   max-height: calc(100vh - 5rem);
   overflow-y: auto;
   overscroll-behavior: contain;
   z-index: 9999;
   transform-origin: top right;
+  animation: topnavadmin-drop-in 0.22s cubic-bezier(0.2, 0.9, 0.25, 1.2);
+}
+
+/* Dropdown móvil hamburguesa — entrada animada + más aire */
+.mobile-dropdown-animated {
+  transform-origin: top right;
+  animation: topnavadmin-drop-in 0.25s cubic-bezier(0.2, 0.9, 0.25, 1.15);
+  max-height: calc(100vh - 5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.mobile-dropdown-animated .mobile-nav-link {
+  animation: topnavadmin-item-in 0.3s ease both;
+}
+
+.mobile-dropdown-animated .mobile-nav-link:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.mobile-dropdown-animated .mobile-nav-link:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+@keyframes topnavadmin-drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes topnavadmin-item-in {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-dropdown-animated,
+  .mobile-dropdown-animated .mobile-nav-link,
+  .user-dropdown {
+    animation: none;
+  }
 }

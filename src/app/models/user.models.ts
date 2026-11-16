@@ -33,30 +33,20 @@ export interface UserPermissions {
     can_cancel_sale: boolean;
     can_create_inventory: boolean;
     can_modify_inventory: boolean;
-    can_update_inventory: boolean;
     can_delete_inventory: boolean;
-    can_create_product: boolean;
-    can_update_product: boolean;
-    can_delete_product: boolean;
-    can_create_category: boolean;
-    can_modify_category: boolean;
-    can_delete_category: boolean;
-    can_create_supplier: boolean;
-    can_modify_supplier: boolean;
-    can_delete_supplier: boolean;
-    can_create_store: boolean;
-    can_modify_store: boolean;
-    can_delete_store: boolean;
-    view_sale: boolean;
-    view_inventory: boolean;
-    view_product: boolean;
-    view_category: boolean;
-    view_supplier: boolean;
-    view_store: boolean;
-    can_create_user: boolean;
-    can_create_proveedor: boolean
-    can_update_proveedor: boolean
-    can_delete_proveedor: boolean
+    can_create_celular: boolean;
+    can_update_celular: boolean;
+    can_delete_celular: boolean;
+    can_create_compra: boolean;
+    can_update_compra: boolean;
+    can_delete_compra: boolean;
+    can_manage_pedido: boolean;
+    view_stats_general: boolean;
+    view_stats_ventas: boolean;
+    view_stats_inventario: boolean;
+    view_ganancia: boolean;
+    can_export_data: boolean;
+    can_make_backup: boolean;
 }
 
 export interface CreateUser {

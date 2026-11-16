@@ -1,4 +1,4 @@
-import { Categoria, CategoriaCreate, CategoriaUpdate, PorcentajeCategoriaResponse } from '@/app/models/categoria.models';
+import { Categoria, CategoriaCreate, CategoriaUpdate, PorcentajeCategoriaResponse, SeedCategoriasResponse } from '@/app/models/categoria.models';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -14,8 +14,11 @@ export class CategoriaService {
   private http = inject(HttpClient)
 
 
-  fetchCategorias(): Observable<Categoria[]> {
-    return this.http.get<Categoria[]>(`${this.siteURL}/categorias/`).pipe(
+  fetchCategorias(tipo?: 'REPUESTO' | 'ACCESORIO' | 'TODO', tienda?: number | string): Observable<Categoria[]> {
+    const params: Record<string, string> = {};
+    if (tipo) params['tipo'] = tipo;
+    if (tienda !== undefined && tienda !== null && tienda !== '') params['tienda'] = String(tienda);
+    return this.http.get<Categoria[]>(`${this.siteURL}/categorias/`, { params }).pipe(
       catchError((error) => {
                 console.error(error);
                 return throwError(() => error);
@@ -46,6 +49,28 @@ export class CategoriaService {
       catchError(error => {
         console.error(error)
         return throwError(error)
+      })
+    );
+  }
+
+  seedAccesorios(tienda?: number | string): Observable<SeedCategoriasResponse> {
+    const params: Record<string, string> = {};
+    if (tienda !== undefined && tienda !== null && tienda !== '') params['tienda'] = String(tienda);
+    return this.http.post<SeedCategoriasResponse>(`${this.siteURL}/categorias/seed-accesorios/`, {}, { params }).pipe(
+      catchError(error => {
+        console.error(error)
+        return throwError(() => error)
+      })
+    );
+  }
+
+  deleteSeedAccesorios(tienda?: number | string): Observable<SeedCategoriasResponse> {
+    const params: Record<string, string> = {};
+    if (tienda !== undefined && tienda !== null && tienda !== '') params['tienda'] = String(tienda);
+    return this.http.delete<SeedCategoriasResponse>(`${this.siteURL}/categorias/delete-seed-accesorios/`, { params }).pipe(
+      catchError(error => {
+        console.error(error)
+        return throwError(() => error)
       })
     );
   }

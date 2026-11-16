@@ -75,12 +75,7 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
   );
 
   form = new FormGroup({
-    numero_pedido: new FormControl(''),
-    nombre_cliente: new FormControl(''),
-    numero_documento_cliente: new FormControl(''),
-    email_cliente: new FormControl(''),
-    telefono_cliente: new FormControl(''),
-    referencia_externa: new FormControl(''),
+    q: new FormControl(''),
     estado: new FormControl('Todos'),
     tipo_pedido: new FormControl('Todos'),
     canal_venta: new FormControl('Todos'),
@@ -131,12 +126,7 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
       filters.from_date = this.buildDateArray(this.range.from);
       filters.to_date = this.buildDateArray(this.range.to);
     }
-    if (formValues.numero_pedido) filters.numero_pedido = formValues.numero_pedido;
-    if (formValues.nombre_cliente) filters.nombre_cliente = formValues.nombre_cliente;
-    if (formValues.numero_documento_cliente) filters.numero_documento_cliente = formValues.numero_documento_cliente;
-    if (formValues.email_cliente) filters.email_cliente = formValues.email_cliente;
-    if (formValues.telefono_cliente) filters.telefono_cliente = formValues.telefono_cliente;
-    if (formValues.referencia_externa) filters.referencia_externa = formValues.referencia_externa;
+    if (formValues.q) filters.q = formValues.q;
     // Los selects mandan string vacío cuando es 'Todos'
     if (formValues.estado != null) filters.estado = formValues.estado === 'Todos' ? '' : formValues.estado;
     if (formValues.tipo_pedido != null) filters.tipo_pedido = formValues.tipo_pedido === 'Todos' ? '' : formValues.tipo_pedido;
@@ -234,7 +224,7 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
   }
 
   onCancelPedido(pedidoId: number) {
-    if (confirm('¿Estás seguro de cancelar este pedido?')) {
+    if (confirm('¿Estás seguro de cancelar este pendiente?')) {
       this.store.dispatch(cancelarPedido({ pedidoId }));
     }
   }
@@ -253,14 +243,14 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
   pedirEliminar(pedido: Pedido, event: MouseEvent): void {
     event.stopPropagation();
     const data: TuiConfirmData = {
-      content: `¿Eliminar permanentemente el pedido ${pedido.numero_pedido}? Esta acción no se puede deshacer.`,
+      content: `¿Eliminar permanentemente el pendiente ${pedido.numero_pedido}? Esta acción no se puede deshacer.`,
       yes: 'Eliminar',
       no: 'Cancelar',
     };
 
     this.dialogs
       .open<boolean>(TUI_CONFIRM, {
-        label: 'Eliminar Pedido',
+        label: 'Eliminar Pendiente',
         size: 's',
         data,
       })
@@ -279,12 +269,7 @@ export class ListallpedidosComponent implements OnInit, OnDestroy {
 
   clearFilters() {
     this.form.reset({
-      numero_pedido: '',
-      nombre_cliente: '',
-      numero_documento_cliente: '',
-      email_cliente: '',
-      telefono_cliente: '',
-      referencia_externa: '',
+      q: '',
       estado: 'Todos',
       tipo_pedido: 'Todos',
       canal_venta: 'Todos',

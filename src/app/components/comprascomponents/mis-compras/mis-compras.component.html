@@ -1,0 +1,112 @@
+<div>
+  <div class="flex items-center justify-between px-1 mb-4">
+    <p class="text-[11px] font-medium tracking-widest uppercase text-[#86868b] dark:text-[#a1a1a6]">
+      Registro<span *ngIf="totalCount"> · {{ totalCount }}</span>
+    </p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="buscar()" class="flex flex-col sm:flex-row gap-3 mb-2 sm:items-end">
+    <div class="flex-1">
+      <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">Buscar</label>
+      <tui-textfield tuiTextfieldSize="m">
+        <input formControlName="q" placeholder="RUC, serie, CDR..." tuiTextfield />
+      </tui-textfield>
+    </div>
+    <div class="sm:w-44">
+      <label class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1 block">N° comprobante</label>
+      <tui-textfield tuiTextfieldSize="m">
+        <input formControlName="numero_comprobante" placeholder="F001-123" tuiTextfield />
+      </tui-textfield>
+    </div>
+    <div class="flex gap-2">
+      <button type="submit" [disabled]="loading"
+        class="inline-flex items-center justify-center h-9 px-5 rounded-full bg-[#1d1d1f] dark:bg-white text-white dark:text-black text-[13px] font-medium transition-opacity disabled:opacity-40">
+        Buscar
+      </button>
+      <button type="button" (click)="limpiar()"
+        class="inline-flex items-center justify-center h-9 px-4 rounded-full text-[13px] font-medium text-[#1d1d1f] dark:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors">
+        Limpiar
+      </button>
+    </div>
+  </form>
+
+  <tui-loader [showLoader]="loading" [overlay]="true">
+    <div *ngIf="!compras.length && !loading" class="py-12 text-center">
+      <p class="text-[14px] font-semibold text-[#1d1d1f] dark:text-white">Sin compras guardadas</p>
+      <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] mt-1">Consulta un comprobante en la pestaña anterior y guárdalo.</p>
+    </div>
+
+    <div *ngIf="compras.length">
+      <div *ngFor="let c of compras; trackBy: trackById"
+        class="flex items-center gap-4 px-1 py-3.5 border-b border-black/[0.06] dark:border-white/[0.08] last:border-0">
+        <span class="shrink-0 text-[11px] font-semibold px-2 py-1 rounded-full"
+          [ngClass]="c.xml_comprobante ? 'bg-[#30d158]/10 text-[#248a3d] dark:text-[#30d158]' : 'bg-[#ff3b30]/10 text-[#ff3b30]'">
+          {{ c.xml_comprobante ? 'Validado en SUNAT' : 'Incompleta' }}
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="text-[14px] font-semibold tracking-[-0.01em] text-[#1d1d1f] dark:text-white truncate">
+            {{ getTipo(c.tipo_comprobante) }} {{ c.serie }}-{{ c.correlativo }}
+          </p>
+          <p class="text-[12px] text-[#86868b] dark:text-[#a1a1a6] truncate">
+            RUC {{ c.ruc_proveedor }}
+          </p>
+            <p *ngIf="c.total" class="text-[14px] font-semibold text-[#1d1d1f] dark:text-white mt-0.5">
+              S/ {{ c.total }}
+            </p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <a *ngIf="c.xml_comprobante" [href]="c.xml_comprobante" target="_blank" rel="noopener"
+            class="inline-flex items-center gap-0.5 text-[12px] font-medium text-[#1d1d1f] dark:text-white underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-500">
+            Factura XML
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+          <a *ngIf="c.pdf_url" [href]="c.pdf_url" target="_blank" rel="noopener"
+            class="inline-flex items-center gap-0.5 text-[12px] font-medium text-[#1d1d1f] dark:text-white underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-500">
+            PDF
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+          <a *ngIf="c.xml_constancia" [href]="c.xml_constancia" target="_blank" rel="noopener"
+            class="inline-flex items-center gap-0.5 text-[12px] font-medium text-[#1d1d1f] dark:text-white underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-500">
+            Constancia
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+          <button type="button" (click)="pedirArchivo(c, 'pdf', pdfInput)"
+            class="text-[12px] font-medium text-[#1d1d1f] dark:text-white underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-500">
+            {{ c.pdf_url ? 'Cambiar PDF' : 'Subir PDF' }}
+          </button>
+          <button *ngIf="!c.xml_comprobante" type="button" (click)="pedirArchivo(c, 'xml', xmlInput)"
+            class="text-[12px] font-medium text-[#1d1d1f] dark:text-white underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-500">
+            Subir XML
+          </button>
+          <button *ngIf="tiene((user$ | async), 'can_delete_compra')" type="button" [disabled]="eliminandoId === c.id" (click)="pedirEliminar(c)" title="Eliminar"
+            class="inline-flex items-center justify-center w-7 h-7 rounded-full text-[#ff3b30] hover:bg-[#ff3b30]/10 transition-colors disabled:opacity-40">
+            <svg *ngIf="eliminandoId !== c.id" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-2a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <tui-loader *ngIf="eliminandoId === c.id" size="xs" [showLoader]="true"></tui-loader>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <input #pdfInput type="file" accept="application/pdf,.pdf" class="hidden" (change)="onArchivoSeleccionado($event)" />
+    <input #xmlInput type="file" accept="text/xml,.xml" class="hidden" (change)="onArchivoSeleccionado($event)" />
+
+    <tui-pagination *ngIf="lengthPages > 1" class="mt-4 flex justify-center" [length]="lengthPages" [index]="indexPage" (indexChange)="goToPage($event)"></tui-pagination>
+  </tui-loader>
+
+  <div *ngIf="compraAEliminar" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" (click)="cancelarEliminar()"></div>
+    <div class="relative w-full max-w-[360px] rounded-2xl bg-white dark:bg-[#1c1c1e] p-6 shadow-xl">
+      <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center mb-3 bg-[#ff3b30]/10">
+        <svg class="w-5 h-5 text-[#ff3b30]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-2a1 1 0 00-1 1v3M4 7h16"/></svg>
+      </div>
+      <h3 class="text-[15px] font-semibold tracking-[-0.02em] text-center text-[#1d1d1f] dark:text-white">¿Eliminar compra?</h3>
+      <p class="text-[12px] leading-5 text-center text-[#86868b] dark:text-[#a1a1a6] mt-1">
+        Se eliminará <span class="font-semibold text-[#1d1d1f] dark:text-white">{{ compraAEliminar.serie }}-{{ compraAEliminar.correlativo }}</span> de tu registro. Los archivos en R2 se conservan.
+      </p>
+      <div class="flex gap-3 mt-5">
+        <button type="button" (click)="cancelarEliminar()" class="flex-1 h-9 rounded-full border border-black/[0.08] dark:border-white/[0.08] text-[#1d1d1f] dark:text-white text-[13px] font-medium">Cancelar</button>
+        <button type="button" (click)="confirmarEliminar()" class="flex-1 h-9 rounded-full text-white text-[13px] font-medium bg-[#ff3b30] hover:bg-[#ff453a]">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

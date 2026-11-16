@@ -7,7 +7,7 @@
         <!-- Header -->
         <div class="flex items-center justify-between gap-3 mb-2 px-4 sm:px-0">
             <div class="min-w-0">
-                <h1 class="text-[22px] sm:text-[28px] font-bold tracking-tight text-neutral-900 dark:text-white truncate">Nuevo pedido</h1>
+                <h1 class="text-[22px] sm:text-[28px] font-bold tracking-tight text-neutral-900 dark:text-white truncate">Nuevo pendiente</h1>
                 <p class="text-[13px] text-stone-500 dark:text-stone-400">Paso {{ currentStep }} de 3 · {{ currentStep === 1 ? 'Productos' : currentStep === 2 ? 'Cliente' : 'Confirmar' }}</p>
             </div>
             <button *ngIf="currentStep === 1" type="button" (click)="showDialog()"
@@ -66,7 +66,7 @@
                         </div>
 
                         <div class="flex flex-col min-[420px]:flex-row gap-2 mt-2.5 min-[420px]:pl-[68px]">
-                            <tui-select formControlName="cantidad_final" class="flex-1" tuiTextfieldSize="s">
+                            <tui-select *ngIf="!item.get('es_celular')?.value" formControlName="cantidad_final" class="flex-1" tuiTextfieldSize="s">
                                 Cant.
                                 <tui-data-list *tuiDataList>
                                     <button *ngFor="let cantidad of arrayCantidades" tuiOption type="button" [value]="cantidad" class="text-sm">
@@ -74,6 +74,9 @@
                                     </button>
                                 </tui-data-list>
                             </tui-select>
+                            <p *ngIf="item.get('es_celular')?.value" class="flex-1 text-sm font-semibold text-neutral-900 dark:text-white flex items-center">
+                                1 unidad <span class="ml-1.5 text-[11px] font-normal text-neutral-400">(IMEI único)</span>
+                            </p>
                             <tui-textfield class="flex-1">
                                 <label tuiLabel class="text-[11px]">Desc</label>
                                 <input formControlName="descuento" prefix="S/. " tuiInputNumber
@@ -285,10 +288,10 @@
                     </div>
                 </div>
 
-                <p class="text-[11px] font-semibold uppercase tracking-wide text-stone-400 mb-1">Pedido</p>
+                <p class="text-[11px] font-semibold uppercase tracking-wide text-stone-400 mb-1">Pendiente</p>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                     <tui-select formControlName="tipo_pedido" class="w-full">
-                        Tipo de pedido
+                        Tipo de pendiente
                         <tui-data-list *tuiDataList>
                             <button *ngFor="let tipo of listTipoPedido" tuiOption [value]="tipo">
                                 {{ tipo }}
@@ -360,7 +363,7 @@
                         [disabled]="!pedidoForm.valid || pedidoForm.get('productos')?.value.length === 0"
                         class="flex-[2] !rounded-full !bg-neutral-900 dark:!bg-white !text-white dark:!text-neutral-900 !font-semibold" tuiButton type="submit" (click)="registrarPedido()" appearance="flat"
                         size="m">
-                        Registrar pedido
+                        Registrar pendiente
                     </button>
                 </div>
             </div>

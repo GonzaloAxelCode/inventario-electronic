@@ -17,6 +17,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { AuthService } from './services/auth.service';
 import { CategoriaService } from './services/categoria.service';
 import { AuthInterceptor } from './services/utils/http-auth-interceptor';
+import { TimeoutRetryInterceptor } from './services/utils/http-timeout';
 import { ROOT_REDUCER } from './state/app.state';
 import { AuthEffects } from './state/effects/auth.effects';
 import { CategoriaEffects } from './state/effects/categoria.effect';
@@ -45,7 +46,6 @@ import { ProveedorEffects } from './state/effects/proveedor.effects';
 import { TiendaEffects } from './state/effects/tienda.effects';
 import { UserEffects } from './state/effects/user.effects';
 import { VentaEffects } from './state/effects/venta.effects';
-import { CompraEffects } from './state/effects/compra.effects';
 import { CompraService } from './services/compra.service';
 import { PedidoEffects } from './state/effects/pedido.effects';
 import { PedidoService } from './services/pedido.service';
@@ -79,7 +79,6 @@ import { GuiaRemisionService } from './services/guia-remision.service';
 			ProveedorEffects,
 			VentaEffects,
 			ClienteEffects,
-			CompraEffects,
 			PedidoEffects,
 			GuiaRemisionEffects,
 		]),
@@ -110,6 +109,7 @@ import { GuiaRemisionService } from './services/guia-remision.service';
 		provideToastr(),
 
 		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+		{ provide: HTTP_INTERCEPTORS, useClass: TimeoutRetryInterceptor, multi: true },
 		NG_EVENT_PLUGINS,
 	],
 	bootstrap: [AppComponent],

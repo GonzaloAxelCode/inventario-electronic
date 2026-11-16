@@ -2,6 +2,8 @@ import { PlanSuscripcion, SuscripcionTiendaResponse, Tienda, UsoMensualTienda } 
 import { TiendaService } from '@/app/services/tienda.service';
 import { imageUrl, URL_BASE } from '@/app/services/utils/endpoints';
 import { loadTiendasAction, updateTiendaAction } from '@/app/state/actions/tienda.actions';
+import { loadCategorias } from '@/app/state/actions/categoria.actions';
+import { loadProveedores } from '@/app/state/actions/proveedor.actions';
 import { AppState } from '@/app/state/app.state';
 import { selectTiendaState } from '@/app/state/selectors/tienda.selectors';
 import { selectCurrenttUser } from '@/app/state/selectors/user.selectors';
@@ -16,6 +18,8 @@ import { TUI_CONFIRM, TuiButtonLoading, TuiConfirmData, TuiSwitch, TuiTab, TuiTa
 import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
 import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { TableUsersComponent } from '../../../components/Tables/tableusers/tableusers.component';
+import { TablecategoriesComponent } from '../../../components/Tables/tablecategories/tablecategories.component';
+import { ListallproveedoresComponent } from '../../../components/proveedorescomponents/listallproveedores/listallproveedores.component';
 import { DialogupdattiendaComponent } from '../../../components/Dialogs/dialogupdattienda/dialogupdattienda.component';
 import { DialogUpdateTiendaService } from '@/app/services/dialogs-services/dialog-updatetienda.service';
 import { DialogUpdateLogosService } from '@/app/services/dialogs-services/dialog-update-logos.service';
@@ -26,7 +30,7 @@ import { DialogUpdateLogosService } from '@/app/services/dialogs-services/dialog
   imports: [
     CommonModule, TuiButton, TuiAppearance, TuiLoader,
     TuiInputModule, TuiSelectModule, FormsModule, TuiTextfield, ReactiveFormsModule,
-    TuiButtonLoading, TuiTabs, TuiTab, TuiSwitch, TuiDataList, TableUsersComponent, DialogupdattiendaComponent
+    TuiButtonLoading, TuiTabs, TuiTab, TuiSwitch, TuiDataList, TableUsersComponent, TablecategoriesComponent, ListallproveedoresComponent, DialogupdattiendaComponent
   ],
   templateUrl: './admintiendadetail.component.html',
   styleUrl: './admintiendadetail.component.scss'
@@ -76,8 +80,9 @@ export class AdmintiendadetailComponent implements OnInit {
   selectedPlanId: number | null = null;
   changingPlan = false;
 
-  activeTab: 'update' | 'config' | 'personal'
+  activeTab: 'update' | 'config' | 'personal' | 'categorias' | 'proveedores'
   | 'diseno' | 'suscripcion' | 'sunat' | 'sucursales' = 'update';
+  readonly validTabs = ['update', 'personal', 'categorias', 'proveedores', 'sucursales', 'diseno', 'suscripcion', 'sunat', 'config'] as const;
   readonly seriesOptions = ['001','002','003','004','005','006','007','008','009','010'];
   isSuperUser = false;
   selectedTicket: 't80_1' | 't80_2' | 't80_3' | 't80_4' | 't80_5' | 't80_6' = 't80_1';
@@ -454,6 +459,12 @@ export class AdmintiendadetailComponent implements OnInit {
       this.loadSuscripcion();
       this.loadPlanes();
     }
+    // Persiste la pestaña en la URL: /admin/store/:id#tab
+    this.router.navigate([], { relativeTo: this.route, fragment: tab, replaceUrl: true });
+  }
+
+  private isValidTab(tab: string): tab is typeof this.activeTab {
+    return (this.validTabs as readonly string[]).includes(tab);
   }
 
   goBack() {
@@ -478,6 +489,17 @@ export class AdmintiendadetailComponent implements OnInit {
 
     const id = Number(this.route.snapshot.paramMap.get('id'));
     let hasDispatchedLoad = false;
+    this.store.dispatch(loadCategorias({ tipo: 'TODO' }));
+    this.store.dispatch(loadProveedores());
+
+    // La pestaña persiste en el fragmento: /admin/store/:id#categorias, etc.
+    this.route.fragment.pipe(takeUntil(this.destroy$)).subscribe((fragment) => {
+      if (fragment && this.isValidTab(fragment)) {
+        if (fragment !== this.activeTab) this.setTab(fragment);
+      } else if (fragment !== 'update') {
+        this.router.navigate([], { relativeTo: this.route, fragment: 'update', replaceUrl: true });
+      }
+    });
 
     // Reactivo a cambios de ruta (padre <-> sucursal) y del estado
     combineLatest([this.route.paramMap, this.store.select(selectTiendaState)])
@@ -485,10 +507,15 @@ export class AdmintiendadetailComponent implements OnInit {
       .subscribe(([params, state]) => {
       const routeId = Number(params.get('id')) || id;
       if (routeId !== this.currentTiendaId) {
-        // Cambió de tienda (p. ej. entró a una sucursal): vista fresca desde Información
+        // Cambió de tienda (p. ej. entró a una sucursal): respeta el fragmento si es válido
         this.currentTiendaId = routeId;
         hasDispatchedLoad = false;
-        this.activeTab = 'update';
+        const frag = this.route.snapshot.fragment;
+        this.activeTab = frag && this.isValidTab(frag) ? frag : 'update';
+        if (this.activeTab === 'suscripcion') {
+          this.loadSuscripcion();
+          this.loadPlanes();
+        }
         try { window.scrollTo({ top: 0 }); } catch { /* SSR/seguro */ }
       }
       this.tiendasEstado = state.tiendas ?? [];

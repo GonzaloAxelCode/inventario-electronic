@@ -1,0 +1,43 @@
+<ng-container *ngIf="(perms$ | async)?.can_export_data; else sinPermiso">
+<div class="flex flex-col gap-4">
+  <div class="flex items-center justify-between gap-3">
+    <p class="text-sm font-bold text-neutral-900 dark:text-white">Destacados del año</p>
+    <select [(ngModel)]="year" (ngModelChange)="onYearChange($event)"
+      class="text-xs px-2 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white">
+      <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="loading" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div *ngFor="let i of [1, 2, 3]" class="h-24 bg-neutral-200 dark:bg-neutral-700 rounded-2xl animate-pulse"></div>
+  </div>
+
+  <div *ngIf="!loading && data" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <p class="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">💰 Total {{ data.year }}</p>
+      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white mt-1">S/ {{ data.total_anual | number:'1.2-2' }}</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{{ data.n_ventas }} ventas en el año</p>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <p class="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">📊 Mejor mes</p>
+      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white mt-1">{{ data.mejor_mes.nombre }}</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">S/ {{ data.mejor_mes.total | number:'1.2-2' }} · {{ data.mejor_mes.n_ventas }} ventas</p>
+    </div>
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+      <p class="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">📅 Mejor día</p>
+      <p class="text-2xl font-extrabold text-neutral-900 dark:text-white mt-1">{{ data.mejor_dia.fecha || '—' }}</p>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">S/ {{ data.mejor_dia.total | number:'1.2-2' }} · {{ data.mejor_dia.n_ventas }} ventas</p>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !data" class="p-4 text-center text-xs text-neutral-400">
+    No se pudo cargar el resumen del año.
+  </div>
+</div>
+</ng-container>
+<ng-template #sinPermiso>
+  <div class="p-6 text-center rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800">
+    <p class="text-sm font-bold text-neutral-900 dark:text-white">Sin permiso</p>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">No tienes permiso para ver estos datos. Pide a tu administrador que te habilite «Exportar datos a CSV».</p>
+  </div>
+</ng-template>

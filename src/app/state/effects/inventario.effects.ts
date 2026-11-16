@@ -7,6 +7,7 @@ import { InventarioCacheService } from '@/app/services/inventario-cache.service'
 import { InventarioService } from '@/app/services/inventario.service';
 import { InventarioSearchService } from '@/app/services/search-services/inventario-search.service';
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
+import { serverErrorMsg } from '@/app/services/utils/server-error';
 import { loadProductosAction } from '../actions/producto.actions';
 import {
     actualizarInventario,
@@ -48,12 +49,12 @@ import {
     loadDistribucionStock,
     loadDistribucionStockFail,
     loadDistribucionStockSuccess,
-    loadValorizacion,
-    loadValorizacionFail,
-    loadValorizacionSuccess,
-    loadTopCategoriasCompra,
-    loadTopCategoriasCompraFail,
-    loadTopCategoriasCompraSuccess,
+    loadTopProductosCompra,
+    loadTopProductosCompraFail,
+    loadTopProductosCompraSuccess,
+    loadValorCategoria,
+    loadValorCategoriaFail,
+    loadValorCategoriaSuccess,
     searchInventarios,
 
     searchInventarioSuccess,
@@ -157,7 +158,7 @@ export class InventarioEffects {
                         if (error.error.string_err === ERRORS_INVENTARIO.INVENTARIO_EXIXTENTE) {
                             this.alertService.showInfo('Ya existe un inventario con ese producto').subscribe();
                         } else {
-                            this.alertService.showError('Error al crear el inventario').subscribe();
+                            this.alertService.showError(serverErrorMsg(error, 'Error al crear el inventario')).subscribe();
                         }
 
                         return of(createInventarioFail({ error }));
@@ -180,7 +181,7 @@ export class InventarioEffects {
                         ];
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al actualizar el stock').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al actualizar el stock')).subscribe();
                         return of(updateStockFail({ error }));
                     })
                 )
@@ -201,7 +202,7 @@ export class InventarioEffects {
                         ];
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al actualizar el inventario').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al actualizar el inventario')).subscribe();
                         return of(actualizarInventarioFail({ error }));
                     })
                 )
@@ -220,7 +221,7 @@ export class InventarioEffects {
                         return eliminarInventarioSuccess({ inventarioId });
                     }),
                     catchError(error => {
-                        this.alertService.showError('Error al eliminar el inventario', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al eliminar el inventario'), 'Error').subscribe();
                         return of(eliminarInventarioFail({ error }));
                     })
                 )
@@ -275,25 +276,25 @@ export class InventarioEffects {
         )
     );
 
-    loadValorizacionEffect = createEffect(() =>
+    loadTopProductosCompraEffect = createEffect(() =>
         this.actions$.pipe(
-            ofType(loadValorizacion),
-            exhaustMap(() =>
-                this.inventarioService.fetchValorizacionInventario().pipe(
-                    map(response => loadValorizacionSuccess({ valorizacion: response.valorizacion })),
-                    catchError(error => of(loadValorizacionFail({ error })))
+            ofType(loadTopProductosCompra),
+            exhaustMap(({ tipo }) =>
+                this.inventarioService.fetchTopProductosCompra(tipo ?? 'compra').pipe(
+                    map(response => loadTopProductosCompraSuccess({ topProductos: response.top_productos_compra })),
+                    catchError(error => of(loadTopProductosCompraFail({ error })))
                 )
             )
         )
     );
 
-    loadTopCategoriasCompraEffect = createEffect(() =>
+    loadValorCategoriaEffect = createEffect(() =>
         this.actions$.pipe(
-            ofType(loadTopCategoriasCompra),
-            exhaustMap(() =>
-                this.inventarioService.fetchTopCategoriasCompra().pipe(
-                    map(response => loadTopCategoriasCompraSuccess({ topCategorias: response.top_categorias_compra })),
-                    catchError(error => of(loadTopCategoriasCompraFail({ error })))
+            ofType(loadValorCategoria),
+            exhaustMap(({ tipo }) =>
+                this.inventarioService.fetchValorPorCategoria(tipo ?? 'compra').pipe(
+                    map(response => loadValorCategoriaSuccess({ valorCategoria: response.valor_por_categoria })),
+                    catchError(error => of(loadValorCategoriaFail({ error })))
                 )
             )
         )

@@ -1,4 +1,4 @@
-import { DistribucionStock, Inventario, TopCategoriaCompra, ValorizacionCategoria } from '@/app/models/inventario.models';
+import { DistribucionStock, Inventario, TopProductoCompra, ValorCategoria } from '@/app/models/inventario.models';
 import { Producto } from '@/app/models/producto.models';
 import { createReducer, on } from '@ngrx/store';
 import {
@@ -22,12 +22,12 @@ import {
     loadDistribucionStock,
     loadDistribucionStockFail,
     loadDistribucionStockSuccess,
-    loadValorizacion,
-    loadValorizacionFail,
-    loadValorizacionSuccess,
-    loadTopCategoriasCompra,
-    loadTopCategoriasCompraFail,
-    loadTopCategoriasCompraSuccess,
+    loadTopProductosCompra,
+    loadTopProductosCompraFail,
+    loadTopProductosCompraSuccess,
+    loadValorCategoria,
+    loadValorCategoriaFail,
+    loadValorCategoriaSuccess,
     searchInventarioFail,
     searchInventarios,
     searchInventarioSuccess,
@@ -64,10 +64,10 @@ export interface InventarioState {
     loadingLowStock: boolean
     distribucionStock: DistribucionStock;
     loadingDistribucionStock: boolean;
-    valorizacion: ValorizacionCategoria[];
-    loadingValorizacion: boolean;
-    topCategoriasCompra: TopCategoriaCompra[];
-    loadingTopCategoriasCompra: boolean;
+    topProductosCompra: TopProductoCompra[];
+    loadingTopProductosCompra: boolean;
+    valorCategoria: ValorCategoria[];
+    loadingValorCategoria: boolean;
 }
 
 const initialState: InventarioState = {
@@ -92,10 +92,10 @@ const initialState: InventarioState = {
     inventarios_search: [],  // Inicializa como un array vacío
     distribucionStock: { sin_stock: 0, critico: 0, bajo: 0, normal: 0 },
     loadingDistribucionStock: false,
-    valorizacion: [],
-    loadingValorizacion: false,
-    topCategoriasCompra: [],
-    loadingTopCategoriasCompra: false,
+    topProductosCompra: [],
+    loadingTopProductosCompra: false,
+    valorCategoria: [],
+    loadingValorCategoria: false,
 };
 export const inventarioReducer = createReducer(
     initialState,
@@ -275,34 +275,34 @@ export const inventarioReducer = createReducer(
         loadingDistribucionStock: false,
     })),
 
-    on(loadValorizacion, (state) => ({
+    on(loadTopProductosCompra, (state) => ({
         ...state,
-        loadingValorizacion: true,
+        loadingTopProductosCompra: true,
     })),
-    on(loadValorizacionSuccess, (state, { valorizacion }) => ({
+    on(loadTopProductosCompraSuccess, (state, { topProductos }) => ({
         ...state,
-        valorizacion,
-        loadingValorizacion: false,
+        topProductosCompra: topProductos,
+        loadingTopProductosCompra: false,
     })),
-    on(loadValorizacionFail, (state, { error }) => ({
+    on(loadTopProductosCompraFail, (state, { error }) => ({
         ...state,
         errors: error,
-        loadingValorizacion: false,
+        loadingTopProductosCompra: false,
     })),
 
-    on(loadTopCategoriasCompra, (state) => ({
+    on(loadValorCategoria, (state) => ({
         ...state,
-        loadingTopCategoriasCompra: true,
+        loadingValorCategoria: true,
     })),
-    on(loadTopCategoriasCompraSuccess, (state, { topCategorias }) => ({
+    on(loadValorCategoriaSuccess, (state, { valorCategoria }) => ({
         ...state,
-        topCategoriasCompra: topCategorias,
-        loadingTopCategoriasCompra: false,
+        valorCategoria,
+        loadingValorCategoria: false,
     })),
-    on(loadTopCategoriasCompraFail, (state, { error }) => ({
+    on(loadValorCategoriaFail, (state, { error }) => ({
         ...state,
         errors: error,
-        loadingTopCategoriasCompra: false,
+        loadingValorCategoria: false,
     })),
 
     //externos

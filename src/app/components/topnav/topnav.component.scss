@@ -14,6 +14,16 @@ body {
   width: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  will-change: transform, opacity;
+  transition: opacity 0.22s ease, transform 0.26s ease-out, margin-bottom 0.26s ease-out;
+}
+
+/* Oculto desvanecido por scroll: colapsa sin dejar hueco */
+.topnav-header.topnav-hidden {
+  opacity: 0;
+  transform: translate3d(0, -100%, 0);
+  margin-bottom: -4rem;
+  pointer-events: none;
 }
 
 .topnav-container {
@@ -67,14 +77,20 @@ body {
   }
 }
 
-/* Navigation Area */
+/* Navigation Area (solo escritorio: en móvil se usa el menú hamburguesa) */
 .topnav-nav-area {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  flex: 1;
-  margin: 0 1rem;
-  min-width: 0;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .topnav-nav-area {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex: 1;
+    margin: 0 1rem;
+    min-width: 0;
+  }
 }
 
 /* Navigation Links */
@@ -518,6 +534,36 @@ button.mobile-nav-link {
   border: none;
   background: none;
   cursor: pointer;
+}
+
+.mobile-dropdown .mobile-nav-link {
+  animation: mobile-nav-item-in 0.28s ease both;
+}
+
+.mobile-dropdown .mobile-nav-link:nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+.mobile-dropdown .mobile-nav-link:nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+@keyframes mobile-nav-item-in {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-dropdown,
+  .mobile-dropdown .mobile-nav-link {
+    animation: none;
+  }
 }
 
 :host-context([tuiTheme="dark"]) .mobile-nav-link:hover {

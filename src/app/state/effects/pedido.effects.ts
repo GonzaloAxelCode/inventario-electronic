@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { catchError, exhaustMap, map, of, switchMap } from 'rxjs';
 
 import { CustomAlertService } from '@/app/services/ui/custom-alert.service';
+import { serverErrorMsg } from '@/app/services/utils/server-error';
 import { PedidoService } from '@/app/services/pedido.service';
 import {
     cargarPedidos,
@@ -68,7 +69,7 @@ export class PedidoEffects {
                         return crearPedidoExito({ pedido: response.pedido });
                     }),
                     catchError((error) => {
-                        this.alertService.showError('Error al registrar el pedido', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al registrar el pedido'), 'Error').subscribe();
                         return of(crearPedidoError({ error }));
                     })
                 )
@@ -86,7 +87,7 @@ export class PedidoEffects {
                         return cancelarPedidoExito({ pedidoId, mensaje: response.mensaje });
                     }),
                     catchError((error) => {
-                        this.alertService.showError('Error al cancelar el pedido', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al cancelar el pedido'), 'Error').subscribe();
                         return of(cancelarPedidoError({ error }));
                     })
                 )
@@ -104,7 +105,7 @@ export class PedidoEffects {
                         return actualizarPedidoExito({ pedido: response.pedido, mensaje: response.mensaje });
                     }),
                     catchError((error) => {
-                        this.alertService.showError('Error al actualizar el pedido', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al actualizar el pedido'), 'Error').subscribe();
                         return of(actualizarPedidoError({ error }));
                     })
                 )
@@ -122,7 +123,7 @@ export class PedidoEffects {
                         return eliminarPedidoExito({ pedidoId, mensaje: response?.mensaje });
                     }),
                     catchError((error) => {
-                        this.alertService.showError('Error al eliminar el pedido', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al eliminar el pedido'), 'Error').subscribe();
                         return of(eliminarPedidoError({ error }));
                     })
                 )
@@ -140,7 +141,7 @@ export class PedidoEffects {
                         return pagarPedidoExito({ pedido: response.pedido, mensaje: response.mensaje });
                     }),
                     catchError((error) => {
-                        this.alertService.showError('Error al pagar el pedido', 'Error').subscribe();
+                        this.alertService.showError(serverErrorMsg(error, 'Error al pagar el pedido'), 'Error').subscribe();
                         return of(pagarPedidoError({ error }));
                     })
                 )
