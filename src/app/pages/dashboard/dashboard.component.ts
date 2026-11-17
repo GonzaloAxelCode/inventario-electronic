@@ -1,5 +1,4 @@
 import { ChartsalesbetweentwodatesComponent } from '@/app/components/dashboardcomponents/chartsalesbetweentwodates/chartsalesbetweentwodates.component';
-import { AnnualBestCardsComponent } from '@/app/components/dashboardcomponents/annual-best-cards/annual-best-cards.component';
 import { tienePermiso } from '@/app/models/permissions.catalog';
 import { DashboardGeneralStatsComponent } from "@/app/components/dashboardcomponents/dashboard-general-stats/dashboard-general-stats.component";
 import { GraficosInicioComponent } from "@/app/components/dashboardcomponents/graficos-inicio/graficos-inicio.component";
@@ -30,7 +29,6 @@ import { initialStateUser } from '@/app/state/reducers/user.reducer';
     DashboardGeneralStatsComponent,
     GraficosInicioComponent,
     ReportExportCardsComponent,
-    AnnualBestCardsComponent,
     AlertasStockComponent,
     GraficosProductosComponent,
     TuiButton, TuiAppearance, TuiTable, TuiSegmented,
@@ -63,6 +61,11 @@ export class DashboardComponent implements OnInit {
   puedeVer(id: string): boolean {
     const item = this.statSections.find((s) => s.id === id);
     if (!item) return false;
+    // Exportar Datos: vale con exportar o con respaldar (el dueño pasa siempre).
+    if (item.id === 'reportes') {
+      return tienePermiso(this.user as any, 'can_export_data')
+        || tienePermiso(this.user as any, 'can_make_backup');
+    }
     return tienePermiso(this.user as any, (item as any).perm);
   }
 

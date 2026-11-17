@@ -1,0 +1,100 @@
+<div class="flex flex-col gap-4">
+  <div>
+    <p class="text-base font-bold text-neutral-900 dark:text-white">{{ titulo }}</p>
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{{ descripcion }}</p>
+  </div>
+
+  <div class="grid grid-cols-2 gap-3" *ngIf="necesitaMes || necesitaYear">
+    <div class="flex flex-col gap-1" *ngIf="necesitaMes">
+      <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-300">Mes</span>
+      <tui-select [(ngModel)]="month" [valueContent]="mesContent" tuiTextfieldSize="m" class="w-full">
+        Mes
+        <tui-data-list *tuiDataList>
+          <button *ngFor="let m of meses; let i = index" tuiOption [value]="i + 1">{{ m }}</button>
+        </tui-data-list>
+      </tui-select>
+      <ng-template #mesContent>
+        <span>{{ meses[month - 1] }}</span>
+      </ng-template>
+    </div>
+    <div class="flex flex-col gap-1" *ngIf="necesitaYear">
+      <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-300">Año</span>
+      <tui-select [(ngModel)]="year" tuiTextfieldSize="m" class="w-full">
+        Año
+        <tui-data-list *tuiDataList>
+          <button *ngFor="let y of years" tuiOption [value]="y">{{ y }}</button>
+        </tui-data-list>
+      </tui-select>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1" *ngIf="tipo === 'ganancias'">
+    <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-300">Detalle</span>
+    <tui-select [(ngModel)]="detalleGanancias" tuiTextfieldSize="m" class="w-full">
+      Detalle
+      <tui-data-list *tuiDataList>
+        <button tuiOption value="venta">Por venta (una fila por ticket)</button>
+        <button tuiOption value="producto">Por producto (qué deja más)</button>
+      </tui-data-list>
+    </tui-select>
+  </div>
+
+  <div class="flex flex-col gap-1" *ngIf="necesitaInventario">
+    <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-300">Qué inventario</span>
+    <tui-select [(ngModel)]="filtroInventario" tuiTextfieldSize="m" class="w-full">
+      Inventario
+      <tui-data-list *tuiDataList>
+        <button tuiOption value="accesorios">Accesorios (con valorizado)</button>
+        <button tuiOption value="celulares">Celulares (por IMEI)</button>
+        <button tuiOption value="repuestos">Repuestos (taller)</button>
+      </tui-data-list>
+    </tui-select>
+  </div>
+
+  <div class="grid grid-cols-2 gap-3" *ngIf="necesitaTipo || necesitaMetodo">
+    <div class="flex flex-col gap-1" *ngIf="necesitaTipo">
+      <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-300">Tipo</span>
+      <tui-select [(ngModel)]="filtroTipo" tuiTextfieldSize="m" class="w-full">
+        Tipo
+        <tui-data-list *tuiDataList>
+          <button tuiOption value="todos">Todos</button>
+          <button tuiOption value="accesorio">Solo accesorios</button>
+          <button tuiOption value="celular">Solo celulares</button>
+        </tui-data-list>
+      </tui-select>
+    </div>
+    <div class="flex flex-col gap-1" *ngIf="necesitaMetodo">
+      <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-300">Método de pago</span>
+      <tui-select [(ngModel)]="filtroMetodo" tuiTextfieldSize="m" class="w-full">
+        Método
+        <tui-data-list *tuiDataList>
+          <button *ngFor="let mp of metodosPago" tuiOption [value]="mp">{{ mp === 'todos' ? 'Todos' : mp }}</button>
+        </tui-data-list>
+      </tui-select>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1" *ngIf="necesitaGrupo">
+    <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-300">Grupo</span>
+    <tui-select [(ngModel)]="filtroGrupo" tuiTextfieldSize="m" class="w-full">
+      Grupo
+      <tui-data-list *tuiDataList>
+        <button tuiOption value="todos">Todos</button>
+        <button tuiOption value="accesorios">Solo accesorios</button>
+        <button tuiOption value="repuestos">Solo repuestos</button>
+      </tui-data-list>
+    </tui-select>
+  </div>
+
+  <p class="text-[11px] text-neutral-400" *ngIf="!necesitaYear && !necesitaInventario">Descarga directa, sin filtros de fecha.</p>
+  <p class="text-[11px] text-neutral-400" *ngIf="esZip">Incluye XML + índice CSV con enlaces. Úsalo para tu contador.</p>
+
+  <div class="flex gap-2 justify-end pt-1">
+    <button tuiButton type="button" appearance="secondary" size="m" (click)="cancelar()" [disabled]="downloading">
+      Cancelar
+    </button>
+    <button tuiButton type="button" appearance="primary" size="m" (click)="descargar()" [disabled]="downloading">
+      {{ downloading ? 'Generando…' : (esZip ? 'Descargar ZIP' : 'Descargar CSV') }}
+    </button>
+  </div>
+</div>

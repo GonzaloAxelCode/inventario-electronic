@@ -72,7 +72,7 @@ export class ReportExportService {
   }
 
   getResumenAnual(year: number): Observable<ResumenAnual> {
-    return this.http.get<ResumenAnual>(`${this.base}/resumen-anual/`, { params: new HttpParams().set('year', String(year)) });
+    return this.http.get<ResumenAnual>(`${URL_BASE}/api/reports/resumen-anual/`, { params: new HttpParams().set('year', String(year)) });
   }
 
   exportComprobantesZip(month: number, year: number): Observable<Blob> {
